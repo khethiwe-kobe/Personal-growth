@@ -24,7 +24,7 @@ export function supabaseConfigured(): boolean {
 export async function signInWithEmail(email: string): Promise<{ error?: string }> {
   const sb = getSupabase();
   if (!sb) return { error: "Supabase is not configured" };
-  const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.origin } });
+  const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.href } });
   return error ? { error: error.message } : {};
 }
 
