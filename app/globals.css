@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+@theme {
+  --color-paper: #faf8f4;
+  --color-card: #ffffff;
+  --color-line: #ece5d9;
+  --color-line-soft: #f3eee5;
+  --color-ink: #2b2420;
+  --color-soft: #6b6259;
+  --color-faint: #8a7c6b;
+  --color-beige: #f4efe6;
+  --color-beige-deep: #e9dfd0;
+  --color-brown: #7c5f44;
+  --color-brown-deep: #5d4633;
+  --color-brown-soft: #9c7b5c;
+  --color-brown-faint: #bda183;
+  --color-sage: #6f7a5e;
+  --font-display: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  --font-body: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+
+html {
+  color-scheme: light only;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--color-beige-deep);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rise {
+  animation: rise 0.35s ease-out both;
+}
+
+@keyframes fadein {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fadein {
+  animation: fadein 0.25s ease-out both;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0.4;
+}
