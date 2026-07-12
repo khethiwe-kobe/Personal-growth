@@ -20,13 +20,21 @@ import type {
 import { bibleStats, todaysReading } from "@/lib/bible";
 import { addDays, dayOfYear, formatLong, formatShort, streakFrom, todayISO, weekStart } from "@/lib/dates";
 import { quotes } from "@/lib/data/quotes";
+import { blessingForDay } from "@/lib/data/blessings";
 import { buildNudges } from "@/lib/companion";
 
 const DEFAULT_SETTINGS: AppSettings = {
-  name: "",
+  name: "Khethiwe",
   reminders: { bible: true, workout: true, meals: true, weeklyReview: true, monthlyReview: true, goals: true },
   dailyFocus: {},
 };
+
+function greetingWord(): string {
+  const h = new Date().getHours();
+  if (h < 12) return "Good morning";
+  if (h < 17) return "Good afternoon";
+  return "Good evening";
+}
 
 const EMPTY_REFLECTION = (date: string): DailyReflection => ({
   date,
@@ -91,6 +99,8 @@ export default function Dashboard() {
 
   const quote = quotes.length ? quotes[dayOfYear(today) % quotes.length] : null;
   const card = truthCards.length ? truthCards[dayOfYear(today) % truthCards.length] : null;
+  const firstName = (settings.name || "").trim().split(" ")[0];
+  const blessing = blessingForDay(dayOfYear(today), firstName);
 
   const milestonesSoon = goals
     .filter((g) => g.status !== "completed" && g.targetDate >= today)
@@ -104,10 +114,10 @@ export default function Dashboard() {
 
   return (
     <div className="mx-auto max-w-5xl">
-      <header className="rise mb-8">
+      <header className="rise mb-6">
         <p className="text-sm text-faint">{formatLong(today)}</p>
         <h1 className="mt-1 font-display text-3xl text-ink sm:text-4xl">
-          {settings.name ? `Good day, ${settings.name}.` : "Good day."}
+          {firstName ? `${greetingWord()}, ${firstName}.` : `${greetingWord()}.`}
         </h1>
         {quote && (
           <blockquote className="mt-4 max-w-2xl border-l-2 border-beige-deep pl-4">
@@ -116,6 +126,15 @@ export default function Dashboard() {
           </blockquote>
         )}
       </header>
+
+      {/* A personal blessing — the word of God spoken over you by name */}
+      <Card className="rise mb-6 border-brown-faint bg-gradient-to-br from-beige/70 to-card">
+        <p className="text-xs font-medium uppercase tracking-widest text-faint">
+          {firstName ? `A word over you, ${firstName}` : "A word over you"}
+        </p>
+        <p className="mt-3 font-display text-2xl leading-relaxed text-ink sm:text-[1.7rem]">{blessing.line}</p>
+        <p className="mt-2 text-sm text-brown">{blessing.ref}</p>
+      </Card>
 
       <Card className="mb-6">
         <Field label="Today's focus">

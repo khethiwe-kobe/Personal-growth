@@ -7,7 +7,7 @@ import type { AppSettings, Reminders } from "@/lib/types";
 import { backupToCloud, currentUserEmail, restoreFromCloud, signInWithEmail, signOut, supabaseConfigured } from "@/lib/supabase";
 
 const DEFAULT_SETTINGS: AppSettings = {
-  name: "",
+  name: "Khethiwe",
   reminders: { bible: true, workout: true, meals: true, weeklyReview: true, monthlyReview: true, goals: true },
   dailyFocus: {},
 };
