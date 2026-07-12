@@ -6,30 +6,21 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
-  group: pages
+  group: pages-deploy
   cancel-in-progress: true
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-      - name: Enable and configure Pages
-        uses: actions/configure-pages@v5
-        with:
-          enablement: true
       - run: npm ci
       - name: Build static site
         run: npm run build
@@ -38,8 +29,11 @@ jobs:
           # Publishable client values — safe to embed in the static bundle.
           NEXT_PUBLIC_SUPABASE_URL: https://neuryvymxahyuwpzksiv.supabase.co
           NEXT_PUBLIC_SUPABASE_ANON_KEY: sb_publishable_ekuxN9v0hmJsieAMBHf95w_E1fHYnE1
-      - uses: actions/upload-pages-artifact@v3
+      - name: Disable Jekyll processing
+        run: touch out/.nojekyll
+      - name: Publish to gh-pages branch
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          path: out
-      - id: deployment
-        uses: actions/deploy-pages@v4
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./out
+          publish_branch: gh-pages
