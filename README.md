@@ -42,8 +42,17 @@ restore a JSON backup at any time.
 
 ## Deploying
 
-Any Next.js host works (Vercel is simplest: import the repo, add the two env vars if
-using Supabase, deploy).
+**GitHub Pages (already set up):** `.github/workflows/deploy-pages.yml` builds a static
+export and deploys it to GitHub Pages on every push to the development branch. The live
+site is served at `https://<owner>.github.io/Personal-growth/`. Notes:
+
+- GitHub Pages requires the repository to be **public** (or a paid GitHub plan for
+  private repos). If the deploy fails with a Pages-availability error, make the repo
+  public under Settings → General, then re-run the workflow from the Actions tab.
+- `DEPLOY_TARGET=pages npm run build` reproduces the same static bundle locally in `out/`.
+
+Any other Next.js host also works (Vercel is simplest: import the repo, add the two env
+vars, deploy).
 
 ## Structure
 
