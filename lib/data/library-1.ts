@@ -11,7 +11,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "2 Corinthians 5:17",
-        text: "Therefore if any man be in Christ, he is a new creature: old things are passed away; behold, all things are become new.",
+        text: "Therefore if anyone is in Christ, he is a new creation. The old things have passed away. Behold, all things have become new.",
         explanation:
           "Anyone who belongs to Christ has been made genuinely new; the old life no longer defines them.",
         application:
@@ -19,7 +19,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "1 Peter 2:9",
-        text: "But ye are a chosen generation, a royal priesthood, an holy nation, a peculiar people; that ye should shew forth the praises of him who hath called you out of darkness into his marvellous light:",
+        text: "But you are a chosen race, a royal priesthood, a holy nation, a people for God's own possession, that you may proclaim the excellence of him who called you out of darkness into his marvelous light.",
         explanation:
           "Believers are chosen and set apart by God, given a royal identity and a purpose to display His praise.",
         application:
@@ -27,7 +27,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Galatians 2:20",
-        text: "I am crucified with Christ: nevertheless I live; yet not I, but Christ liveth in me: and the life which I now live in the flesh I live by the faith of the Son of God, who loved me, and gave himself for me.",
+        text: "I have been crucified with Christ, and it is no longer I who live, but Christ lives in me. That life which I now live in the flesh, I live by faith in the Son of God, who loved me and gave himself up for me.",
         explanation:
           "The believer's old self died with Christ, and now Christ Himself lives in and through the believer.",
         application:
@@ -46,7 +46,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "Ephesians 2:8-9",
-        text: "For by grace are ye saved through faith; and that not of yourselves: it is the gift of God: Not of works, lest any man should boast.",
+        text: "for by grace you have been saved through faith, and that not of yourselves; it is the gift of God, not of works, that no one would boast.",
         explanation:
           "Salvation comes entirely by God's grace through faith, not by human effort or merit.",
         application:
@@ -54,7 +54,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Romans 10:9",
-        text: "That if thou shalt confess with thy mouth the Lord Jesus, and shalt believe in thine heart that God hath raised him from the dead, thou shalt be saved.",
+        text: "that if you will confess with your mouth that Jesus is Lord and believe in your heart that God raised him from the dead, you will be saved.",
         explanation:
           "Salvation is received by confessing Jesus as Lord and believing in His resurrection.",
         application:
@@ -62,7 +62,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "John 3:16",
-        text: "For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life.",
+        text: "For God so loved the world, that he gave his one and only Son, that whoever believes in him should not perish, but have eternal life.",
         explanation:
           "God's love moved Him to give His Son so that everyone who believes receives everlasting life.",
         application:
@@ -81,7 +81,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "Ephesians 2:8",
-        text: "For by grace are ye saved through faith; and that not of yourselves: it is the gift of God:",
+        text: "for by grace you have been saved through faith, and that not of yourselves; it is the gift of God,",
         explanation:
           "God's grace is the source of our salvation, and even the faith to receive it is His gift.",
         application:
@@ -89,7 +89,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "2 Corinthians 12:9",
-        text: "And he said unto me, My grace is sufficient for thee: for my strength is made perfect in weakness. Most gladly therefore will I rather glory in my infirmities, that the power of Christ may rest upon me.",
+        text: "He has said to me, \"My grace is sufficient for you, for my power is made perfect in weakness.\" Most gladly therefore I will rather glory in my weaknesses, that the power of Christ may rest on me.",
         explanation:
           "God's grace is enough for every weakness, and His power shines brightest where we are weakest.",
         application:
@@ -97,7 +97,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Titus 2:11",
-        text: "For the grace of God that bringeth salvation hath appeared to all men,",
+        text: "For the grace of God has appeared, bringing salvation to all men,",
         explanation:
           "God's saving grace has been revealed in Christ and is offered to all people.",
         application:
@@ -116,7 +116,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "1 John 1:9",
-        text: "If we confess our sins, he is faithful and just to forgive us our sins, and to cleanse us from all unrighteousness.",
+        text: "If we confess our sins, he is faithful and righteous to forgive us the sins and to cleanse us from all unrighteousness.",
         explanation:
           "God faithfully forgives and cleanses everyone who honestly confesses their sins to Him.",
         application:
@@ -124,7 +124,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Ephesians 1:7",
-        text: "In whom we have redemption through his blood, the forgiveness of sins, according to the riches of his grace;",
+        text: "in whom we have our redemption through his blood, the forgiveness of our trespasses, according to the riches of his grace,",
         explanation:
           "Forgiveness is secured by the blood of Jesus and flows from the abundant riches of God's grace.",
         application:
@@ -132,7 +132,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Psalm 103:12",
-        text: "As far as the east is from the west, so far hath he removed our transgressions from us.",
+        text: "As far as the east is from the west, so far has he removed our transgressions from us.",
         explanation:
           "God removes forgiven sin completely and immeasurably far from the believer.",
         application:
@@ -151,7 +151,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "2 Corinthians 5:21",
-        text: "For he hath made him to be sin for us, who knew no sin; that we might be made the righteousness of God in him.",
+        text: "For him who knew no sin he made to be sin on our behalf; so that in him we might become the righteousness of God.",
         explanation:
           "Jesus took our sin upon Himself so that believers could be given God's own righteousness.",
         application:
@@ -159,7 +159,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Romans 3:22",
-        text: "Even the righteousness of God which is by faith of Jesus Christ unto all and upon all them that believe: for there is no difference:",
+        text: "even the righteousness of God through faith in Jesus Christ to all and on all those who believe. For there is no distinction,",
         explanation:
           "God's righteousness comes through faith in Jesus Christ to everyone who believes, without distinction.",
         application:
@@ -167,7 +167,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Philippians 3:9",
-        text: "And be found in him, not having mine own righteousness, which is of the law, but that which is through the faith of Christ, the righteousness which is of God by faith:",
+        text: "and be found in him, not having a righteousness of my own, that which is of the law, but that which is through faith in Christ, the righteousness which is from God by faith,",
         explanation:
           "Paul treasured the righteousness that comes from God by faith far above any righteousness earned by keeping rules.",
         application:
@@ -186,7 +186,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "Romans 8:15",
-        text: "For ye have not received the spirit of bondage again to fear; but ye have received the Spirit of adoption, whereby we cry, Abba, Father.",
+        text: "For you didn't receive the spirit of bondage again to fear, but you received the Spirit of adoption, by whom we cry, \"Abba! Father!\"",
         explanation:
           "The Holy Spirit assures believers that they are adopted children who can call God their Father.",
         application:
@@ -194,7 +194,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Galatians 4:4-5",
-        text: "But when the fulness of the time was come, God sent forth his Son, made of a woman, made under the law, To redeem them that were under the law, that we might receive the adoption of sons.",
+        text: "But when the fullness of the time came, God sent out his Son, born to a woman, born under the law, that he might redeem those who were under the law, that we might receive the adoption of children.",
         explanation:
           "God sent His Son at just the right time to redeem us and make us His adopted children.",
         application:
@@ -202,7 +202,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Ephesians 1:5",
-        text: "Having predestinated us unto the adoption of children by Jesus Christ to himself, according to the good pleasure of his will,",
+        text: "having predestined us for adoption as children through Jesus Christ to himself, according to the good pleasure of his desire,",
         explanation:
           "God joyfully chose beforehand to adopt believers as His own children through Jesus Christ.",
         application:
@@ -221,7 +221,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "John 1:12",
-        text: "But as many as received him, to them gave he power to become the sons of God, even to them that believe on his name:",
+        text: "But as many as received him, to them he gave the right to become God's children, to those who believe in his name:",
         explanation:
           "Everyone who receives and believes in Jesus is given the right to become a child of God.",
         application:
@@ -229,7 +229,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "1 John 3:1",
-        text: "Behold, what manner of love the Father hath bestowed upon us, that we should be called the sons of God: therefore the world knoweth us not, because it knew him not.",
+        text: "Behold, how great a love the Father has bestowed on us, that we should be called children of God! For this cause the world doesn't know us, because it didn't know him.",
         explanation:
           "God's amazing love has made believers His children, even if the world does not recognize them.",
         application:
@@ -237,7 +237,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Romans 8:16",
-        text: "The Spirit itself beareth witness with our spirit, that we are the children of God:",
+        text: "The Spirit himself testifies with our spirit that we are children of God;",
         explanation:
           "The Holy Spirit personally assures believers deep within that they belong to God as His children.",
         application:
@@ -256,7 +256,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "2 Corinthians 5:17",
-        text: "Therefore if any man be in Christ, he is a new creature: old things are passed away; behold, all things are become new.",
+        text: "Therefore if anyone is in Christ, he is a new creation. The old things have passed away. Behold, all things have become new.",
         explanation:
           "Union with Christ makes a person a brand-new creation whose old life has passed away.",
         application:
@@ -264,7 +264,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Ezekiel 36:26",
-        text: "A new heart also will I give you, and a new spirit will I put within you: and I will take away the stony heart out of your flesh, and I will give you an heart of flesh.",
+        text: "I will also give you a new heart, and I will put a new spirit within you. I will take away the stony heart out of your flesh, and I will give you a heart of flesh.",
         explanation:
           "God promises to replace a hard, unresponsive heart with a soft heart that responds to Him.",
         application:
@@ -272,7 +272,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Galatians 6:15",
-        text: "For in Christ Jesus neither circumcision availeth any thing, nor uncircumcision, but a new creature.",
+        text: "For in Christ Jesus neither is circumcision anything, nor uncircumcision, but a new creation.",
         explanation:
           "What matters to God is not outward religious status but the inner transformation of being made new in Christ.",
         application:
@@ -291,7 +291,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "Jeremiah 29:11",
-        text: "For I know the thoughts that I think toward you, saith the LORD, thoughts of peace, and not of evil, to give you an expected end.",
+        text: "For I know the thoughts that I think toward you,\" says the LORD, \"thoughts of peace, and not of evil, to give you hope and a future.",
         explanation:
           "God's plans for His people are good plans of peace, leading to a hope-filled future.",
         application:
@@ -299,7 +299,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Ephesians 2:10",
-        text: "For we are his workmanship, created in Christ Jesus unto good works, which God hath before ordained that we should walk in them.",
+        text: "For we are his workmanship, created in Christ Jesus for good works, which God prepared before that we would walk in them.",
         explanation:
           "Believers are God's handiwork, created for good works He prepared in advance.",
         application:
@@ -307,7 +307,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Romans 8:28",
-        text: "And we know that all things work together for good to them that love God, to them who are the called according to his purpose.",
+        text: "We know that all things work together for good for those who love God, for those who are called according to his purpose.",
         explanation:
           "God sovereignly works everything, even hardship, together for the good of those who love Him.",
         application:
@@ -326,7 +326,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "2 Timothy 1:9",
-        text: "Who hath saved us, and called us with an holy calling, not according to our works, but according to his own purpose and grace, which was given us in Christ Jesus before the world began,",
+        text: "who saved us and called us with a holy calling, not according to our works, but according to his own purpose and grace, which was given to us in Christ Jesus before times eternal,",
         explanation:
           "God's calling is holy and rooted in His own purpose and grace, established before time began.",
         application:
@@ -334,7 +334,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "1 Peter 2:9",
-        text: "But ye are a chosen generation, a royal priesthood, an holy nation, a peculiar people; that ye should shew forth the praises of him who hath called you out of darkness into his marvellous light:",
+        text: "But you are a chosen race, a royal priesthood, a holy nation, a people for God's own possession, that you may proclaim the excellence of him who called you out of darkness into his marvelous light.",
         explanation:
           "Every believer is called to declare God's praises as part of His chosen people.",
         application:
@@ -342,7 +342,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Romans 11:29",
-        text: "For the gifts and calling of God are without repentance.",
+        text: "For the gifts and the calling of God are irrevocable.",
         explanation:
           "God does not revoke His gifts or His calling; what He gives, He stands behind.",
         application:
@@ -359,11 +359,11 @@ export const libraryTopics1: LibraryTopic[] = [
     name: "Fear",
     category: "Emotions",
     summary:
-      "Fear shrinks our world, but God's presence enlarges it again. He does not shame you for feeling afraid; He simply keeps saying, 'I am with thee.'",
+      "Fear shrinks our world, but God's presence enlarges it again. He does not shame you for feeling afraid; He simply keeps saying, 'I am with you.'",
     verses: [
       {
         ref: "Isaiah 41:10",
-        text: "Fear thou not; for I am with thee: be not dismayed; for I am thy God: I will strengthen thee; yea, I will help thee; yea, I will uphold thee with the right hand of my righteousness.",
+        text: "Don't you be afraid, for I am with you. Don't be dismayed, for I am your God. I will strengthen you. Yes, I will help you. Yes, I will uphold you with the right hand of my righteousness.",
         explanation:
           "God commands His people not to fear because He Himself is present to strengthen, help, and uphold them.",
         application:
@@ -371,7 +371,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "2 Timothy 1:7",
-        text: "For God hath not given us the spirit of fear; but of power, and of love, and of a sound mind.",
+        text: "For God didn't give us a spirit of fear, but of power, love, and self-control.",
         explanation:
           "A spirit of fear does not come from God; He gives power, love, and a sound mind instead.",
         application:
@@ -379,7 +379,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Psalm 34:4",
-        text: "I sought the LORD, and he heard me, and delivered me from all my fears.",
+        text: "I sought the LORD, and he answered me, and delivered me from all my fears.",
         explanation:
           "David testifies that seeking the Lord in prayer brought deliverance from all his fears.",
         application:
@@ -398,7 +398,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "Philippians 4:6-7",
-        text: "Be careful for nothing; but in every thing by prayer and supplication with thanksgiving let your requests be made known unto God. And the peace of God, which passeth all understanding, shall keep your hearts and minds through Christ Jesus.",
+        text: "In nothing be anxious, but in everything, by prayer and petition with thanksgiving, let your requests be made known to God. And the peace of God, which surpasses all understanding, will guard your hearts and your thoughts in Christ Jesus.",
         explanation:
           "God calls believers to replace anxiety with thankful prayer, promising His guarding peace in return.",
         application:
@@ -406,7 +406,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "1 Peter 5:7",
-        text: "Casting all your care upon him; for he careth for you.",
+        text: "casting all your worries on him, because he cares for you.",
         explanation:
           "Believers can throw every care onto God because He personally cares for them.",
         application:
@@ -414,7 +414,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Isaiah 26:3",
-        text: "Thou wilt keep him in perfect peace, whose mind is stayed on thee: because he trusteth in thee.",
+        text: "You will keep whoever's mind is steadfast in perfect peace, because he trusts in you.",
         explanation:
           "God keeps in perfect peace the person whose mind stays fixed on Him in trust.",
         application:
@@ -433,7 +433,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "Matthew 6:34",
-        text: "Take therefore no thought for the morrow: for the morrow shall take thought for the things of itself. Sufficient unto the day is the evil thereof.",
+        text: "Therefore don't be anxious for tomorrow, for tomorrow will be anxious for itself. Each day's own evil is sufficient.",
         explanation:
           "Jesus teaches His followers not to worry about tomorrow but to live faithfully within today.",
         application:
@@ -441,7 +441,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Matthew 6:26",
-        text: "Behold the fowls of the air: for they sow not, neither do they reap, nor gather into barns; yet your heavenly Father feedeth them. Are ye not much better than they?",
+        text: "See the birds of the sky, that they don't sow, neither do they reap, nor gather into barns. Your heavenly Father feeds them. Aren't you of much more value than they?",
         explanation:
           "God's faithful care for the birds proves He will certainly provide for His far more valuable children.",
         application:
@@ -449,7 +449,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Psalm 55:22",
-        text: "Cast thy burden upon the LORD, and he shall sustain thee: he shall never suffer the righteous to be moved.",
+        text: "Cast your burden on the LORD and he will sustain you. He will never allow the righteous to be moved.",
         explanation:
           "God promises to sustain and steady everyone who casts their burden on Him.",
         application:
@@ -468,7 +468,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "Matthew 11:28",
-        text: "Come unto me, all ye that labour and are heavy laden, and I will give you rest.",
+        text: "Come to me, all you who labor and are heavily burdened, and I will give you rest.",
         explanation:
           "Jesus personally invites the weary and burdened to come to Him and receive rest.",
         application:
@@ -484,7 +484,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Isaiah 40:29",
-        text: "He giveth power to the faint; and to them that have no might he increaseth strength.",
+        text: "He gives power to the weak. He increases the strength of him who has no might.",
         explanation:
           "God supplies fresh strength to those who are exhausted and have nothing left.",
         application:
@@ -503,15 +503,15 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "Psalm 42:11",
-        text: "Why art thou cast down, O my soul? and why art thou disquieted within me? hope thou in God: for I shall yet praise him, who is the health of my countenance, and my God.",
+        text: "Why are you in despair, my soul? Why are you disturbed within me? Hope in God! For I shall still praise him, the saving help of my countenance, and my God.",
         explanation:
           "The psalmist speaks to his own downcast soul, commanding it to hope in God and expect to praise Him again.",
         application:
-          "When your soul feels heavy, talk to yourself with truth instead of only listening to your feelings, saying, 'Hope thou in God.'",
+          "When your soul feels heavy, talk to yourself with truth instead of only listening to your feelings, saying, 'Hope in God.'",
       },
       {
         ref: "Psalm 34:18",
-        text: "The LORD is nigh unto them that are of a broken heart; and saveth such as be of a contrite spirit.",
+        text: "The LORD is near to those who have a broken heart, and saves those who have a crushed spirit.",
         explanation:
           "God is especially near to those whose hearts are broken and crushed in spirit.",
         application:
@@ -519,7 +519,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Isaiah 61:3",
-        text: "To appoint unto them that mourn in Zion, to give unto them beauty for ashes, the oil of joy for mourning, the garment of praise for the spirit of heaviness; that they might be called trees of righteousness, the planting of the LORD, that he might be glorified.",
+        text: "to appoint to those who mourn in Zion, to give to them a garland for ashes, the oil of joy for mourning, the garment of praise for the spirit of heaviness; that they may be called trees of righteousness, the planting of the LORD, that he may be glorified.",
         explanation:
           "God promises to exchange mourning and heaviness for beauty, joy, and praise in the lives of His people.",
         application:
@@ -538,7 +538,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "Deuteronomy 31:6",
-        text: "Be strong and of a good courage, fear not, nor be afraid of them: for the LORD thy God, he it is that doth go with thee; he will not fail thee, nor forsake thee.",
+        text: "Be strong and courageous. Don't be afraid or scared of them; for the LORD your God himself is who goes with you. He will not fail you nor forsake you.",
         explanation:
           "God commands courage because He personally goes with His people and will never abandon them.",
         application:
@@ -546,7 +546,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Psalm 68:6",
-        text: "God setteth the solitary in families: he bringeth out those which are bound with chains: but the rebellious dwell in a dry land.",
+        text: "God sets the lonely in families. He brings out the prisoners with singing, but the rebellious dwell in a sun-scorched land.",
         explanation:
           "God cares for lonely people and works to place them in community and belonging.",
         application:
@@ -554,7 +554,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Matthew 28:20",
-        text: "Teaching them to observe all things whatsoever I have commanded you: and, lo, I am with you alway, even unto the end of the world. Amen.",
+        text: "teaching them to observe all things that I commanded you. Behold, I am with you always, even to the end of the age.",
         explanation:
           "Jesus promises His continual presence with His followers until the very end of the age.",
         application:
@@ -581,7 +581,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "John 6:37",
-        text: "All that the Father giveth me shall come to me; and him that cometh to me I will in no wise cast out.",
+        text: "All those whom the Father gives me will come to me. He who comes to me I will in no way throw out.",
         explanation:
           "Jesus promises that He will never reject anyone who comes to Him.",
         application:
@@ -589,7 +589,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Isaiah 53:3",
-        text: "He is despised and rejected of men; a man of sorrows, and acquainted with grief: and we hid as it were our faces from him; he was despised, and we esteemed him not.",
+        text: "He was despised and rejected by men, a man of suffering and acquainted with disease. He was despised as one from whom men hide their face; and we didn't respect him.",
         explanation:
           "Jesus personally experienced rejection and sorrow, so He fully understands the rejected.",
         application:
@@ -608,15 +608,15 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "Mark 9:24",
-        text: "And straightway the father of the child cried out, and said with tears, Lord, I believe; help thou mine unbelief.",
+        text: "Immediately the father of the child cried out with tears, \"I believe. Help my unbelief!\"",
         explanation:
           "Jesus honored the honest prayer of a struggling father who admitted both his faith and his unbelief.",
         application:
-          "When doubt surfaces, pray honestly, 'Lord, I believe; help thou mine unbelief,' instead of hiding your struggle.",
+          "When doubt surfaces, pray honestly, 'Lord, I believe; help my unbelief,' instead of hiding your struggle.",
       },
       {
         ref: "James 1:6",
-        text: "But let him ask in faith, nothing wavering. For he that wavereth is like a wave of the sea driven with the wind and tossed.",
+        text: "But let him ask in faith, without any doubting, for he who doubts is like a wave of the sea, driven by the wind and tossed.",
         explanation:
           "God calls us to ask Him with settled trust, because wavering doubt leaves the soul tossed and unstable.",
         application:
@@ -624,7 +624,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "John 20:29",
-        text: "Jesus saith unto him, Thomas, because thou hast seen me, thou hast believed: blessed are they that have not seen, and yet have believed.",
+        text: "Jesus said to him, \"Because you have seen me, you have believed. Blessed are those who have not seen, and have believed.\"",
         explanation:
           "Jesus gently restored doubting Thomas and pronounced a special blessing on those who believe without seeing.",
         application:
@@ -643,7 +643,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "Romans 10:11",
-        text: "For the scripture saith, Whosoever believeth on him shall not be ashamed.",
+        text: "For the Scripture says, \"Whoever believes in him will not be disappointed.\"",
         explanation:
           "God guarantees that no one who trusts in Christ will ultimately be put to shame.",
         application:
@@ -651,7 +651,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Psalm 34:5",
-        text: "They looked unto him, and were lightened: and their faces were not ashamed.",
+        text: "They looked to him, and were radiant. Their faces shall never be covered with shame.",
         explanation:
           "Those who look to the Lord find their faces radiant rather than covered with shame.",
         application:
@@ -659,7 +659,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Isaiah 54:4",
-        text: "Fear not; for thou shalt not be ashamed: neither be thou confounded; for thou shalt not be put to shame: for thou shalt forget the shame of thy youth, and shalt not remember the reproach of thy widowhood any more.",
+        text: "Don't be afraid, for you will not be ashamed. Don't be confounded, for you will not be disappointed. For you will forget the shame of your youth, and the reproach of your widowhood you will remember no more.",
         explanation:
           "God promises His people freedom from shame, including healing from the shame of their past.",
         application:
@@ -678,7 +678,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "1 John 1:9",
-        text: "If we confess our sins, he is faithful and just to forgive us our sins, and to cleanse us from all unrighteousness.",
+        text: "If we confess our sins, he is faithful and righteous to forgive us the sins and to cleanse us from all unrighteousness.",
         explanation:
           "God promises full forgiveness and cleansing to everyone who confesses their sins to Him.",
         application:
@@ -686,7 +686,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Psalm 32:5",
-        text: "I acknowledged my sin unto thee, and mine iniquity have I not hid. I said, I will confess my transgressions unto the LORD; and thou forgavest the iniquity of my sin. Selah.",
+        text: "I acknowledged my sin to you. I didn't hide my iniquity. I said, I will confess my transgressions to the LORD, and you forgave the iniquity of my sin. Selah.",
         explanation:
           "When David stopped hiding his sin and confessed it, God immediately forgave him.",
         application:
@@ -694,7 +694,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Hebrews 10:22",
-        text: "Let us draw near with a true heart in full assurance of faith, having our hearts sprinkled from an evil conscience, and our bodies washed with pure water.",
+        text: "let's draw near with a true heart in fullness of faith, having our hearts sprinkled from an evil conscience, and having our body washed with pure water,",
         explanation:
           "Christ's sacrifice cleanses the conscience so believers can approach God with full assurance.",
         application:
@@ -713,7 +713,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "Romans 8:1",
-        text: "There is therefore now no condemnation to them which are in Christ Jesus, who walk not after the flesh, but after the Spirit.",
+        text: "There is therefore now no condemnation to those who are in Christ Jesus, who don't walk according to the flesh, but according to the Spirit.",
         explanation:
           "Because of Christ, believers stand under no condemnation before God.",
         application:
@@ -721,7 +721,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "John 3:17",
-        text: "For God sent not his Son into the world to condemn the world; but that the world through him might be saved.",
+        text: "For God didn't send his Son into the world to judge the world, but that the world should be saved through him.",
         explanation:
           "God's purpose in sending Jesus was salvation, not condemnation.",
         application:
@@ -729,7 +729,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Romans 8:34",
-        text: "Who is he that condemneth? It is Christ that died, yea rather, that is risen again, who is even at the right hand of God, who also maketh intercession for us.",
+        text: "Who is he who condemns? It is Christ who died, yes rather, who was raised from the dead, who is at the right hand of God, who also makes intercession for us.",
         explanation:
           "No one can condemn the believer, because the risen Christ Himself intercedes for us at God's right hand.",
         application:
@@ -748,7 +748,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "James 1:19-20",
-        text: "Wherefore, my beloved brethren, let every man be swift to hear, slow to speak, slow to wrath: For the wrath of man worketh not the righteousness of God.",
+        text: "So, then, my beloved brothers, let every man be swift to hear, slow to speak, and slow to anger; for the anger of man doesn't produce the righteousness of God.",
         explanation:
           "God calls us to listen quickly and grow angry slowly, because human anger does not produce God's righteousness.",
         application:
@@ -756,7 +756,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Ephesians 4:26",
-        text: "Be ye angry, and sin not: let not the sun go down upon your wrath:",
+        text: "Be angry, and don't sin. Don't let the sun go down on your wrath,",
         explanation:
           "Anger must be handled without sin and resolved quickly rather than nursed overnight.",
         application:
@@ -764,7 +764,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Proverbs 15:1",
-        text: "A soft answer turneth away wrath: but grievous words stir up anger.",
+        text: "A gentle answer turns away wrath, but a harsh word stirs up anger.",
         explanation:
           "Gentle words defuse conflict, while harsh words inflame it.",
         application:
@@ -783,7 +783,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "Matthew 5:4",
-        text: "Blessed are they that mourn: for they shall be comforted.",
+        text: "Blessed are those who mourn, for they shall be comforted.",
         explanation:
           "Jesus promises real comfort from God to those who mourn.",
         application:
@@ -791,7 +791,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Psalm 34:18",
-        text: "The LORD is nigh unto them that are of a broken heart; and saveth such as be of a contrite spirit.",
+        text: "The LORD is near to those who have a broken heart, and saves those who have a crushed spirit.",
         explanation:
           "God draws especially near to people whose hearts are broken.",
         application:
@@ -799,7 +799,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Revelation 21:4",
-        text: "And God shall wipe away all tears from their eyes; and there shall be no more death, neither sorrow, nor crying, neither shall there be any more pain: for the former things are passed away.",
+        text: "He will wipe away every tear from their eyes. Death will be no more; neither will there be mourning, nor crying, nor pain any more. The first things have passed away.",
         explanation:
           "God promises a coming day when He will personally end all death, sorrow, and pain forever.",
         application:
@@ -818,7 +818,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "Joshua 1:9",
-        text: "Have not I commanded thee? Be strong and of a good courage; be not afraid, neither be thou dismayed: for the LORD thy God is with thee whithersoever thou goest.",
+        text: "Haven't I commanded you? Be strong and courageous. Don't be afraid, neither be dismayed; for the LORD your God is with you wherever you go.",
         explanation:
           "God commands courage and forbids dismay because He goes with His servant everywhere.",
         application:
@@ -826,7 +826,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Galatians 6:9",
-        text: "And let us not be weary in well doing: for in due season we shall reap, if we faint not.",
+        text: "Let's not be weary in doing good, for we will reap in due season, if we don't give up.",
         explanation:
           "God promises a harvest in due season to those who keep doing good without giving up.",
         application:
@@ -834,7 +834,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Isaiah 40:31",
-        text: "But they that wait upon the LORD shall renew their strength; they shall mount up with wings as eagles; they shall run, and not be weary; and they shall walk, and not faint.",
+        text: "but those who wait for the LORD will renew their strength. They will mount up with wings like eagles. They will run, and not be weary. They will walk, and not faint.",
         explanation:
           "Those who wait on the Lord receive renewed strength to keep going.",
         application:
@@ -853,7 +853,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "Romans 15:13",
-        text: "Now the God of hope fill you with all joy and peace in believing, that ye may abound in hope, through the power of the Holy Ghost.",
+        text: "Now may the God of hope fill you with all joy and peace in believing, that you may abound in hope in the power of the Holy Spirit.",
         explanation:
           "God Himself is the source of hope, filling believers with joy and peace by the Holy Spirit.",
         application:
@@ -861,7 +861,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Lamentations 3:22-23",
-        text: "It is of the LORD's mercies that we are not consumed, because his compassions fail not. They are new every morning: great is thy faithfulness.",
+        text: "It is because of the LORD's loving kindnesses that we are not consumed, because his compassion doesn't fail. They are new every morning. Great is your faithfulness.",
         explanation:
           "Even in devastation, God's mercies never run out and arrive fresh every morning.",
         application:
@@ -869,7 +869,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Psalm 42:5",
-        text: "Why art thou cast down, O my soul? and why art thou disquieted in me? hope thou in God: for I shall yet praise him for the help of his countenance.",
+        text: "Why are you in despair, my soul? Why are you disturbed within me? Hope in God! For I shall still praise him for the saving help of his presence.",
         explanation:
           "The psalmist preaches hope to his own despairing soul, expecting to praise God again.",
         application:
@@ -888,7 +888,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "Nehemiah 8:10",
-        text: "Then he said unto them, Go your way, eat the fat, and drink the sweet, and send portions unto them for whom nothing is prepared: for this day is holy unto our Lord: neither be ye sorry; for the joy of the LORD is your strength.",
+        text: "Then he said to them, \"Go your way. Eat the fat, drink the sweet, and send portions to him for whom nothing is prepared; for today is holy to our Lord. Don't be grieved; for the joy of the LORD is your strength.\"",
         explanation:
           "God's people were told not to grieve, because joy rooted in the Lord is what strengthens them.",
         application:
@@ -896,7 +896,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Psalm 16:11",
-        text: "Thou wilt shew me the path of life: in thy presence is fulness of joy; at thy right hand there are pleasures for evermore.",
+        text: "You will show me the path of life. In your presence is fullness of joy. In your right hand there are pleasures forever more.",
         explanation:
           "Fullness of joy is found in God's presence, and lasting pleasure at His right hand.",
         application:
@@ -904,7 +904,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "John 15:11",
-        text: "These things have I spoken unto you, that my joy might remain in you, and that your joy might be full.",
+        text: "I have spoken these things to you, that my joy may remain in you, and that your joy may be made full.",
         explanation:
           "Jesus wants His own joy to live in His followers so their joy is complete.",
         application:
@@ -923,7 +923,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "John 14:27",
-        text: "Peace I leave with you, my peace I give unto you: not as the world giveth, give I unto you. Let not your heart be troubled, neither let it be afraid.",
+        text: "Peace I leave with you. My peace I give to you; not as the world gives, I give to you. Don't let your heart be troubled, neither let it be fearful.",
         explanation:
           "Jesus gives His own peace, which is unlike anything the world can offer, and commands hearts not to be troubled.",
         application:
@@ -931,7 +931,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Isaiah 26:3",
-        text: "Thou wilt keep him in perfect peace, whose mind is stayed on thee: because he trusteth in thee.",
+        text: "You will keep whoever's mind is steadfast in perfect peace, because he trusts in you.",
         explanation:
           "God keeps in perfect peace those whose minds remain fixed on Him.",
         application:
@@ -939,7 +939,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Philippians 4:7",
-        text: "And the peace of God, which passeth all understanding, shall keep your hearts and minds through Christ Jesus.",
+        text: "And the peace of God, which surpasses all understanding, will guard your hearts and your minds in Christ Jesus.",
         explanation:
           "God's peace surpasses human understanding and stands guard over the believer's heart and mind.",
         application:
@@ -958,7 +958,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "Philippians 4:11",
-        text: "Not that I speak in respect of want: for I have learned, in whatsoever state I am, therewith to be content.",
+        text: "Not that I speak because of lack, for I have learned in whatever state I am, to be content in it.",
         explanation:
           "Paul learned contentment in every circumstance rather than depending on favorable conditions.",
         application:
@@ -974,7 +974,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Hebrews 13:5",
-        text: "Let your conversation be without covetousness; and be content with such things as ye have: for he hath said, I will never leave thee, nor forsake thee.",
+        text: "Be free from the love of money, content with such things as you have, for he has said, \"I will in no way leave you, neither will I in any way forsake you.\"",
         explanation:
           "We can be content with what we have because God's unfailing presence is our true security.",
         application:
@@ -995,7 +995,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "Hebrews 11:1",
-        text: "Now faith is the substance of things hoped for, the evidence of things not seen.",
+        text: "Now faith is assurance of things hoped for, proof of things not seen.",
         explanation:
           "Faith gives present substance and assurance to the things God has promised but we do not yet see.",
         application:
@@ -1003,7 +1003,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Hebrews 11:6",
-        text: "But without faith it is impossible to please him: for he that cometh to God must believe that he is, and that he is a rewarder of them that diligently seek him.",
+        text: "Without faith it is impossible to be well pleasing to him, for he who comes to God must believe that he exists, and that he is a rewarder of those who seek him.",
         explanation:
           "Pleasing God requires believing that He exists and that He rewards those who earnestly seek Him.",
         application:
@@ -1011,7 +1011,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Romans 10:17",
-        text: "So then faith cometh by hearing, and hearing by the word of God.",
+        text: "So faith comes by hearing, and hearing by the word of God.",
         explanation:
           "Faith is produced and strengthened by hearing the word of God.",
         application:
@@ -1030,7 +1030,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "Proverbs 3:5-6",
-        text: "Trust in the LORD with all thine heart; and lean not unto thine own understanding. In all thy ways acknowledge him, and he shall direct thy paths.",
+        text: "Trust in the LORD with all your heart, and don't lean on your own understanding. In all your ways acknowledge him, and he will make your paths straight.",
         explanation:
           "Wholehearted trust in God, rather than self-reliance, brings His direction to every part of life.",
         application:
@@ -1038,7 +1038,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Psalm 37:5",
-        text: "Commit thy way unto the LORD; trust also in him; and he shall bring it to pass.",
+        text: "Commit your way to the LORD. Trust also in him, and he will do this:",
         explanation:
           "When we entrust our plans to God, He acts on our behalf to accomplish His purposes.",
         application:
@@ -1046,7 +1046,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Isaiah 26:4",
-        text: "Trust ye in the LORD for ever: for in the LORD JEHOVAH is everlasting strength:",
+        text: "Trust in the LORD forever; for in Yah, the LORD, is an everlasting Rock.",
         explanation:
           "God is worthy of permanent trust because His strength is everlasting.",
         application:
@@ -1073,7 +1073,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Matthew 7:7",
-        text: "Ask, and it shall be given you; seek, and ye shall find; knock, and it shall be opened unto you:",
+        text: "Ask, and it will be given you. Seek, and you will find. Knock, and it will be opened for you.",
         explanation:
           "Jesus promises that persistent asking, seeking, and knocking will be answered by the Father.",
         application:
@@ -1081,7 +1081,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Jeremiah 33:3",
-        text: "Call unto me, and I will answer thee, and shew thee great and mighty things, which thou knowest not.",
+        text: "Call to me, and I will answer you, and will show you great and difficult things, which you don't know.",
         explanation:
           "God promises to answer those who call on Him and to reveal things beyond their knowledge.",
         application:
@@ -1100,7 +1100,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "Matthew 6:17-18",
-        text: "But thou, when thou fastest, anoint thine head, and wash thy face; That thou appear not unto men to fast, but unto thy Father which is in secret: and thy Father, which seeth in secret, shall reward thee openly.",
+        text: "But you, when you fast, anoint your head and wash your face, so that you are not seen by men to be fasting, but by your Father who is in secret; and your Father, who sees in secret, will reward you.",
         explanation:
           "Jesus assumes His followers will fast and teaches them to do it secretly for the Father rather than for human applause.",
         application:
@@ -1108,7 +1108,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Joel 2:12",
-        text: "Therefore also now, saith the LORD, turn ye even to me with all your heart, and with fasting, and with weeping, and with mourning:",
+        text: "Yet even now,\" says the LORD, \"turn to me with all your heart, and with fasting, and with weeping, and with mourning.",
         explanation:
           "God calls His people to return to Him wholeheartedly, and fasting is part of that sincere turning.",
         application:
@@ -1116,7 +1116,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Isaiah 58:6",
-        text: "Is not this the fast that I have chosen? to loose the bands of wickedness, to undo the heavy burdens, and to let the oppressed go free, and that ye break every yoke?",
+        text: "Isn't this the fast that I have chosen: to release the bonds of wickedness, to undo the straps of the yoke, to let the oppressed go free, and that you break every yoke?",
         explanation:
           "The fasting God desires goes beyond ritual and expresses itself in justice, mercy, and freeing the oppressed.",
         application:
@@ -1135,7 +1135,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "John 4:24",
-        text: "God is a Spirit: and they that worship him must worship him in spirit and in truth.",
+        text: "God is spirit, and those who worship him must worship in spirit and truth.",
         explanation:
           "True worship engages the heart by the Spirit and is grounded in the truth of who God is.",
         application:
@@ -1143,7 +1143,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Psalm 95:6",
-        text: "O come, let us worship and bow down: let us kneel before the LORD our maker.",
+        text: "Oh come, let's worship and bow down. Let's kneel before the LORD, our Maker,",
         explanation:
           "Worship includes humble reverence before God as our Creator.",
         application:
@@ -1151,7 +1151,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Psalm 29:2",
-        text: "Give unto the LORD the glory due unto his name; worship the LORD in the beauty of holiness.",
+        text: "Ascribe to the LORD the glory due to his name. Worship the LORD in holy array.",
         explanation:
           "God is worthy of the full glory His name deserves, offered in holy reverence.",
         application:
@@ -1170,7 +1170,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "John 14:15",
-        text: "If ye love me, keep my commandments.",
+        text: "If you love me, keep my commandments.",
         explanation:
           "Jesus connects genuine love for Him directly to obeying His commands.",
         application:
@@ -1178,7 +1178,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "1 Samuel 15:22",
-        text: "And Samuel said, Hath the LORD as great delight in burnt offerings and sacrifices, as in obeying the voice of the LORD? Behold, to obey is better than sacrifice, and to hearken than the fat of rams.",
+        text: "Samuel said, \"Has the LORD as great delight in burnt offerings and sacrifices, as in obeying the LORD's voice? Behold, to obey is better than sacrifice, and to listen than the fat of rams.\"",
         explanation:
           "God values obedience to His voice above outward religious sacrifice.",
         application:
@@ -1186,7 +1186,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "James 1:22",
-        text: "But be ye doers of the word, and not hearers only, deceiving your own selves.",
+        text: "But be doers of the word, and not only hearers, deluding your own selves.",
         explanation:
           "Hearing God's word without doing it is self-deception; real faith acts on what it hears.",
         application:
@@ -1205,7 +1205,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "1 Peter 1:15-16",
-        text: "But as he which hath called you is holy, so be ye holy in all manner of conversation; Because it is written, Be ye holy; for I am holy.",
+        text: "but just as he who called you is holy, you yourselves also be holy in all of your behavior; because it is written, \"You shall be holy; for I am holy.\"",
         explanation:
           "God calls His people to be holy in all their conduct because He Himself is holy.",
         application:
@@ -1213,7 +1213,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Hebrews 12:14",
-        text: "Follow peace with all men, and holiness, without which no man shall see the Lord:",
+        text: "Follow after peace with all men, and the sanctification without which no man will see the Lord,",
         explanation:
           "Believers are to actively pursue both peace with others and holiness before God.",
         application:
@@ -1221,7 +1221,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "2 Corinthians 7:1",
-        text: "Having therefore these promises, dearly beloved, let us cleanse ourselves from all filthiness of the flesh and spirit, perfecting holiness in the fear of God.",
+        text: "Having therefore these promises, beloved, let's cleanse ourselves from all defilement of flesh and spirit, perfecting holiness in the fear of God.",
         explanation:
           "God's promises motivate believers to cleanse themselves from every defilement and grow in holiness.",
         application:
@@ -1240,7 +1240,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "Acts 3:19",
-        text: "Repent ye therefore, and be converted, that your sins may be blotted out, when the times of refreshing shall come from the presence of the Lord;",
+        text: "Repent therefore, and turn again, that your sins may be blotted out, so that there may come times of refreshing from the presence of the Lord,",
         explanation:
           "Turning from sin to God brings the blotting out of sins and refreshing from His presence.",
         application:
@@ -1248,7 +1248,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "2 Chronicles 7:14",
-        text: "If my people, which are called by my name, shall humble themselves, and pray, and seek my face, and turn from their wicked ways; then will I hear from heaven, and will forgive their sin, and will heal their land.",
+        text: "if my people, who are called by my name, will humble themselves, pray, seek my face, and turn from their wicked ways, then I will hear from heaven, and will forgive their sin, and will heal their land.",
         explanation:
           "God promises to hear, forgive, and heal when His people humble themselves, pray, and turn from sin.",
         application:
@@ -1256,7 +1256,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Luke 15:7",
-        text: "I say unto you, that likewise joy shall be in heaven over one sinner that repenteth, more than over ninety and nine just persons, which need no repentance.",
+        text: "I tell you that even so there will be more joy in heaven over one sinner who repents, than over ninety-nine righteous people who need no repentance.",
         explanation:
           "Heaven rejoices over every single sinner who repents.",
         application:
@@ -1275,7 +1275,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "James 4:10",
-        text: "Humble yourselves in the sight of the Lord, and he shall lift you up.",
+        text: "Humble yourselves in the sight of the Lord, and he will exalt you.",
         explanation:
           "God promises to exalt those who humble themselves before Him.",
         application:
@@ -1283,7 +1283,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "1 Peter 5:6",
-        text: "Humble yourselves therefore under the mighty hand of God, that he may exalt you in due time:",
+        text: "Humble yourselves therefore under the mighty hand of God, that he may exalt you in due time,",
         explanation:
           "Humbling ourselves under God's mighty hand positions us for His exaltation at the right time.",
         application:
@@ -1291,7 +1291,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Micah 6:8",
-        text: "He hath shewed thee, O man, what is good; and what doth the LORD require of thee, but to do justly, and to love mercy, and to walk humbly with thy God?",
+        text: "He has shown you, O man, what is good. What does the LORD require of you, but to act justly, to love mercy, and to walk humbly with your God?",
         explanation:
           "God requires justice, mercy, and a humble daily walk with Him.",
         application:
@@ -1310,7 +1310,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "James 1:5",
-        text: "If any of you lack wisdom, let him ask of God, that giveth to all men liberally, and upbraideth not; and it shall be given him.",
+        text: "But if any of you lacks wisdom, let him ask of God, who gives to all liberally and without reproach, and it will be given to him.",
         explanation:
           "God generously gives wisdom to anyone who asks, without scolding them for needing it.",
         application:
@@ -1318,7 +1318,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Proverbs 9:10",
-        text: "The fear of the LORD is the beginning of wisdom: and the knowledge of the holy is understanding.",
+        text: "The fear of the LORD is the beginning of wisdom. The knowledge of the Holy One is understanding.",
         explanation:
           "True wisdom starts with reverent awe of the Lord and knowing Him.",
         application:
@@ -1326,7 +1326,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Proverbs 4:7",
-        text: "Wisdom is the principal thing; therefore get wisdom: and with all thy getting get understanding.",
+        text: "Wisdom is supreme. Get wisdom. Yes, though it costs all your possessions, get understanding.",
         explanation:
           "Wisdom is supremely valuable and worth pursuing above everything else we acquire.",
         application:
@@ -1345,7 +1345,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "1 John 4:1",
-        text: "Beloved, believe not every spirit, but try the spirits whether they are of God: because many false prophets are gone out into the world.",
+        text: "Beloved, don't believe every spirit, but test the spirits, whether they are of God, because many false prophets have gone out into the world.",
         explanation:
           "Believers must not be gullible but should test every message and influence against God's truth.",
         application:
@@ -1353,7 +1353,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Hebrews 5:14",
-        text: "But strong meat belongeth to them that are of full age, even those who by reason of use have their senses exercised to discern both good and evil.",
+        text: "But solid food is for those who are full grown, who by reason of use have their senses exercised to discern good and evil.",
         explanation:
           "Spiritual maturity comes through constant practice in distinguishing good from evil.",
         application:
@@ -1361,7 +1361,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Philippians 1:9-10",
-        text: "And this I pray, that your love may abound yet more and more in knowledge and in all judgment; That ye may approve things that are excellent; that ye may be sincere and without offence till the day of Christ;",
+        text: "This I pray, that your love may abound yet more and more in knowledge and all discernment, so that you may approve the things that are excellent, that you may be sincere and without offense to the day of Christ,",
         explanation:
           "Paul prays for love that grows in knowledge and discernment so believers can approve what is excellent.",
         application:
@@ -1380,7 +1380,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "John 10:27",
-        text: "My sheep hear my voice, and I know them, and they follow me:",
+        text: "My sheep hear my voice, and I know them, and they follow me.",
         explanation:
           "Jesus says His true followers recognize His voice and respond by following Him.",
         application:
@@ -1388,7 +1388,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Isaiah 30:21",
-        text: "And thine ears shall hear a word behind thee, saying, This is the way, walk ye in it, when ye turn to the right hand, and when ye turn to the left.",
+        text: "and when you turn to the right hand, and when you turn to the left, your ears will hear a voice behind you, saying, \"This is the way. Walk in it.\"",
         explanation:
           "God promises to guide His people with His voice when they are tempted to stray.",
         application:
@@ -1396,11 +1396,11 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "1 Samuel 3:10",
-        text: "And the LORD came, and stood, and called as at other times, Samuel, Samuel. Then Samuel answered, Speak; for thy servant heareth.",
+        text: "The LORD came, and stood, and called as at other times, \"Samuel! Samuel!\" Then Samuel said, \"Speak; for your servant hears.\"",
         explanation:
           "Samuel modeled the listening posture God desires: ready, available, and willing to hear.",
         application:
-          "Begin your quiet time by praying, 'Speak, Lord, for thy servant heareth,' and then be still.",
+          "Begin your quiet time by praying, 'Speak, Lord, for your servant is listening,' and then be still.",
       },
     ],
     crossRefs: ["Psalm 46:10", "Hebrews 1:1-2", "Revelation 3:20", "James 1:19"],
@@ -1415,7 +1415,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "Romans 12:2",
-        text: "And be not conformed to this world: but be ye transformed by the renewing of your mind, that ye may prove what is that good, and acceptable, and perfect, will of God.",
+        text: "Don't be conformed to this world, but be transformed by the renewing of your mind, so that you may prove what is the good, well-pleasing, and perfect will of God.",
         explanation:
           "Transformation comes through a renewed mind rather than conformity to the world's patterns.",
         application:
@@ -1423,7 +1423,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Philippians 4:8",
-        text: "Finally, brethren, whatsoever things are true, whatsoever things are honest, whatsoever things are just, whatsoever things are pure, whatsoever things are lovely, whatsoever things are of good report; if there be any virtue, and if there be any praise, think on these things.",
+        text: "Finally, brothers, whatever things are true, whatever things are honorable, whatever things are just, whatever things are pure, whatever things are lovely, whatever things are of good report: if there is any virtue and if there is any praise, think about these things.",
         explanation:
           "God directs believers to deliberately dwell on what is true, pure, lovely, and praiseworthy.",
         application:
@@ -1431,7 +1431,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "2 Corinthians 10:5",
-        text: "Casting down imaginations, and every high thing that exalteth itself against the knowledge of God, and bringing into captivity every thought to the obedience of Christ;",
+        text: "throwing down imaginations and every high thing that is exalted against the knowledge of God, and bringing every thought into captivity to the obedience of Christ,",
         explanation:
           "Believers are to actively capture every thought and bring it under the authority of Christ.",
         application:
@@ -1450,7 +1450,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "Ephesians 6:11",
-        text: "Put on the whole armour of God, that ye may be able to stand against the wiles of the devil.",
+        text: "Put on the whole armor of God, that you may be able to stand against the wiles of the devil.",
         explanation:
           "God provides complete armor so believers can stand firm against the devil's schemes.",
         application:
@@ -1458,7 +1458,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "2 Corinthians 10:4",
-        text: "(For the weapons of our warfare are not carnal, but mighty through God to the pulling down of strong holds;)",
+        text: "for the weapons of our warfare are not of the flesh, but mighty before God to the throwing down of strongholds,",
         explanation:
           "Our weapons are spiritual, not fleshly, and they carry God's power to demolish strongholds.",
         application:
@@ -1466,7 +1466,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "James 4:7",
-        text: "Submit yourselves therefore to God. Resist the devil, and he will flee from you.",
+        text: "Be subject therefore to God. Resist the devil, and he will flee from you.",
         explanation:
           "Victory over the devil comes through submission to God first, then active resistance.",
         application:
@@ -1485,7 +1485,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "John 14:26",
-        text: "But the Comforter, which is the Holy Ghost, whom the Father will send in my name, he shall teach you all things, and bring all things to your remembrance, whatsoever I have said unto you.",
+        text: "But the Counselor, the Holy Spirit, whom the Father will send in my name, will teach you all things, and will remind you of all that I said to you.",
         explanation:
           "The Holy Spirit comforts believers, teaches them, and reminds them of Jesus' words.",
         application:
@@ -1493,7 +1493,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Acts 1:8",
-        text: "But ye shall receive power, after that the Holy Ghost is come upon you: and ye shall be witnesses unto me both in Jerusalem, and in all Judaea, and in Samaria, and unto the uttermost part of the earth.",
+        text: "But you will receive power when the Holy Spirit has come upon you. You will be witnesses to me in Jerusalem, in all Judea and Samaria, and to the uttermost parts of the earth.",
         explanation:
           "The Holy Spirit gives believers power to be effective witnesses for Jesus.",
         application:
@@ -1501,7 +1501,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Romans 8:26",
-        text: "Likewise the Spirit also helpeth our infirmities: for we know not what we should pray for as we ought: but the Spirit itself maketh intercession for us with groanings which cannot be uttered.",
+        text: "In the same way, the Spirit also helps our weaknesses, for we don't know how to pray as we ought. But the Spirit himself makes intercession for us with groanings which can't be uttered.",
         explanation:
           "The Holy Spirit helps our weakness by interceding for us when we do not know how to pray.",
         application:
@@ -1520,7 +1520,7 @@ export const libraryTopics1: LibraryTopic[] = [
     verses: [
       {
         ref: "1 Corinthians 12:4",
-        text: "Now there are diversities of gifts, but the same Spirit.",
+        text: "Now there are various kinds of gifts, but the same Spirit.",
         explanation:
           "The one Holy Spirit distributes many different gifts among believers.",
         application:
@@ -1528,7 +1528,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "1 Peter 4:10",
-        text: "As every man hath received the gift, even so minister the same one to another, as good stewards of the manifold grace of God.",
+        text: "As each has received a gift, employ it in serving one another, as good managers of the grace of God in its various forms.",
         explanation:
           "Every believer has received a gift and is responsible to use it in serving others as a steward of God's grace.",
         application:
@@ -1536,7 +1536,7 @@ export const libraryTopics1: LibraryTopic[] = [
       },
       {
         ref: "Romans 12:6",
-        text: "Having then gifts differing according to the grace that is given to us, whether prophecy, let us prophesy according to the proportion of faith;",
+        text: "Having gifts differing according to the grace that was given to us: if prophecy, let's prophesy according to the proportion of our faith;",
         explanation:
           "God gives differing gifts by grace, and each believer should exercise theirs faithfully.",
         application:

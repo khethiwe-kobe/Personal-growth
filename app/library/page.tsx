@@ -39,6 +39,9 @@ export default function LibraryPage() {
       {tab === "search" && <SearchTab />}
       {tab === "cards" && <TruthCardsTab />}
       {tab === "teachings" && <TeachingsTab />}
+      <p className="mt-12 border-t border-line-soft pt-4 text-xs leading-relaxed text-faint">
+        Scripture quotations are from the World English Bible (WEB), a modern-English translation in the public domain.
+      </p>
     </div>
   );
 }
@@ -121,7 +124,7 @@ function TopicDetail({ topic, onBack, onOpen }: { topic: LibraryTopic; onBack: (
           return (
             <Card key={v.ref} className={highlighted ? "border-brown-faint bg-beige/50" : ""}>
               <p className="font-display text-lg leading-relaxed text-ink">&ldquo;{v.text}&rdquo;</p>
-              <p className="mt-2 text-sm font-medium text-brown">{v.ref} (KJV)</p>
+              <p className="mt-2 text-sm font-medium text-brown">{v.ref} (WEB)</p>
               <p className="mt-3 text-sm leading-relaxed text-soft">{v.explanation}</p>
               <p className="mt-2 text-sm leading-relaxed text-brown-deep">{v.application}</p>
               <div className="mt-4 flex flex-wrap gap-2 border-t border-line-soft pt-3">
@@ -233,7 +236,7 @@ function SituationsTab({ onOpenTopic }: { onOpenTopic: () => void }) {
         {active.scriptures.map((s) => (
           <Card key={s.ref}>
             <p className="font-display text-lg leading-relaxed text-ink">&ldquo;{s.text}&rdquo;</p>
-            <p className="mt-2 text-sm font-medium text-brown">{s.ref} (KJV)</p>
+            <p className="mt-2 text-sm font-medium text-brown">{s.ref} (WEB)</p>
           </Card>
         ))}
       </div>

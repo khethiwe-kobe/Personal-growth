@@ -11,15 +11,15 @@ export const situations: Situation[] = [
       },
       {
         ref: "Isaiah 41:9",
-        text: "Thou art my servant; I have chosen thee, and not cast thee away.",
+        text: "You whom I have taken hold of from the ends of the earth, and called from its corners, and said to you, \"You are my servant, I have chosen you and have not cast you away\";",
       },
       {
         ref: "Ephesians 1:6",
-        text: "To the praise of the glory of his grace, wherein he hath made us accepted in the beloved.",
+        text: "to the praise of the glory of his grace, by which he freely gave us favor in the Beloved,",
       },
       {
         ref: "John 6:37",
-        text: "All that the Father giveth me shall come to me; and him that cometh to me I will in no wise cast out.",
+        text: "All those whom the Father gives me will come to me. He who comes to me I will in no way throw out.",
       },
     ],
     encouragement:
@@ -51,19 +51,19 @@ export const situations: Situation[] = [
     scriptures: [
       {
         ref: "Philippians 4:6-7",
-        text: "Be careful for nothing; but in every thing by prayer and supplication with thanksgiving let your requests be made known unto God. And the peace of God, which passeth all understanding, shall keep your hearts and minds through Christ Jesus.",
+        text: "In nothing be anxious, but in everything, by prayer and petition with thanksgiving, let your requests be made known to God. And the peace of God, which surpasses all understanding, will guard your hearts and your thoughts in Christ Jesus.",
       },
       {
         ref: "1 Peter 5:7",
-        text: "Casting all your care upon him; for he careth for you.",
+        text: "casting all your worries on him, because he cares for you.",
       },
       {
         ref: "Matthew 6:34",
-        text: "Take therefore no thought for the morrow: for the morrow shall take thought for the things of itself. Sufficient unto the day is the evil thereof.",
+        text: "Therefore don't be anxious for tomorrow, for tomorrow will be anxious for itself. Each day's own evil is sufficient.",
       },
       {
         ref: "Psalm 94:19",
-        text: "In the multitude of my thoughts within me thy comforts delight my soul.",
+        text: "In the multitude of my thoughts within me, your comforts delight my soul.",
       },
     ],
     encouragement:
@@ -95,19 +95,19 @@ export const situations: Situation[] = [
     scriptures: [
       {
         ref: "Mark 9:24",
-        text: "And straightway the father of the child cried out, and said with tears, Lord, I believe; help thou mine unbelief.",
+        text: "Immediately the father of the child cried out with tears, \"I believe. Help my unbelief!\"",
       },
       {
         ref: "Psalm 34:8",
-        text: "O taste and see that the LORD is good: blessed is the man that trusteth in him.",
+        text: "Oh taste and see that the LORD is good. Blessed is the man who takes refuge in him.",
       },
       {
         ref: "Isaiah 55:8-9",
-        text: "For my thoughts are not your thoughts, neither are your ways my ways, saith the LORD. For as the heavens are higher than the earth, so are my ways higher than your ways, and my thoughts than your thoughts.",
+        text: "\"For my thoughts are not your thoughts, and your ways are not my ways,\" says the LORD. \"For as the heavens are higher than the earth, so are my ways higher than your ways, and my thoughts than your thoughts.\"",
       },
       {
         ref: "2 Timothy 2:13",
-        text: "If we believe not, yet he abideth faithful: he cannot deny himself.",
+        text: "If we are faithless, he remains faithful; for he can't deny himself.",
       },
     ],
     encouragement:
@@ -139,19 +139,19 @@ export const situations: Situation[] = [
     scriptures: [
       {
         ref: "John 14:27",
-        text: "Peace I leave with you, my peace I give unto you: not as the world giveth, give I unto you. Let not your heart be troubled, neither let it be afraid.",
+        text: "Peace I leave with you. My peace I give to you; not as the world gives, I give to you. Don't let your heart be troubled, neither let it be fearful.",
       },
       {
         ref: "Isaiah 26:3",
-        text: "Thou wilt keep him in perfect peace, whose mind is stayed on thee: because he trusteth in thee.",
+        text: "You will keep whoever's mind is steadfast in perfect peace, because he trusts in you.",
       },
       {
         ref: "Psalm 4:8",
-        text: "I will both lay me down in peace, and sleep: for thou, LORD, only makest me dwell in safety.",
+        text: "In peace I will both lay myself down and sleep, for you, the LORD alone, make me live in safety.",
       },
       {
         ref: "Colossians 3:15",
-        text: "And let the peace of God rule in your hearts, to the which also ye are called in one body; and be ye thankful.",
+        text: "And let the peace of God rule in your hearts, to which also you were called in one body, and be thankful.",
       },
     ],
     encouragement:
@@ -183,19 +183,19 @@ export const situations: Situation[] = [
     scriptures: [
       {
         ref: "1 Corinthians 10:13",
-        text: "There hath no temptation taken you but such as is common to man: but God is faithful, who will not suffer you to be tempted above that ye are able; but will with the temptation also make a way to escape, that ye may be able to bear it.",
+        text: "No temptation has taken you except what is common to man. God is faithful, who will not allow you to be tempted above what you are able, but will with the temptation also make the way of escape, that you may be able to endure it.",
       },
       {
         ref: "Hebrews 4:15-16",
-        text: "For we have not an high priest which cannot be touched with the feeling of our infirmities; but was in all points tempted like as we are, yet without sin. Let us therefore come boldly unto the throne of grace, that we may obtain mercy, and find grace to help in time of need.",
+        text: "For we don't have a high priest who can't be touched with the feeling of our infirmities, but one who has been in all points tempted like we are, yet without sin. Let's therefore draw near with boldness to the throne of grace, that we may receive mercy and may find grace for help in time of need.",
       },
       {
         ref: "Psalm 119:11",
-        text: "Thy word have I hid in mine heart, that I might not sin against thee.",
+        text: "I have hidden your word in my heart, that I might not sin against you.",
       },
       {
         ref: "James 4:7",
-        text: "Submit yourselves therefore to God. Resist the devil, and he will flee from you.",
+        text: "Be subject therefore to God. Resist the devil, and he will flee from you.",
       },
     ],
     encouragement:
@@ -227,19 +227,19 @@ export const situations: Situation[] = [
     scriptures: [
       {
         ref: "James 1:5",
-        text: "If any of you lack wisdom, let him ask of God, that giveth to all men liberally, and upbraideth not; and it shall be given him.",
+        text: "But if any of you lacks wisdom, let him ask of God, who gives to all liberally and without reproach, and it will be given to him.",
       },
       {
         ref: "Proverbs 3:5-6",
-        text: "Trust in the LORD with all thine heart; and lean not unto thine own understanding. In all thy ways acknowledge him, and he shall direct thy paths.",
+        text: "Trust in the LORD with all your heart, and don't lean on your own understanding. In all your ways acknowledge him, and he will make your paths straight.",
       },
       {
         ref: "Psalm 32:8",
-        text: "I will instruct thee and teach thee in the way which thou shalt go: I will guide thee with mine eye.",
+        text: "I will instruct you and teach you in the way which you shall go. I will counsel you with my eye on you.",
       },
       {
         ref: "Proverbs 9:10",
-        text: "The fear of the LORD is the beginning of wisdom: and the knowledge of the holy is understanding.",
+        text: "The fear of the LORD is the beginning of wisdom. The knowledge of the Holy One is understanding.",
       },
     ],
     encouragement:
@@ -271,19 +271,19 @@ export const situations: Situation[] = [
     scriptures: [
       {
         ref: "Isaiah 41:10",
-        text: "Fear thou not; for I am with thee: be not dismayed; for I am thy God: I will strengthen thee; yea, I will help thee; yea, I will uphold thee with the right hand of my righteousness.",
+        text: "Don't you be afraid, for I am with you. Don't be dismayed, for I am your God. I will strengthen you. Yes, I will help you. Yes, I will uphold you with the right hand of my righteousness.",
       },
       {
         ref: "Psalm 56:3",
-        text: "What time I am afraid, I will trust in thee.",
+        text: "When I am afraid, I will put my trust in you.",
       },
       {
         ref: "2 Timothy 1:7",
-        text: "For God hath not given us the spirit of fear; but of power, and of love, and of a sound mind.",
+        text: "For God didn't give us a spirit of fear, but of power, love, and self-control.",
       },
       {
         ref: "Psalm 34:4",
-        text: "I sought the LORD, and he heard me, and delivered me from all my fears.",
+        text: "I sought the LORD, and he answered me, and delivered me from all my fears.",
       },
     ],
     encouragement:
@@ -315,19 +315,19 @@ export const situations: Situation[] = [
     scriptures: [
       {
         ref: "Deuteronomy 31:6",
-        text: "Be strong and of a good courage, fear not, nor be afraid of them: for the LORD thy God, he it is that doth go with thee; he will not fail thee, nor forsake thee.",
+        text: "Be strong and courageous. Don't be afraid or scared of them; for the LORD your God himself is who goes with you. He will not fail you nor forsake you.",
       },
       {
         ref: "Psalm 68:6",
-        text: "God setteth the solitary in families: he bringeth out those which are bound with chains: but the rebellious dwell in a dry land.",
+        text: "God sets the lonely in families. He brings out the prisoners with singing, but the rebellious dwell in a sun-scorched land.",
       },
       {
         ref: "Matthew 28:20",
-        text: "Teaching them to observe all things whatsoever I have commanded you: and, lo, I am with you alway, even unto the end of the world. Amen.",
+        text: "teaching them to observe all things that I commanded you. Behold, I am with you always, even to the end of the age.",
       },
       {
         ref: "Psalm 139:9-10",
-        text: "If I take the wings of the morning, and dwell in the uttermost parts of the sea; even there shall thy hand lead me, and thy right hand shall hold me.",
+        text: "If I take the wings of the dawn, and settle in the uttermost parts of the sea, even there your hand will lead me, and your right hand will hold me.",
       },
     ],
     encouragement:
@@ -359,19 +359,19 @@ export const situations: Situation[] = [
     scriptures: [
       {
         ref: "Psalm 34:18",
-        text: "The LORD is nigh unto them that are of a broken heart; and saveth such as be of a contrite spirit.",
+        text: "The LORD is near to those who have a broken heart, and saves those who have a crushed spirit.",
       },
       {
         ref: "Matthew 5:4",
-        text: "Blessed are they that mourn: for they shall be comforted.",
+        text: "Blessed are those who mourn, for they shall be comforted.",
       },
       {
         ref: "Psalm 30:5",
-        text: "For his anger endureth but a moment; in his favour is life: weeping may endure for a night, but joy cometh in the morning.",
+        text: "For his anger is but for a moment. His favor is for a lifetime. Weeping may stay for the night, but joy comes in the morning.",
       },
       {
         ref: "Revelation 21:4",
-        text: "And God shall wipe away all tears from their eyes; and there shall be no more death, neither sorrow, nor crying, neither shall there be any more pain: for the former things are passed away.",
+        text: "He will wipe away every tear from their eyes. Death will be no more; neither will there be mourning, nor crying, nor pain, any more. The first things have passed away.",
       },
     ],
     encouragement:
@@ -403,19 +403,19 @@ export const situations: Situation[] = [
     scriptures: [
       {
         ref: "Jeremiah 29:11",
-        text: "For I know the thoughts that I think toward you, saith the LORD, thoughts of peace, and not of evil, to give you an expected end.",
+        text: "For I know the thoughts that I think toward you, says the LORD, thoughts of peace, and not of evil, to give you hope and a future.",
       },
       {
         ref: "Romans 15:13",
-        text: "Now the God of hope fill you with all joy and peace in believing, that ye may abound in hope, through the power of the Holy Ghost.",
+        text: "Now may the God of hope fill you with all joy and peace in believing, that you may abound in hope, in the power of the Holy Spirit.",
       },
       {
         ref: "Lamentations 3:22-23",
-        text: "It is of the LORD's mercies that we are not consumed, because his compassions fail not. They are new every morning: great is thy faithfulness.",
+        text: "It is because of the LORD's loving kindnesses that we are not consumed, because his compassion doesn't fail. They are new every morning. Great is your faithfulness.",
       },
       {
         ref: "Psalm 42:11",
-        text: "Why art thou cast down, O my soul? and why art thou disquieted within me? hope thou in God: for I shall yet praise him, who is the health of my countenance, and my God.",
+        text: "Why are you in despair, my soul? Why are you disturbed within me? Hope in God! For I shall still praise him, the saving help of my countenance, and my God.",
       },
     ],
     encouragement:
@@ -447,19 +447,19 @@ export const situations: Situation[] = [
     scriptures: [
       {
         ref: "Proverbs 3:5-6",
-        text: "Trust in the LORD with all thine heart; and lean not unto thine own understanding. In all thy ways acknowledge him, and he shall direct thy paths.",
+        text: "Trust in the LORD with all your heart, and don't lean on your own understanding. In all your ways acknowledge him, and he will make your paths straight.",
       },
       {
         ref: "Psalm 119:105",
-        text: "Thy word is a lamp unto my feet, and a light unto my path.",
+        text: "Your word is a lamp to my feet, and a light for my path.",
       },
       {
         ref: "Isaiah 30:21",
-        text: "And thine ears shall hear a word behind thee, saying, This is the way, walk ye in it, when ye turn to the right hand, and when ye turn to the left.",
+        text: "and when you turn to the right hand, and when you turn to the left, your ears will hear a voice behind you, saying, \"This is the way. Walk in it.\"",
       },
       {
         ref: "Psalm 37:23",
-        text: "The steps of a good man are ordered by the LORD: and he delighteth in his way.",
+        text: "A man's steps are established by the LORD. He delights in his way.",
       },
     ],
     encouragement:
@@ -491,19 +491,19 @@ export const situations: Situation[] = [
     scriptures: [
       {
         ref: "Isaiah 40:31",
-        text: "But they that wait upon the LORD shall renew their strength; they shall mount up with wings as eagles; they shall run, and not be weary; and they shall walk, and not faint.",
+        text: "But those who wait for the LORD will renew their strength. They will mount up with wings like eagles. They will run, and not be weary. They will walk, and not faint.",
       },
       {
         ref: "Philippians 4:13",
-        text: "I can do all things through Christ which strengtheneth me.",
+        text: "I can do all things through Christ, who strengthens me.",
       },
       {
         ref: "2 Corinthians 12:9",
-        text: "And he said unto me, My grace is sufficient for thee: for my strength is made perfect in weakness. Most gladly therefore will I rather glory in my infirmities, that the power of Christ may rest upon me.",
+        text: "He has said to me, \"My grace is sufficient for you, for my power is made perfect in weakness.\" Most gladly therefore I will rather glory in my weaknesses, that the power of Christ may rest on me.",
       },
       {
         ref: "Psalm 73:26",
-        text: "My flesh and my heart faileth: but God is the strength of my heart, and my portion for ever.",
+        text: "My flesh and my heart fails, but God is the strength of my heart and my portion forever.",
       },
     ],
     encouragement:
@@ -535,19 +535,19 @@ export const situations: Situation[] = [
     scriptures: [
       {
         ref: "Psalm 27:14",
-        text: "Wait on the LORD: be of good courage, and he shall strengthen thine heart: wait, I say, on the LORD.",
+        text: "Wait for the LORD. Be strong, and let your heart take courage. Yes, wait for the LORD.",
       },
       {
         ref: "Habakkuk 2:3",
-        text: "For the vision is yet for an appointed time, but at the end it shall speak, and not lie: though it tarry, wait for it; because it will surely come, it will not tarry.",
+        text: "For the vision is yet for the appointed time, and it hurries toward the end, and won't prove false. Though it takes time, wait for it; because it will surely come. It won't delay.",
       },
       {
         ref: "Lamentations 3:25-26",
-        text: "The LORD is good unto them that wait for him, to the soul that seeketh him. It is good that a man should both hope and quietly wait for the salvation of the LORD.",
+        text: "The LORD is good to those who wait for him, to the soul who seeks him. It is good that a man should hope and quietly wait for the salvation of the LORD.",
       },
       {
         ref: "Galatians 6:9",
-        text: "And let us not be weary in well doing: for in due season we shall reap, if we faint not.",
+        text: "Let's not be weary in doing good, for we will reap in due season, if we don't give up.",
       },
     ],
     encouragement:
@@ -579,19 +579,19 @@ export const situations: Situation[] = [
     scriptures: [
       {
         ref: "Romans 8:18",
-        text: "For I reckon that the sufferings of this present time are not worthy to be compared with the glory which shall be revealed in us.",
+        text: "For I consider that the sufferings of this present time are not worthy to be compared with the glory which will be revealed toward us.",
       },
       {
         ref: "2 Corinthians 4:17",
-        text: "For our light affliction, which is but for a moment, worketh for us a far more exceeding and eternal weight of glory.",
+        text: "For our light affliction, which is for the moment, works for us more and more exceedingly an eternal weight of glory,",
       },
       {
         ref: "1 Peter 5:10",
-        text: "But the God of all grace, who hath called us unto his eternal glory by Christ Jesus, after that ye have suffered a while, make you perfect, stablish, strengthen, settle you.",
+        text: "But may the God of all grace, who called you to his eternal glory by Christ Jesus, after you have suffered a little while, perfect, establish, strengthen, and settle you.",
       },
       {
         ref: "Isaiah 43:2",
-        text: "When thou passest through the waters, I will be with thee; and through the rivers, they shall not overflow thee: when thou walkest through the fire, thou shalt not be burned; neither shall the flame kindle upon thee.",
+        text: "When you pass through the waters, I will be with you, and through the rivers, they will not overflow you. When you walk through the fire, you will not be burned, and flame will not scorch you.",
       },
     ],
     encouragement:

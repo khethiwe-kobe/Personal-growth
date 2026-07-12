@@ -4,7 +4,7 @@
 
 export interface LibraryVerse {
   ref: string; // e.g. "Romans 8:1"
-  text: string; // KJV text (public domain)
+  text: string; // World English Bible text (public domain)
   explanation: string; // 1–2 sentences on what the verse means
   application: string; // one practical sentence
 }
@@ -22,7 +22,7 @@ export interface LibraryTopic {
 export interface Situation {
   id: string;
   label: string; // "I feel rejected"
-  scriptures: { ref: string; text: string }[]; // KJV
+  scriptures: { ref: string; text: string }[]; // World English Bible
   encouragement: string; // 2–4 sentences
   truths: string[]; // short truth declarations
   reflectionQuestions: string[];

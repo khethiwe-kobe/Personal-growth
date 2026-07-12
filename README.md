@@ -62,5 +62,5 @@ vars, deploy).
 - `lib/` — domain logic: reading-plan engine (`bible.ts`), storage layer (`storage.ts`),
   scripture-reference extraction (`refs.ts`), companion insights (`companion.ts`)
 - `lib/data/` — the Scripture Library content (94 topics, 22 stories, 14 situations,
-  quotes and affirmations; verse text is KJV, public domain)
+  quotes and affirmations; verse text is the World English Bible, public domain)
 - `supabase/schema.sql` — table + row-level security for optional cloud backup
