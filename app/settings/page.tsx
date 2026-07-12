@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Button, Card, Check, Field, Input, PageTitle, SectionTitle } from "@/components/ui";
 import { exportBundle, importBundle, useStore } from "@/lib/storage";
 import type { AppSettings, Reminders } from "@/lib/types";
-import { backupToCloud, currentUserEmail, onAuthChange, restoreFromCloud, signInWithEmail, signOut, supabaseConfigured } from "@/lib/supabase";
+import { backupToCloud, currentUserEmail, onAuthChange, restoreFromCloud, signInWithEmail, signInWithPassword, signOut, signUpWithPassword, supabaseConfigured } from "@/lib/supabase";
 
 const DEFAULT_SETTINGS: AppSettings = {
   name: "Khethiwe",
@@ -25,6 +25,7 @@ export default function SettingsPage() {
   const [settings, setSettings] = useStore<AppSettings>("settings", DEFAULT_SETTINGS);
   const [message, setMessage] = useState("");
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [signedInAs, setSignedInAs] = useState<string | null>(null);
   const [notifState, setNotifState] = useState<string>("unsupported");
   const fileRef = useRef<HTMLInputElement>(null);
@@ -170,19 +171,62 @@ export default function SettingsPage() {
           </div>
         ) : (
           <div>
-            <p className="mb-3 text-sm text-soft">Sign in with a magic link to back up your data to your own Supabase project.</p>
-            <div className="flex gap-2">
-              <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" />
-              <Button
-                onClick={async () => {
-                  const r = await signInWithEmail(email);
-                  setMessage(r.error ? r.error : "Check your email for the sign-in link.");
-                }}
-                disabled={!email.includes("@")}
-              >
-                Send link
-              </Button>
+            <p className="mb-3 text-sm leading-relaxed text-soft">
+              Sign in with an email and password to back up your data and use it across devices. Password sign-in
+              sends no email, so it is not affected by email limits. Use the same email and password on each device.
+            </p>
+            <div className="grid gap-2 sm:max-w-sm">
+              <Input type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" />
+              <Input
+                type="password"
+                autoComplete="current-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Password (at least 6 characters)"
+              />
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  onClick={async () => {
+                    const r = await signInWithPassword(email, password);
+                    if (r.error) setMessage(r.error);
+                    else setPassword("");
+                  }}
+                  disabled={!email.includes("@") || password.length < 6}
+                >
+                  Sign in
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={async () => {
+                    const r = await signUpWithPassword(email, password);
+                    if (r.error) setMessage(r.error);
+                    else if (r.needsConfirm)
+                      setMessage("Account created. Check your email to confirm it (or turn off 'Confirm email' in Supabase for instant access).");
+                    else setPassword("");
+                  }}
+                  disabled={!email.includes("@") || password.length < 6}
+                >
+                  Create account
+                </Button>
+              </div>
             </div>
+            <details className="mt-4">
+              <summary className="cursor-pointer text-xs text-faint hover:text-soft">Prefer a magic link instead?</summary>
+              <div className="mt-2 flex gap-2 sm:max-w-sm">
+                <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" />
+                <Button
+                  variant="ghost"
+                  onClick={async () => {
+                    const r = await signInWithEmail(email);
+                    setMessage(r.error ? r.error : "Check your email for the sign-in link.");
+                  }}
+                  disabled={!email.includes("@")}
+                >
+                  Send link
+                </Button>
+              </div>
+              <p className="mt-1 text-xs text-faint">Magic-link emails are limited by Supabase&apos;s free email service.</p>
+            </details>
             {message && <p className="mt-3 text-sm text-brown-deep">{message}</p>}
           </div>
         )}

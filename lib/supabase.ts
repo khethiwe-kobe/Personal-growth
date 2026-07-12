@@ -41,6 +41,27 @@ export async function signInWithEmail(email: string): Promise<{ error?: string }
   return error ? { error: error.message } : {};
 }
 
+/** Password sign-in — sends no email, so it never hits the email rate limit. */
+export async function signInWithPassword(email: string, password: string): Promise<{ error?: string }> {
+  const sb = getSupabase();
+  if (!sb) return { error: "Supabase is not configured" };
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  return error ? { error: error.message } : {};
+}
+
+/** Create an account with a password. Signs in immediately when email
+ *  confirmation is disabled in Supabase; otherwise a confirmation email is sent. */
+export async function signUpWithPassword(
+  email: string,
+  password: string
+): Promise<{ error?: string; needsConfirm?: boolean }> {
+  const sb = getSupabase();
+  if (!sb) return { error: "Supabase is not configured" };
+  const { data, error } = await sb.auth.signUp({ email, password });
+  if (error) return { error: error.message };
+  return { needsConfirm: !data.session };
+}
+
 export async function currentUserEmail(): Promise<string | null> {
   const sb = getSupabase();
   if (!sb) return null;
