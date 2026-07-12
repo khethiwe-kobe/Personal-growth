@@ -60,7 +60,14 @@ export default function Shell({ children }: { children: React.ReactNode }) {
   // Page content depends on the current date and locally stored data, neither of
   // which exists at prerender time — mount it client-side to avoid hydration drift.
   const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    setMounted(true);
+    // If a Supabase magic link redirected here (to any page), initialise the
+    // client so it parses the session from the URL and signs the user in.
+    if (typeof window !== "undefined" && /[?#&](access_token|code|error|type)=/.test(window.location.href)) {
+      import("@/lib/supabase").then((m) => m.getSupabase());
+    }
+  }, []);
   return (
     <div className="mx-auto flex min-h-screen max-w-7xl">
       {/* Sidebar — desktop */}
