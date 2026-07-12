@@ -13,7 +13,20 @@ export function getSupabase(): SupabaseClient | null {
   if (client !== undefined) return client;
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  client = url && key ? createClient(url, key) : null;
+  client =
+    url && key
+      ? createClient(url, key, {
+          auth: {
+            // Implicit flow delivers the session in the URL hash, so a magic
+            // link works even when opened on a different device or browser
+            // from the one that requested it (PKCE would fail there).
+            flowType: "implicit",
+            detectSessionInUrl: true,
+            persistSession: true,
+            autoRefreshToken: true,
+          },
+        })
+      : null;
   return client;
 }
 
@@ -37,6 +50,16 @@ export async function currentUserEmail(): Promise<string | null> {
 
 export async function signOut(): Promise<void> {
   await getSupabase()?.auth.signOut();
+}
+
+/** Notify when auth state changes (e.g. a magic link completes sign-in). */
+export function onAuthChange(cb: (email: string | null) => void): () => void {
+  const sb = getSupabase();
+  if (!sb) return () => {};
+  const { data } = sb.auth.onAuthStateChange((_event, session) => {
+    cb(session?.user?.email ?? null);
+  });
+  return () => data.subscription.unsubscribe();
 }
 
 /** Push the whole local bundle to the user's row in app_state. */

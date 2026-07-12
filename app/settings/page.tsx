@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Button, Card, Check, Field, Input, PageTitle, SectionTitle } from "@/components/ui";
 import { exportBundle, importBundle, useStore } from "@/lib/storage";
 import type { AppSettings, Reminders } from "@/lib/types";
-import { backupToCloud, currentUserEmail, restoreFromCloud, signInWithEmail, signOut, supabaseConfigured } from "@/lib/supabase";
+import { backupToCloud, currentUserEmail, onAuthChange, restoreFromCloud, signInWithEmail, signOut, supabaseConfigured } from "@/lib/supabase";
 
 const DEFAULT_SETTINGS: AppSettings = {
   name: "Khethiwe",
@@ -32,7 +32,14 @@ export default function SettingsPage() {
 
   useEffect(() => {
     if (typeof Notification !== "undefined") setNotifState(Notification.permission);
-    if (configured) currentUserEmail().then(setSignedInAs);
+    if (!configured) return;
+    currentUserEmail().then(setSignedInAs);
+    // Update when a magic link completes sign-in after redirect.
+    const unsub = onAuthChange((e) => {
+      setSignedInAs(e);
+      if (e) setMessage(`Signed in as ${e}.`);
+    });
+    return unsub;
   }, [configured]);
 
   function download() {
