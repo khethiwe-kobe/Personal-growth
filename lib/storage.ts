@@ -12,8 +12,20 @@ const PREFIX = "pg:";
 const cache = new Map<string, unknown>();
 const listeners = new Map<string, Set<() => void>>();
 
+// Global change listeners (used by cloud auto-sync). Fired on any local write
+// except while applying a cloud restore (so a pull doesn't trigger a push).
+const globalListeners = new Set<() => void>();
+let suppressGlobal = false;
+
 function notify(key: string) {
   listeners.get(key)?.forEach((l) => l());
+  if (!suppressGlobal) globalListeners.forEach((l) => l());
+}
+
+/** Subscribe to any local data change (returns an unsubscribe function). */
+export function subscribeChanges(cb: () => void): () => void {
+  globalListeners.add(cb);
+  return () => globalListeners.delete(cb);
 }
 
 export function readKey<T>(key: string, fallback: T): T {
@@ -88,15 +100,22 @@ export function exportBundle(): string {
   return JSON.stringify({ app: "personal-growth", exportedAt: new Date().toISOString(), data: bundle }, null, 2);
 }
 
-/** Import a bundle produced by exportBundle, replacing existing keys. */
+/** Import a bundle produced by exportBundle, replacing existing keys.
+ *  Global change listeners are suppressed so a cloud restore doesn't
+ *  immediately re-upload; per-key listeners still fire so the UI updates. */
 export function importBundle(json: string): number {
   const parsed = JSON.parse(json) as { data?: Record<string, unknown> };
   const data = parsed.data;
   if (!data || typeof data !== "object") throw new Error("Not a valid backup file");
   let count = 0;
-  for (const [key, value] of Object.entries(data)) {
-    writeKey(key, value);
-    count++;
+  suppressGlobal = true;
+  try {
+    for (const [key, value] of Object.entries(data)) {
+      writeKey(key, value);
+      count++;
+    }
+  } finally {
+    suppressGlobal = false;
   }
   return count;
 }

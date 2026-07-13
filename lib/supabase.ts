@@ -111,3 +111,45 @@ export async function restoreFromCloud(): Promise<{ error?: string; keys?: numbe
   const keys = importBundle(JSON.stringify(data.data));
   return { keys };
 }
+
+// ---- Lower-level helpers for automatic sync (see lib/sync.ts) ----
+
+/** Fetch the cloud state and its server timestamp, or null if none exists. */
+export async function fetchCloudState(): Promise<
+  { data: unknown; updatedAt: string } | null | { error: string }
+> {
+  const sb = getSupabase();
+  if (!sb) return { error: "Supabase is not configured" };
+  const { data: userData } = await sb.auth.getUser();
+  const user = userData.user;
+  if (!user) return { error: "Not signed in" };
+  const { data, error } = await sb
+    .from("app_state")
+    .select("data, updated_at")
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (error) return { error: error.message };
+  if (!data) return null;
+  return { data: data.data, updatedAt: data.updated_at as string };
+}
+
+/** Upsert the current local bundle to the cloud; returns the new server timestamp. */
+export async function pushCloudState(): Promise<{ updatedAt: string } | { error: string }> {
+  const sb = getSupabase();
+  if (!sb) return { error: "Supabase is not configured" };
+  const { data: userData } = await sb.auth.getUser();
+  const user = userData.user;
+  if (!user) return { error: "Not signed in" };
+  const updatedAt = new Date().toISOString();
+  const { error } = await sb.from("app_state").upsert({
+    user_id: user.id,
+    data: JSON.parse(exportBundle()),
+    updated_at: updatedAt,
+  });
+  return error ? { error: error.message } : { updatedAt };
+}
+
+/** Import a raw cloud bundle object into local storage. Returns key count. */
+export function applyCloudBundle(bundle: unknown): number {
+  return importBundle(JSON.stringify(bundle));
+}

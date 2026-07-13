@@ -137,8 +137,12 @@ export default function SettingsPage() {
           </p>
         ) : signedInAs ? (
           <div>
-            <p className="mb-4 text-sm text-soft">
+            <p className="mb-1 text-sm text-soft">
               Signed in as <span className="text-ink">{signedInAs}</span>.
+            </p>
+            <p className="mb-4 text-sm leading-relaxed text-soft">
+              Your data now syncs automatically — every change is saved to your account, and signing in on another
+              device loads it there. The buttons below are for manual backup or restore if you ever want them.
             </p>
             <div className="flex flex-wrap gap-2">
               <Button
