@@ -40,6 +40,33 @@ restore a JSON backup at any time.
 5. Restart the dev server. **Settings → Cloud sync** now offers sign-in,
    "Back up now" and "Restore from cloud".
 
+## Optional: Re:amaze support integration
+
+Server-side integration with the [Re:amaze](https://www.reamaze.com/api) support
+platform. The API token is a **secret** and is only ever used on the server — it
+never reaches the browser.
+
+1. In `.env.local` add:
+
+   ```
+   REAMAZE_BRAND=serentia-shop          # the {brand} in {brand}.reamaze.io
+   REAMAZE_LOGIN_EMAIL=you@example.com  # login email the token belongs to
+   REAMAZE_API_TOKEN=your-secret-token  # from Re:amaze → Settings → Developer/API
+   ```
+
+2. The endpoint is `app/api/reamaze/route.api.ts`, backed by the typed client in
+   `lib/reamaze.ts`:
+   - `GET /api/reamaze` — returns `{ configured, ok }`; a token health check.
+   - `POST /api/reamaze` with `{ name, email, subject, message }` — opens a
+     support conversation.
+
+3. This route needs a Node server, so run it with `npm run dev`, `npm start`, or
+   deploy to a server host (e.g. Vercel). The static **GitHub Pages** export does
+   not include it — `output: export` can't serve server routes, so `route.api.ts`
+   is registered as a route only for server builds (see `next.config.ts`).
+
+If a token is ever exposed, rotate it in Re:amaze and update `.env.local`.
+
 ## Deploying
 
 **GitHub Pages (already set up):** `.github/workflows/deploy-pages.yml` builds a static
