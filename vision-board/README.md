@@ -47,8 +47,8 @@ leaves a white border, trim it; if it can print borderless, use that. Matte
 ├──────┬───┴────┬─────┴────┬──────┴──┬──────┤
 │  C1  │   C2   │    C3    │   C4    │  C5  │  ← 10 × A4 portrait, 5 across × 2 down
 │Celes-│  The   │    S2    │ DNA of  │Dream │
-│tial  │ Build  │Structure │  CRC    │of CRC│
-│Venti │        │          │         │      │
+│tia-  │ Build  │Structure │  CRC    │of CRC│
+│venti │        │          │         │      │
 ├──────┼────────┼──────────┼─────────┼──────┤
 │  C6  │   C7   │    C8    │   C9    │ C10  │
 │Spiri-│Finances│  Health  │ Social  │Rela- │
@@ -201,7 +201,7 @@ script title needs a real bottom margin (3 mm+), never 1 mm, or the tail of a *y
 C1 and C2 are written from the **Vision Meeting of 27 July 2026** (Sethu Zwane,
 Calvin Beck, Khethiwe Kobe) rather than from general ambition:
 
-- **Celestial Venti** is the holding company; **Serentia** and **Innadern** are the
+- **Celestiaventi** is the holding company; **Serentia** and **Innaderm** are the
   portfolio brands and the cash-flow engines.
 - **Purpose:** finance God's kingdom. Salaries, cars and lifestyle are byproducts.
   We are not working for a man — we are working for God.
@@ -215,7 +215,7 @@ Calvin Beck, Khethiwe Kobe) rather than from general ambition:
 - **The fund being built:** homeless rehabilitation centres, education and student
   funding, missionary work and travel, Bibles for everyone at every church, CRC CARES
   and feeding schemes.
-- **Year 1:** build Serentia and Innadern for cash flow — enough to fund Cape Town and
+- **Year 1:** build Serentia and Innaderm for cash flow — enough to fund Cape Town and
   every recurring commitment, every single month. **Then** a new company purpose-built
   for a nine-figure exit ($100M+), in as little as one to three years.
 - **The standard agreed in the room:** 1% better every day, measured against your role;

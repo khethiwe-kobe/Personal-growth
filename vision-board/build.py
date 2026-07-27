@@ -295,9 +295,9 @@ def bare(inner, cls="", sheet=""):
 
 C1 = card(sheet="C1", inner="""
   <div class="eyebrow">Career &amp; Work · 01</div>
-  <div class="script" style="font-size:17mm;margin:4mm 0 2mm">Celestial Venti</div>
+  <div class="script" style="font-size:17mm;margin:4mm 0 2mm">Celestiaventi</div>
   <div class="h-mod" style="font-size:2.8mm;color:var(--cocoa);margin-bottom:4.5mm">
-    The Calling · Serentia &amp; Innadern</div>
+    The Calling · Serentia &amp; Innaderm</div>
 
   <div class="scripture" style="padding:5mm 6mm">
     <span class="ref">Ephesians 3:20–21 · AMP</span>
@@ -361,7 +361,7 @@ C1 = card(sheet="C1", inner="""
     <li><b>In peak season, flex.</b> Q4 is decided by the mission, not the clock.</li>
   </ul>
 
-  <div class="foot"><span>Celestial Venti · working for God</span><span>Sheet C1</span></div>
+  <div class="foot"><span>Celestiaventi · working for God</span><span>Sheet C1</span></div>
 """)
 
 
@@ -418,7 +418,7 @@ C2 = card(sheet="C2", inner="""
   <div class="target">
     <span class="num" style="font-size:5mm">YEAR 1</span>
     <span class="lbl">Cash flow</span>
-    <span class="sub">Serentia · Innadern</span>
+    <span class="sub">Serentia · Innaderm</span>
   </div>
   <div style="font-size:3.1mm;line-height:1.5;margin:-1mm 0 3.5mm 0;color:var(--umber)">
     Build both businesses for cash flow — enough to fund Cape Town and every recurring
@@ -430,7 +430,7 @@ C2 = card(sheet="C2", inner="""
     <span class="sub">1–3 years</span>
   </div>
   <div style="font-size:3.1mm;line-height:1.5;margin:-1mm 0 0 0;color:var(--umber)">
-    Then a new company, purpose-built for exit — while Serentia and Innadern keep running as
+    Then a new company, purpose-built for exit — while Serentia and Innaderm keep running as
     the cash-flow engines.
   </div>
 
@@ -454,7 +454,7 @@ C2 = card(sheet="C2", inner="""
         this week’s action.</li>
   </ul>
 
-  <div class="foot"><span>Celestial Venti · the build</span><span>Sheet C2</span></div>
+  <div class="foot"><span>Celestiaventi · the build</span><span>Sheet C2</span></div>
 """)
 
 
