@@ -47,8 +47,8 @@ leaves a white border, trim it; if it can print borderless, use that. Matte
 ├──────┬───┴────┬─────┴────┬──────┴──┬──────┤
 │  C1  │   C2   │    C3    │   C4    │  C5  │  ← 10 × A4 portrait, 5 across × 2 down
 │Celes-│  The   │    S2    │ DNA of  │Dream │
-│tia-  │ Build  │Structure │  CRC    │of CRC│
-│venti │        │          │         │      │
+│tial  │ Build  │Structure │  CRC    │of CRC│
+│Venti │        │          │         │      │
 ├──────┼────────┼──────────┼─────────┼──────┤
 │  C6  │   C7   │    C8    │   C9    │ C10  │
 │Spiri-│Finances│  Health  │ Social  │Rela- │
@@ -131,7 +131,7 @@ achievement keeps pointing at:
 - **If–then beats intention.** Gollwitzer & Sheeran's meta-analysis across 94 studies
   found implementation intentions — naming *when and where* — produce one of the
   larger effects in the literature. Hence "If it is Monday 06:00, then…".
-- **Specific and hard beats "do your best."** Locke & Latham. Hence R6 000/month,
+- **Specific and hard beats "do your best."** Locke & Latham. Hence R4 000/month,
   8 chapters a day, 4× a week, 100+ members, $100M — numbers, not adjectives.
 - **Daily visual exposure.** Hence: A0, on a wall, where you pass it.
 
@@ -145,17 +145,17 @@ if that happens.
 
 ## The numbers, and where they came from
 
-**Finances (C7)** — five months left, starting at R0: August, September, October,
+**Finances (C7)** — five months to close the year: August, September, October,
 November, December.
 
 | Goal | Total | Per month |
 |---|---|---|
-| Savings | R30 000 | **R6 000** |
-| Investments | R50 000 | **R10 000** |
-| | | **R16 000/month** |
+| Savings | R20 000 | **R4 000** |
+| Investments | R30 000 | **R6 000** |
+| | | **R10 000/month** |
 
 Plus **R3 000/month** for the December trip (see C9), so the real monthly commitment
-is R19 000 in September, October and November.
+is R13 000 in September, October and November.
 
 **Social (C9)**
 
@@ -196,6 +196,41 @@ script title needs a real bottom margin (3 mm+), never 1 mm, or the tail of a *y
 
 ---
 
+## The career sheets
+
+C1 and C2 are written from the **Vision Meeting of 27 July 2026** (Sethu Zwane,
+Calvin Beck, Khethiwe Kobe) rather than from general ambition:
+
+- **Celestial Venti** is the holding company; **Serentia** and **Innadern** are the
+  portfolio brands and the cash-flow engines.
+- **Purpose:** finance God's kingdom. Salaries, cars and lifestyle are byproducts.
+  We are not working for a man — we are working for God.
+- **Responsibilities adopted from the dream of CRC:** feed the poor, clothe the naked,
+  care for orphans and widows; plant several daughter churches every year, nationally
+  and internationally; be first to raise our hands on the building project; develop
+  suitable, practical, beautiful facilities — rehab centres, orphanages, old-age homes,
+  community centres.
+- **Every month:** tithe on profit to the church; continuous giving to the Cape Town
+  building project; monthly support to Talitha Cumi — reported transparently.
+- **The fund being built:** homeless rehabilitation centres, education and student
+  funding, missionary work and travel, Bibles for everyone at every church, CRC CARES
+  and feeding schemes.
+- **Year 1:** build Serentia and Innadern for cash flow — enough to fund Cape Town and
+  every recurring commitment, every single month. **Then** a new company purpose-built
+  for a nine-figure exit ($100M+), in as little as one to three years.
+- **The standard agreed in the room:** 1% better every day, measured against your role;
+  "who, not how"; attitude is non-negotiable and outranks raw output; flex in peak
+  season rather than keeping rigid hours; church commitments never become the reason
+  work slipped.
+- **Spiritual anchors from the meeting:** Ephesians 3:20–21, Daniel 11:32 and the
+  Hebrew *yada* (to know by deep intimacy), and seed-sowing — hence 2 Corinthians 9:6
+  on C2.
+
+The line *"I am here to be a financial vessel in the house of God"* is taken from the
+affirmations at the end of that meeting.
+
+---
+
 ## Notes on the content
 
 - **The Dream of CRC (C5) is reproduced verbatim** from crcchurch.com, including the
@@ -204,3 +239,5 @@ script title needs a real bottom margin (3 mm+), never 1 mm, or the tail of a *y
 - **Talitha Cumi** appears as the safety house, with no translation added.
 - **The five names** box on C10 is intentionally blank. Write them in by hand.
 - **Currency** is South African Rand.
+- **Health (C8)** assumes no coffee; meal prep is Sunday afternoon after AM service,
+  covering three days.

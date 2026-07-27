@@ -295,27 +295,28 @@ def bare(inner, cls="", sheet=""):
 
 C1 = card(sheet="C1", inner="""
   <div class="eyebrow">Career &amp; Work · 01</div>
-  <div class="script" style="font-size:19mm;margin:5mm 0 4mm">Celestiaventi</div>
-  <div class="h-mod" style="font-size:3mm;color:var(--cocoa);margin-bottom:5mm">The Calling</div>
+  <div class="script" style="font-size:17mm;margin:4mm 0 2mm">Celestial Venti</div>
+  <div class="h-mod" style="font-size:2.8mm;color:var(--cocoa);margin-bottom:4.5mm">
+    The Calling · Serentia &amp; Innadern</div>
 
-  <div class="scripture">
+  <div class="scripture" style="padding:5mm 6mm">
     <span class="ref">Ephesians 3:20–21 · AMP</span>
-    <div class="verse">“Now to Him who is able to [carry out His purpose and] do
+    <div class="verse" style="font-size:3.1mm">“Now to Him who is able to [carry out His purpose and] do
       <em>superabundantly more than all that we dare ask or think</em> [infinitely beyond our
       greatest prayers, hopes, or dreams], according to His power that is at work within us,
       to Him be the glory in the church and in Christ Jesus throughout all generations
       forever and ever. Amen.”</div>
   </div>
 
-  <div class="block-label" style="margin:6mm 0 3.5mm">Purpose</div>
+  <div class="block-label" style="margin:5.5mm 0 3.5mm">Purpose</div>
   <div style="font-size:5.2mm;font-weight:800;letter-spacing:.03em;color:var(--espresso);
-              line-height:1.3;margin-bottom:5mm">Finance God’s kingdom.</div>
+              line-height:1.3;margin-bottom:4.5mm">Finance God’s kingdom.</div>
 
   <div class="block-label" style="margin-bottom:3.5mm">The Truth I Build On</div>
   <ul class="vision">
-    <li>You are <strong>working for God</strong> — this is not your company, it is His assignment.</li>
-    <li>We need <strong>resources to expand God’s kingdom</strong>. Money is a tool, not a trophy.</li>
-    <li><strong>See beyond yourself.</strong> The vision is bigger than your comfort.</li>
+    <li>We are not working for a man. <strong>We are working for God.</strong></li>
+    <li>Salaries, cars and lifestyle are <strong>byproducts</strong> — never the point.</li>
+    <li>I am here to be a <strong>financial vessel in the house of God</strong>.</li>
   </ul>
 
   <div class="declare" style="margin:2mm 0 4.5mm;padding:4.2mm 6mm">
@@ -324,119 +325,136 @@ C1 = card(sheet="C1", inner="""
     <div class="small">Daniel 1:20 · ten times more capable</div>
   </div>
 
-  <div class="block-label" style="margin-bottom:3.5mm">The Standard</div>
+  <div class="block-label" style="margin-bottom:3.5mm">The Standard We Agreed</div>
   <ul class="vision" style="margin-bottom:2mm">
-    <li>Excellence is a witness. Nothing leaves my hands half-finished.</li>
-    <li>I carry the room’s standard, not the room’s average.</li>
+    <li style="font-size:3.3mm"><strong>1% better every day</strong> — obsessed with
+      learning, measured against my role.</li>
+    <li style="font-size:3.3mm"><strong>Who, not how.</strong> Great people first; great
+      systems and outcomes follow.</li>
+    <li style="font-size:3.3mm"><strong>Attitude is non-negotiable</strong> — it outranks
+      raw output.</li>
+    <li style="font-size:3.3mm">Church is <strong>never the excuse.</strong> Plan ahead,
+      communicate early, show up anyway.</li>
   </ul>
 
   <div class="grow"></div>
 
-  <div class="pull" style="padding:1mm 4mm">
-    <div class="q" style="font-size:11.5mm">Not by force nor by strength</div>
-    <div class="r">Zechariah 4:6 NLT · but by my Spirit</div>
-  </div>
-
-  <div class="grow"></div>
-
-  <div class="verse-mini" style="margin-bottom:4mm">
+  <div class="verse-mini" style="margin-bottom:3.5mm">
     <b>Standing on</b><br>
     <span style="display:block;margin-top:1.5mm">
-    <strong>Deut. 8:18</strong> — “Remember the LORD your God. He is the one who gives you
-    power to be successful.”<br>
+    <strong>Dan. 11:32</strong> — “The people who know their God will be strong.”
+    <i>yada — to know by deep intimacy.</i><br>
     <strong>Col. 3:23</strong> — “Work willingly at whatever you do, as though you were
-    working for the Lord.”</span>
+    working for the Lord.”<br>
+    <strong>1 Cor. 15:10</strong> — “I have worked harder than any of the other apostles —
+    yet it was not I but God who was working through me by his grace.”</span>
   </div>
 
   <div class="block-label" style="margin-bottom:3.5mm">Actionables</div>
   <ul class="acts">
-    <li><b>If it is Monday 06:00,</b> then 90 minutes of deep work on the single
-        highest-leverage build task — before email, before anyone else’s agenda.</li>
-    <li><b>Before every pitch or negotiation,</b> read Ephesians 3:20–21 out loud.</li>
-    <li><b>On every deal,</b> name the kingdom outcome before the profit outcome — in writing.</li>
-    <li><b>Every Friday,</b> one hour of sharpening the craft: the skill that makes you
-        undeniable in this industry.</li>
+    <li><b>1% every day.</b> One documented learning, measured against my role — brought
+        to the weekly check-in, not kept in my head.</li>
+    <li><b>When I am stuck, ask who — not how.</b> The bottleneck is almost always a
+        person I have not brought in yet.</li>
+    <li><b>Before a church commitment goes in the diary,</b> the work around it is planned
+        and communicated. Ministry never becomes the reason something slipped.</li>
+    <li><b>In peak season, flex.</b> Q4 is decided by the mission, not the clock.</li>
   </ul>
 
-  <div class="foot"><span>Celestiaventi</span><span>Sheet C1</span></div>
+  <div class="foot"><span>Celestial Venti · working for God</span><span>Sheet C1</span></div>
 """)
 
 
 C2 = card(sheet="C2", inner="""
   <div class="eyebrow">Career &amp; Work · 02</div>
   <div class="h-mod" style="font-size:8.5mm;margin:4mm 0 2mm;line-height:1.1">The Build</div>
-  <div class="script" style="font-size:12mm;color:var(--terracotta);margin-bottom:5mm">biggest givers</div>
+  <div class="script" style="font-size:11mm;color:var(--terracotta);margin-bottom:4.5mm">first to raise our hands</div>
 
-  <div class="scripture">
+  <div class="scripture" style="padding:5mm 6mm">
     <span class="ref">1 Chronicles 29:3, 14 · NLT</span>
-    <div class="verse">“Because of my devotion to the Temple of my God, <em>I am giving all
-      of my own private treasures</em> of gold and silver to help in the construction.”</div>
-    <div class="verse">“Everything we have has come from you, and we give you only what you
-      first gave us!”</div>
+    <div class="verse" style="font-size:3.15mm">“Because of my devotion to the Temple of my
+      God, <em>I am giving all of my own private treasures</em> of gold and silver to help in
+      the construction.”</div>
+    <div class="verse" style="font-size:3.15mm">“Everything we have has come from you, and we
+      give you only what you first gave us!”</div>
   </div>
 
-  <div class="block-label" style="margin:6mm 0 3.5mm">The Focus</div>
-  <ul class="vision">
-    <li><strong>CRC CPT building project</strong> — the reason the cashflow exists.</li>
-    <li><strong>Talitha Cumi</strong> — the safety house.</li>
-    <li>We want to be <strong>the biggest givers</strong>.</li>
+  <div class="block-label" style="margin:5mm 0 3.5mm">What we carry — from the dream of CRC</div>
+  <ul class="vision" style="margin-bottom:4mm">
+    <li style="font-size:3.2mm;margin-bottom:2mm">Feed the poor · clothe the naked · care for
+      <strong>orphans and widows</strong>.</li>
+    <li style="font-size:3.2mm;margin-bottom:2mm">Plant <strong>several daughter churches
+      every year</strong>, nationally and internationally.</li>
+    <li style="font-size:3.2mm;margin-bottom:2mm">Be <strong>first to raise our hands</strong>
+      on the building project.</li>
+    <li style="font-size:3.2mm;margin-bottom:0">Suitable, practical, beautiful
+      <strong>facilities</strong> — rehab centres, orphanages, old-age homes, community centres.</li>
   </ul>
 
-  <div class="block-label" style="margin:5mm 0 3.5mm">The Horizon</div>
-  <div class="target">
-    <span class="num">→</span>
-    <span class="lbl">Short term</span>
-    <span class="sub">Cashflow</span>
+  <div style="display:flex;gap:3mm;margin-bottom:4.5mm">
+    <div style="flex:1">
+      <div class="block-label" style="margin-bottom:3mm">Every month</div>
+      <ul class="acts" style="margin-bottom:0">
+        <li style="font-size:2.85mm;margin-bottom:1.8mm"><b>Tithe on profit</b> → the church</li>
+        <li style="font-size:2.85mm;margin-bottom:1.8mm"><b>Cape Town building project</b>
+          → continuous</li>
+        <li style="font-size:2.85mm;margin-bottom:0"><b>Talitha Cumi</b> → monthly support</li>
+      </ul>
+    </div>
+    <div style="flex:1.15">
+      <div class="block-label" style="margin-bottom:3mm">The fund we are building</div>
+      <ul class="acts" style="margin-bottom:0">
+        <li style="font-size:2.85mm;margin-bottom:1.5mm">Homeless rehabilitation centres</li>
+        <li style="font-size:2.85mm;margin-bottom:1.5mm">Education — funding students</li>
+        <li style="font-size:2.85mm;margin-bottom:1.5mm">Missionary work and travel</li>
+        <li style="font-size:2.85mm;margin-bottom:1.5mm">Bibles — a Bible for everyone,
+          at every church</li>
+        <li style="font-size:2.85mm;margin-bottom:0">CRC CARES and feeding schemes</li>
+      </ul>
+    </div>
   </div>
-  <div style="font-size:3.2mm;line-height:1.55;margin:-1mm 0 4mm 0;color:var(--umber)">
-    Build for cashflow — to fund the CRC CPT building project and other kingdom projects.
+
+  <div class="block-label" style="margin-bottom:3.5mm">The Horizon</div>
+  <div class="target">
+    <span class="num" style="font-size:5mm">YEAR 1</span>
+    <span class="lbl">Cash flow</span>
+    <span class="sub">Serentia · Innadern</span>
+  </div>
+  <div style="font-size:3.1mm;line-height:1.5;margin:-1mm 0 3.5mm 0;color:var(--umber)">
+    Build both businesses for cash flow — enough to fund Cape Town and every recurring
+    commitment, <b>every single month</b>.
   </div>
   <div class="target">
     <span class="num">$100M+</span>
-    <span class="lbl">Long term</span>
-    <span class="sub">Build to sell</span>
+    <span class="lbl">Nine figures</span>
+    <span class="sub">1–3 years</span>
   </div>
-  <div style="font-size:3.2mm;line-height:1.55;margin:-1mm 0 0 0;color:var(--umber)">
-    Build an asset worth selling — so that one signature can fund a generation of ministry.
-  </div>
-
-  <div class="grow"></div>
-
-  <div class="pull">
-    <div class="q">Make our efforts successful</div>
-    <div class="r">Psalm 90:17 NLT · yes, make our efforts successful</div>
+  <div style="font-size:3.1mm;line-height:1.5;margin:-1mm 0 0 0;color:var(--umber)">
+    Then a new company, purpose-built for exit — while Serentia and Innadern keep running as
+    the cash-flow engines.
   </div>
 
   <div class="grow"></div>
 
-  <div class="block-label" style="margin-bottom:3.5mm">The measure of a good year</div>
-  <ul class="vision" style="margin-bottom:2mm">
-    <li>The giving line went <strong>up</strong>.</li>
-    <li>The business can run <strong>without me</strong> for a week.</li>
-    <li>Somebody was funded who could not have funded themselves.</li>
-  </ul>
-
-  <div class="verse-mini" style="margin-bottom:4mm">
-    <b>Standing on</b><br>
-    <span style="display:block;margin-top:1.5mm">
-    <strong>Hab. 2:2</strong> — “Write my answer plainly on tablets, so that a runner can
-    carry the correct message to others.”<br>
-    <strong>Prov. 13:22</strong> — “Good people leave an inheritance to their
-    grandchildren.”</span>
+  <div class="pull" style="padding:1mm 4mm">
+    <div class="q" style="font-size:11mm">The one who plants generously<br>will get a generous crop</div>
+    <div class="r">2 Corinthians 9:6 NLT · seed sown, not money spent</div>
   </div>
+
+  <div class="grow"></div>
 
   <div class="block-label" style="margin-bottom:3.5mm">Actionables</div>
   <ul class="acts">
-    <li><b>On the 1st of every month,</b> the cashflow number goes on the board — measured,
-        not guessed.</li>
-    <li><b>When money lands,</b> the building-fund percentage moves first — before any
-        other line.</li>
+    <li><b>On the 1st of every month,</b> the three allocations go out first — tithe, Cape
+        Town, Talitha Cumi — and the amounts are reported to the team transparently.</li>
+    <li><b>Build for cash flow and build for exit differently.</b> Name which one every
+        decision serves before you make it.</li>
     <li><b>Every quarter,</b> raise the giving line, not the lifestyle line.</li>
     <li><b>Work backwards:</b> $100M → the one metric that must move this quarter →
         this week’s action.</li>
   </ul>
 
-  <div class="foot"><span>Celestiaventi</span><span>Sheet C2</span></div>
+  <div class="foot"><span>Celestial Venti · the build</span><span>Sheet C2</span></div>
 """)
 
 
@@ -647,22 +665,22 @@ C7 = card(sheet="C7", inner="""
   </div>
 
   <div class="declare" style="margin:4.5mm 0;padding:4mm 6mm;background:var(--terracotta)">
-    <div class="big" style="font-size:3.4mm">Five months. Starting at R0.</div>
+    <div class="big" style="font-size:3.4mm">Five months to close the year</div>
     <div class="small" style="color:rgba(238,228,218,.78)">August · September · October ·
       November · December</div>
   </div>
 
   <div class="block-label" style="margin-bottom:4mm">The Numbers</div>
-  <div class="target"><span class="num">R30k</span><span class="lbl">Savings</span>
+  <div class="target"><span class="num">R20k</span><span class="lbl">Savings</span>
+    <span class="sub"><b style="color:var(--terracotta)">R4 000</b> / month × 5</span></div>
+  <div class="target"><span class="num">R30k</span><span class="lbl">Investments</span>
     <span class="sub"><b style="color:var(--terracotta)">R6 000</b> / month × 5</span></div>
-  <div class="target"><span class="num">R50k</span><span class="lbl">Investments</span>
-    <span class="sub"><b style="color:var(--terracotta)">R10 000</b> / month × 5</span></div>
   <div class="target" style="border-bottom:none"><span class="num" style="font-size:5mm">LONG</span>
     <span class="lbl">Property investment</span><span class="sub">Deposit fund open</span></div>
 
   <div style="background:var(--espresso);color:var(--linen);padding:3.6mm 6mm;
        display:flex;align-items:baseline;gap:4mm;margin:2mm 0 4mm">
-    <span style="font-size:6.5mm;font-weight:800;color:var(--sand);line-height:1">R16 000</span>
+    <span style="font-size:6.5mm;font-weight:800;color:var(--sand);line-height:1">R10 000</span>
     <span style="font-size:2.7mm;font-weight:600;letter-spacing:.2em;text-transform:uppercase">
       Every month, non-negotiable</span>
     <span style="font-size:2.4mm;color:var(--taupe);margin-left:auto;text-align:right">
@@ -702,7 +720,7 @@ C7 = card(sheet="C7", inner="""
 
   <div class="block-label" style="margin-bottom:3.5mm">Actionables</div>
   <ul class="acts">
-    <li><b>On payday, before anything else:</b> tithe, then R6 000 to savings, then R10 000
+    <li><b>On payday, before anything else:</b> tithe, then R4 000 to savings, then R6 000
         to investments. Automated — not a monthly decision.</li>
     <li><b>Every Sunday evening,</b> five minutes with the bank app.</li>
     <li><b>If an unplanned expense appears,</b> then it waits 48 hours.</li>
@@ -728,7 +746,7 @@ C8 = card(sheet="C8", inner="""
   <ul class="vision">
     <li><strong>Gym 4× a week — minimum.</strong> Four is the floor, not the goal.</li>
     <li><strong>Join dancing classes</strong> — worship with the body, joy as discipline.</li>
-    <li><strong>Meal prep healthy meals</strong> — decide once, eat well seven times.</li>
+    <li><strong>Meal prep healthy meals</strong> — decide once, eat well for three days.</li>
   </ul>
 
   <div style="display:flex;gap:1.6mm;margin:4mm 0 5mm">
@@ -755,9 +773,9 @@ C8 = card(sheet="C8", inner="""
 
   <div class="block-label" style="margin-bottom:3.5mm">The Non-Negotiables</div>
   <ul class="vision" style="margin-bottom:1mm">
-    <li>Water and protein before coffee.</li>
+    <li>Water and protein before the first task of the day.</li>
     <li>Asleep by the hour that makes 03:00 and 4× a week possible.</li>
-    <li>Sunday is prep day — the week is won on Sunday afternoon.</li>
+    <li>Sunday afternoon is prep — the week is won straight after AM service.</li>
   </ul>
 
   <div class="grow"></div>
@@ -783,7 +801,8 @@ C8 = card(sheet="C8", inner="""
     <li><b>If it is the night before a gym day,</b> then the bag is packed and by the door.
         The decision is made while you are still willing.</li>
     <li><b>If you miss a session,</b> then never miss two in a row.</li>
-    <li><b>Every Sunday 16:00,</b> meal prep for the next four days.</li>
+    <li><b>Every Sunday, straight after AM service,</b> meal prep for the next three days —
+        then top up midweek.</li>
     <li><b>Book and pay for the dance class</b> — a paid class is a kept class.</li>
   </ul>
 
