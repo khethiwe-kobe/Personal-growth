@@ -16,7 +16,16 @@ A0 landscape is 1189 x 841 mm.
   * 4 x A4 landscape (297 x 210) = 1188 mm — the headline strip, full width.
   * 10 x A4 portrait (210 x 297) in a 5 x 2 grid underneath.
 Every sheet is a whole, self-contained card: no word is ever cut by a seam,
-so trimming and pasting is forgiving.
+so trimming and pasting is forgiving. Sheet C10 carries two half-height panels
+(Relationships above, The Rhythm below) on the one A4 page.
+
+Typefaces
+---------
+Mairo      CRC's brand hand — every script title, every pull-quote.
+Montserrat CRC's brand sans — everything structural.
+
+Scripture is NLT throughout, except Ephesians 3:20-21 which is AMP as asked.
+The Dream of CRC is reproduced verbatim from crcchurch.com, typos and all.
 
 Run:  python3 build.py
 """
@@ -39,7 +48,6 @@ def _data_uri(path, mime):
 def font_css():
     mont = _data_uri(FONTS / "Montserrat-latin.woff2", "font/woff2")
     mont_ext = _data_uri(FONTS / "Montserrat-latin-ext.woff2", "font/woff2")
-    parslay = _data_uri(FONTS / "Parslay.otf", "font/otf")
     mairo = _data_uri(FONTS / "Mairo.otf", "font/otf")
     return f"""
 @font-face{{font-family:'Montserrat';font-style:normal;font-weight:100 900;
@@ -47,7 +55,6 @@ def font_css():
   unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1E00-1E9F,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;}}
 @font-face{{font-family:'Montserrat';font-style:normal;font-weight:100 900;
   src:url({mont}) format('woff2');}}
-@font-face{{font-family:'Parslay';font-weight:400;src:url({parslay}) format('opentype');}}
 @font-face{{font-family:'Mairo';font-weight:400;src:url({mairo}) format('opentype');}}
 """
 
@@ -64,8 +71,9 @@ BASE_CSS = """
   --taupe:#BEB5A9;   --stone:#A78D78;
   --terracotta:#A46447; --umber:#4C362D; --espresso:#291C0E; --cocoa:#6E473B;
   --sage:#88937B;    --burgundy:#4D0E13;
-  /* CRC brand — used only on the Dream of CRC cards */
-  --crc-navy:#080E36; --crc-blue:#5CB2ED; --crc-off:#F9F9F9;
+  /* CRC brand — used only on the two CRC sheets */
+  --crc-navy:#0A1130; --crc-blue:#5CB2ED; --crc-ink:#3E97DE; --crc-sky:#A8D2F4;
+  --crc-off:#F9F9F9;
 }
 body{font-family:'Montserrat',sans-serif;-webkit-font-smoothing:antialiased;
      text-rendering:geometricPrecision;}
@@ -73,6 +81,7 @@ body{font-family:'Montserrat',sans-serif;-webkit-font-smoothing:antialiased;
 /* ---------- shared card shell ---------- */
 .card{position:relative;overflow:hidden;background:var(--linen);color:var(--umber);}
 .card.portrait{width:210mm;height:297mm;padding:13mm 12mm 11mm;}
+.card.flush{padding:0;}
 .tile{position:relative;overflow:hidden;width:297mm;height:210mm;
       background:var(--espresso);color:var(--linen);
       display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -88,23 +97,25 @@ body{font-family:'Montserrat',sans-serif;-webkit-font-smoothing:antialiased;
 .tile::after{mix-blend-mode:screen;
   background-image:radial-gradient(circle at 22% 18%,rgba(232,225,213,.05) 0 40%,transparent 41%),
                    radial-gradient(circle at 80% 78%,rgba(164,100,71,.10) 0 45%,transparent 46%);}
+.card.crc-dna::after,.card.crc-dream::after{display:none;}
 
 /* ---------- type ---------- */
 .eyebrow{font-size:2.5mm;font-weight:600;letter-spacing:.42em;text-transform:uppercase;
          color:var(--terracotta);}
-.script{font-family:'Parslay',cursive;font-weight:400;line-height:.98;color:var(--espresso);}
-.mairo{font-family:'Mairo',cursive;font-weight:400;line-height:1;}
+/* Mairo's descenders drop well below the line box — script titles need clearance
+   under them, so give any title an explicit bottom margin, never 1mm. */
+.script{font-family:'Mairo',cursive;font-weight:400;line-height:1.06;color:var(--espresso);}
 .h-mod{font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--espresso);}
 
 .rule{height:.35mm;background:var(--almond);width:100%;}
-.rule.short{width:18mm;height:.7mm;background:var(--terracotta);}
 
 /* ---------- scripture block ---------- */
 .scripture{background:var(--sand);padding:6mm 6.5mm;position:relative;}
 .scripture .ref{font-size:2.5mm;font-weight:700;letter-spacing:.3em;text-transform:uppercase;
                 color:var(--terracotta);display:block;margin-bottom:2.4mm;}
-.scripture .verse{font-size:3.35mm;line-height:1.62;font-weight:400;color:var(--umber);}
+.scripture .verse{font-size:3.3mm;line-height:1.6;font-weight:400;color:var(--umber);}
 .scripture .verse em{font-style:normal;font-weight:600;color:var(--espresso);}
+.scripture .verse + .verse{margin-top:2.4mm;}
 
 /* ---------- lists ---------- */
 .block-label{font-size:2.4mm;font-weight:700;letter-spacing:.36em;text-transform:uppercase;
@@ -128,7 +139,7 @@ ul.acts li b{font-weight:700;color:var(--cocoa);letter-spacing:.04em;}
 
 /* script pull-quote — the breathing space between vision and action */
 .pull{text-align:center;padding:2mm 4mm;}
-.pull .q{font-family:'Parslay',cursive;font-size:12mm;line-height:1.06;color:var(--terracotta);}
+.pull .q{font-family:'Mairo',cursive;font-size:13mm;line-height:1.08;color:var(--terracotta);}
 .pull .r{font-size:2.3mm;letter-spacing:.32em;text-transform:uppercase;color:var(--stone);
          margin-top:3.5mm;}
 
@@ -144,11 +155,12 @@ ul.acts li b{font-weight:700;color:var(--cocoa);letter-spacing:.04em;}
 
 .target{display:flex;align-items:baseline;gap:3mm;border-bottom:.3mm dashed var(--almond);
         padding-bottom:2.6mm;margin-bottom:2.6mm;}
-.target .num{font-family:'Montserrat';font-size:7mm;font-weight:800;color:var(--terracotta);
+.target .num{font-size:7mm;font-weight:800;color:var(--terracotta);
              letter-spacing:-.02em;line-height:1;}
 .target .lbl{font-size:2.9mm;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
              color:var(--umber);}
-.target .sub{font-size:2.5mm;color:var(--stone);margin-left:auto;letter-spacing:.1em;}
+.target .sub{font-size:2.5mm;color:var(--stone);margin-left:auto;letter-spacing:.1em;
+             text-align:right;}
 
 .stack{display:flex;flex-direction:column;height:100%;}
 .grow{flex:1;}
@@ -156,45 +168,67 @@ ul.acts li b{font-weight:700;color:var(--cocoa);letter-spacing:.04em;}
       font-size:2.2mm;letter-spacing:.3em;text-transform:uppercase;color:var(--stone);
       border-top:.3mm solid var(--almond);padding-top:3mm;}
 
-/* ---------- CRC dream cards ---------- */
-.card.crc{background:var(--crc-navy);color:var(--crc-off);}
-.card.crc::after{mix-blend-mode:screen;
-  background-image:radial-gradient(circle at 20% 15%,rgba(92,178,237,.10) 0 40%,transparent 41%),
-                   radial-gradient(circle at 82% 84%,rgba(92,178,237,.07) 0 42%,transparent 43%);}
-.card.crc .eyebrow{color:var(--crc-blue);}
-.card.crc .rule{background:rgba(249,249,249,.18);}
-.card.crc .crc-lock{display:flex;align-items:baseline;gap:6mm;}
-.card.crc .crc-lock .s{font-family:'Parslay',cursive;font-size:13mm;color:var(--crc-off);
-                       line-height:.9;}
-.card.crc .crc-lock .m{font-size:9mm;font-weight:800;letter-spacing:.06em;color:var(--crc-blue);}
-.card.crc p.dream{font-size:3.32mm;line-height:1.66;color:rgba(249,249,249,.9);
-                  margin-bottom:4.2mm;font-weight:400;}
-.card.crc p.dream::first-letter{color:var(--crc-blue);font-weight:700;}
-.card.crc .vmm{margin-bottom:4mm;}
-.card.crc .vmm .k{font-size:2.4mm;font-weight:700;letter-spacing:.34em;text-transform:uppercase;
-                  color:var(--crc-blue);margin-bottom:1.2mm;}
-.card.crc .vmm .v{font-size:3.6mm;font-weight:600;line-height:1.45;color:var(--crc-off);}
-.card.crc .foot{color:rgba(249,249,249,.45);border-top-color:rgba(249,249,249,.18);}
-/* sheet C4 carries less copy than C5, so it is set larger to fill the page evenly */
-.card.crc.roomy p.dream{font-size:4.2mm;line-height:1.66;margin-bottom:5.4mm;}
-.card.crc.roomy .vmm{margin-bottom:4.6mm;}
-.card.crc.roomy .vmm .v{font-size:4.05mm;line-height:1.45;}
-.card.crc.roomy .crc-lock .s{font-size:15mm;}
-.card.crc.roomy .crc-lock .m{font-size:10.5mm;}
+/* ---------- sheet C10: two half-height panels on one A4 ---------- */
+.card.split{padding:0;display:flex;flex-direction:column;}
+.card.split .half{height:148.5mm;padding:11mm 12mm 9mm;display:flex;flex-direction:column;}
+.card.split .half.dark{background:var(--espresso);color:var(--linen);}
+.card.split .half.dark .block-label{color:var(--almond);}
+.card.split .half.dark .block-label::after{background:rgba(232,225,213,.28);}
+.card.split .half.dark .eyebrow{color:var(--almond);}
+.card.split .half.dark ul.acts li{color:rgba(232,225,213,.88);}
+.card.split .half.dark ul.acts li b{color:var(--sand);}
+.card.split .half.dark .foot{color:rgba(232,225,213,.45);
+                             border-top-color:rgba(232,225,213,.25);}
+.card.split .cut{height:.4mm;background:var(--almond);}
 
-.card.crc .closing{border:.4mm solid var(--crc-blue);padding:4.5mm 5mm;text-align:center;}
-.card.crc .closing .t{font-size:3.3mm;font-weight:700;letter-spacing:.06em;line-height:1.45;}
-.card.crc .closing .b{font-size:2.5mm;letter-spacing:.3em;text-transform:uppercase;
-                      color:var(--crc-blue);margin-top:2mm;}
+/* ==========================================================================
+   CRC sheets — CRC's own brand, reproduced from crcchurch.com
+   ========================================================================== */
+
+/* C4 — the DNA banner */
+.card.crc-dna{background:var(--crc-sky);}
+.dna-hero{position:relative;overflow:hidden;height:88mm;padding:13mm 12mm;
+  display:flex;flex-direction:column;justify-content:center;
+  background:linear-gradient(118deg,#2B2CD4 0%,#2C56C8 22%,#2E7CC4 44%,
+                             #1B4C8F 66%,#101F52 84%,#080E30 100%);}
+.dna-hero .kicker{font-size:3.4mm;letter-spacing:.02em;color:#fff;font-weight:400;
+                  white-space:nowrap;}
+.dna-hero .kicker b{font-weight:800;}
+.dna-hero .ghost{font-size:16.5mm;font-weight:800;letter-spacing:.01em;line-height:1;
+                 color:rgba(255,255,255,.26);margin-top:8mm;white-space:nowrap;}
+.dna-hero .ghost span{color:rgba(255,255,255,.44);}
+.dna-hero .sig{font-family:'Mairo',cursive;font-size:19mm;line-height:1;color:#fff;
+               margin-top:-6mm;white-space:nowrap;}
+.dna-body{padding:11mm 12mm 9mm;display:flex;flex-direction:column;height:209mm;}
+.vmm-card{background:var(--crc-navy);color:#fff;padding:7mm 8mm;margin-bottom:5.5mm;
+  flex:1;display:flex;flex-direction:column;justify-content:center;}
+.vmm-card .k{font-size:4.4mm;font-weight:800;letter-spacing:.01em;margin-bottom:3.2mm;}
+.vmm-card .v{font-size:3.7mm;line-height:1.55;font-weight:400;color:rgba(255,255,255,.94);}
+.vmm-card .v + .v{margin-top:3mm;}
+.card.crc-dna .foot{color:#26456E;border-top-color:rgba(10,17,48,.28);}
+
+/* C5 — the dream, exactly as the site sets it */
+.card.crc-dream{background:#fff;color:#12193A;}
+.dream-bar{background:var(--crc-navy);color:#fff;padding:6.5mm 12mm;
+           font-size:5.6mm;font-weight:800;letter-spacing:.01em;}
+.dream-body{padding:7.5mm 12mm 8mm;display:flex;flex-direction:column;height:263mm;}
+p.dream{font-size:4.15mm;line-height:1.55;margin-bottom:4.4mm;color:#12193A;font-weight:400;}
+p.dream b{color:var(--crc-ink);font-weight:700;}
+.dream-close{border:.5mm solid var(--crc-ink);padding:4.5mm 5mm;text-align:center;
+             margin-top:1mm;}
+.dream-close .t{font-size:4mm;font-weight:700;line-height:1.5;color:var(--crc-navy);}
+.dream-close .b{font-size:2.4mm;letter-spacing:.3em;text-transform:uppercase;
+                color:var(--crc-ink);margin-top:2.4mm;font-weight:700;}
+.card.crc-dream .foot{color:#7E8AA8;border-top-color:#D8DEEC;}
 
 /* ---------- headline tiles ---------- */
 .tile .word{font-weight:900;letter-spacing:.1em;line-height:.92;color:var(--linen);}
-.tile .word.script{font-family:'Parslay',cursive;font-weight:400;letter-spacing:0;
+.tile .word.script{font-family:'Mairo',cursive;font-weight:400;letter-spacing:0;
                    color:var(--sand);}
 .tile .kicker{font-size:2.6mm;font-weight:600;letter-spacing:.5em;text-transform:uppercase;
               color:var(--terracotta);}
 .tile .verse{font-size:2.9mm;line-height:1.6;color:rgba(232,225,213,.74);
-             max-width:210mm;font-weight:400;min-height:14mm;}
+             max-width:230mm;font-weight:400;min-height:14mm;}
 .tile .verse b{display:block;font-size:2.3mm;letter-spacing:.34em;text-transform:uppercase;
                color:var(--terracotta);margin-top:2.6mm;font-weight:700;}
 .tile .hair{width:26mm;height:.6mm;background:var(--terracotta);margin:10mm auto 8mm;}
@@ -209,26 +243,28 @@ TILES = [
     dict(
         kicker="THE YEAR OF",
         word='<div class="word" style="font-size:52mm">2026</div>',
-        verse="“To proclaim the acceptable year of the <em>LORD</em>.”",
-        ref="ISAIAH 61:2",
+        verse="“He has sent me to tell those who mourn that <em>the time of the "
+              "LORD’s favor</em> has come.”",
+        ref="ISAIAH 61:2 NLT",
     ),
     dict(
         kicker="AND THE POSTURE IS",
         word='<div class="word" style="font-size:34mm">INVASION</div>',
-        verse="“The kingdom of heaven suffereth violence, and the violent take it by force.”",
-        ref="MATTHEW 11:12",
+        verse="“The Kingdom of Heaven has been forcefully advancing.”",
+        ref="MATTHEW 11:12 NLT",
     ),
     dict(
         kicker="THIS IS",
         word='<div class="word" style="font-size:25mm;line-height:1.08">THE SECOND<br>WAVE</div>',
-        verse="“Launch out into the deep, and let down your nets for a draught.”",
-        ref="LUKE 5:4",
+        verse="“Now go out where it is deeper, and let down your nets to catch some fish.”",
+        ref="LUKE 5:4 NLT",
     ),
     dict(
         kicker="AND THE GREATEST OF THESE",
-        word='<div class="word script" style="font-size:62mm">Love</div>',
-        verse="“And now abideth faith, hope, love, these three; but the greatest of these is love.”",
-        ref="1 CORINTHIANS 13:13",
+        word='<div class="word script" style="font-size:70mm">Love</div>',
+        verse="“Three things will last forever — faith, hope, and love — and the "
+              "greatest of these is love.”",
+        ref="1 CORINTHIANS 13:13 NLT",
     ),
 ]
 
@@ -248,19 +284,27 @@ def tile_html(t, n):
 # --------------------------------------------------------------------------
 
 def card(inner, cls="", sheet=""):
-    return f'<section class="card portrait {cls}" data-sheet="{sheet}"><div class="stack">{inner}</div></section>'
+    return (f'<section class="card portrait {cls}" data-sheet="{sheet}">'
+            f'<div class="stack">{inner}</div></section>')
+
+
+def bare(inner, cls="", sheet=""):
+    """A card that lays out its own full-bleed sections."""
+    return f'<section class="card portrait flush {cls}" data-sheet="{sheet}">{inner}</section>'
 
 
 C1 = card(sheet="C1", inner="""
   <div class="eyebrow">Career &amp; Work · 01</div>
-  <div class="script" style="font-size:21mm;margin:4mm 0 1mm">Celestiaventi</div>
+  <div class="script" style="font-size:19mm;margin:5mm 0 4mm">Celestiaventi</div>
   <div class="h-mod" style="font-size:3mm;color:var(--cocoa);margin-bottom:5mm">The Calling</div>
 
   <div class="scripture">
-    <span class="ref">Ephesians 3:20–21</span>
-    <div class="verse">“Now unto him that is able to do <em>exceeding abundantly above</em>
-      all that we ask or think, according to the power that worketh in us, unto him be glory
-      in the church by Christ Jesus throughout all ages, world without end. Amen.”</div>
+    <span class="ref">Ephesians 3:20–21 · AMP</span>
+    <div class="verse">“Now to Him who is able to [carry out His purpose and] do
+      <em>superabundantly more than all that we dare ask or think</em> [infinitely beyond our
+      greatest prayers, hopes, or dreams], according to His power that is at work within us,
+      to Him be the glory in the church and in Christ Jesus throughout all generations
+      forever and ever. Amen.”</div>
   </div>
 
   <div class="block-label" style="margin:6mm 0 3.5mm">Purpose</div>
@@ -274,9 +318,10 @@ C1 = card(sheet="C1", inner="""
     <li><strong>See beyond yourself.</strong> The vision is bigger than your comfort.</li>
   </ul>
 
-  <div class="declare" style="margin:2mm 0 5mm">
-    <div class="big">You have the Holy Spirit —<br>you should be the best in this industry</div>
-    <div class="small">Daniel 1:20 · ten times better</div>
+  <div class="declare" style="margin:2mm 0 4.5mm;padding:4.2mm 6mm">
+    <div class="big" style="font-size:3.4mm">You have the Holy Spirit —<br>you should be the
+      best in this industry</div>
+    <div class="small">Daniel 1:20 · ten times more capable</div>
   </div>
 
   <div class="block-label" style="margin-bottom:3.5mm">The Standard</div>
@@ -287,9 +332,9 @@ C1 = card(sheet="C1", inner="""
 
   <div class="grow"></div>
 
-  <div class="pull">
-    <div class="q">Not by might, nor by power</div>
-    <div class="r">Zechariah 4:6 · but by my Spirit</div>
+  <div class="pull" style="padding:1mm 4mm">
+    <div class="q" style="font-size:11.5mm">Not by force nor by strength</div>
+    <div class="r">Zechariah 4:6 NLT · but by my Spirit</div>
   </div>
 
   <div class="grow"></div>
@@ -297,9 +342,10 @@ C1 = card(sheet="C1", inner="""
   <div class="verse-mini" style="margin-bottom:4mm">
     <b>Standing on</b><br>
     <span style="display:block;margin-top:1.5mm">
-    <strong>Deut. 8:18</strong> — “It is he that giveth thee power to get wealth, that he may
-    establish his covenant.”<br>
-    <strong>Col. 3:23</strong> — “Whatsoever ye do, do it heartily, as to the Lord, and not unto men.”</span>
+    <strong>Deut. 8:18</strong> — “Remember the LORD your God. He is the one who gives you
+    power to be successful.”<br>
+    <strong>Col. 3:23</strong> — “Work willingly at whatever you do, as though you were
+    working for the Lord.”</span>
   </div>
 
   <div class="block-label" style="margin-bottom:3.5mm">Actionables</div>
@@ -318,20 +364,21 @@ C1 = card(sheet="C1", inner="""
 
 C2 = card(sheet="C2", inner="""
   <div class="eyebrow">Career &amp; Work · 02</div>
-  <div class="h-mod" style="font-size:8.5mm;margin:4mm 0 1.5mm;line-height:1.1">The Build</div>
-  <div class="script" style="font-size:11mm;color:var(--terracotta);margin-bottom:5mm">biggest givers</div>
+  <div class="h-mod" style="font-size:8.5mm;margin:4mm 0 2mm;line-height:1.1">The Build</div>
+  <div class="script" style="font-size:12mm;color:var(--terracotta);margin-bottom:5mm">biggest givers</div>
 
   <div class="scripture">
-    <span class="ref">1 Chronicles 29:3, 14</span>
-    <div class="verse">“Because I have set my affection to the house of my God… <em>I have given
-      to the house of my God</em>… for all things come of thee, and of thine own have we
-      given thee.”</div>
+    <span class="ref">1 Chronicles 29:3, 14 · NLT</span>
+    <div class="verse">“Because of my devotion to the Temple of my God, <em>I am giving all
+      of my own private treasures</em> of gold and silver to help in the construction.”</div>
+    <div class="verse">“Everything we have has come from you, and we give you only what you
+      first gave us!”</div>
   </div>
 
   <div class="block-label" style="margin:6mm 0 3.5mm">The Focus</div>
   <ul class="vision">
     <li><strong>CRC CPT building project</strong> — the reason the cashflow exists.</li>
-    <li><strong>Talitha Cumi</strong> — “Damsel, I say unto thee, arise.” <em>Mark 5:41</em></li>
+    <li><strong>Talitha Cumi</strong> — the safety house.</li>
     <li>We want to be <strong>the biggest givers</strong>.</li>
   </ul>
 
@@ -356,14 +403,14 @@ C2 = card(sheet="C2", inner="""
   <div class="grow"></div>
 
   <div class="pull">
-    <div class="q">Talitha cumi</div>
-    <div class="r">Mark 5:41 · Damsel, I say unto thee, arise</div>
+    <div class="q">Make our efforts successful</div>
+    <div class="r">Psalm 90:17 NLT · yes, make our efforts successful</div>
   </div>
 
   <div class="grow"></div>
 
   <div class="block-label" style="margin-bottom:3.5mm">The measure of a good year</div>
-  <ul class="vision" style="margin-bottom:1mm">
+  <ul class="vision" style="margin-bottom:2mm">
     <li>The giving line went <strong>up</strong>.</li>
     <li>The business can run <strong>without me</strong> for a week.</li>
     <li>Somebody was funded who could not have funded themselves.</li>
@@ -372,9 +419,10 @@ C2 = card(sheet="C2", inner="""
   <div class="verse-mini" style="margin-bottom:4mm">
     <b>Standing on</b><br>
     <span style="display:block;margin-top:1.5mm">
-    <strong>Hab. 2:2</strong> — “Write the vision, and make it plain upon tables, that he may
-    run that readeth it.”<br>
-    <strong>Prov. 13:22</strong> — “A good man leaveth an inheritance to his children’s children.”</span>
+    <strong>Hab. 2:2</strong> — “Write my answer plainly on tablets, so that a runner can
+    carry the correct message to others.”<br>
+    <strong>Prov. 13:22</strong> — “Good people leave an inheritance to their
+    grandchildren.”</span>
   </div>
 
   <div class="block-label" style="margin-bottom:3.5mm">Actionables</div>
@@ -394,18 +442,18 @@ C2 = card(sheet="C2", inner="""
 
 C3 = card(sheet="C3", inner="""
   <div class="eyebrow">The House · S2</div>
-  <div class="mairo" style="font-size:26mm;color:var(--espresso);margin:3mm 0 0">S2</div>
-  <div class="mairo" style="font-size:12mm;color:var(--terracotta);margin:0 0 5mm;line-height:1.15">
-    Structure of<br>breakthrough
-  </div>
+  <div class="script" style="font-size:30mm;color:var(--espresso);margin:4mm 0 0">S2</div>
+  <div class="script" style="font-size:14mm;color:var(--terracotta);margin:1mm 0 6mm;
+       line-height:1.12">Structure of<br>breakthrough</div>
 
   <div class="scripture">
-    <span class="ref">John 2:17 · Psalm 92:13</span>
-    <div class="verse">“The <em>zeal of thine house</em> hath eaten me up.”<br>
-      “Those that be planted in the house of the LORD shall flourish in the courts of our God.”</div>
+    <span class="ref">John 2:17 · Psalm 92:13 · NLT</span>
+    <div class="verse">“<em>Passion for God’s house will consume me.</em>”</div>
+    <div class="verse">“For they are transplanted to the LORD’s own house. They flourish in
+      the courts of our God.”</div>
   </div>
 
-  <div class="block-label" style="margin:6mm 0 3.5mm">The Structure</div>
+  <div class="block-label" style="margin:7mm 0 4mm">The Structure</div>
   <ul class="vision">
     <li><strong>100% membership in Reith.</strong></li>
     <li>A bus for <strong>education</strong> &amp; a bus for <strong>Arteria</strong>.</li>
@@ -414,171 +462,228 @@ C3 = card(sheet="C3", inner="""
     <li><strong>Honour and zeal</strong> for the house.</li>
   </ul>
 
-  <div class="block-label" style="margin:5mm 0 3.5mm">Breakthrough In</div>
-  <div style="display:flex;gap:2.5mm;margin-bottom:5mm">
-    <div style="flex:1;background:var(--sand);padding:4mm 2mm;text-align:center">
-      <div style="font-size:2.6mm;font-weight:700;letter-spacing:.18em;color:var(--espresso)">FINANCES</div></div>
-    <div style="flex:1.35;background:var(--sand);padding:4mm 2mm;text-align:center">
-      <div style="font-size:2.6mm;font-weight:700;letter-spacing:.18em;color:var(--espresso)">ACADEMICS<br>&amp; CAREER</div></div>
-    <div style="flex:1.15;background:var(--sand);padding:4mm 2mm;text-align:center">
-      <div style="font-size:2.6mm;font-weight:700;letter-spacing:.18em;color:var(--espresso)">RELATION-<br>SHIPS</div></div>
+  <div class="block-label" style="margin:6mm 0 4mm">Breakthrough In</div>
+  <div style="display:flex;gap:2.5mm;margin-bottom:6mm">
+    <div style="flex:1;background:var(--sand);padding:5mm 2mm;text-align:center">
+      <div style="font-size:2.8mm;font-weight:700;letter-spacing:.18em;color:var(--espresso)">FINANCES</div></div>
+    <div style="flex:1.35;background:var(--sand);padding:5mm 2mm;text-align:center">
+      <div style="font-size:2.8mm;font-weight:700;letter-spacing:.18em;color:var(--espresso)">ACADEMICS<br>&amp; CAREER</div></div>
+    <div style="flex:1.15;background:var(--sand);padding:5mm 2mm;text-align:center">
+      <div style="font-size:2.8mm;font-weight:700;letter-spacing:.18em;color:var(--espresso)">RELATION-<br>SHIPS</div></div>
   </div>
 
   <div class="grow"></div>
 
   <div class="pull">
-    <div class="q">Here am I; send me</div>
-    <div class="r">Isaiah 6:8 · whom shall I send</div>
+    <div class="q">I will build my church</div>
+    <div class="r">Matthew 16:18 NLT · and all the powers of hell will not conquer it</div>
   </div>
+
+  <div class="grow"></div>
+
+  <div class="verse-mini">
+    <b>Standing on</b><br>
+    <span style="display:block;margin-top:1.5mm">
+    <strong>Acts 2:47</strong> — “Each day the Lord added to their fellowship those who were
+    being saved.”<br>
+    <strong>Rom. 12:11</strong> — “Never be lazy, but work hard and serve the Lord
+    enthusiastically.”<br>
+    <strong>Matt. 16:18</strong> — “Upon this rock I will build my church, and all the powers
+    of hell will not conquer it.”</span>
+  </div>
+
+  <div style="height:6mm"></div>
+  <div class="foot"><span>S2 · Structure of Breakthrough</span><span>Sheet C3</span></div>
+""")
+
+
+# --- C4: the DNA of CRC, reproduced from crcchurch.com --------------------
+
+C4 = bare(cls="crc-dna", sheet="C4", inner="""
+  <div class="dna-hero">
+    <div class="kicker"><b>THE DREAM OF CRC</b> · THE VISION · THE MISSION · THE MANDATE</div>
+    <div class="ghost">THE DNA OF <span>CRC</span></div>
+    <div class="sig">this is who we are</div>
+  </div>
+  <div class="dna-body">
+    <div class="vmm-card">
+      <div class="k">Our Vision</div>
+      <div class="v">Our vision is building one church in many locations, nationally and
+        internationally!</div>
+    </div>
+    <div class="vmm-card">
+      <div class="k">Our Mission</div>
+      <div class="v">Our mission is mend the nets, the catch will be great!</div>
+    </div>
+    <div class="vmm-card" style="margin-bottom:0;flex:1.25">
+      <div class="k">Our Mandate</div>
+      <div class="v">Our mandate is to win the lost at any cost!</div>
+      <div class="v">Everything we do is about souls as we plunder hell and populate heaven!</div>
+    </div>
+    <div class="grow"></div>
+    <div class="foot"><span>crcchurch.com</span><span>Sheet C4</span></div>
+  </div>
+""")
+
+
+# --- C5: the Dream itself, verbatim from the site -------------------------
+
+C5 = bare(cls="crc-dream", sheet="C5", inner="""
+  <div class="dream-bar">The Dream of CRC</div>
+  <div class="dream-body">
+    <p class="dream">It is the <b>dream of CRC to be on oasis of life</b> in this city where
+      the hurting, the depressed, the sick, the frustrated and the confused can find love
+      acceptance, help, hope, healing, forgiveness, guidance and encouragement.</p>
+    <p class="dream">It is our dream to <b>feed the poor, to clothe the naked and to take
+      care of orphans and widows.</b></p>
+    <p class="dream">It is the <b>dream of CRC to effectively share the Good News of Jesus
+      Christ with every man, woman and child.</b></p>
+    <p class="dream">It is the dream of CRC to <b>welcome a tithe of each of our cities as
+      members</b> into the fellowship of our church family, loving, learning, laughing and
+      living in harmony together, fulfilling God’s vision for us.</p>
+    <p class="dream">It is the dream of CRC to <b>develop every incoming member to spiritual
+      maturity</b>, ministering to the whole man (spirit, soul and body) through small groups,
+      seminars, retreats, bible studies and a Bible School for our members.</p>
+    <p class="dream">It is the dream of CRC to <b>equip every member for significant
+      ministry</b> helping them discover the gifts and talents God has given them.</p>
+    <p class="dream">It is the dream of CRC to be a <b>lighthouse to the nations</b> - mission
+      base regularly sending out missionaries to the four corners of the earth. It is our
+      dream to regularly send out hundreds of career missionaries and church workers oil
+      around the world on short tem mission projects.</p>
+    <p class="dream">It is our dream to <b>plant several daughter churches every year
+      nationally and internationally.</b></p>
+    <p class="dream">It is the dream of CRC to have <b>suitable, practical but beautiful
+      facilities</b> designed to minister to the total person, spiritually, emotionally,
+      physically and socially. These facilities include worship auditoriums seating thousands,
+      recreational facilities, children facilities, Bible School, several fellowship halls,
+      administration facilities and schools.</p>
+    <p class="dream">It is our dream to have <b>a farm with rehabilitation facilities,
+      industry warehouses, orphanages, old age homes and several community centres.</b></p>
+
+    <div class="dream-close">
+      <div class="t">We confidently state that these dreams will become a reality.<br>
+        Because they are inspired by God.</div>
+      <div class="b">Pastor At Boshoff</div>
+    </div>
+
+    <div class="grow"></div>
+    <div class="foot"><span>crcchurch.com</span><span>Sheet C5</span></div>
+  </div>
+""")
+
+
+C6 = card(sheet="C6", inner="""
+  <div class="eyebrow">The Secret Place · 2026</div>
+  <div class="script" style="font-size:22mm;margin:5mm 0 6mm">Spiritual</div>
+
+  <div class="scripture">
+    <span class="ref">Mark 1:35 · Joshua 1:8 · NLT</span>
+    <div class="verse">“<em>Before daybreak</em> the next morning, Jesus got up and went out
+      to an isolated place to pray.”</div>
+    <div class="verse">“Study this Book of Instruction continually. Meditate on it day and
+      night so you will be sure to obey everything written in it. Only then will you prosper
+      and succeed in all you do.”</div>
+  </div>
+
+  <div class="block-label" style="margin:6mm 0 4mm">The Vision</div>
+  <ul class="vision">
+    <li><strong>Daily 3am intercession.</strong> Everything is birthed and maintained
+        in prayer.</li>
+    <li><strong>Finish the whole Bible</strong> before 31 December.</li>
+    <li><strong>Memorise scripture daily.</strong></li>
+    <li><strong>Rewrite half of the Bible</strong> by hand.</li>
+    <li><strong>Intentional weekly evangelism</strong> — share the gospel.</li>
+  </ul>
+
+  <div class="declare" style="margin:3mm 0 5mm">
+    <div class="big" style="font-size:3.3mm">Everything is birthed and<br>maintained in prayer</div>
+    <div class="small">Luke 18:1 · always pray and never give up</div>
+  </div>
+
+  <div class="block-label" style="margin-bottom:4mm">What that costs per day</div>
+  <div class="target"><span class="num">8</span><span class="lbl">Chapters read</span>
+    <span class="sub">1 189 chapters ÷ 157 days</span></div>
+  <div class="target"><span class="num">4</span><span class="lbl">Chapters written</span>
+    <span class="sub">Half the Bible by 31 Dec</span></div>
+  <div class="target" style="border-bottom:none"><span class="num">1</span>
+    <span class="lbl">Verse memorised</span><span class="sub">≈157 by year end</span></div>
 
   <div class="grow"></div>
 
   <div class="verse-mini" style="margin-bottom:4mm">
     <b>Standing on</b><br>
     <span style="display:block;margin-top:1.5mm">
-    <strong>Acts 2:47</strong> — “And the Lord added to the church daily such as should be saved.”<br>
-    <strong>Rom. 12:11</strong> — “Not slothful in business; fervent in spirit; serving the Lord.”</span>
+    <strong>Deut. 17:18–19</strong> — “He must copy for himself this body of instruction on a
+    scroll… and read it daily as long as he lives.”<br>
+    <strong>Ps. 119:11</strong> — “I have hidden your word in my heart, that I might not sin
+    against you.”<br>
+    <strong>Mark 16:15</strong> — “Go into all the world and preach the Good News to
+    everyone.”</span>
   </div>
 
   <div class="block-label" style="margin-bottom:3.5mm">Actionables</div>
   <ul class="acts">
-    <li><b>Every week,</b> leaders pray together before they plan together.</li>
-    <li><b>Every month,</b> one honest membership number on the wall — and one new name invited
-        into Reith personally, not generally.</li>
-    <li><b>For the buses,</b> name the amount, name the date, name who is asking.</li>
-    <li><b>When it is easier to complain than to serve,</b> then serve — honour is a
-        decision before it is a feeling.</li>
+    <li><b>Alarm at 02:50, phone across the room.</b> 03:00 is not a mood, it is an
+        appointment — the list of names is written the night before.</li>
+    <li><b>Eight chapters before the day starts,</b> four chapters written before it ends.</li>
+    <li><b>One verse on the mirror each morning;</b> say it out loud before you leave.</li>
+    <li><b>One gospel conversation every week</b> — name the person on Sunday, not
+        on Saturday.</li>
   </ul>
 
-  <div class="foot"><span>S2 · Structure of Breakthrough</span><span>Sheet C3</span></div>
+  <div class="foot"><span>Birthed and maintained in prayer</span><span>Sheet C6</span></div>
 """)
 
 
-CRC_A = card(cls="crc roomy", sheet="C4", inner="""
-  <div class="eyebrow">Christian Revival Church</div>
-  <div class="crc-lock" style="margin:4mm 0 1mm"><span class="s">The Dream of</span><span class="m">CRC</span></div>
-  <div class="rule" style="margin:4mm 0 6mm"></div>
-
-  <div class="vmm"><div class="k">Our Vision</div>
-    <div class="v">Our vision is building one church in many locations,
-      nationally and internationally!</div></div>
-  <div class="vmm"><div class="k">Our Mission</div>
-    <div class="v">Our mission is mend the nets, the catch will be great!</div></div>
-  <div class="vmm" style="margin-bottom:6mm"><div class="k">Our Mandate</div>
-    <div class="v">Our mandate is to win the lost at any cost! Everything we do is about souls
-      as we plunder hell and populate heaven!</div></div>
-
-  <div class="rule" style="margin-bottom:5mm"></div>
-
-  <p class="dream">It is the dream of CRC to be an oasis of life in this city where the hurting,
-    the depressed, the sick, the frustrated and the confused can find love, acceptance, help,
-    hope, healing, forgiveness, guidance and encouragement.</p>
-  <p class="dream">It is our dream to feed the poor, to clothe the naked and to take care of
-    orphans and widows.</p>
-  <p class="dream">It is the dream of CRC to effectively share the Good News of Jesus Christ
-    with every man, woman and child.</p>
-  <p class="dream">It is the dream of CRC to welcome a tithe of each of our cities as members
-    into the fellowship of our church family, loving, learning, laughing and living in harmony
-    together, fulfilling God’s vision for us.</p>
-  <p class="dream">It is the dream of CRC to develop every incoming member to spiritual
-    maturity, ministering to the whole man (spirit, soul and body) through small groups,
-    seminars, retreats, bible studies and a Bible School for our members.</p>
-  <p class="dream">It is the dream of CRC to equip every member for significant ministry
-    helping them discover the gifts and talents God has given them.</p>
-  <p class="dream">It is the dream of CRC to be a lighthouse to the nations — a mission base
-    regularly sending out missionaries to the four corners of the earth. It is our dream to
-    regularly send out hundreds of career missionaries and church workers all around the world
-    on short term mission projects.</p>
-
-  <div class="grow"></div>
-  <div class="foot"><span>crcchurch.com</span><span>Sheet C4 · i of ii</span></div>
-""")
-
-
-CRC_B = card(cls="crc", sheet="C5", inner="""
-  <div class="eyebrow">Christian Revival Church</div>
-  <div class="crc-lock" style="margin:4mm 0 1mm"><span class="s">The Dream of</span><span class="m">CRC</span></div>
-  <div class="rule" style="margin:4mm 0 6mm"></div>
-
-  <p class="dream">It is our dream to plant several daughter churches every year nationally
-    and internationally.</p>
-  <p class="dream">It is the dream of CRC to have suitable, practical but beautiful facilities
-    designed to minister to the total person, spiritually, emotionally, physically and socially.
-    These facilities include worship auditoriums seating thousands, recreational facilities,
-    children facilities, Bible School, several fellowship halls, administration facilities
-    and schools.</p>
-  <p class="dream">It is our dream to have a farm with rehabilitation facilities, industry
-    warehouses, orphanages, old age homes and several community centres.</p>
-
-  <div style="margin:6mm 0 6mm" class="closing">
-    <div class="t">We confidently state that these dreams<br>will become a reality.<br>
-      Because they are inspired by God.</div>
-    <div class="b">Pastor At Boshoff</div>
-  </div>
-
-  <div class="rule" style="margin-bottom:5mm"></div>
-  <div class="vmm"><div class="k">My part in it</div>
-    <div class="v" style="font-size:3.1mm;font-weight:400;line-height:1.55;
-        color:rgba(249,249,249,.88)">
-      Celestiaventi exists to finance this page. The building project, the buses, the farm,
-      the orphanages — these are line items on a balance sheet somebody has to carry.
-      I am asking God to make me one of the people who carries them.</div></div>
-
-  <div class="grow"></div>
-
-  <div class="rule" style="margin-bottom:5mm"></div>
-  <div class="eyebrow" style="margin-bottom:4mm">My assignment this year</div>
-  <ul class="acts" style="margin-bottom:0">
-    <li style="color:rgba(249,249,249,.86);font-size:3.1mm">
-      <b style="color:var(--crc-blue)">Give first, give most.</b> Be counted among the
-      biggest givers to the CRC CPT building project — not by intention, by receipt.</li>
-    <li style="color:rgba(249,249,249,.86);font-size:3.1mm">
-      <b style="color:var(--crc-blue)">Build the machine that funds it.</b> Cashflow is
-      ministry infrastructure.</li>
-    <li style="color:rgba(249,249,249,.86);font-size:3.1mm">
-      <b style="color:var(--crc-blue)">Bring people, not just money.</b> A tithe of the
-      city starts with the names on Sheet C9.</li>
-  </ul>
-
-  <div style="height:6mm"></div>
-  <div class="foot"><span>crcchurch.com</span><span>Sheet C5 · ii of ii</span></div>
-""")
-
-
-C6 = card(sheet="C6", inner="""
-  <div class="eyebrow">Stewardship · 2026</div>
-  <div class="script" style="font-size:23mm;margin:4mm 0 5mm">Finances</div>
+C7 = card(sheet="C7", inner="""
+  <div class="eyebrow">Stewardship · Aug–Dec 2026</div>
+  <div class="script" style="font-size:24mm;margin:4mm 0 5mm">Finances</div>
 
   <div class="scripture">
-    <span class="ref">Proverbs 21:20 · Luke 16:10</span>
-    <div class="verse">“There is <em>treasure to be desired</em> and oil in the dwelling of the
-      wise; but a foolish man spendeth it up.”<br>
-      “He that is faithful in that which is least is faithful also in much.”</div>
+    <span class="ref">Luke 16:10 · Proverbs 21:5 · NLT</span>
+    <div class="verse">“If you are faithful in little things, <em>you will be faithful in
+      large ones.</em>”</div>
+    <div class="verse">“Good planning and hard work lead to prosperity.”</div>
   </div>
 
-  <div class="block-label" style="margin:6mm 0 4mm">The Numbers</div>
+  <div class="declare" style="margin:4.5mm 0;padding:4mm 6mm;background:var(--terracotta)">
+    <div class="big" style="font-size:3.4mm">Five months. Starting at R0.</div>
+    <div class="small" style="color:rgba(238,228,218,.78)">August · September · October ·
+      November · December</div>
+  </div>
+
+  <div class="block-label" style="margin-bottom:4mm">The Numbers</div>
   <div class="target"><span class="num">R30k</span><span class="lbl">Savings</span>
-    <span class="sub">R2 500 / month</span></div>
+    <span class="sub"><b style="color:var(--terracotta)">R6 000</b> / month × 5</span></div>
   <div class="target"><span class="num">R50k</span><span class="lbl">Investments</span>
-    <span class="sub">R4 200 / month</span></div>
+    <span class="sub"><b style="color:var(--terracotta)">R10 000</b> / month × 5</span></div>
   <div class="target" style="border-bottom:none"><span class="num" style="font-size:5mm">LONG</span>
     <span class="lbl">Property investment</span><span class="sub">Deposit fund open</span></div>
 
-  <div class="block-label" style="margin:5mm 0 4mm">The order every rand follows</div>
+  <div style="background:var(--espresso);color:var(--linen);padding:3.6mm 6mm;
+       display:flex;align-items:baseline;gap:4mm;margin:2mm 0 4mm">
+    <span style="font-size:6.5mm;font-weight:800;color:var(--sand);line-height:1">R16 000</span>
+    <span style="font-size:2.7mm;font-weight:600;letter-spacing:.2em;text-transform:uppercase">
+      Every month, non-negotiable</span>
+    <span style="font-size:2.4mm;color:var(--taupe);margin-left:auto;text-align:right">
+      + R3 000 / month for the<br>December trip · Sheet C9</span>
+  </div>
+
+  <div class="block-label" style="margin-bottom:4mm">The order every rand follows</div>
   <div style="display:flex;flex-direction:column;gap:2mm">
-    <div style="display:flex;align-items:center;gap:3mm;background:var(--sand);padding:3.4mm 4mm">
+    <div style="display:flex;align-items:center;gap:3mm;background:var(--sand);padding:3mm 4mm">
       <span style="font-size:2.4mm;font-weight:800;color:var(--terracotta);letter-spacing:.2em">01</span>
       <span style="font-size:3.1mm;font-weight:700;letter-spacing:.14em;color:var(--espresso)">GIVE</span>
       <span style="font-size:2.6mm;color:var(--stone);margin-left:auto">The tithe is not mine to budget</span></div>
-    <div style="display:flex;align-items:center;gap:3mm;background:var(--sand);padding:3.4mm 4mm">
+    <div style="display:flex;align-items:center;gap:3mm;background:var(--sand);padding:3mm 4mm">
       <span style="font-size:2.4mm;font-weight:800;color:var(--terracotta);letter-spacing:.2em">02</span>
       <span style="font-size:3.1mm;font-weight:700;letter-spacing:.14em;color:var(--espresso)">SAVE</span>
       <span style="font-size:2.6mm;color:var(--stone);margin-left:auto">Automated on payday</span></div>
-    <div style="display:flex;align-items:center;gap:3mm;background:var(--sand);padding:3.4mm 4mm">
+    <div style="display:flex;align-items:center;gap:3mm;background:var(--sand);padding:3mm 4mm">
       <span style="font-size:2.4mm;font-weight:800;color:var(--terracotta);letter-spacing:.2em">03</span>
       <span style="font-size:3.1mm;font-weight:700;letter-spacing:.14em;color:var(--espresso)">INVEST</span>
       <span style="font-size:2.6mm;color:var(--stone);margin-left:auto">Before it can be spent</span></div>
-    <div style="display:flex;align-items:center;gap:3mm;background:var(--espresso);padding:3.4mm 4mm">
+    <div style="display:flex;align-items:center;gap:3mm;background:var(--espresso);padding:3mm 4mm">
       <span style="font-size:2.4mm;font-weight:800;color:var(--almond);letter-spacing:.2em">04</span>
       <span style="font-size:3.1mm;font-weight:700;letter-spacing:.14em;color:var(--linen)">LIVE</span>
       <span style="font-size:2.6mm;color:var(--taupe);margin-left:auto">On what is left, gladly</span></div>
@@ -586,47 +691,37 @@ C6 = card(sheet="C6", inner="""
 
   <div class="grow"></div>
 
-  <div class="pull">
-    <div class="q" style="font-size:10mm">My God shall supply all your need</div>
-    <div class="r">Philippians 4:19 · according to his riches in glory</div>
-  </div>
-
-  <div class="grow"></div>
-
-  <div class="verse-mini" style="margin-bottom:4mm">
+  <div class="verse-mini" style="margin-bottom:3.5mm">
     <b>Standing on</b><br>
     <span style="display:block;margin-top:1.5mm">
-    <strong>Prov. 21:5</strong> — “The thoughts of the diligent tend only to plenteousness.”<br>
-    <strong>Mal. 3:10</strong> — “Bring ye all the tithes into the storehouse… and prove me now
-    herewith, saith the LORD of hosts, if I will not open you the windows of heaven.”<br>
-    <strong>Matt. 6:33</strong> — “Seek ye first the kingdom of God… and all these things shall
-    be added unto you.”</span>
+    <strong>Mal. 3:10</strong> — “Bring all the tithes into the storehouse… Try it!
+    Put me to the test!”<br>
+    <strong>Matt. 6:33</strong> — “Seek the Kingdom of God above all else… and he will give
+    you everything you need.”</span>
   </div>
 
   <div class="block-label" style="margin-bottom:3.5mm">Actionables</div>
   <ul class="acts">
-    <li><b>On payday, before anything else:</b> tithe, then the savings transfer, then the
-        investment transfer. Automated — not a monthly decision.</li>
-    <li><b>Every Sunday evening,</b> five minutes with the bank app. Nothing hidden from
-        yourself.</li>
-    <li><b>If an unplanned expense appears,</b> then it waits 48 hours before it is approved.</li>
-    <li><b>Property:</b> open the deposit account this month; learn one area properly
-        before you buy anything.</li>
+    <li><b>On payday, before anything else:</b> tithe, then R6 000 to savings, then R10 000
+        to investments. Automated — not a monthly decision.</li>
+    <li><b>Every Sunday evening,</b> five minutes with the bank app.</li>
+    <li><b>If an unplanned expense appears,</b> then it waits 48 hours.</li>
+    <li><b>Property:</b> open the deposit account in August.</li>
   </ul>
 
-  <div class="foot"><span>Faithful in little</span><span>Sheet C6</span></div>
+  <div class="foot"><span>Faithful in little</span><span>Sheet C7</span></div>
 """)
 
 
-C7 = card(sheet="C7", inner="""
+C8 = card(sheet="C8", inner="""
   <div class="eyebrow">The Temple · 2026</div>
-  <div class="script" style="font-size:24mm;margin:4mm 0 5mm">Health</div>
+  <div class="script" style="font-size:25mm;margin:4mm 0 5mm">Health</div>
 
   <div class="scripture">
-    <span class="ref">1 Corinthians 6:19–20</span>
-    <div class="verse">“Know ye not that your body is the <em>temple of the Holy Ghost</em>
-      which is in you, which ye have of God, and ye are not your own? For ye are bought with
-      a price: therefore glorify God in your body, and in your spirit, which are God’s.”</div>
+    <span class="ref">1 Corinthians 6:19–20 · NLT</span>
+    <div class="verse">“Don’t you realize that <em>your body is the temple of the Holy
+      Spirit</em>, who lives in you and was given to you by God? You do not belong to
+      yourself, for God bought you with a high price. So you must honor God with your body.”</div>
   </div>
 
   <div class="block-label" style="margin:6mm 0 3.5mm">The Vision</div>
@@ -655,21 +750,21 @@ C7 = card(sheet="C7", inner="""
 
   <div class="declare" style="margin-bottom:5mm">
     <div class="big" style="font-size:3.2mm">Discipline in the body<br>is discipline everywhere else</div>
-    <div class="small">1 Cor. 9:27 · bring it into subjection</div>
+    <div class="small">1 Cor. 9:27 · training it to do what it should</div>
   </div>
 
   <div class="block-label" style="margin-bottom:3.5mm">The Non-Negotiables</div>
   <ul class="vision" style="margin-bottom:1mm">
     <li>Water and protein before coffee.</li>
-    <li>Asleep by the hour that makes 4× a week possible.</li>
+    <li>Asleep by the hour that makes 03:00 and 4× a week possible.</li>
     <li>Sunday is prep day — the week is won on Sunday afternoon.</li>
   </ul>
 
   <div class="grow"></div>
 
   <div class="pull">
-    <div class="q">He giveth power to the faint</div>
-    <div class="r">Isaiah 40:29 · and to them that have no might</div>
+    <div class="q">He gives power to the weak</div>
+    <div class="r">Isaiah 40:29 NLT · and strength to the powerless</div>
   </div>
 
   <div class="grow"></div>
@@ -677,138 +772,76 @@ C7 = card(sheet="C7", inner="""
   <div class="verse-mini" style="margin-bottom:4mm">
     <b>Standing on</b><br>
     <span style="display:block;margin-top:1.5mm">
-    <strong>1 Cor. 9:27</strong> — “But I keep under my body, and bring it into subjection.”<br>
-    <strong>3 John 1:2</strong> — “I wish above all things that thou mayest prosper and be in
-    health, even as thy soul prospereth.”</span>
+    <strong>1 Cor. 9:27</strong> — “I discipline my body like an athlete, training it to do
+    what it should.”<br>
+    <strong>3 John 1:2</strong> — “I hope all is well with you and that you are as healthy in
+    body as you are strong in spirit.”</span>
   </div>
 
   <div class="block-label" style="margin-bottom:3.5mm">Actionables</div>
   <ul class="acts">
     <li><b>If it is the night before a gym day,</b> then the bag is packed and by the door.
         The decision is made while you are still willing.</li>
-    <li><b>If you miss a session,</b> then never miss two in a row. The rule is not perfection,
-        it is no back-to-back misses.</li>
-    <li><b>Every Sunday 16:00,</b> meal prep for the next four days — cooking is a
-        standing appointment, not a mood.</li>
+    <li><b>If you miss a session,</b> then never miss two in a row.</li>
+    <li><b>Every Sunday 16:00,</b> meal prep for the next four days.</li>
     <li><b>Book and pay for the dance class</b> — a paid class is a kept class.</li>
   </ul>
 
-  <div class="foot"><span>Glorify God in your body</span><span>Sheet C7</span></div>
-""")
-
-
-C8 = card(sheet="C8", inner="""
-  <div class="eyebrow">Joy &amp; Presence · 2026</div>
-  <div class="script" style="font-size:24mm;margin:4mm 0 5mm">Social</div>
-
-  <div class="scripture">
-    <span class="ref">Psalm 118:24 · Ecclesiastes 3:4</span>
-    <div class="verse">“This is the day which the LORD hath made; we will <em>rejoice and be
-      glad</em> in it.”<br>“A time to weep, and a time to laugh; a time to mourn,
-      and a time to dance.”</div>
-  </div>
-
-  <div class="block-label" style="margin:6mm 0 3.5mm">The Vision</div>
-  <ul class="vision">
-    <li><strong>October marathon</strong> — trained for, finished, celebrated.</li>
-    <li><strong>Remember December</strong> — fully present, fully in.</li>
-    <li><strong>Celebrate my birthday with friends</strong> — planned early, not squeezed in.</li>
-  </ul>
-
-  <div class="declare" style="margin:3mm 0 5mm;background:var(--terracotta)">
-    <div class="big" style="font-size:3.3mm">Rest and celebration are<br>obedience, not indulgence</div>
-    <div class="small" style="color:rgba(238,228,218,.75)">Exodus 20:8 · Remember the sabbath day</div>
-  </div>
-
-  <div class="block-label" style="margin-bottom:4mm">The three dates</div>
-  <div style="display:flex;gap:2mm;margin-bottom:2mm">
-    <div style="flex:1;border:.4mm solid var(--almond);padding:4mm 2mm;text-align:center">
-      <div style="font-size:6mm;font-weight:800;color:var(--terracotta);line-height:1">OCT</div>
-      <div style="font-size:2.4mm;font-weight:700;letter-spacing:.18em;color:var(--umber);
-        margin-top:1.6mm">MARATHON</div>
-      <div style="font-size:2.3mm;color:var(--stone);margin-top:1.2mm">16 weeks of training</div></div>
-    <div style="flex:1;border:.4mm solid var(--almond);padding:4mm 2mm;text-align:center">
-      <div style="font-size:6mm;font-weight:800;color:var(--terracotta);line-height:1">MY&nbsp;DAY</div>
-      <div style="font-size:2.4mm;font-weight:700;letter-spacing:.18em;color:var(--umber);
-        margin-top:1.6mm">BIRTHDAY</div>
-      <div style="font-size:2.3mm;color:var(--stone);margin-top:1.2mm">Booked 6 weeks out</div></div>
-    <div style="flex:1;border:.4mm solid var(--almond);padding:4mm 2mm;text-align:center">
-      <div style="font-size:6mm;font-weight:800;color:var(--terracotta);line-height:1">DEC</div>
-      <div style="font-size:2.4mm;font-weight:700;letter-spacing:.18em;color:var(--umber);
-        margin-top:1.6mm">REMEMBER</div>
-      <div style="font-size:2.3mm;color:var(--stone);margin-top:1.2mm">All in, fully present</div></div>
-  </div>
-
-  <div class="grow"></div>
-
-  <div class="pull">
-    <div class="q">The joy of the LORD is your strength</div>
-    <div class="r">Nehemiah 8:10 · neither be ye sorry</div>
-  </div>
-
-  <div class="grow"></div>
-
-  <div class="verse-mini" style="margin-bottom:4mm">
-    <b>Standing on</b><br>
-    <span style="display:block;margin-top:1.5mm">
-    <strong>Heb. 12:1</strong> — “Let us run with patience the race that is set before us.”<br>
-    <strong>Isa. 40:31</strong> — “They shall run, and not be weary; and they shall walk,
-    and not faint.”</span>
-  </div>
-
-  <div class="block-label" style="margin-bottom:3.5mm">Actionables</div>
-  <ul class="acts">
-    <li><b>Register and pay for the marathon now</b> — the entry fee is the commitment device.</li>
-    <li><b>Sixteen weeks out,</b> the training plan goes in the calendar as appointments,
-        not intentions. Long run every Saturday.</li>
-    <li><b>Six weeks before your birthday,</b> the date, the place and the invitations
-        are sent. You do not get celebrated by accident.</li>
-    <li><b>By 1 November,</b> the Remember December plan is made — who, where, what you
-        are giving.</li>
-  </ul>
-
-  <div class="foot"><span>A time to dance</span><span>Sheet C8</span></div>
+  <div class="foot"><span>Honor God with your body</span><span>Sheet C8</span></div>
 """)
 
 
 C9 = card(sheet="C9", inner="""
-  <div class="eyebrow">People · 2026</div>
-  <div class="script" style="font-size:19mm;margin:4mm 0 1mm">Relationships</div>
-  <div class="h-mod" style="font-size:3.4mm;color:var(--cocoa);margin-bottom:5mm">Build your circle</div>
+  <div class="eyebrow">Joy &amp; Presence · 2026</div>
+  <div class="script" style="font-size:25mm;margin:4mm 0 5mm">Social</div>
 
   <div class="scripture">
-    <span class="ref">Proverbs 27:17 · Proverbs 13:20</span>
-    <div class="verse">“<em>Iron sharpeneth iron</em>; so a man sharpeneth the countenance of
-      his friend.”<br>“He that walketh with wise men shall be wise: but a companion of fools
-      shall be destroyed.”</div>
+    <span class="ref">Psalm 118:24 · Ecclesiastes 3:4 · NLT</span>
+    <div class="verse">“This is the day the LORD has made. <em>We will rejoice and be glad
+      in it.</em>”</div>
+    <div class="verse">“A time to cry and a time to laugh. A time to grieve and a time
+      to dance.”</div>
   </div>
 
-  <div class="block-label" style="margin:6mm 0 3.5mm">The Vision</div>
-  <ul class="vision">
-    <li>A circle chosen <strong>on purpose</strong> — not inherited by proximity.</li>
-    <li>People who are <strong>ahead of me</strong> in something and unafraid to say so.</li>
-    <li>People I am <strong>faithfully carrying</strong> — I am someone’s answered prayer too.</li>
-  </ul>
+  <div class="block-label" style="margin:6mm 0 4mm">The three dates</div>
+  <div style="display:flex;gap:2mm;margin-bottom:5mm">
+    <div style="flex:1;border:.4mm solid var(--almond);padding:4mm 2mm;text-align:center">
+      <div style="font-size:5.4mm;font-weight:800;color:var(--terracotta);line-height:1">OCT</div>
+      <div style="font-size:2.4mm;font-weight:700;letter-spacing:.16em;color:var(--umber);
+        margin-top:1.8mm">MARATHON</div>
+      <div style="font-size:2.3mm;color:var(--stone);margin-top:1.4mm;line-height:1.4">
+        Week 1 starts<br>this week</div></div>
+    <div style="flex:1;border:.4mm solid var(--almond);padding:4mm 2mm;text-align:center">
+      <div style="font-size:5.4mm;font-weight:800;color:var(--terracotta);line-height:1">29 OCT</div>
+      <div style="font-size:2.4mm;font-weight:700;letter-spacing:.16em;color:var(--umber);
+        margin-top:1.8mm">BIRTHDAY</div>
+      <div style="font-size:2.3mm;color:var(--stone);margin-top:1.4mm;line-height:1.4">
+        Booked by<br>17 September</div></div>
+    <div style="flex:1.35;border:.4mm solid var(--almond);padding:4mm 2mm;text-align:center">
+      <div style="font-size:5.4mm;font-weight:800;color:var(--terracotta);line-height:1">30 NOV<span
+        style="font-size:3.4mm"> – </span>9 DEC</div>
+      <div style="font-size:2.4mm;font-weight:700;letter-spacing:.16em;color:var(--umber);
+        margin-top:1.8mm">REMEMBER DECEMBER</div>
+      <div style="font-size:2.3mm;color:var(--stone);margin-top:1.4mm;line-height:1.4">
+        Summer vacation</div></div>
+  </div>
 
-  <div style="border:.4mm solid var(--almond);padding:5mm;margin:2mm 0 5mm">
-    <div style="font-size:2.4mm;font-weight:700;letter-spacing:.3em;color:var(--terracotta);
-      text-transform:uppercase;margin-bottom:3.5mm">The five names</div>
-    <div style="display:flex;flex-direction:column;gap:5mm">
-      <div style="border-bottom:.3mm dashed var(--stone);height:7mm"></div>
-      <div style="border-bottom:.3mm dashed var(--stone);height:7mm"></div>
-      <div style="border-bottom:.3mm dashed var(--stone);height:7mm"></div>
-      <div style="border-bottom:.3mm dashed var(--stone);height:7mm"></div>
-      <div style="border-bottom:.3mm dashed var(--stone);height:7mm"></div>
-    </div>
-    <div style="font-size:2.4mm;color:var(--stone);margin-top:3.5mm;letter-spacing:.06em">
-      Write them in by hand. A circle you can’t name is a circle you don’t have.</div>
+  <div class="block-label" style="margin-bottom:4mm">Remember December · the money</div>
+  <div class="target"><span class="num">R3k</span><span class="lbl">Deposit</span>
+    <span class="sub">Due by 31 August</span></div>
+  <div class="target"><span class="num">R12k</span><span class="lbl">Total for the trip</span>
+    <span class="sub">R3 000 / month · Sep, Oct, Nov</span></div>
+
+  <div class="declare" style="margin:3mm 0 5mm;background:var(--terracotta)">
+    <div class="big" style="font-size:3.3mm">Rest and celebration are<br>obedience, not indulgence</div>
+    <div class="small" style="color:rgba(238,228,218,.75)">Exodus 20:8 · keep the Sabbath holy</div>
   </div>
 
   <div class="grow"></div>
 
   <div class="pull">
-    <div class="q">A friend loveth at all times</div>
-    <div class="r">Proverbs 17:17 · born for adversity</div>
+    <div class="q" style="font-size:11mm">The joy of the LORD is your strength</div>
+    <div class="r">Nehemiah 8:10 NLT · don’t be dejected and sad</div>
   </div>
 
   <div class="grow"></div>
@@ -816,81 +849,148 @@ C9 = card(sheet="C9", inner="""
   <div class="verse-mini" style="margin-bottom:4mm">
     <b>Standing on</b><br>
     <span style="display:block;margin-top:1.5mm">
-    <strong>Eccl. 4:9–10</strong> — “Two are better than one… for if they fall, the one will
-    lift up his fellow.”<br>
-    <strong>Amos 3:3</strong> — “Can two walk together, except they be agreed?”</span>
+    <strong>Heb. 12:1</strong> — “Let us run with endurance the race God has set before us.”<br>
+    <strong>Isa. 40:31</strong> — “They will run and not grow weary. They will walk and
+    not faint.”</span>
   </div>
 
   <div class="block-label" style="margin-bottom:3.5mm">Actionables</div>
   <ul class="acts">
-    <li><b>One intentional conversation a week</b> — not a text, a conversation.</li>
-    <li><b>One gathering a month that I host.</b> Be the one who makes the table, not the
-        one who waits for an invitation.</li>
-    <li><b>If someone comes to mind,</b> then reach out the same day. That prompting is
-        usually not random.</li>
-    <li><b>Ask for help out loud</b> at least once a month. Isolation is the enemy’s
-        cheapest strategy.</li>
+    <li><b>Register and pay for the marathon this week</b> — the entry fee is the
+        commitment device. Ten weeks of training, long run every Saturday.</li>
+    <li><b>By 31 August,</b> the R3 000 deposit is paid and the dates are locked with
+        whoever is coming.</li>
+    <li><b>By 17 September,</b> the birthday venue is booked and the invitations are sent.
+        You do not get celebrated by accident.</li>
+    <li><b>30 Nov – 9 Dec:</b> out of office means out of office. Fully present, fully in.</li>
   </ul>
 
-  <div class="foot"><span>Iron sharpeneth iron</span><span>Sheet C9</span></div>
+  <div class="foot"><span>A time to dance</span><span>Sheet C9</span></div>
 """)
 
 
-C10 = card(sheet="C10", inner="""
-  <div class="eyebrow">How this board works</div>
-  <div class="script" style="font-size:20mm;margin:4mm 0 1mm">The Rhythm</div>
-  <div class="h-mod" style="font-size:3mm;color:var(--cocoa);margin-bottom:5mm">
-    What the research says makes a vision actually happen</div>
+# --- C10: two half-height panels on one A4 --------------------------------
 
-  <div class="scripture">
-    <span class="ref">Habakkuk 2:2–3</span>
-    <div class="verse">“<em>Write the vision, and make it plain upon tables, that he may run
-      that readeth it.</em> For the vision is yet for an appointed time… though it tarry,
-      wait for it; because it will surely come.”</div>
+C10 = bare(cls="split", sheet="C10", inner="""
+  <div class="half">
+    <div class="eyebrow">People · 2026</div>
+    <div class="script" style="font-size:17mm;margin:3mm 0 3.5mm">Relationships</div>
+    <div class="h-mod" style="font-size:3mm;color:var(--cocoa);margin-bottom:4mm">
+      Build your circle</div>
+
+    <div class="scripture" style="padding:4.5mm 5mm">
+      <span class="ref">Proverbs 27:17 · Proverbs 13:20 · NLT</span>
+      <div class="verse" style="font-size:3.1mm">“<em>As iron sharpens iron, so a friend
+        sharpens a friend.</em>”</div>
+      <div class="verse" style="font-size:3.1mm">“Walk with the wise and become wise;
+        associate with fools and get in trouble.”</div>
+    </div>
+
+    <div style="display:flex;gap:6mm;margin-top:4.5mm">
+      <div style="flex:1.05">
+        <div class="block-label" style="margin-bottom:3mm">The Vision</div>
+        <ul class="vision" style="margin-bottom:0">
+          <li style="font-size:3.1mm;margin-bottom:2mm">A circle chosen <strong>on
+            purpose</strong> — not inherited by proximity.</li>
+          <li style="font-size:3.1mm;margin-bottom:2mm">People <strong>ahead of me</strong>
+            in something, unafraid to say so.</li>
+          <li style="font-size:3.1mm;margin-bottom:0">People I am <strong>faithfully
+            carrying</strong> — I am someone’s answered prayer too.</li>
+        </ul>
+      </div>
+      <div style="flex:1;border:.4mm solid var(--almond);padding:4mm 4.5mm">
+        <div style="font-size:2.3mm;font-weight:700;letter-spacing:.28em;
+          color:var(--terracotta);text-transform:uppercase;margin-bottom:3mm">The five names</div>
+        <div style="display:flex;flex-direction:column;gap:3.6mm">
+          <div style="border-bottom:.3mm dashed var(--stone);height:4mm"></div>
+          <div style="border-bottom:.3mm dashed var(--stone);height:4mm"></div>
+          <div style="border-bottom:.3mm dashed var(--stone);height:4mm"></div>
+          <div style="border-bottom:.3mm dashed var(--stone);height:4mm"></div>
+          <div style="border-bottom:.3mm dashed var(--stone);height:4mm"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grow"></div>
+
+    <ul class="acts" style="margin-bottom:3mm">
+      <li><b>One intentional conversation a week</b> — not a text, a conversation.</li>
+      <li><b>One gathering a month that I host.</b> Be the one who makes the table.</li>
+      <li><b>If someone comes to mind,</b> then reach out the same day. That prompting is
+          usually not random. <i>Prov. 17:17 — “A friend is always loyal.”</i></li>
+    </ul>
+
+    <div class="foot"><span>Iron sharpens iron</span><span>Sheet C10 · upper</span></div>
   </div>
 
-  <div class="block-label" style="margin:5.5mm 0 3.5mm">Six findings this board is built on</div>
-  <ul class="acts" style="margin-bottom:4mm">
-    <li><b>Write it, don’t wish it.</b> Matthews (Dominican University) — people who wrote
-        their goals, wrote action commitments and sent weekly progress to a friend achieved
-        about 76%, versus 43% for those who only thought about them.</li>
-    <li><b>Picture the process, not just the prize.</b> Pham &amp; Taylor (UCLA, 1999) —
-        students who mentally rehearsed the <i>studying</i> scored higher; those who only
-        pictured the good grade studied less.</li>
-    <li><b>Contrast the wish with the obstacle.</b> Oettingen’s WOOP — Wish, Outcome,
-        Obstacle, Plan. Fantasy alone predicts <i>less</i> achievement.</li>
-    <li><b>“If–then” beats good intentions.</b> Gollwitzer &amp; Sheeran, 94 studies —
-        naming when and where you will act is one of the strongest effects in the literature.</li>
-    <li><b>Specific and hard beats “do your best.”</b> Locke &amp; Latham’s goal-setting
-        theory — vague goals produce vague effort.</li>
-    <li><b>Look daily; the eye recruits attention.</b> A goal you see is a goal your mind
-        keeps solving in the background.</li>
-  </ul>
+  <div class="cut"></div>
 
-  <div class="grow"></div>
+  <div class="half dark">
+    <div class="eyebrow">How this board works</div>
+    <div class="script" style="font-size:13.5mm;margin:1.5mm 0 4mm;color:var(--linen)">The Rhythm</div>
+    <div class="h-mod" style="font-size:2.7mm;color:var(--almond);margin-bottom:3.4mm">
+      What the research says makes a vision actually happen</div>
 
-  <div class="block-label" style="margin-bottom:3.5mm">The cadence</div>
-  <ul class="acts">
-    <li><b>Daily · 60 seconds.</b> Read the headline out loud. Name one thing today that
-        serves it.</li>
-    <li><b>Weekly · Sunday 18:00.</b> Ten minutes at the board. What moved, what didn’t,
-        what is next — then send it to one person who will ask you about it.</li>
-    <li><b>Monthly.</b> The numbers: cashflow, savings, investments, gym sessions,
-        membership.</li>
-    <li><b>Quarterly.</b> Re-read the Dream of CRC. Adjust the plan, never the purpose.</li>
-  </ul>
+    <div style="background:rgba(232,225,213,.10);padding:3.4mm 5mm;margin-bottom:4mm">
+      <div style="font-size:2.4mm;font-weight:700;letter-spacing:.3em;color:var(--sand);
+        text-transform:uppercase;margin-bottom:2.4mm">Habakkuk 2:2–3 · NLT</div>
+      <div style="font-size:3.05mm;line-height:1.5;color:rgba(232,225,213,.92)">
+        “<b>Write my answer plainly on tablets, so that a runner can carry the correct
+        message to others.</b> If it seems slow in coming, wait patiently, for it will surely
+        take place.”</div>
+    </div>
 
-  <div class="declare" style="margin-top:4mm">
-    <div class="big" style="font-size:3.2mm">Commit thy works unto the LORD,<br>
-      and thy thoughts shall be established</div>
-    <div class="small">Proverbs 16:3</div>
+    <div style="display:flex;gap:6mm">
+      <div style="flex:1">
+        <div class="block-label" style="margin-bottom:3mm">Six findings this board is built on</div>
+        <ul class="acts" style="margin-bottom:0">
+          <li style="font-size:2.55mm;margin-bottom:1.45mm"><b>Write it, don’t wish it.</b>
+            Matthews, Dominican University — goals written, action commitments written,
+            weekly progress sent to a friend: ~76% achieved vs 43%.</li>
+          <li style="font-size:2.55mm;margin-bottom:1.45mm"><b>Picture the process, not the
+            prize.</b> Pham &amp; Taylor, UCLA — rehearsing the studying beat picturing the
+            grade.</li>
+          <li style="font-size:2.55mm;margin-bottom:1.45mm"><b>Contrast the wish with the
+            obstacle.</b> Oettingen’s WOOP — fantasy alone predicts less achievement.</li>
+          <li style="font-size:2.55mm;margin-bottom:1.45mm"><b>“If–then” beats intention.</b>
+            Gollwitzer &amp; Sheeran, 94 studies — naming when and where you act.</li>
+          <li style="font-size:2.55mm;margin-bottom:1.45mm"><b>Specific and hard beats “do
+            your best.”</b> Locke &amp; Latham — vague goals produce vague effort.</li>
+          <li style="font-size:2.55mm;margin-bottom:0"><b>Look daily.</b> A goal you see is
+            a goal your mind keeps solving in the background.</li>
+        </ul>
+      </div>
+      <div style="flex:.72">
+        <div class="block-label" style="margin-bottom:3mm">The cadence</div>
+        <ul class="acts" style="margin-bottom:0">
+          <li style="font-size:2.55mm;margin-bottom:2mm"><b>Daily · 60 seconds.</b>
+            Read the headline out loud. Name one thing today that serves it.</li>
+          <li style="font-size:2.55mm;margin-bottom:2mm"><b>Weekly · Sunday 18:00.</b>
+            Ten minutes at the board — then send it to one person who will ask about it.</li>
+          <li style="font-size:2.55mm;margin-bottom:2mm"><b>Monthly.</b> The numbers:
+            R16 000 moved, gym sessions, chapters read, membership.</li>
+          <li style="font-size:2.55mm;margin-bottom:0"><b>Quarterly.</b> Re-read Sheet C5.
+            Adjust the plan, never the purpose.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="grow"></div>
+
+    <div style="background:rgba(232,225,213,.12);padding:2.8mm 5mm;text-align:center;
+         margin-bottom:3mm">
+      <span style="font-size:3.1mm;font-weight:800;letter-spacing:.1em;color:var(--sand);
+        text-transform:uppercase">Commit your actions to the LORD, and your plans will succeed</span>
+      <span style="font-size:2.2mm;letter-spacing:.3em;text-transform:uppercase;
+        color:var(--stone);margin-left:3mm">Proverbs 16:3 NLT</span>
+    </div>
+
+    <div class="foot"><span>Make it plain · run with it</span><span>Sheet C10 · lower</span></div>
   </div>
-
-  <div class="foot"><span>Make it plain · run with it</span><span>Sheet C10</span></div>
 """)
 
 
-CARDS = [C1, C2, C3, CRC_A, CRC_B, C6, C7, C8, C9, C10]
+CARDS = [C1, C2, C3, C4, C5, C6, C7, C8, C9, C10]
 
 
 # --------------------------------------------------------------------------
@@ -914,7 +1014,6 @@ html,body{background:#3B3128;display:flex;align-items:flex-start;justify-content
       padding:14mm 24mm 10mm;column-gap:0;row-gap:0;}
 .a0 .card{box-shadow:0 1.2mm 3mm rgba(41,28,14,.20);}
 .a0 .tile{box-shadow:none;}
-/* the seam between banner sheets, shown faintly so the paste-up is obvious */
 .banner-row .tile + .tile{box-shadow:inset .35mm 0 0 rgba(232,225,213,.10);}
 """
 
