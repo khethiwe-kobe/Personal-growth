@@ -22,6 +22,7 @@ const NAV: { group: string; items: { href: string; label: string }[] }[] = [
       { href: "/memory", label: "Scripture Memory" },
       { href: "/prayer", label: "Prayer Journal" },
       { href: "/renew", label: "Renewing My Mind" },
+      { href: "/homecell", label: "Homecell" },
     ],
   },
   {
@@ -93,6 +94,8 @@ export default function Shell({ children }: { children: React.ReactNode }) {
   const [email, setEmail] = useState<string | null>(null);
   const [status, setStatus] = useState<SyncStatus>("idle");
   const bottomNavRef = useRef<HTMLDivElement>(null);
+  // The Homecell site carries its own full-bleed CRC theme and navigation.
+  const bare = pathname.startsWith("/homecell");
 
   // Keep the active tab in view within the scrollable bottom bar.
   useEffect(() => {
@@ -118,6 +121,8 @@ export default function Shell({ children }: { children: React.ReactNode }) {
     const unsub = onAuthChange(begin);
     return unsub;
   }, []);
+
+  if (bare) return <>{mounted ? children : null}</>;
 
   return (
     <div className="mx-auto flex min-h-screen max-w-7xl">
