@@ -1,17 +1,15 @@
 # Rental Cost Comparison — SoHo Junction vs Petra Nera
 
-**Prepared:** August 2026 · **Decision window:** SoHo Junction available 1 October 2026
+**Prepared:** August 2026 · **Two people sharing** · **All travel by Uber**
 
-Two shortlisted options in the Fourways area. Both are within reach of CRC Johannesburg
-(cnr Witkoppen & Riverbend Road, Fourways) and both require a Wednesday run to Wits main
-campus, Braamfontein.
+- **Option A — SoHo Junction**, 4 Poplar Ave, Broadacres Park, Sandton 2055 · 2 bed / 2 bath / 62 m² · **R9,500 p/m** · available 1 Oct 2026
+- **Option B — Petra Nera**, 14 Riverbend Rd, Hoogland, Randburg 2188 · 3 bed / 2 bath · **R9,000 p/m**
 
-- **Option A — SoHo Junction**, 4 Poplar Ave, Broadacres, Fourways · 2 bed / 2 bath / 62 m² · **R9,500 p/m**
-- **Option B — Petra Nera**, 14 Riverbend Road, Fourways · 3 bed / 2 bath · **R9,000 p/m**
+Travel pattern: CRC Johannesburg (cnr Witkoppen & Riverbend Rd) on Mon, Tue, Thu.
+Wits main campus (1 Jan Smuts Ave, Braamfontein) on Wednesday, with no CRC on campus days.
 
-The headline rents are R500 apart. **The real gap is roughly R1,670 a month** once
-utilities, levies, gym and transport are added — and it runs the *other* way from what the
-listing price suggests. Detail below.
+The headline rents are R500 apart. **The real gap is R1,330 a month** — in Petra Nera's
+favour, but by a narrower margin than the rents suggest, and the case is fragile.
 
 ---
 
@@ -21,462 +19,400 @@ listing price suggests. Detail below.
 |---|---:|---:|
 | Advertised rent | R9,500 | R9,000 |
 | **Advertised gap** | **+R500** | — |
-| True all-in monthly cost | **R12,792** | **R11,120** |
-| **True gap** | **+R1,672** | — |
+| True all-in monthly cost | **R13,773** | **R12,443** |
+| **True gap** | **+R1,330** | — |
+| Per person, per month | R6,887 | R6,222 |
 
-SoHo Junction's advertised price captures **74%** of what you will actually pay each month.
-The remaining 26% is in charges that appear below the fold of the listing.
-
----
-
-## 2. ⚠️ Hidden fees — SoHo Junction
-
-These are the costs **not** in the R9,500 headline. Items 1–4 are confirmed on the listing
-itself; items 5–13 are standard-practice charges that need to be confirmed in writing
-before you sign.
-
-### Confirmed on the listing
-
-| # | Charge | Amount | Note |
-|---|---|---:|---|
-| 1 | **Sanitation / sewerage** | **R900 p/m** | Fixed. Not usage-based — you pay this even if you travel. |
-| 2 | **Refuse & security levy** | **R500 p/m** | Fixed body-corporate charge. |
-| 3 | **Electricity** | Pre-paid, ~R700 est. | Variable. See note on geyser below. |
-| 4 | **Water** | Pre-paid, ~R350 est. | Variable. Pre-paid water is uncommon and means **no grace period** — it cuts off when the credit runs out. |
-
-**Items 1 + 2 alone = R1,400 per month = R16,800 per year** that the advert does not show.
-That is nearly two months of rent, invisible at first glance.
-
-### To confirm before signing
-
-| # | Item | Likely cost | Why it matters |
-|---|---|---:|---|
-| 5 | **Deposit** | R10,000 unfurnished / **R20,000 semi-furnished** | The deposit *doubles* if you take the semi-furnished option. Confirm which applies and get the interest-bearing account confirmed in writing (required by the Rental Housing Act). |
-| 6 | Lease initiation / admin fee | R950 – R1,500 once-off | Agent charge, usually non-refundable. |
-| 7 | Credit & background check | R100 – R500 once-off | Sometimes billed per applicant. |
-| 8 | Pre-paid meter activation / access tags / remotes | R300 – R800 once-off | Per tag. Ask how many are included. |
-| 9 | Annual escalation | **6 – 8%** | Year 2 rent becomes **R10,070 – R10,260**, and the levies escalate too. Get the % written into the lease. |
-| 10 | Special levy | Currently **R0** | The body corporate can raise one at any time. Ask for the last two AGM minutes and the reserve-fund balance. |
-| 11 | Contents insurance | R150 – R350 p/m | The landlord insures the building, not your possessions. |
-| 12 | Early-cancellation penalty | Up to ~2 months' rent | The CPA gives you 20 business days' notice, but the landlord may charge a "reasonable" penalty. Get the number capped in the lease. |
-| 13 | Fibre installation + router | R0 – R1,800 once-off | Often waived on a 12-month contract. Complex is fibre-ready, not fibre-included. |
-
-### Two more gates worth flagging
-
-- **Minimum income requirement: R33,000 gross per month.** This is a hard qualifying
-  criterion. If applying jointly, both parties need 6 months of payslips, 6 months of bank
-  statements, ID, current lease, rental invoice and a clear credit record.
-- **Cats only — no dogs.** Second-floor unit. A deal-breaker if a dog is in the picture.
-- **Available 1 October 2026.** If your current lease ends earlier or later, budget for
-  either a gap (storage + temporary accommodation) or an overlap month (double rent
-  ≈ R12,800).
+SoHo Junction's advertised price captures **69%** of the true housing cost. The rest is in
+charges that appear below the fold of the listing.
 
 ---
 
-## 3. ✅ What SoHo Junction gives you for that premium
-
-This is the honest other side of the ledger, and it is not trivial. The complex is
-effectively a wellness-and-work bundle attached to the flat.
-
-### Fitness & wellness — on site, zero commute
-
-| Facility | Standalone value |
-|---|---:|
-| **Gym** (Activity Centre) | R650 – R900 p/m if bought separately |
-| **Sauna** | R200 – R400 p/m at a commercial club |
-| **Steam room** | Bundled with sauna above |
-| **Swimming pool** (auto-cleaning equipment) | R150 – R300 p/m equivalent |
-| **Travel to any of it** | **R0 and 0 minutes** — it's downstairs |
-
-Replacing just the gym externally costs R650/month at Planet Fitness Fourways, plus fuel,
-plus roughly 20 minutes of round-trip travel per session. The on-site gym is the single
-biggest practical benefit here: **the friction of going is near zero**, which is the actual
-reason most memberships lapse. A gym you walk downstairs to at 05:30 gets used; one that
-needs a car at 05:30 often doesn't.
-
-### Work & study
-
-- **Business centre** — a real advantage for a Wits student. A quiet, powered, seated
-  workspace outside the flat, on the property, at no extra cost. The alternative is coffee
-  shops (R60–R100 a sitting, ~R800/month if you work out twice a week) or driving to campus
-  outside class days.
-- **Function room** — hosting capacity without needing a large flat, and without restaurant
-  or venue hire costs for birthdays, small groups or study sessions.
-- **Fibre-ready** — no build-out delay; connection can be live quickly.
-
-### Security & comfort
-
-- **24/7 manned guard + CCTV + intercom.** Meaningful for late returns from Braamfontein
-  on a Wednesday.
-- **2 parking bays** (1 covered with shade net, 1 open) — many Fourways complexes charge
-  R250–R500/month per extra bay. Two included is genuinely good value; confirm both are
-  in the lease at no extra cost.
-- **Central geyser with electricity included.** Water heating is typically 30–40% of a
-  household electricity bill. Having it on the communal account is a real, ongoing saving
-  of roughly **R250–R400 a month** and is why the R700 electricity estimate above is lower
-  than you'd expect for a 2-bed.
-- **North-facing** — warmer through winter, lower heating load, better natural light.
-- **Newer, better-presented stock.** Harder to price, easy to feel every day.
-
----
-
-## 4. Petra Nera — the cost picture
-
-| Item | Amount | Note |
-|---|---:|---|
-| Rent | R9,000 | 3 bed / 2 bath |
-| Electricity & water | R800 | As quoted |
-| **Planet Fitness Fourways** membership | **R650** | Single-club, 12-month contract. Range is R400–R900 depending on club and package; Fourways is a Megaclub, so budget toward the upper half. |
-| Gym joining fee | R199 – R500 once-off | |
-| Transport to gym | R218 p/m fuel | ~4 km each way to The Buzz Shopping Centre, cnr Witkoppen & Nerine Dr |
-
-**⚠️ Verify the R800.** For a 3-bedroom unit, R800 covering *both* electricity and water is
-low. It very likely excludes **sanitation and refuse**, which at SoHo are billed separately
-at R1,400. Ask explicitly: *"Is R800 the total, or does the body corporate bill sanitation,
-sewerage and refuse on top?"* If there's an additional R700–R1,000 hiding there, the gap
-between the two options narrows sharply. **This is the single most important number to
-confirm in this whole analysis.**
-
-### What Petra Nera gives you
-
-- **Walking distance to CRC.** ~500 m. This is the standout feature and it compounds:
-  no fuel, no parking, no traffic on Witkoppen, no reason to skip a midweek service,
-  and full freedom to be involved in evening or spontaneous church activity.
-- **Three bedrooms.** Scarce in this area, as you noted. A third room is either a study,
-  a guest room, or **income** — see §7.
-- **More space for less money.** Petra Nera is both bigger and cheaper.
-
-### What it costs you
-
-- Aesthetics. Not pretty, in your words — and this is a place you'll be in every day.
-- No on-site gym, pool, sauna, business centre or function room.
-- The gym becomes a *trip*, not a *decision*.
-
----
-
-## 5. Transport analysis
-
-### Weekly travel pattern
-
-| Day | Destination | Notes |
-|---|---|---|
-| Mon, Tue, Thu | CRC Johannesburg | Round trip, 3 days/week ≈ **13 trips/month** |
-| Wed | Wits main campus, Braamfontein | Round trip, ≈ **4.3 trips/month** (no CRC on campus days) |
-| Gym (Option B only) | Planet Fitness Fourways | ~3×/week ≈ **13 trips/month** |
-
-### Assumptions
-
-- **Fuel:** R26.17/litre (95 unleaded, inland, August 2026)
-- **Consumption:** 8 l/100 km → **R2.09 per km** in fuel
-- **All-in running cost** (fuel + tyres + servicing + depreciation): **R4.50 per km**
-- 4.33 weeks per month
-
-### Distances (road, approximate)
-
-| Leg | Option A (SoHo Junction) | Option B (Petra Nera) |
-|---|---:|---:|
-| → CRC Johannesburg, one way | ~6.5 km | **~0.5 km — walk** |
-| → Wits Braamfontein, one way | ~27 km | ~25 km |
-| → Planet Fitness Fourways, one way | 0 km (on site) | ~4 km |
-
-### Monthly distance & cost
-
-| | **A — SoHo Junction** | **B — Petra Nera** |
-|---|---:|---:|
-| CRC travel | 169 km | **0 km** |
-| Wits travel | 234 km | 217 km |
-| Gym travel | 0 km | 104 km |
-| **Total** | **403 km** | **321 km** |
-| Fuel only @ R2.09/km | **R842** | **R670** |
-| All-in @ R4.50/km | R1,813 | R1,442 |
-
-Petra Nera saves **R172/month in fuel** (R2,064/year), or **R371/month** on a true
-cost-of-ownership basis (R4,452/year).
-
-Note how much smaller this is than you'd expect. **The gym trips eat most of the walking-to-CRC
-saving.** Cutting a 6.5 km commute three times a week is worth ~R350/month; adding a 4 km
-gym run three times a week costs ~R220 of it back.
-
-### If you don't own a car (or lose access to one)
-
-This is where the two options stop being close.
-
-| | **A — SoHo Junction** | **B — Petra Nera** |
-|---|---:|---:|
-| CRC by e-hail (~R100 each way) | R2,600 | **R0 — walk** |
-| Wits by e-hail (~R320 each way) | R2,771 | R2,771 |
-| Gym travel | R0 | ~R520 (minibus taxi on Witkoppen) |
-| **Monthly transport** | **R5,371** | **R3,291** |
-
-Without a car, Petra Nera saves **R2,080 a month** on transport alone. If car access is at
-all uncertain over the next 12 months, this should weigh heavily.
-
-### Time cost (the number nobody budgets)
-
-| | **A** | **B** |
-|---|---:|---:|
-| CRC round trips | ~6.5 hrs/month | ~3.0 hrs/month |
-| Gym round trips | 0 hrs | ~4.3 hrs/month |
-| **Total local travel** | **~6.5 hrs/month** | **~7.3 hrs/month** |
-
-Effectively a wash. Petra Nera buys back the church commute and spends it on the gym
-commute. Wits travel is near-identical for both (~7 hrs/month either way).
-
----
-
-## 6. Full monthly comparison
-
-### Scenario 1 — you drive your own car (fuel only)
+## 2. Full monthly cost
 
 | Line item | **A — SoHo Junction** | **B — Petra Nera** |
 |---|---:|---:|
 | Rent | R9,500 | R9,000 |
-| Sanitation | R900 | *verify — assumed in R800* |
-| Refuse & security | R500 | *verify — assumed in R800* |
-| Electricity | ~R700 | R800 combined |
-| Water | ~R350 | — |
-| Gym membership | **R0** *(included)* | R650 |
-| Transport (fuel) | R842 | R670 |
-| **Total** | **R12,792** | **R11,120** |
-| **Difference** | **+R1,672/month** | — |
-| **Per year** | **+R20,064** | — |
+| Sanitation *(confirmed on SoHo listing)* | R900 | *assumed in the R800* |
+| Refuse & security levy *(confirmed)* | R500 | *assumed in the R800* |
+| Electricity *(verified estimate — §6)* | R700 | R800 combined, as quoted |
+| Water *(first 6 kL free — §6)* | R50 | ↑ |
+| **Housing subtotal** | **R11,650** | **R9,800** |
+| Gym membership | **R0 — on site** | R650 (Planet Fitness Fourways) |
+| Uber — CRC (13 round trips) | R1,300 | **R0 — walk** |
+| Uber — Wits (4.3 round trips) | R823 | R823 |
+| Uber — gym (13 round trips) | R0 | R1,170 |
+| **Transport subtotal** | **R2,123** | **R1,993** |
+| **Monthly total** | **R13,773** | **R12,443** |
+| **Difference** | **R1,330/month · R15,960/year · R665 each** | — |
 
-### Scenario 2 — full vehicle running cost @ R4.50/km
+---
 
-| | **A** | **B** |
+## 3. ⚠️ Hidden fees
+
+Both listings understate. SoHo's omissions are larger and **confirmed**; Petra Nera's are
+smaller but **unverified** — which makes them riskier.
+
+### SoHo Junction — confirmed on the listing
+
+| Charge | Amount | Note |
+|---|---:|---|
+| **Sanitation / sewerage** | **R900 p/m** | Fixed, not usage-based. You pay it even when away. |
+| **Refuse & security levy** | **R500 p/m** | Fixed body-corporate charge. |
+| Electricity | ~R700 | Pre-paid, variable. Lower than usual because the geyser is on the communal account. |
+| Water | ~R50 | Pre-paid. Genuinely small — but it cuts off with no grace period when credit runs out. |
+| **Added to the advertised R9,500** | **R2,150** | The advert captures 69% of the true housing cost |
+
+**Sanitation and refuse alone = R1,400/month = R16,800/year** that the advert never shows —
+close to two months' rent, invisible at first glance. Both are fixed, so there is no way to
+reduce them by using less.
+
+### SoHo Junction — to confirm before signing
+
+| # | Item | Likely cost | Why it matters |
+|---|---|---:|---|
+| 1 | **Deposit** | R10,000 unfurnished / **R20,000 semi-furnished** | The deposit *doubles* on the semi-furnished option. Get the interest-bearing account confirmed in writing (Rental Housing Act). |
+| 2 | Lease initiation / admin fee | R950 – R1,500 once-off | Petra Nera's equivalent is R2,000, so ask early. |
+| 3 | Credit & background check | R100 – R500 once-off | Sometimes billed per applicant — twice for the two of you. |
+| 4 | Meter activation, access tags, remotes | R300 – R800 once-off | Per tag. You need two. |
+| 5 | **Annual escalation** | **6 – 8%** | Year-two rent becomes R10,070–R10,260, and the levies escalate too. |
+| 6 | Special levy | Currently R0 | The body corporate can raise one at any time. Ask for the last two AGM minutes and reserve-fund balance. |
+| 7 | Contents insurance | R150 – R350 p/m | The landlord insures the building, not your possessions. |
+| 8 | Early-cancellation penalty | up to ~2 months | CPA gives 20 business days' notice, but a "reasonable" penalty may apply. Get it capped. |
+| 9 | Fibre installation + router | R0 – R1,800 once-off | Complex is fibre-*ready*, not fibre-included. |
+
+**Two more gates:** minimum income **R33,000 gross/month** (both of you supply 6 months of
+payslips, bank statements, ID, current lease, rental invoice, clear credit); **cats only —
+no dogs**; and availability is **1 October**, so budget for a gap or an overlap month at
+roughly R13,800.
+
+### ⚠️ Petra Nera — two things to press on
+
+**1. The R2,000 admin fee is high.** Market rate for a lease initiation fee is R950–R1,500,
+so this is roughly R500–R1,000 above normal, and non-refundable. Ask what it covers and
+whether it's negotiable.
+
+**2. The R800 utility figure does not add up for a 3-bedroom.** Water is genuinely tiny —
+call it R50 — which leaves about R750 for electricity. A three-bed with its own geyser
+typically runs **R1,100–R1,500/month** at current City Power rates. Either the flat has a
+gas or solar geyser, or the quote excludes something. If sanitation and refuse are billed
+separately on top as well, this line could move by **R700–R1,000 a month** — enough to
+erase most of Petra Nera's advantage.
+
+---
+
+## 4. ✅ What SoHo's premium buys
+
+Because you are using Uber rather than a car, the on-site gym is worth considerably more
+than it would otherwise be — every trip you don't take is a fare you don't pay.
+
+| Facility | Value if bought separately |
+|---|---:|
+| **Gym** — on site, in the Activity Centre | R650 – R900 |
+| **Uber fares avoided** by the gym being downstairs | R1,170 |
+| **Sauna** and **steam room** | R200 – R400 |
+| **Swimming pool**, auto-cleaning equipment | R150 – R300 |
+| **Business centre** — quiet, powered workspace | R300 – R800 |
+| **24/7 manned guard, CCTV, intercom** | R200 – R400 |
+| **Central geyser**, electricity included | R250 – R400 |
+| **Two parking bays**, one covered | R250 – R500 |
+| **Estimated bundle value** | **R3,170 – R4,870** |
+| **What you actually pay for it** | **R1,330** |
+
+On paper the bundle is worth **more than the premium**. That only holds if you use it. If
+the honest answer is "the gym, and the pool occasionally," realistic value is closer to
+**R1,800–R2,100** — still ahead of the R1,330 premium, but by much less, and you give up a
+bedroom to get it.
+
+**Fitness.** At Petra Nera, staying fit costs **R650 membership + R1,170 Uber = R1,820/month**.
+At SoHo it is R0 and zero minutes. This is the strongest financial argument for SoHo, and it
+did not exist in the car-based version of this comparison.
+
+**Work & study.** The business centre is a real asset for Wits work. But Petra Nera answers
+this differently and arguably better: with two of you in a 3-bed, **the third room becomes a
+permanent study** — always available, no booking.
+
+**Security.** 24/7 manned guard, CCTV and intercom. Matters most on the Wednesday return
+from Braamfontein, and it is the one benefit with no equivalent at Petra Nera until you've
+seen that building's setup.
+
+**The quiet saving.** Water heating is typically 30–40% of a household electricity bill.
+The communal geyser is R250–R400/month back — and it's why SoHo's electricity estimate is
+lower than Petra Nera's despite the smaller flat.
+
+---
+
+## 5. Transport — Uber
+
+| Trip | Fare each way | Round trips/month | **A** | **B** |
+|---|---:|---:|---:|---:|
+| Home → CRC | R50 *(A)* | 13 | R1,300 | **R0 — walk** |
+| Home → Wits Braamfontein | ~R95 | 4.3 | R823 | R823 |
+| Home → Planet Fitness Fourways | ~R45 *(est.)* | 13 | R0 *(on site)* | R1,170 |
+| **Monthly Uber spend** | | | **R2,123** | **R1,993** |
+
+### ⚠️ The counter-intuitive result
+
+Walking to CRC saves **R1,300/month** — the single biggest line difference anywhere in this
+comparison. But Ubering to the gym costs **R1,170** of it straight back. **Net transport
+difference: R130/month.** Petra Nera's location advantage is almost entirely spent on
+getting to a gym that SoHo would have given you for free.
+
+### Gym frequency changes the answer
+
+| Gym visits | B monthly total | Gap |
 |---|---:|---:|
-| Housing + utilities + gym | R11,950 | R10,450 |
-| Transport | R1,813 | R1,442 |
-| **Total** | **R13,763** | **R11,892** |
-| **Difference** | **+R1,871/month** | — |
+| 2× a week | R12,053 | R1,720 |
+| **3× a week** | **R12,443** | **R1,330** |
+| 4× a week | R12,833 | R940 |
+| 6× a week | R13,613 | R160 |
 
-### Scenario 3 — no car, e-hailing
+SoHo only draws level at roughly **6.4 gym visits a week** — so on gym use alone it never
+quite catches up. But the more seriously you train, the smaller the gap gets.
 
-| | **A** | **B** |
-|---|---:|---:|
-| Housing + utilities + gym | R11,950 | R10,450 |
-| Transport | R5,371 | R3,291 |
-| **Total** | **R17,321** | **R13,741** |
-| **Difference** | **+R3,580/month** | — |
+### Distances — context only
 
-### Upfront / move-in cash
+| Leg | Distance |
+|---|---:|
+| SoHo → CRC | ~5 km |
+| SoHo → Wits | ~25 km |
+| **Petra Nera → CRC** | **~500 m — 6 min walk** |
+| Petra Nera → Wits | ~24 km |
+| Petra Nera → gym | ~3.5 km |
+
+Because you are using Uber, the **fares drive the numbers** and these distances are
+indicative only — shown to sense-check the fares, not to compute them.
+
+### Time
+
+Local travel is roughly **6.5 hrs/month at SoHo** against **7.3 at Petra Nera** — the CRC
+walk is short, but thirteen gym round trips are not. Wits is near-identical either way at
+about 7 hrs/month. On time, this is a wash.
+
+---
+
+## 6. Method — how the utility figures were checked
+
+### Water — R50 confirmed ✅
+
+Johannesburg Water gives the **first 6 kL a month free** to residential customers, then
+charges R16.45/kL from 6 to 10 kL. Two people typically use 6–8 kL, so the metered cost
+really is in the tens of rands. **R50 is right** — the earlier R350 estimate was wrong.
+Watch only for the demand-management levy, which rose to about R108/month in July 2026 and
+may sit on the body-corporate account rather than yours.
+
+### Electricity — R120 is the fixed charge, not the bill
+
+City Power's 2026/27 prepaid residential tariff runs **R3.06–R4.37 per kWh**, plus roughly
+R200/month in fixed charges — a R70 service charge and a **R130 network capacity charge**.
+That R130 is almost certainly the R120 figure you had in mind; actual consumption sits on
+top of it.
+
+A two-person flat uses 300–450 kWh/month. Strip out the geyser at 30–40% and SoHo lands
+around **200–280 kWh, or R650–R900**. R700 is used in this model. Ask the agent for a
+current tenant's real number — it's the cheapest way to settle this.
+
+---
+
+## 7. Cash — moving in and year one
 
 | Item | **A — SoHo Junction** | **B — Petra Nera** |
 |---|---:|---:|
-| Deposit (refundable) | R10,000 *(R20,000 if semi-furnished)* | ~R9,000 – R18,000 — **confirm** |
+| Deposit *(refundable)* | R10,000 *(R20,000 if semi-furnished)* | **R9,000** *(confirmed)* |
 | First month's rent | R9,500 | R9,000 |
-| Lease admin fee | ~R1,250 | ~R1,250 |
-| Credit check | ~R300 | ~R300 |
-| Meter activation / tags | ~R500 | ~R500 |
+| Admin / lease initiation fee | ~R1,250 *(to confirm)* | **R2,000** *(confirmed — above market)* |
+| Credit check | ~R300 | included? |
+| Meter activation, access tags | ~R500 | ~R500 |
 | Gym joining fee | R0 | ~R350 |
 | Fibre install + router | R0 – R1,800 | R0 – R1,800 |
 | Moving costs | R3,000 – R6,000 | R3,000 – R6,000 |
-| **Cash needed to move in** | **~R25,500 – R29,400** | **~R23,400 – R27,200** |
+| **Cash needed** | **R24,550 – R29,350** | **R23,850 – R28,650** |
 
-### Year-1 total cost
+Move-in cash is essentially the same — Petra Nera's lower deposit and rent are almost
+exactly offset by its R2,000 admin fee and the gym joining fee. About R700 apart, which
+decides nothing.
 
-| | **A** | **B** |
+| Year one | **A** | **B** |
 |---|---:|---:|
-| 12 months of running cost | R153,504 | R133,440 |
-| Non-refundable move-in costs | ~R6,000 | ~R6,400 |
-| **Year-1 cash out** | **~R159,500** | **~R139,800** |
-| **Plus deposit held** | R10,000 | ~R9,000 |
-| **Difference** | **+R19,700** | — |
+| Twelve months of running cost | R165,276 | R149,316 |
+| Non-refundable once-off costs | ~R7,450 | ~R7,750 |
+| **Year-one cash out** | **~R172,700** | **~R157,100** |
+| Plus deposit held | R10,000 | R9,000 |
+| **Difference** | **R15,600 · R7,800 each** | — |
 
 ---
 
-## 7. The value angles worth thinking about
+## 8. Stress test — what would flip this
 
-### Cost per bedroom
+The R1,330 gap is **not robust**. Three plausible corrections would close most of it, and
+two of them turn on the same unverified number.
 
-| | **A** | **B** |
-|---|---:|---:|
-| Bedrooms | 2 | **3** |
-| All-in monthly cost | R12,792 | R11,120 |
-| **Cost per bedroom** | **R6,396** | **R3,707** |
+| If… | B monthly | Gap | Verdict |
+|---|---:|---:|---|
+| **Base case** — everything as quoted | R12,443 | R1,330 | Petra Nera clearly ahead |
+| Petra Nera's electricity is really R1,300 (3-bed, own geyser) | R12,993 | R780 | Still ahead, less comfortably |
+| Sanitation and refuse billed separately at Petra Nera too | R13,443 | R330 | **Effectively a tie** |
+| Both of the above | R13,993 | **−R220** | **SoHo becomes cheaper** |
+| SoHo's electricity is R900 rather than R700 | R12,443 | R1,130 | Petra Nera still ahead |
+| You go to gym six times a week | R13,613 | R160 | Effectively a tie |
 
-Petra Nera is **42% cheaper per bedroom** — and it's the bigger place. You are paying more
-at SoHo Junction for *less* space.
-
-### The third bedroom is an asset
-
-If the third room at Petra Nera were let out at a modest **R3,500/month**, your effective
-housing cost drops to **~R7,620/month** — roughly **R5,170 a month less than SoHo Junction**,
-or **R62,000 a year**. Even used as a dedicated study for Wits work rather than income, it
-substitutes for the business-centre benefit that SoHo charges a premium for.
-
-Given that 3-bed units are scarce in the area (your own observation), the option itself has
-value — you are unlikely to find this again quickly if you pass on it.
-
-### What the SoHo premium actually buys
-
-You are paying **R1,672/month (R20,064/year)** for:
-
-| Benefit | Fair market value |
-|---|---:|
-| Gym | R650 – R900 |
-| Sauna + steam room | R200 – R400 |
-| Pool | R150 – R300 |
-| Business centre + function room | R300 – R800 |
-| Upgraded security | R200 – R400 |
-| Geyser electricity included | R250 – R400 (already netted into the R700 estimate) |
-| **Estimated total value** | **R1,500 – R2,800** |
-
-So the premium is **defensible on paper** — you're roughly paying market value for the
-bundle. The question is not whether it's worth R1,672 in the abstract; it's whether **you
-will actually use the sauna, steam room, pool, business centre and function room**. If the
-honest answer is "the gym, occasionally the pool," you're paying R1,672 for something worth
-R800 to you, and losing a bedroom in the process.
-
-### The break-even
-
-For SoHo Junction to cost the same as Petra Nera, its rent would need to drop to **R7,828**
-— a **R1,672 reduction**. Alternatively, Petra Nera could absorb a rent increase to
-**R10,672** before the two are equal. That's your negotiating headroom on the SoHo side.
+**One number decides this.** Everything hinges on what Petra Nera's **R800** actually
+covers. If it is the genuine all-in figure, Petra Nera wins by R1,330/month. If it excludes
+sanitation, refuse and a realistic geyser load, **SoHo Junction is the cheaper flat**. Get
+this in writing before deciding anything else.
 
 ---
 
-## 8. Pros and cons
+## 9. Pros and cons
 
 ### Option A — SoHo Junction (R9,500 · 2 bed / 2 bath / 62 m²)
 
 **Pros**
-- Complete wellness stack on site — gym, sauna, steam room, pool — at **zero travel cost and zero friction**
-- Business centre: a genuine study asset for Wits, replacing coffee-shop spend and giving a work-from-home escape valve
+- **The gym costs you nothing to reach.** At Petra Nera staying fit runs R1,820/month once Uber is counted. The strongest financial argument for SoHo
+- Sauna, steam room and pool on the same terms — zero travel, zero friction
+- Business centre — a quiet powered workspace for Wits work, on the property
 - Function room for hosting without needing a big flat
-- 24/7 guarded security, CCTV, intercom — real value for late Wednesday returns from Braamfontein
-- **2 parking bays included** (one covered) — often a paid extra elsewhere
-- Central geyser with electricity included — an ongoing R250–R400/month saving
+- 24/7 guarded security, CCTV and intercom — real value on the Wednesday return from Braamfontein
+- **Two parking bays included**, one covered — worth R250–R500/month, and useful the moment either of you gets a car
+- Central geyser with electricity included — R250–R400/month back
 - North-facing: better light, lower winter heating
-- Newer, better-presented, nicer to live in and to host in
-- Fibre-ready, no build-out wait
-- Well located for Fourways Mall, Broadacres shopping and the William Nicol / N1 routes
+- Newer and better presented — nicer to live in, nicer to host in
+- Every cost is documented on the listing. You know what you are signing
 
 **Cons**
-- **R1,672/month more expensive all-in** — R20,064 a year
-- **R1,400/month of fixed charges are not in the advertised rent** (sanitation R900 + refuse/security R500)
-- Pre-paid water *and* pre-paid electricity — no billing grace period, cuts off when credit runs out
-- **One fewer bedroom** than Petra Nera, for more money
-- 62 m² is compact for a 2-bed
-- Deposit doubles to R20,000 if you take the semi-furnished option
-- R33,000 gross minimum income requirement — a hard affordability gate
-- **Cats only** — no dogs
-- Body corporate can raise a special levy at any time
+- **R1,330/month more — R15,960/year, R665 each**
+- **R1,400/month of fixed levies sit outside the advertised rent**
+- **R1,300/month in Uber fares to CRC** that Petra Nera simply does not have
+- Pre-paid water *and* electricity — no grace period, supply cuts when credit runs out
+- **One fewer bedroom.** With two of you, that's the difference between having a study and not
+- 62 m² is compact for two people sharing
+- Deposit doubles to R20,000 on the semi-furnished option
+- R33,000 gross minimum income — a hard gate you both have to clear
+- Cats only — no dogs
+- The body corporate can raise a special levy at any time
 - Only available 1 October — possible gap or overlap month
-- ~6.5 km to CRC each way: 169 km and ~6.5 hours a month spent on a commute you could walk
 
 ### Option B — Petra Nera (R9,000 · 3 bed / 2 bath, 14 Riverbend Rd)
 
 **Pros**
-- **Walking distance to CRC** — this is the headline benefit and it is hard to overstate
-- **Three bedrooms** — 42% cheaper per bedroom, and scarce stock in this area
-- **R1,672/month / R20,064/year cheaper** all-in
-- Third room can become income (~R3,500/month) or a dedicated Wits study
-- Simple, predictable utility bill (R800) — *if* that figure is genuinely all-inclusive
-- Removes church-related transport, parking, traffic and late-night driving entirely
-- Enables full involvement in midweek and evening church activity without a travel decision each time
-- Much less exposed if car access is ever interrupted — saves R2,080/month in that scenario
-- Lower cash to move in
+- **Walking distance to CRC** — R1,300/month saved, and the single biggest line difference in the comparison
+- **R1,330/month cheaper** all-in — R15,960/year
+- **A third bedroom for two people.** A permanent study, always available — which answers SoHo's business centre with something better
+- More space, less money
+- No transport decision before church. You can be involved in midweek and evening activity without a fare attached to every visit
+- Simple utility bill — *if* the R800 holds
+- Lower deposit and lower rent
+- Likely available sooner than October — worth confirming
 
 **Cons**
-- **Not attractive** — and this is where you'll live and host every day. Aesthetics are not a rounding error over 12 months
-- No on-site gym: Planet Fitness membership **R650/month** + **R218/month** transport + ~4.3 hrs/month travel
+- **Not attractive** — and this is where you both live and host every day. Over twelve months that is not a rounding error
+- **Staying fit costs R1,820/month** — R650 membership plus R1,170 Uber, plus ~4.3 hrs of travel
+- **The R800 is unverified and looks low** for a 3-bed with its own geyser. This alone could close most of the gap
+- **R2,000 admin fee** — roughly R500–R1,000 above market, non-refundable
 - No pool, sauna, steam room, business centre or function room
-- The gym trip is a decision every time; on-site facilities get used, off-site ones lapse
-- **The R800 utility figure needs verification** — it may exclude sanitation and refuse, which would narrow the gap by R700–R1,000/month
-- Security arrangements unknown — must be compared against SoHo's 24/7 guard + CCTV
+- The gym becomes a decision with a fare attached, every single time. Off-site memberships lapse
+- Security arrangements unknown — must be seen and compared against SoHo's 24/7 guard
 - Parking allocation unknown
 - Walking to CRC after dark needs an honest safety assessment before it counts as a benefit
-- Older / less-maintained stock may mean higher niggle-cost (geyser, plumbing, damp)
+- Older or less-maintained stock may mean higher niggle-cost — geyser, plumbing, damp
 
 ---
 
-## 9. Verdict
+## 10. Verdict
 
-**On pure numbers, Petra Nera wins clearly and by a wide margin.** It is R1,672/month
-cheaper, gives you an extra bedroom, and eliminates the church commute entirely. Over the
-lease that's roughly **R20,000**, and if the third bedroom is let, closer to **R62,000**.
+**Petra Nera — but the margin is thinner than it looks.**
 
-**SoHo Junction is not overpriced** — the amenity bundle is genuinely worth roughly what
-you're paying for it. But you're buying a *lifestyle package*, not accommodation, and it
-comes with one less bedroom and a commute to the place you go most often.
+Petra Nera is R1,330/month cheaper, gives the two of you a third room to use as a study,
+and removes the church commute entirely. On the numbers as quoted, it wins.
 
-The decision reduces to three honest questions:
+But the case is more fragile than a first look suggests. Switching to Uber changed the
+picture materially: the gym is no longer a minor convenience at SoHo — it is worth
+**R1,820/month**, and it cancels almost all of Petra Nera's walking-distance advantage.
+Meanwhile the R800 utility quote does not survive scrutiny for a three-bedroom flat. Two
+plausible corrections and SoHo becomes the cheaper option outright.
 
-1. **Will you actually use the pool, sauna, steam room and business centre — not just the gym?**
-   If yes, SoHo's premium is fair value. If it's really just the gym, you're paying
-   R1,672/month for something worth R650 and giving up a bedroom to get it.
+### Three questions decide it
 
-2. **Is the R800 at Petra Nera really all-in?** If sanitation and refuse are billed on top,
-   the gap shrinks to R700–R1,000/month and SoHo becomes much more competitive.
+1. **What does Petra Nera's R800 actually cover?** Get it in writing: sanitation, sewerage,
+   refuse, and what kind of geyser the flat has. This one number is worth R700–R1,000 a
+   month and is the difference between Petra Nera winning comfortably and SoHo winning outright.
+2. **How seriously will you train?** At two gym visits a week Petra Nera is R1,720 ahead.
+   At six it is R160 ahead — a tie. If either of you trains properly, SoHo's gym is not a
+   perk, it's a line item worth nearly two thousand rand.
+3. **How much is walking to church worth beyond the fare?** R1,300/month is the measurable
+   part. The rest is that nothing stands between you and being there — no booking, no fare,
+   no waiting. That's the argument a spreadsheet can't score, and it's the strongest thing
+   Petra Nera has.
 
-3. **How much is walking to church worth to you?** Not in rands — in participation. Three
-   round trips a week, every week, for a year, is 169 km/month and 6.5 hours/month of
-   friction between you and something central to your life. That's the argument for
-   Petra Nera that a spreadsheet can't score.
-
-**Recommendation:** Petra Nera, *conditional on* (a) confirming the R800 covers sanitation
-and refuse, (b) seeing the security setup in person, and (c) walking the Riverbend Road
-route to CRC after dark yourself. If any of those three fail, the two options are close
-enough that SoHo Junction's amenities and presentation justify the difference.
+**Recommendation:** Petra Nera — conditional on (a) the R800 being confirmed in writing as
+genuinely all-in, (b) seeing the security setup in person, and (c) walking the Riverbend
+Road route to CRC after dark yourselves. If the utility figure moves by more than about
+R700, or if you both intend to train five or six days a week, the two options are level and
+SoHo's amenities, security and presentation become the better buy.
 
 ---
 
-## 10. Questions to ask before signing
+## 11. Questions to ask before signing
 
 ### SoHo Junction
 
-1. Is the R900 sanitation and R500 refuse/security fixed, or does it escalate annually?
-2. Are both parking bays included at no extra charge, and are they allocated in the lease?
-3. What is the annual escalation percentage, and does it apply to the levies too?
-4. Are there any special levies planned? Can I see the last two AGM minutes and the reserve-fund balance?
-5. What are the Activity Centre / gym / pool operating hours, and is there any additional access charge?
-6. Is the business centre bookable, and is there a fee?
-7. What is the deposit interest arrangement and which account is it held in?
-8. What is the total once-off cost — lease admin, credit check, access tags, meter activation?
-9. Does the complex have a generator/inverter for load-shedding, and water tanks for Joburg Water outages?
-10. What is the early-cancellation penalty, and can it be capped in writing?
-11. Is the R10,000 deposit confirmed for the unfurnished option?
+1. Are the R900 sanitation and R500 refuse/security fixed, or do they escalate annually?
+2. What is a realistic monthly electricity spend for a two-bed here, given the central geyser? Ask for a current tenant's actual figure.
+3. Are both parking bays included at no extra charge, and allocated in the lease?
+4. What is the annual escalation percentage, and does it apply to the levies too?
+5. Are any special levies planned? Can we see the last two AGM minutes and the reserve-fund balance?
+6. What are the Activity Centre, gym and pool hours, and is there any additional access charge?
+7. Is the business centre bookable, and is there a fee?
+8. What is the deposit interest arrangement, and which account is it held in?
+9. What is the total once-off cost — lease admin, credit checks for two, access tags, meter activation?
+10. Does the complex have a generator or inverter for load-shedding, and water tanks for Joburg Water outages?
+11. What is the early-cancellation penalty, and can it be capped in writing?
+12. Is the R10,000 deposit confirmed for the unfurnished option?
 
 ### Petra Nera
 
 1. **Does the R800 include sanitation, sewerage and refuse — or are those billed separately?**
-2. What is the deposit and the total once-off move-in cost?
-3. What is the annual escalation percentage?
-4. What is the security setup — guard, access control, CCTV, perimeter?
-5. How many parking bays, and are they covered/allocated?
-6. Backup power and water storage during load-shedding and municipal outages?
-7. Age and condition of geyser, plumbing and roof — who pays for repairs?
-8. Will the landlord contribute to repainting or basic cosmetic improvement given the condition?
-9. Can I sub-let the third bedroom, and is that permitted in the lease?
-10. What is the exact walking route and distance to the CRC entrance, and is it lit at night?
+2. **What kind of geyser does the flat have** — electric, gas or solar? An electric geyser in a 3-bed makes R800 unrealistic.
+3. Can we see a recent utility bill or statement for the unit?
+4. **What does the R2,000 admin fee cover, and is it negotiable?** Market rate is R950–R1,500.
+5. What is the annual escalation percentage?
+6. What is the security setup — guard, access control, CCTV, perimeter?
+7. How many parking bays, and are they covered or allocated?
+8. Backup power and water storage during load-shedding and municipal outages?
+9. Age and condition of the geyser, plumbing and roof — and who pays for repairs?
+10. Will the landlord contribute to repainting or basic cosmetic improvement given the condition?
+11. What is the exact walking route and distance to the CRC entrance, and is it lit at night?
+12. When is it available, and is the R9,000 held for a 12-month lease?
 
 ---
 
 ## Sources & assumptions
 
 **Sources**
-- [Property24 listing — SoHo Junction, Fourways](https://www.property24.com/to-rent/fourways/sandton/gauteng/5811/117458624) — rent, deposit, sanitation, refuse/security, amenities, income requirement, pet policy, availability
+- [Property24 listing — SoHo Junction, Fourways](https://www.property24.com/to-rent/fourways/sandton/gauteng/5811/117458624) — rent, deposit, sanitation, refuse and security, amenities, income requirement, pet policy, availability
+- [Johannesburg Water tariffs](https://www.johannesburgwater.co.za/resource-centre/water-tarrifs/) and the [City of Johannesburg approved 2026/27 tariffs](https://joburg.org.za/documents_/Documents/TARIFFS/Approved-Tariffs-20262027.pdf) — first 6 kL free, R16.45/kL thereafter, demand-management levy
+- [City Power July 2026 tariffs](https://energybee.co.za/news/city-power-tariffs-july-2026-bill-breakdown) — R3.34–R4.37/kWh incl. VAT, R70 service charge, R130 network capacity charge
 - [Planet Fitness Fourways Megaclub](https://www.planetfitness.co.za/gyms/fourways-megaclub/) — cnr Witkoppen Rd & Nerine Dr, The Buzz Shopping Centre
-- [Gym prices in 2026: Virgin Active vs Planet Fitness — BusinessTech](https://businesstech.co.za/news/lifestyle/847540/gym-prices-in-2026-virgin-active-vs-planet-fitness/) — R400–R900/month single club
-- [Official August 2026 fuel prices — IOL](https://iol.co.za/motoring/industry-news/2026-08-03-august-fuel-price-heres-what-youre-likely-to-pay-for-petrol-and-diesel-from-wednesday/) — R26.17/l, 95 unleaded inland
+- [Gym prices in 2026 — BusinessTech](https://businesstech.co.za/news/lifestyle/847540/gym-prices-in-2026-virgin-active-vs-planet-fitness/) — R400–R900/month, single club
 - [CRC Johannesburg](https://www.christianrevival.church/locations/crc-johannesburg) — cnr Witkoppen & Riverbend Road, Fourways
 
-**Assumptions used**
-| Assumption | Value | Change it if… |
-|---|---|---|
-| Fuel price | R26.17/l (95, inland, Aug 2026) | it moves — recalc at R/l ÷ 100 × consumption |
-| Fuel consumption | 8 l/100 km → R2.09/km | your car differs materially |
-| All-in vehicle cost | R4.50/km | you want fuel-only comparisons |
-| SoHo electricity | R700/month | geyser is *not* actually on the communal account |
-| SoHo water | R350/month | household size differs |
-| Planet Fitness | R650/month | you qualify for Vitality / Multiply / Reality discounts (up to 75% off) |
-| Weeks per month | 4.33 | — |
-| Gym frequency (Option B) | 3×/week | — |
-| Distance to Wits | 27 km (A) / 25 km (B) one way | verify on your usual route |
-| Distance to CRC | 6.5 km (A) / 0.5 km (B) one way | verify |
-| Distance to gym | 4 km (B) one way | verify |
+**Assumptions**
 
-Distances are road-route estimates from the stated addresses and should be checked against
-your actual route. Utility estimates for SoHo Junction are modelled, not quoted — only the
-R900 sanitation and R500 refuse/security figures come from the listing itself.
+| Assumption | Value | Source / change it if… |
+|---|---|---|
+| Occupancy | Two people, both flats | Third room at Petra Nera used as a study, not let |
+| Transport mode | Uber for everything | If either of you gets a car, SoHo's two free parking bays start to matter and the gap narrows further |
+| Uber — SoHo to CRC | R50 each way | Your figure |
+| Uber — either flat to Wits | ~R95 each way | Your figure — "just under R100" |
+| Uber — Petra Nera to gym | ~R45 each way | Estimated from your other fares over ~3.5 km. The one fare not confirmed — worth checking in the app |
+| CRC trips | 13 round trips/month | Mon, Tue, Thu × 4.33 weeks |
+| Wits trips | 4.3 round trips/month | Wednesdays, no CRC on campus days |
+| Gym visits | 3×/week — 13 round trips | See §5 for 2, 4 and 6 |
+| SoHo electricity | R700/month | City Power 2026/27 tariff, geyser excluded. Range R650–R900 |
+| SoHo water | R50/month | Johannesburg Water — first 6 kL free |
+| SoHo sanitation & refuse | R900 + R500 | Stated on the Property24 listing |
+| Petra Nera utilities | R800/month combined | As quoted — unverified, and the biggest risk in the model |
+| Petra Nera deposit & admin | R9,000 + R2,000 | Your figures |
+| Planet Fitness | R650/month | Single-club range R400–R900; Fourways is a Megaclub. Vitality / Multiply / Reality discount up to 75% |
+| Weeks per month | 4.33 | — |
+| Distances | Indicative only | Road-route estimates from the address pins. Fares drive the model, not kilometres |
