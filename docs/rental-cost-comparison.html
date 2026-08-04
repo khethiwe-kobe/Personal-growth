@@ -1,300 +1,277 @@
-<title>SoHo Junction vs Petra Nera — Rental Cost Comparison</title>
+<title>Rental Cost Comparison — Petra Nera, SoHo Junction, Meander</title>
 <style>
   :root {
-    --paper:      #FAF7F1;
-    --surface:    #FFFFFF;
-    --beige:      #F1EADD;
-    --beige-deep: #E5DAC7;
-    --ink:        #17130F;
-    --ink-2:      #453A2F;
-    --muted:      #7D6E5D;
-    --rule:       #E2D8C7;
-    --rule-soft:  #EFE8DC;
+    --paper:#FAF7F1; --surface:#FFFFFF; --beige:#F1EADD; --beige-deep:#E5DAC7;
+    --ink:#17130F; --ink-2:#453A2F; --muted:#7D6E5D;
+    --rule:#E2D8C7; --rule-soft:#EFE8DC;
 
-    --a:      #8A5F33;
-    --a-fill: #C3A075;
-    --a-tint: #F5EEE2;
-    --a-rgb:  195 160 117;
-
-    --b:      #2B211A;
-    --b-fill: #55432F;
-    --b-tint: #EBE5D9;
-    --b-rgb:  85 67 47;
+    --b:#2B211A; --b-fill:#55432F; --b-tint:#EBE5D9; --b-rgb:85 67 47;
+    --c:#9C4A16; --c-fill:#C9814A; --c-tint:#F8EDE1; --c-rgb:201 129 74;
+    --d:#8A6B2E; --d-fill:#C4A768; --d-tint:#F7F1E1; --d-rgb:196 167 104;
+    --a:#8A7C6C; --a-fill:#BFB3A3; --a-tint:#F2EFEA; --a-rgb:191 179 163;
 
     --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     --mono: ui-monospace, "SF Mono", SFMono-Regular, "Cascadia Mono", Menlo, Consolas, "Liberation Mono", monospace;
   }
-
   @media (prefers-color-scheme: dark) {
     :root {
       --paper:#14110D; --surface:#1C1712; --beige:#26201A; --beige-deep:#2F2820;
       --ink:#F3ECE1; --ink-2:#D3C7B7; --muted:#A2907C;
       --rule:#332B22; --rule-soft:#272119;
-      --a:#D9AC78; --a-fill:#A67C52; --a-tint:#292014; --a-rgb:166 124 82;
       --b:#EFE6D8; --b-fill:#C0AE93; --b-tint:#221D17; --b-rgb:192 174 147;
+      --c:#E28B4A; --c-fill:#B0663A; --c-tint:#2B1C12; --c-rgb:176 102 58;
+      --d:#D4B571; --d-fill:#9E844A; --d-tint:#26200F; --d-rgb:158 132 74;
+      --a:#A69B8C; --a-fill:#7A7165; --a-tint:#201D19; --a-rgb:122 113 101;
     }
   }
   :root[data-theme="dark"] {
     --paper:#14110D; --surface:#1C1712; --beige:#26201A; --beige-deep:#2F2820;
     --ink:#F3ECE1; --ink-2:#D3C7B7; --muted:#A2907C;
     --rule:#332B22; --rule-soft:#272119;
-    --a:#D9AC78; --a-fill:#A67C52; --a-tint:#292014; --a-rgb:166 124 82;
     --b:#EFE6D8; --b-fill:#C0AE93; --b-tint:#221D17; --b-rgb:192 174 147;
+    --c:#E28B4A; --c-fill:#B0663A; --c-tint:#2B1C12; --c-rgb:176 102 58;
+    --d:#D4B571; --d-fill:#9E844A; --d-tint:#26200F; --d-rgb:158 132 74;
+    --a:#A69B8C; --a-fill:#7A7165; --a-tint:#201D19; --a-rgb:122 113 101;
   }
   :root[data-theme="light"] {
     --paper:#FAF7F1; --surface:#FFFFFF; --beige:#F1EADD; --beige-deep:#E5DAC7;
     --ink:#17130F; --ink-2:#453A2F; --muted:#7D6E5D;
     --rule:#E2D8C7; --rule-soft:#EFE8DC;
-    --a:#8A5F33; --a-fill:#C3A075; --a-tint:#F5EEE2; --a-rgb:195 160 117;
     --b:#2B211A; --b-fill:#55432F; --b-tint:#EBE5D9; --b-rgb:85 67 47;
+    --c:#9C4A16; --c-fill:#C9814A; --c-tint:#F8EDE1; --c-rgb:201 129 74;
+    --d:#8A6B2E; --d-fill:#C4A768; --d-tint:#F7F1E1; --d-rgb:196 167 104;
+    --a:#8A7C6C; --a-fill:#BFB3A3; --a-tint:#F2EFEA; --a-rgb:191 179 163;
   }
 
   * { box-sizing: border-box; }
+  body { margin:0; background:var(--paper); color:var(--ink); font-family:var(--sans);
+    font-size:16.5px; line-height:1.68; -webkit-font-smoothing:antialiased; }
+  .wrap { max-width:1060px; margin:0 auto; padding:0 32px; }
+  .measure { max-width:66ch; }
 
-  body {
-    margin: 0;
-    background: var(--paper);
-    color: var(--ink);
-    font-family: var(--sans);
-    font-size: 16.5px;
-    line-height: 1.68;
-    -webkit-font-smoothing: antialiased;
+  .eyebrow { font-family:var(--mono); font-size:11px; letter-spacing:.18em;
+    text-transform:uppercase; color:var(--muted); margin:0; }
+  h1,h2,h3 { margin:0; font-weight:600; text-wrap:balance; letter-spacing:-.02em; }
+  h1 { font-size:clamp(2.1rem,5.2vw,3.25rem); line-height:1.06; }
+  h2 { font-size:clamp(1.45rem,3vw,1.85rem); line-height:1.2; }
+  h3 { font-size:1.06rem; line-height:1.35; letter-spacing:-.01em; }
+  p { margin:0; }
+  strong { font-weight:650; }
+  a { color:var(--ink); text-underline-offset:3px; text-decoration-color:var(--beige-deep); }
+  a:hover { text-decoration-color:currentColor; }
+  a:focus-visible, summary:focus-visible { outline:2px solid var(--c); outline-offset:3px; }
+  .lede { font-size:1.14rem; line-height:1.6; color:var(--ink-2); }
+  .note { font-size:14.5px; line-height:1.6; color:var(--muted); }
+
+  .masthead { border-bottom:1px solid var(--rule); }
+  .masthead-top { display:flex; flex-wrap:wrap; gap:10px 24px;
+    justify-content:space-between; align-items:baseline; padding:26px 0 0; }
+  .hero { padding:52px 0 56px; display:flex; flex-direction:column; gap:26px; }
+
+  .headline-figs { display:grid; grid-template-columns:repeat(auto-fit,minmax(175px,1fr));
+    gap:28px 36px; padding-top:12px; border-top:1px solid var(--rule); }
+  .fig { display:flex; flex-direction:column; gap:4px; padding-top:16px; }
+  .fig-n { font-size:2.2rem; line-height:1; letter-spacing:-.035em;
+    font-variant-numeric:tabular-nums; font-weight:600; }
+  .fig-note { font-size:12.5px; line-height:1.5; color:var(--muted); }
+
+  section { padding:56px 0; border-top:1px solid var(--rule); }
+  section:first-of-type { border-top:none; }
+  .sec-head { display:flex; flex-direction:column; gap:10px; margin-bottom:30px; }
+  .stack { display:flex; flex-direction:column; gap:18px; }
+  .stack-lg { display:flex; flex-direction:column; gap:32px; }
+  .grid-2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(290px,1fr)); gap:22px; }
+  .grid-4 { display:grid; grid-template-columns:repeat(auto-fit,minmax(228px,1fr)); gap:18px; }
+
+  .tag { font-family:var(--mono); font-size:10.5px; letter-spacing:.14em;
+    text-transform:uppercase; padding:4px 9px; display:inline-block;
+    white-space:nowrap; border:1px solid; align-self:flex-start; }
+  .tag-a { color:var(--a); border-color:var(--a-fill); background:var(--a-tint); }
+  .tag-b { color:var(--b); border-color:var(--b-fill); background:var(--b-tint); }
+  .tag-c { color:var(--c); border-color:var(--c-fill); background:var(--c-tint); }
+  .tag-d { color:var(--d); border-color:var(--d-fill); background:var(--d-tint); }
+  .c-a{color:var(--a)} .c-b{color:var(--b)} .c-c{color:var(--c)} .c-d{color:var(--d)}
+
+  .panel { background:var(--surface); border:1px solid var(--rule);
+    padding:22px 24px 24px; display:flex; flex-direction:column; gap:12px; }
+  .panel.top-a { border-top:3px solid var(--a-fill); }
+  .panel.top-b { border-top:3px solid var(--b-fill); }
+  .panel.top-c { border-top:3px solid var(--c-fill); }
+  .panel.top-d { border-top:3px solid var(--d-fill); }
+  .panel.faded { opacity:.68; }
+  .addr { font-size:13px; line-height:1.55; color:var(--muted); }
+  .big-fig { font-size:2.1rem; line-height:1; letter-spacing:-.035em;
+    font-variant-numeric:tabular-nums; font-weight:600; }
+  .big-fig small { display:block; font-size:11px; font-weight:500; color:var(--muted);
+    letter-spacing:.1em; text-transform:uppercase; margin-top:6px; font-family:var(--mono); }
+
+  .table-scroll { overflow-x:auto; border:1px solid var(--rule); background:var(--surface); }
+  table { width:100%; border-collapse:collapse; font-size:14.2px; min-width:640px; }
+  caption { text-align:left; padding:15px 20px; font-family:var(--mono);
+    font-size:11px; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--muted); border-bottom:1px solid var(--rule); background:var(--beige); }
+  th,td { padding:10px 15px; text-align:left; border-bottom:1px solid var(--rule-soft); vertical-align:top; }
+  thead th { font-family:var(--mono); font-size:10.5px; font-weight:500;
+    letter-spacing:.12em; text-transform:uppercase; color:var(--muted);
+    border-bottom:1px solid var(--rule); white-space:nowrap; }
+  tbody tr:last-child td { border-bottom:none; }
+  .r { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  th.r, td.r { text-align:right; }
+  tr.total td { border-top:1px solid var(--rule); border-bottom:none; font-weight:650; background:var(--beige); }
+  tr.sub td { background:var(--rule-soft); font-weight:600; }
+  .cell-note { display:block; font-size:11.5px; color:var(--muted); line-height:1.45; margin-top:2px; font-weight:400; }
+  .idx { font-family:var(--mono); font-size:12px; color:var(--muted); }
+  .dim { color:var(--muted); }
+  col.hi { background:var(--c-tint); }
+
+  .flag { border-left:3px solid var(--c-fill); background:var(--c-tint);
+    padding:20px 24px; display:flex; flex-direction:column; gap:9px; }
+  .flag.dark { border-left-color:var(--b-fill); background:var(--b-tint); }
+  .flag.gold { border-left-color:var(--d-fill); background:var(--d-tint); }
+  .flag-title { font-family:var(--mono); font-size:11px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--c); }
+  .flag.dark .flag-title { color:var(--b); }
+  .flag.gold .flag-title { color:var(--d); }
+  .flag p { font-size:15px; line-height:1.62; }
+
+  .bars { display:flex; flex-direction:column; gap:18px; }
+  .bar-row { display:flex; flex-direction:column; gap:8px; }
+  .bar-label { display:flex; justify-content:space-between; align-items:baseline; gap:16px; font-size:14px; }
+  .bar-track { display:flex; height:24px; }
+  .seg { display:block; height:100%; }
+  .a1{background:rgb(var(--a-rgb)/1)} .a2{background:rgb(var(--a-rgb)/.66)} .a3{background:rgb(var(--a-rgb)/.3)}
+  .b1{background:rgb(var(--b-rgb)/1)} .b2{background:rgb(var(--b-rgb)/.66)} .b3{background:rgb(var(--b-rgb)/.46)} .b4{background:rgb(var(--b-rgb)/.26)}
+  .c1{background:rgb(var(--c-rgb)/1)} .c2{background:rgb(var(--c-rgb)/.66)} .c3{background:rgb(var(--c-rgb)/.3)}
+  .d1{background:rgb(var(--d-rgb)/1)} .d2{background:rgb(var(--d-rgb)/.66)} .d3{background:rgb(var(--d-rgb)/.3)}
+  .legend { display:flex; flex-wrap:wrap; gap:6px 22px; font-size:12.5px; color:var(--muted); }
+  .legend span { display:inline-flex; align-items:center; gap:8px; }
+  .swatch { width:10px; height:10px; background:var(--muted); flex:none; }
+
+  ul.tick { list-style:none; margin:10px 0 0; padding:0; display:flex; flex-direction:column;
+    gap:10px; font-size:14.4px; line-height:1.58; }
+  ul.tick li { padding-left:20px; position:relative; }
+  ul.tick li::before { content:""; position:absolute; left:0; top:.68em; width:10px; height:2px; background:var(--muted); }
+  ul.tick.pro li::before { background:var(--b-fill); }
+  ul.tick.con li::before { background:var(--c-fill); }
+  ol.qs { margin:0; padding-left:1.5em; display:flex; flex-direction:column; gap:10px;
+    font-size:14.4px; line-height:1.58; }
+  ol.qs li::marker { font-family:var(--mono); font-size:12px; color:var(--muted); }
+
+  .pc-col { background:var(--surface); border:1px solid var(--rule); }
+  .pc-head { padding:18px 24px; border-bottom:1px solid var(--rule); background:var(--beige);
+    display:flex; flex-direction:column; gap:8px; }
+  .pc-body { padding:20px 24px 24px; display:flex; flex-direction:column; gap:20px; }
+  .pc-body h4 { margin:0; font-family:var(--mono); font-size:11px; font-weight:500;
+    letter-spacing:.16em; text-transform:uppercase; color:var(--muted); }
+
+  .verdict { background:var(--surface); border:1px solid var(--rule);
+    border-top:3px solid var(--c-fill); padding:32px 34px 36px;
+    display:flex; flex-direction:column; gap:22px; }
+  .verdict .say { font-size:clamp(1.24rem,2.8vw,1.52rem); line-height:1.34;
+    letter-spacing:-.02em; font-weight:600; text-wrap:balance; }
+  .qlist { display:flex; flex-direction:column; gap:18px; }
+  .q { display:grid; grid-template-columns:auto 1fr; gap:16px; align-items:start; }
+  .q-n { font-family:var(--mono); font-size:11.5px; color:var(--muted); padding-top:.45em; letter-spacing:.1em; }
+  .q p { font-size:15px; line-height:1.62; }
+
+  details { border:1px solid var(--rule); background:var(--surface); }
+  summary { cursor:pointer; padding:16px 20px; font-family:var(--mono); font-size:11px;
+    letter-spacing:.16em; text-transform:uppercase; color:var(--muted); list-style:none; }
+  summary::-webkit-details-marker { display:none; }
+  summary::after { content:" +"; }
+  details[open] summary { border-bottom:1px solid var(--rule); background:var(--beige); }
+  details[open] summary::after { content:" \2212"; }
+  .details-body { padding:22px 20px 26px; display:flex; flex-direction:column; gap:20px; }
+
+  footer { border-top:1px solid var(--rule); padding:34px 0 62px; color:var(--muted);
+    font-size:13.5px; line-height:1.62; }
+  footer ul { margin:12px 0 0; padding-left:1.2em; display:flex; flex-direction:column; gap:7px; }
+
+  @media (max-width:620px) {
+    .wrap { padding:0 20px; }
+    section { padding:42px 0; }
+    .panel { padding:20px; }
+    .verdict { padding:24px 20px 28px; }
+    .pc-body,.pc-head { padding-left:20px; padding-right:20px; }
   }
-
-  .wrap { max-width: 1000px; margin: 0 auto; padding: 0 32px; }
-  .measure { max-width: 66ch; }
-
-  .eyebrow {
-    font-family: var(--mono); font-size: 11px; letter-spacing: .18em;
-    text-transform: uppercase; color: var(--muted); margin: 0;
-  }
-  h1, h2, h3 { margin: 0; font-weight: 600; text-wrap: balance; letter-spacing: -.02em; }
-  h1 { font-size: clamp(2.2rem, 5.5vw, 3.4rem); line-height: 1.05; }
-  h2 { font-size: clamp(1.45rem, 3vw, 1.85rem); line-height: 1.2; }
-  h3 { font-size: 1.1rem; line-height: 1.35; letter-spacing: -.01em; }
-  p { margin: 0; }
-  em { font-style: italic; }
-  strong { font-weight: 650; }
-  a { color: var(--ink); text-underline-offset: 3px; text-decoration-color: var(--beige-deep); }
-  a:hover { text-decoration-color: currentColor; }
-  a:focus-visible, summary:focus-visible { outline: 2px solid var(--a); outline-offset: 3px; }
-  .num { font-variant-numeric: tabular-nums; }
-  .lede { font-size: 1.15rem; line-height: 1.6; color: var(--ink-2); }
-  .note { font-size: 14.5px; line-height: 1.6; color: var(--muted); }
-
-  /* ---- masthead ---- */
-  .masthead { border-bottom: 1px solid var(--rule); }
-  .masthead-top {
-    display: flex; flex-wrap: wrap; gap: 10px 24px;
-    justify-content: space-between; align-items: baseline; padding: 26px 0 0;
-  }
-  .hero { padding: 56px 0 60px; display: flex; flex-direction: column; gap: 26px; }
-
-  .headline-figs {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-    gap: 32px 40px; padding-top: 12px; border-top: 1px solid var(--rule);
-  }
-  .fig { display: flex; flex-direction: column; gap: 4px; padding-top: 16px; }
-  .fig-n {
-    font-size: 2.4rem; line-height: 1; letter-spacing: -.035em;
-    font-variant-numeric: tabular-nums; font-weight: 600;
-  }
-  .fig-n.accent { color: var(--a); }
-  .fig-note { font-size: 13px; line-height: 1.5; color: var(--muted); }
-  .strike { color: var(--muted); text-decoration: line-through; text-decoration-thickness: 2px; }
-
-  /* ---- sections ---- */
-  section { padding: 58px 0; border-top: 1px solid var(--rule); }
-  section:first-of-type { border-top: none; }
-  .sec-head { display: flex; flex-direction: column; gap: 10px; margin-bottom: 30px; }
-  .stack { display: flex; flex-direction: column; gap: 18px; }
-  .stack-lg { display: flex; flex-direction: column; gap: 34px; }
-  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 24px; }
-
-  /* ---- option identity ---- */
-  .tag {
-    font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em;
-    text-transform: uppercase; padding: 4px 9px; display: inline-block;
-    white-space: nowrap; border: 1px solid; align-self: flex-start;
-  }
-  .tag-a { color: var(--a); border-color: var(--a-fill); background: var(--a-tint); }
-  .tag-b { color: var(--b); border-color: var(--b-fill); background: var(--b-tint); }
-  .c-a { color: var(--a); }
-  .c-b { color: var(--b); }
-
-  .panel { background: var(--surface); border: 1px solid var(--rule); padding: 26px 28px 28px; display: flex; flex-direction: column; gap: 14px; }
-  .panel.top-a { border-top: 3px solid var(--a-fill); }
-  .panel.top-b { border-top: 3px solid var(--b-fill); }
-  .panel.plain { background: transparent; border: none; border-top: 1px solid var(--rule); padding: 22px 0 0; }
-  .addr { font-size: 13.5px; line-height: 1.55; color: var(--muted); }
-  .big-fig { font-size: 2.5rem; line-height: 1; letter-spacing: -.035em; font-variant-numeric: tabular-nums; font-weight: 600; }
-  .big-fig small { font-size: 12.5px; font-weight: 500; color: var(--muted); letter-spacing: 0; margin-left: 8px; }
-
-  /* ---- tables ---- */
-  .table-scroll { overflow-x: auto; border: 1px solid var(--rule); background: var(--surface); }
-  table { width: 100%; border-collapse: collapse; font-size: 14.6px; min-width: 460px; }
-  caption {
-    text-align: left; padding: 15px 20px; font-family: var(--mono);
-    font-size: 11px; letter-spacing: .16em; text-transform: uppercase;
-    color: var(--muted); border-bottom: 1px solid var(--rule); background: var(--beige);
-  }
-  th, td { padding: 11px 20px; text-align: left; border-bottom: 1px solid var(--rule-soft); vertical-align: top; }
-  thead th {
-    font-family: var(--mono); font-size: 10.5px; font-weight: 500;
-    letter-spacing: .12em; text-transform: uppercase; color: var(--muted);
-    border-bottom: 1px solid var(--rule); white-space: nowrap;
-  }
-  tbody tr:last-child td { border-bottom: none; }
-  .r { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
-  th.r, td.r { text-align: right; }
-  tr.total td { border-top: 1px solid var(--rule); border-bottom: none; font-weight: 650; background: var(--beige); }
-  tr.sub td { background: var(--rule-soft); font-weight: 600; }
-  .cell-note { display: block; font-size: 12px; color: var(--muted); line-height: 1.45; margin-top: 2px; font-weight: 400; }
-  .idx { font-family: var(--mono); font-size: 12px; color: var(--muted); }
-  .dim { color: var(--muted); }
-
-  /* ---- callout ---- */
-  .flag { border-left: 3px solid var(--a-fill); background: var(--a-tint); padding: 20px 24px; display: flex; flex-direction: column; gap: 9px; }
-  .flag.dark { border-left-color: var(--b-fill); background: var(--b-tint); }
-  .flag-title { font-family: var(--mono); font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--a); }
-  .flag.dark .flag-title { color: var(--b); }
-  .flag p { font-size: 15px; line-height: 1.62; }
-
-  /* ---- bars ---- */
-  .bars { display: flex; flex-direction: column; gap: 22px; }
-  .bar-row { display: flex; flex-direction: column; gap: 8px; }
-  .bar-label { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; font-size: 14px; }
-  .bar-track { display: flex; height: 26px; }
-  .seg { display: block; height: 100%; }
-  .a1 { background: rgb(var(--a-rgb) / 1); }
-  .a2 { background: rgb(var(--a-rgb) / .66); }
-  .a3 { background: rgb(var(--a-rgb) / .34); }
-  .b1 { background: rgb(var(--b-rgb) / 1); }
-  .b2 { background: rgb(var(--b-rgb) / .66); }
-  .b3 { background: rgb(var(--b-rgb) / .46); }
-  .b4 { background: rgb(var(--b-rgb) / .26); }
-  .legend { display: flex; flex-wrap: wrap; gap: 6px 22px; font-size: 12.5px; color: var(--muted); }
-  .legend span { display: inline-flex; align-items: center; gap: 8px; }
-  .swatch { width: 10px; height: 10px; background: var(--muted); flex: none; }
-
-  /* ---- lists ---- */
-  ul.tick { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 10px; font-size: 14.6px; line-height: 1.58; }
-  ul.tick li { padding-left: 20px; position: relative; }
-  ul.tick li::before { content: ""; position: absolute; left: 0; top: .68em; width: 10px; height: 1px; background: var(--muted); }
-  ul.tick.pro li::before { background: var(--b-fill); height: 2px; }
-  ul.tick.con li::before { background: var(--a-fill); height: 2px; }
-  ol.qs { margin: 0; padding-left: 1.5em; display: flex; flex-direction: column; gap: 10px; font-size: 14.6px; line-height: 1.58; }
-  ol.qs li::marker { font-family: var(--mono); font-size: 12px; color: var(--muted); }
-
-  .pc-col { background: var(--surface); border: 1px solid var(--rule); }
-  .pc-head { padding: 20px 26px; border-bottom: 1px solid var(--rule); background: var(--beige); display: flex; flex-direction: column; gap: 8px; }
-  .pc-body { padding: 24px 26px 28px; display: flex; flex-direction: column; gap: 24px; }
-  .pc-body h4 { margin: 0; font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
-
-  /* ---- verdict ---- */
-  .verdict { background: var(--surface); border: 1px solid var(--rule); border-top: 3px solid var(--b-fill); padding: 34px 36px 38px; display: flex; flex-direction: column; gap: 24px; }
-  .verdict .say { font-size: clamp(1.28rem, 2.9vw, 1.6rem); line-height: 1.34; letter-spacing: -.02em; font-weight: 600; text-wrap: balance; }
-  .qlist { display: flex; flex-direction: column; gap: 18px; }
-  .q { display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: start; }
-  .q-n { font-family: var(--mono); font-size: 11.5px; color: var(--muted); padding-top: .45em; letter-spacing: .1em; }
-  .q p { font-size: 15px; line-height: 1.62; }
-
-  details { border: 1px solid var(--rule); background: var(--surface); }
-  summary { cursor: pointer; padding: 16px 20px; font-family: var(--mono); font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); list-style: none; }
-  summary::-webkit-details-marker { display: none; }
-  summary::after { content: " +"; }
-  details[open] summary { border-bottom: 1px solid var(--rule); background: var(--beige); }
-  details[open] summary::after { content: " \2212"; }
-  .details-body { padding: 24px 20px 28px; display: flex; flex-direction: column; gap: 20px; }
-
-  footer { border-top: 1px solid var(--rule); padding: 36px 0 64px; color: var(--muted); font-size: 13.5px; line-height: 1.62; }
-  footer ul { margin: 12px 0 0; padding-left: 1.2em; display: flex; flex-direction: column; gap: 7px; }
-
-  @media (max-width: 620px) {
-    .wrap { padding: 0 20px; }
-    section { padding: 42px 0; }
-    .panel { padding: 22px; }
-    .verdict { padding: 26px 22px 30px; }
-    .pc-body, .pc-head { padding-left: 22px; padding-right: 22px; }
-  }
-  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+  @media (prefers-reduced-motion:reduce) { * { animation:none!important; transition:none!important; } }
 
   @media print {
     :root {
-      --paper:#FFFFFF; --surface:#FFFFFF; --beige:#F4EEE3; --beige-deep:#E5DAC7;
+      --paper:#FFF; --surface:#FFF; --beige:#F4EEE3; --beige-deep:#E5DAC7;
       --ink:#17130F; --ink-2:#453A2F; --muted:#6F6152;
       --rule:#D6CAB6; --rule-soft:#EAE2D4;
-      --a:#7A5228; --a-fill:#B8935F; --a-tint:#F6F0E4; --a-rgb:184 147 95;
       --b:#241C14; --b-fill:#4A3A2C; --b-tint:#EBE5D9; --b-rgb:74 58 44;
+      --c:#8C4212; --c-fill:#C07640; --c-tint:#F9EEE2; --c-rgb:192 118 64;
+      --d:#7C5F26; --d-fill:#BC9E5E; --d-tint:#F8F2E3; --d-rgb:188 158 94;
+      --a:#7C6F60; --a-fill:#B6AA9A; --a-tint:#F3F0EB; --a-rgb:182 170 154;
     }
-    body { font-size: 10.2pt; line-height: 1.5; background:#fff; }
-    .wrap { max-width: none; padding: 0; }
-    @page { size: A4; margin: 15mm 14mm; }
-    h1 { font-size: 26pt; }
-    h2 { font-size: 14.5pt; }
-    .fig-n { font-size: 16pt; }
-    .big-fig { font-size: 19pt; }
-    .headline-figs { grid-template-columns: repeat(4, 1fr); gap: 14pt; }
-    .fig-note { font-size: 8pt; }
-    section { padding: 13pt 0; break-inside: auto; }
-    .hero { padding: 16pt 0 18pt; }
-    .sec-head { margin-bottom: 12pt; }
-    h2, .sec-head { break-after: avoid; }
-    tr, thead { break-inside: avoid; }
-    thead { display: table-header-group; }
-    .stack-lg { gap: 16pt; }
-    .grid-2 { gap: 12pt; }
-    .table-scroll { overflow: visible; }
-    table { min-width: 0; font-size: 9pt; }
-    th, td { padding: 6px 10px; }
-    caption { padding: 8px 10px; }
-    .panel, .verdict, .flag, .table-scroll { break-inside: avoid; }
-    .pc-col, .pc-body, details { break-inside: auto; }
-    .pc-body > div { break-inside: avoid; }
-    details > summary { display: none; }
-    details { border: none; }
-    .details-body { padding: 0; }
-    footer { padding: 20pt 0 0; }
-    a { text-decoration: none; }
+    body { font-size:9.6pt; line-height:1.48; background:#fff; }
+    .wrap { max-width:none; padding:0; }
+    @page { size:A4; margin:14mm 12mm; }
+    h1 { font-size:24pt; } h2 { font-size:13.5pt; }
+    .fig-n { font-size:14pt; } .big-fig { font-size:16pt; }
+    .headline-figs { grid-template-columns:repeat(4,1fr); gap:11pt; }
+    .fig-note { font-size:7.2pt; }
+    .grid-4 { grid-template-columns:repeat(4,1fr); gap:8pt; }
+    section { padding:11pt 0; break-inside:auto; }
+    .hero { padding:15pt 0 16pt; }
+    .sec-head { margin-bottom:10pt; }
+    h2,.sec-head { break-after:avoid; }
+    tr,thead { break-inside:avoid; }
+    thead { display:table-header-group; }
+    .stack-lg { gap:14pt; } .grid-2 { gap:10pt; }
+    .table-scroll { overflow:visible; }
+    table { min-width:0; font-size:7.9pt; }
+    th,td { padding:4px 7px; }
+    caption { padding:6px 7px; }
+    .panel,.verdict,.flag,.table-scroll { break-inside:avoid; }
+    .pc-col,.pc-body,details { break-inside:auto; }
+    .pc-body>div { break-inside:avoid; }
+    details>summary { display:none; }
+    details { border:none; }
+    .details-body { padding:0; }
+    footer { padding:16pt 0 0; }
+    a { text-decoration:none; }
   }
 </style>
 
 <header class="masthead">
   <div class="wrap">
     <div class="masthead-top">
-      <p class="eyebrow">Rental cost comparison &middot; Fourways, Johannesburg</p>
+      <p class="eyebrow">Rental cost comparison &middot; Four options, two people, all travel by Uber</p>
       <p class="eyebrow">August 2026</p>
     </div>
   </div>
   <div class="wrap hero">
-    <h1>Two flats, R500 apart on paper.<br>R980 apart in reality.</h1>
+    <h1>Four flats. R1,700 a month between the cheapest and the dearest.</h1>
     <p class="lede measure">
-      Both are within reach of CRC Johannesburg, both need a Wednesday trip to Wits.
-      Once levies, utilities, gym and Uber fares are counted, Petra Nera comes out
-      <strong>R980 a month cheaper</strong> &mdash; under a thousand rand, and close enough
-      that one unresolved question could still flip it.
+      Petra Nera is still the cheapest, but only just &mdash; the R8,800 SoHo unit is
+      <strong>R280 behind it</strong>. Meander in Midrand is the most expensive to run and the
+      cheapest to move into: <strong>zero deposit, month-to-month, internet included</strong>.
+      Cost has stopped deciding this.
     </p>
 
     <div class="headline-figs">
       <div class="fig">
-        <p class="eyebrow">Advertised gap</p>
-        <p class="fig-n strike">R500</p>
-        <p class="fig-note">SoHo R9,500 &middot; Petra Nera R9,000</p>
+        <p class="eyebrow">Petra Nera</p>
+        <p class="fig-n c-b">R13,593</p>
+        <p class="fig-note">3 bed &middot; cheapest to run</p>
       </div>
       <div class="fig">
-        <p class="eyebrow">Actual monthly gap</p>
-        <p class="fig-n accent">R980</p>
-        <p class="fig-note">In Petra Nera&rsquo;s favour &mdash; R11,760 a year</p>
+        <p class="eyebrow">SoHo @ R8,800</p>
+        <p class="fig-n c-c">R13,873</p>
+        <p class="fig-note">2 bed &middot; R280 behind, R140 each</p>
       </div>
       <div class="fig">
-        <p class="eyebrow">Not in SoHo&rsquo;s rent</p>
-        <p class="fig-n">R1,400</p>
-        <p class="fig-note">Fixed monthly levies the advert never shows</p>
+        <p class="eyebrow">SoHo @ R9,500</p>
+        <p class="fig-n c-a">R14,573</p>
+        <p class="fig-note">Same complex, R700 more rent</p>
       </div>
       <div class="fig">
-        <p class="eyebrow">Cost per person</p>
-        <p class="fig-n">R490</p>
-        <p class="fig-note">What each of you saves per month at Petra Nera</p>
+        <p class="eyebrow">Meander, Midrand</p>
+        <p class="fig-n c-d">R15,278</p>
+        <p class="fig-note">2 bed &middot; dearest monthly, cheapest move-in</p>
       </div>
     </div>
   </div>
@@ -302,68 +279,99 @@
 
 <main class="wrap">
 
+  <!-- ===== NEW LINE ITEM ===== -->
+  <section>
+    <div class="flag gold">
+      <p class="flag-title">One change to the model this round</p>
+      <p>
+        Meander includes <strong>free uncapped internet</strong>, which exposed a gap: internet was
+        not costed for any option before. It is now a line item at <strong>R800 a month</strong> for
+        the three flats that do not include it, and R0 for Meander. Every total on this page is
+        therefore about R800 higher than the previous version. The <em>gaps between</em> Petra Nera
+        and the two SoHo units are unchanged &mdash; the same R800 was added to each.
+      </p>
+    </div>
+  </section>
+
   <!-- ===== OPTIONS ===== -->
   <section>
     <div class="sec-head">
       <p class="eyebrow">The shortlist</p>
-      <h2>Two options, two people</h2>
+      <h2>Four options</h2>
     </div>
 
     <div class="stack-lg">
-      <div class="grid-2">
-        <article class="panel top-a">
-          <span class="tag tag-a">Option A</span>
-          <h3>SoHo Junction</h3>
-          <p class="addr">4 Poplar Ave, Broadacres Park, Sandton 2055<br>2 bed &middot; 2 bath &middot; 62&nbsp;m&sup2; &middot; 2nd floor, north-facing<br>Available 1 October 2026</p>
-          <p class="big-fig c-a">R13,773<small>true monthly</small></p>
-          <p class="addr">Advertised R9,500. Gym, sauna, steam room, pool, business centre, 24/7 guarded security, two parking bays &mdash; all on site.</p>
-        </article>
-
+      <div class="grid-4">
         <article class="panel top-b">
           <span class="tag tag-b">Option B</span>
           <h3>Petra Nera</h3>
-          <p class="addr">14 Riverbend Rd, Hoogland, Randburg 2188<br>3 bed &middot; 2 bath<br>Roughly a six-minute walk to CRC</p>
-          <p class="big-fig c-b">R12,793<small>true monthly</small></p>
-          <p class="addr">Advertised R9,000. No on-site amenities and plainer presentation &mdash; but a third bedroom and no church commute at all.</p>
+          <p class="addr">14 Riverbend Rd, Hoogland, Randburg<br><strong>3 bed &middot; 2 bath</strong><br>Six-minute walk to CRC</p>
+          <p class="big-fig c-b">R13,593<small>true monthly</small></p>
+          <p class="addr">Rent R9,000 &middot; deposit R9,000 &middot; admin R2,000. Plain, no amenities &mdash; but the extra bedroom and no church commute.</p>
+        </article>
+
+        <article class="panel top-c">
+          <span class="tag tag-c">Option C</span>
+          <h3>SoHo Junction &mdash; R8,800</h3>
+          <p class="addr">Broadacres, Sandton<br><strong>2 bed &middot; 2 bath</strong> &middot; balcony<br>Available 1 August 2026</p>
+          <p class="big-fig c-c">R13,873<small>true monthly</small></p>
+          <p class="addr">Deposit R9,000 &middot; 1 carport &middot; no pets. Gym, pool, clubhouse, 24-hour manned security.</p>
+        </article>
+
+        <article class="panel top-a faded">
+          <span class="tag tag-a">Option A</span>
+          <h3>SoHo Junction &mdash; R9,500</h3>
+          <p class="addr">4 Poplar Ave, Broadacres Park<br>2 bed &middot; 2 bath &middot; 62&nbsp;m&sup2;<br>Available 1 October 2026</p>
+          <p class="big-fig c-a">R14,573<small>true monthly</small></p>
+          <p class="addr">Deposit R10,000 &middot; 2 bays &middot; cats allowed. Same building as C, R700 more rent.</p>
+        </article>
+
+        <article class="panel top-d">
+          <span class="tag tag-d">Option D &mdash; new</span>
+          <h3>Meander Lifestyle</h3>
+          <p class="addr">1 Celery Drive, Treesbank AH, Midrand<br><strong>2 bed &middot; 2 bath &middot; 68&nbsp;m&sup2;</strong><br>3rd floor+, Helderfontein</p>
+          <p class="big-fig c-d">R15,278<small>true monthly</small></p>
+          <p class="addr"><strong>Zero deposit &middot; month-to-month</strong> &middot; 2 bays. Levies R1,365. Gym, padel, pools, restaurant, solar &amp; water backup, free uncapped internet.</p>
         </article>
       </div>
 
       <div class="stack">
-        <p class="eyebrow">Where the money actually goes</p>
+        <p class="eyebrow">Where the money goes</p>
         <div class="bars">
           <div class="bar-row">
-            <div class="bar-label">
-              <span><span class="tag tag-a">A</span>&nbsp;&nbsp;SoHo Junction</span>
-              <span class="num c-a"><strong>R13,773</strong></span>
-            </div>
-            <div class="bar-track" style="width:100%;" role="img" aria-label="SoHo Junction: rent R9,500, levies and utilities R2,150, gym included, Uber R2,123">
-              <span class="seg a1" style="flex:9500;"></span>
-              <span class="seg a2" style="flex:2150;"></span>
-              <span class="seg a3" style="flex:2123;"></span>
+            <div class="bar-label"><span><span class="tag tag-b">B</span>&nbsp;&nbsp;Petra Nera</span><span class="c-b"><strong>R13,593</strong></span></div>
+            <div class="bar-track" style="width:89.0%;" role="img" aria-label="Petra Nera: rent R9,000, utilities and internet R1,950, gym R650, Uber R1,993">
+              <span class="seg b1" style="flex:9000"></span><span class="seg b2" style="flex:1950"></span><span class="seg b3" style="flex:650"></span><span class="seg b4" style="flex:1993"></span>
             </div>
           </div>
           <div class="bar-row">
-            <div class="bar-label">
-              <span><span class="tag tag-b">B</span>&nbsp;&nbsp;Petra Nera</span>
-              <span class="num c-b"><strong>R12,793</strong></span>
+            <div class="bar-label"><span><span class="tag tag-c">C</span>&nbsp;&nbsp;SoHo @ R8,800</span><span class="c-c"><strong>R13,873</strong></span></div>
+            <div class="bar-track" style="width:90.8%;" role="img" aria-label="SoHo R8,800: rent R8,800, levies utilities and internet R2,950, gym included, Uber R2,123">
+              <span class="seg c1" style="flex:8800"></span><span class="seg c2" style="flex:2950"></span><span class="seg c3" style="flex:2123"></span>
             </div>
-            <div class="bar-track" style="width:92.9%;" role="img" aria-label="Petra Nera: rent R9,000, utilities R1,150, gym R650, Uber R1,993">
-              <span class="seg b1" style="flex:9000;"></span>
-              <span class="seg b2" style="flex:1150;"></span>
-              <span class="seg b3" style="flex:650;"></span>
-              <span class="seg b4" style="flex:1993;"></span>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label"><span><span class="tag tag-a">A</span>&nbsp;&nbsp;SoHo @ R9,500</span><span class="c-a"><strong>R14,573</strong></span></div>
+            <div class="bar-track" style="width:95.4%;" role="img" aria-label="SoHo R9,500: rent R9,500, levies utilities and internet R2,950, gym included, Uber R2,123">
+              <span class="seg a1" style="flex:9500"></span><span class="seg a2" style="flex:2950"></span><span class="seg a3" style="flex:2123"></span>
+            </div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label"><span><span class="tag tag-d">D</span>&nbsp;&nbsp;Meander, Midrand</span><span class="c-d"><strong>R15,278</strong></span></div>
+            <div class="bar-track" style="width:100%;" role="img" aria-label="Meander: rent R10,500, levies and utilities R2,265, gym and internet included, Uber R2,513">
+              <span class="seg d1" style="flex:10500"></span><span class="seg d2" style="flex:2265"></span><span class="seg d3" style="flex:2513"></span>
             </div>
           </div>
           <div class="legend">
             <span><i class="swatch"></i>Rent</span>
-            <span><i class="swatch" style="opacity:.66;"></i>Levies &amp; utilities</span>
-            <span><i class="swatch" style="opacity:.46;"></i>Gym</span>
-            <span><i class="swatch" style="opacity:.26;"></i>Uber</span>
+            <span><i class="swatch" style="opacity:.66"></i>Levies, utilities &amp; internet</span>
+            <span><i class="swatch" style="opacity:.46"></i>Gym</span>
+            <span><i class="swatch" style="opacity:.28"></i>Uber</span>
           </div>
         </div>
         <p class="note measure">
-          Bars are drawn to the same scale. The rent blocks are nearly identical. Everything
-          that separates these two flats sits in the bands to the right of them.
+          Bars are drawn to the same scale. Meander&rsquo;s extra cost is roughly half rent and half
+          Uber &mdash; Midrand is further from both CRC and Wits than anything else on this list.
         </p>
       </div>
     </div>
@@ -379,193 +387,136 @@
     <div class="table-scroll">
       <table>
         <caption>Full monthly cost &mdash; two people, Uber for all travel</caption>
-        <thead><tr><th>Line item</th><th class="r">A &mdash; SoHo Junction</th><th class="r">B &mdash; Petra Nera</th></tr></thead>
+        <colgroup><col><col><col class="hi"><col><col></colgroup>
+        <thead><tr><th>Line item</th><th class="r">B &mdash; Petra Nera</th><th class="r">C &mdash; SoHo 8,800</th><th class="r">A &mdash; SoHo 9,500</th><th class="r">D &mdash; Meander</th></tr></thead>
         <tbody>
-          <tr><td>Rent</td><td class="r">R9,500</td><td class="r">R9,000</td></tr>
-          <tr><td>Sanitation<span class="cell-note">confirmed on the SoHo listing</span></td><td class="r">R900</td><td class="r dim">unknown &mdash; still to confirm</td></tr>
-          <tr><td>Refuse &amp; security levy<span class="cell-note">confirmed on the SoHo listing</span></td><td class="r">R500</td><td class="r dim">unknown &mdash; still to confirm</td></tr>
-          <tr><td>Electricity<span class="cell-note">A: verified estimate &middot; B: your figure</span></td><td class="r">R700</td><td class="r">R1,000</td></tr>
-          <tr><td>Water<span class="cell-note">first 6&nbsp;kL free on Joburg Water</span></td><td class="r">R50</td><td class="r">R150</td></tr>
-          <tr class="sub"><td>Housing subtotal</td><td class="r">R11,650</td><td class="r">R10,150</td></tr>
-          <tr><td>Gym membership</td><td class="r"><strong class="c-a">R0 &mdash; on site</strong></td><td class="r">R650<span class="cell-note">Planet Fitness Fourways</span></td></tr>
-          <tr><td>Uber &mdash; CRC<span class="cell-note">13 round trips a month</span></td><td class="r">R1,300</td><td class="r"><strong class="c-b">R0 &mdash; walk</strong></td></tr>
-          <tr><td>Uber &mdash; Wits<span class="cell-note">4.3 round trips a month</span></td><td class="r">R823</td><td class="r">R823</td></tr>
-          <tr><td>Uber &mdash; gym<span class="cell-note">13 round trips a month</span></td><td class="r">R0</td><td class="r">R1,170</td></tr>
-          <tr class="sub"><td>Transport subtotal</td><td class="r">R2,123</td><td class="r">R1,993</td></tr>
-          <tr class="total"><td>Monthly total</td><td class="r c-a">R13,773</td><td class="r c-b">R12,793</td></tr>
-          <tr class="total"><td>Difference</td><td class="r" colspan="2">R980 a month &middot; R11,760 a year &middot; R490 each</td></tr>
+          <tr><td>Rent</td><td class="r">R9,000</td><td class="r">R8,800</td><td class="r">R9,500</td><td class="r">R10,500</td></tr>
+          <tr><td>Levies<span class="cell-note">D: stated on listing, security included</span></td><td class="r dim">&mdash;</td><td class="r dim">&mdash;</td><td class="r dim">&mdash;</td><td class="r">R1,365</td></tr>
+          <tr><td>Sanitation<span class="cell-note">SoHo: confirmed on the R9,500 listing</span></td><td class="r dim">unknown</td><td class="r">R900</td><td class="r">R900</td><td class="r dim">in levies?</td></tr>
+          <tr><td>Refuse &amp; security<span class="cell-note">SoHo: confirmed on the R9,500 listing</span></td><td class="r dim">unknown</td><td class="r">R500</td><td class="r">R500</td><td class="r dim">in levies</td></tr>
+          <tr><td>Electricity<span class="cell-note">B: your figure &middot; others: estimate</span></td><td class="r">R1,000</td><td class="r">R700</td><td class="r">R700</td><td class="r">R800</td></tr>
+          <tr><td>Water</td><td class="r">R150</td><td class="r">R50</td><td class="r">R50</td><td class="r">R100</td></tr>
+          <tr><td>Internet<span class="cell-note">uncapped fibre</span></td><td class="r">R800</td><td class="r">R800</td><td class="r">R800</td><td class="r"><strong class="c-d">R0 &mdash; included</strong></td></tr>
+          <tr class="sub"><td>Housing subtotal</td><td class="r">R10,950</td><td class="r">R11,750</td><td class="r">R12,450</td><td class="r">R12,765</td></tr>
+          <tr><td>Gym membership</td><td class="r">R650</td><td class="r"><strong class="c-c">R0 &mdash; on site</strong></td><td class="r"><strong class="c-a">R0 &mdash; on site</strong></td><td class="r"><strong class="c-d">R0 &mdash; on site</strong></td></tr>
+          <tr><td>Uber &mdash; CRC<span class="cell-note">13 round trips a month</span></td><td class="r"><strong class="c-b">R0 &mdash; walk</strong></td><td class="r">R1,300</td><td class="r">R1,300</td><td class="r">R1,560</td></tr>
+          <tr><td>Uber &mdash; Wits<span class="cell-note">4.3 round trips a month</span></td><td class="r">R823</td><td class="r">R823</td><td class="r">R823</td><td class="r">R953</td></tr>
+          <tr><td>Uber &mdash; gym<span class="cell-note">13 round trips a month</span></td><td class="r">R1,170</td><td class="r">R0</td><td class="r">R0</td><td class="r">R0</td></tr>
+          <tr class="sub"><td>Transport subtotal</td><td class="r">R1,993</td><td class="r">R2,123</td><td class="r">R2,123</td><td class="r">R2,513</td></tr>
+          <tr class="total"><td>Monthly total</td><td class="r c-b">R13,593</td><td class="r c-c">R13,873</td><td class="r c-a">R14,573</td><td class="r c-d">R15,278</td></tr>
+          <tr class="total"><td>Per person</td><td class="r">R6,797</td><td class="r">R6,937</td><td class="r">R7,287</td><td class="r">R7,639</td></tr>
+          <tr class="total"><td>Gap to Petra Nera</td><td class="r">&mdash;</td><td class="r c-c"><strong>R280</strong><span class="cell-note">R140 each</span></td><td class="r c-a">R980<span class="cell-note">R490 each</span></td><td class="r c-d">R1,685<span class="cell-note">R843 each</span></td></tr>
         </tbody>
       </table>
     </div>
   </section>
 
-  <!-- ===== WHAT THE RENT HIDES ===== -->
+  <!-- ===== MEANDER ===== -->
   <section>
     <div class="sec-head">
-      <p class="eyebrow">Hidden costs</p>
-      <h2>What neither rent figure includes</h2>
+      <p class="eyebrow">The new option</p>
+      <h2>Meander is a different kind of offer</h2>
       <p class="lede measure" style="font-size:1.02rem;">
-        Both listings understate. SoHo&rsquo;s omissions are larger but fully documented.
-        Petra Nera&rsquo;s utilities are now known &mdash; but whether sanitation and refuse
-        are billed on top of them is still an open question, and it is worth more than
-        everything else on this page.
+        It is the most expensive to run and by far the cheapest to move into. It is also the only
+        one of the four with no twelve-month commitment.
       </p>
     </div>
 
     <div class="stack-lg">
-      <div class="table-scroll">
-        <table>
-          <caption>SoHo Junction &mdash; confirmed on the listing</caption>
-          <thead><tr><th>Charge</th><th class="r">Amount</th><th>Note</th></tr></thead>
-          <tbody>
-            <tr><td><strong>Sanitation / sewerage</strong></td><td class="r"><strong>R900</strong></td><td>Fixed, not usage-based. You pay it even when away.</td></tr>
-            <tr><td><strong>Refuse &amp; security levy</strong></td><td class="r"><strong>R500</strong></td><td>Fixed body-corporate charge.</td></tr>
-            <tr><td>Electricity</td><td class="r">~R700</td><td>Pre-paid, variable. Lower than usual because the geyser sits on the communal account.</td></tr>
-            <tr><td>Water</td><td class="r">~R50</td><td>Pre-paid. Genuinely small &mdash; but it cuts off with no grace period when the credit runs out.</td></tr>
-            <tr class="total"><td>Added to the advertised R9,500</td><td class="r c-a">R2,150</td><td>The advert captures 82% of the true housing cost &mdash; and 69% once travel is counted</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="flag">
-        <p class="flag-title">The big one</p>
-        <p>
-          Sanitation and refuse alone come to <strong>R1,400 every month &mdash; R16,800 a year</strong>
-          that the advert never shows. That is close to two months&rsquo; rent, invisible at first glance.
-          Both are fixed, so there is no way to reduce them by using less.
-        </p>
-      </div>
-
-      <div class="table-scroll">
-        <table>
-          <caption>SoHo Junction &mdash; to confirm before signing</caption>
-          <thead><tr><th></th><th>Item</th><th class="r">Likely cost</th><th>Why it matters</th></tr></thead>
-          <tbody>
-            <tr><td class="idx">01</td><td><strong>Deposit</strong></td><td class="r">R10,000 unfurnished<br><strong>R20,000 semi-furnished</strong></td><td>The deposit <em>doubles</em> on the semi-furnished option. Get the interest-bearing account confirmed in writing &mdash; required by the Rental Housing Act.</td></tr>
-            <tr><td class="idx">02</td><td>Lease initiation / admin fee</td><td class="r">R950 &ndash; R1,500<span class="cell-note">once-off</span></td><td>Petra Nera&rsquo;s equivalent is R2,000, so ask early &mdash; this could go either way.</td></tr>
-            <tr><td class="idx">03</td><td>Credit &amp; background check</td><td class="r">R100 &ndash; R500<span class="cell-note">once-off</span></td><td>Sometimes billed per applicant, so twice for the two of you.</td></tr>
-            <tr><td class="idx">04</td><td>Meter activation, access tags, remotes</td><td class="r">R300 &ndash; R800<span class="cell-note">once-off</span></td><td>Charged per tag. You need two.</td></tr>
-            <tr><td class="idx">05</td><td><strong>Annual escalation</strong></td><td class="r"><strong>6 &ndash; 8%</strong></td><td>Year-two rent becomes R10,070&ndash;R10,260, and the levies escalate too. Get the percentage into the lease.</td></tr>
-            <tr><td class="idx">06</td><td>Special levy</td><td class="r">Currently R0</td><td>The body corporate can raise one at any time. Ask for the last two AGM minutes and the reserve-fund balance.</td></tr>
-            <tr><td class="idx">07</td><td>Contents insurance</td><td class="r">R150 &ndash; R350<span class="cell-note">monthly</span></td><td>The landlord insures the building, not your possessions.</td></tr>
-            <tr><td class="idx">08</td><td>Early-cancellation penalty</td><td class="r">up to ~2 months</td><td>The CPA gives you 20 business days&rsquo; notice, but the landlord may charge a &ldquo;reasonable&rdquo; penalty. Get it capped.</td></tr>
-            <tr><td class="idx">09</td><td>Fibre installation + router</td><td class="r">R0 &ndash; R1,800<span class="cell-note">once-off</span></td><td>Often waived on 12 months. The complex is fibre-<em>ready</em>, not fibre-included.</td></tr>
-          </tbody>
-        </table>
-      </div>
-
       <div class="grid-2">
-        <article class="panel">
-          <p class="eyebrow">Qualifying gate &mdash; SoHo</p>
-          <p style="font-size:15px;"><strong>R33,000 gross monthly minimum income.</strong> A hard criterion.
-          Applying jointly means both of you supply six months of payslips, six months of bank statements,
-          ID, current lease, rental invoice and a clear credit record.</p>
-        </article>
-        <article class="panel">
-          <p class="eyebrow">Two more constraints &mdash; SoHo</p>
-          <p style="font-size:15px;"><strong>Cats only &mdash; no dogs.</strong> Second-floor unit.<br><br>
-          <strong>Available 1 October.</strong> If your current lease ends off that date, budget for a gap
-          &mdash; storage plus temporary accommodation &mdash; or an overlap month at roughly R13,800.</p>
-        </article>
+        <div class="flag gold">
+          <p class="flag-title">What it does better than everything else</p>
+          <p>
+            <strong>Zero deposit.</strong> Every other option wants R9,000&ndash;R10,000 held for a year.<br>
+            <strong>Month-to-month lease.</strong> No twelve-month lock-in, no cancellation penalty.
+            If Wits, work or anything else might move you within the year, this is worth real money.<br>
+            <strong>Free uncapped internet.</strong> R800 a month and no installation.<br>
+            <strong>Solar backup and water backup.</strong> The only option with confirmed load-shedding
+            and water-outage protection &mdash; both are live problems in Johannesburg.<br>
+            <strong>68&nbsp;m&sup2; and two bays.</strong> The largest two-bed here, and the levies are
+            stated rather than inferred.
+          </p>
+        </div>
+        <div class="flag">
+          <p class="flag-title">What it costs you</p>
+          <p>
+            <strong>R1,685 a month more than Petra Nera, R1,405 more than the R8,800 SoHo</strong>
+            &mdash; roughly R17,000&ndash;R20,000 a year. Two things drive it: rent is R1,700 above SoHo,
+            and Midrand is further from everywhere you go. CRC costs about
+            <strong>R1,560 a month in fares against SoHo&rsquo;s R1,300 and Petra Nera&rsquo;s nothing</strong>,
+            and Wits is dearer too. The amenities are excellent, but you already get a free gym at
+            either SoHo unit.
+          </p>
+        </div>
       </div>
 
-      <div class="flag dark">
-        <p class="flag-title">Petra Nera &mdash; two things to press on</p>
+      <div class="table-scroll">
+        <table>
+          <caption>Meander &mdash; what the listing states and what it does not</caption>
+          <thead><tr><th>Item</th><th class="r">Figure</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Rent</td><td class="r">R10,500</td><td>Stated</td></tr>
+            <tr><td><strong>Levies</strong> &mdash; security included</td><td class="r"><strong>R1,365</strong></td><td>Stated. Special levy R0</td></tr>
+            <tr><td>Deposit</td><td class="r"><strong class="c-d">R0</strong></td><td>&ldquo;Zero deposit apartments available&rdquo; &mdash; confirm it applies to <em>this</em> unit, and whether a deposit-replacement fee or insurance product substitutes for it</td></tr>
+            <tr><td>Lease</td><td class="r">Month-to-month</td><td>Stated. Confirm notice period and how often rent can be revised</td></tr>
+            <tr><td>Internet</td><td class="r">Included, uncapped</td><td>Stated</td></tr>
+            <tr><td>Floor size</td><td class="r">68&nbsp;m&sup2;</td><td>Stated &mdash; the largest two-bed of the four</td></tr>
+            <tr><td>Parking</td><td class="r">2 secure carport</td><td>Stated, plus visitor parking</td></tr>
+            <tr><td>Electricity</td><td class="r">~R800 est.</td><td><strong>Not stated.</strong> Estimated with gas hobs and solar offset. Ask for a current tenant&rsquo;s figure and whether the geyser is electric, gas or solar</td></tr>
+            <tr><td>Water</td><td class="r">~R100 est.</td><td><strong>Not stated.</strong> First 6&nbsp;kL free on Joburg Water</td></tr>
+            <tr><td>Sanitation &amp; refuse</td><td class="r dim">unclear</td><td><strong>Ask.</strong> Likely inside the R1,365, but if billed on top the gap widens by up to R1,400</td></tr>
+            <tr><td>Availability</td><td class="r">1 July 2026</td><td>Available now</td></tr>
+            <tr><td>Pets</td><td class="r">None</td><td>Despite the dog park</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="flag gold">
+        <p class="flag-title">The number to check first</p>
         <p>
-          <strong>The R2,000 admin fee is high.</strong> Market rate for a lease initiation fee is
-          R950&ndash;R1,500, so this is roughly R500&ndash;R1,000 above normal and it is non-refundable.
-          Worth asking what it covers, and whether it is negotiable.
-        </p>
-        <p>
-          <strong>The utilities came in at R1,150, not R800</strong> &mdash; R1,000 electricity and
-          R150 water. That is R350 a month more than first quoted, and it checks out: a three-bedroom
-          heating its own water at City Power&rsquo;s 2026/27 rates should land near R1,000, and it is
-          exactly R300 above SoHo&rsquo;s two-bed on a communal geyser. Both figures now corroborate
-          each other. <strong>The gap has narrowed from R1,330 to R980.</strong>
-        </p>
-        <p>
-          <strong>What is still unknown is sanitation and refuse.</strong> SoHo bills these separately
-          at R900 and R500. If Petra Nera does the same, that is up to <strong>R1,400 a month</strong>
-          on top of the R1,150 &mdash; which would make SoHo Junction the cheaper flat outright. This is
-          now the single most valuable question left to ask, and it is worth more than the rent
-          difference, the gym and the Uber fares combined.
+          <strong>The Uber fares to CRC and Wits are my estimates, not yours.</strong> They are
+          extrapolated from the two fares you gave &mdash; R50 over about 5&nbsp;km and R95 over
+          about 25&nbsp;km &mdash; which fits roughly R39 plus R2.25 a kilometre. Meander sits about
+          10&nbsp;km from CRC and 32&nbsp;km from Wits, giving R60 and R110 a trip. That is
+          <strong>R2,513 a month, and it is the single biggest reason Meander is dearest</strong>.
+          Price both trips in the app before taking this seriously either way.
         </p>
       </div>
     </div>
   </section>
 
-  <!-- ===== WHAT SOHO BUYS ===== -->
+  <!-- ===== SOHO UNITS ===== -->
   <section>
     <div class="sec-head">
-      <p class="eyebrow">The other side of the ledger</p>
-      <h2>What SoHo&rsquo;s premium buys</h2>
-      <p class="lede measure" style="font-size:1.02rem;">
-        Because you are using Uber rather than a car, the on-site gym is worth considerably more
-        here than it would be otherwise &mdash; every trip you don&rsquo;t take is a fare you don&rsquo;t pay.
-      </p>
+      <p class="eyebrow">Same building, different flat</p>
+      <h2>The two SoHo units</h2>
     </div>
 
-    <div class="stack-lg">
-      <div class="table-scroll">
-        <table>
-          <caption>Amenities valued against standalone cost</caption>
-          <thead><tr><th>Facility</th><th class="r">Value if bought separately</th></tr></thead>
-          <tbody>
-            <tr><td><strong>Gym</strong> &mdash; on site, in the Activity Centre</td><td class="r">R650 &ndash; R900</td></tr>
-            <tr><td><strong>Uber fares avoided</strong> by the gym being downstairs</td><td class="r">R1,170</td></tr>
-            <tr><td><strong>Sauna</strong> and <strong>steam room</strong></td><td class="r">R200 &ndash; R400</td></tr>
-            <tr><td><strong>Swimming pool</strong>, with auto-cleaning equipment</td><td class="r">R150 &ndash; R300</td></tr>
-            <tr><td><strong>Business centre</strong> &mdash; quiet, powered workspace</td><td class="r">R300 &ndash; R800</td></tr>
-            <tr><td><strong>24/7 manned guard, CCTV, intercom</strong></td><td class="r">R200 &ndash; R400</td></tr>
-            <tr><td><strong>Central geyser</strong>, electricity included</td><td class="r">R250 &ndash; R400</td></tr>
-            <tr><td><strong>Two parking bays</strong>, one covered</td><td class="r">R250 &ndash; R500</td></tr>
-            <tr class="total"><td>Estimated bundle value</td><td class="r c-a">R3,170 &ndash; R4,870</td></tr>
-            <tr class="total"><td>What you actually pay for it</td><td class="r">R980</td></tr>
-          </tbody>
-        </table>
-      </div>
+    <div class="table-scroll">
+      <table>
+        <caption>SoHo Junction &mdash; R8,800 against R9,500</caption>
+        <thead><tr><th></th><th class="r">C &mdash; R8,800</th><th class="r">A &mdash; R9,500</th><th>What it means</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Rent</strong></td><td class="r"><strong class="c-c">R8,800</strong></td><td class="r">R9,500</td><td>R700 a month &mdash; R8,400 a year</td></tr>
+          <tr><td><strong>Deposit</strong></td><td class="r"><strong class="c-c">R9,000</strong></td><td class="r">R10,000</td><td>R1,000 less cash up front</td></tr>
+          <tr><td><strong>Parking</strong></td><td class="r">1 undercover carport</td><td class="r">2 bays</td><td>The clearest loss &mdash; worth R250&ndash;R500 a month if either of you gets a car</td></tr>
+          <tr><td><strong>Floor size</strong></td><td class="r dim">not stated</td><td class="r">62&nbsp;m&sup2;</td><td><strong>Confirm this.</strong> If C is materially smaller, the saving is not free</td></tr>
+          <tr><td><strong>Available</strong></td><td class="r"><strong class="c-c">1 August 2026</strong></td><td class="r">1 October 2026</td><td>C is available now &mdash; no gap, no overlap month, no storage</td></tr>
+          <tr><td>Pets</td><td class="r">None</td><td class="r">Cats only</td><td>Only matters if a cat was in the plan</td></tr>
+          <tr><td>Facilities</td><td class="r" colspan="2" style="text-align:center;">Shared &mdash; pool, clubhouse, gym, jungle gym, 24-hour manned security</td><td>The R9,500 listing also names a sauna, steam room, business centre and function room. Same complex, so likely available &mdash; confirm</td></tr>
+          <tr class="total"><td>All-in monthly</td><td class="r c-c">R13,873</td><td class="r c-a">R14,573</td><td>C dominates A on cost. A is only worth it for the second bay and the confirmed 62&nbsp;m&sup2;</td></tr>
+        </tbody>
+      </table>
+    </div>
 
-      <div class="flag">
-        <p class="flag-title">Worth sitting with</p>
-        <p>
-          On paper the SoHo bundle is worth <strong>three to five times the premium you pay for it</strong>.
-          That only holds if you use it &mdash; but even on the most sceptical reading, counting just the
-          gym, the avoided Uber fares and the pool, you are at roughly R1,970 of value against a
-          <strong>R980 premium</strong>. The amenities are no longer the weak part of SoHo&rsquo;s case.
-          The bedroom you give up is.
-        </p>
-      </div>
-
-      <div class="grid-2">
-        <article class="panel">
-          <p class="eyebrow">Fitness</p>
-          <p style="font-size:15px;">At Petra Nera the gym costs <strong>R650 membership plus R1,170 in Uber
-          fares &mdash; R1,820 a month</strong> to stay fit. At SoHo it is R0 and zero minutes. This is by far
-          the strongest financial argument for SoHo, and it did not exist in the car-based version of
-          this comparison.</p>
-        </article>
-        <article class="panel">
-          <p class="eyebrow">Work &amp; study</p>
-          <p style="font-size:15px;">The <strong>business centre</strong> is a real asset for Wits work &mdash;
-          quiet, powered, seated, on the property. But note that Petra Nera answers this differently and
-          arguably better: with two of you in a three-bed, <strong>the third room becomes a permanent
-          study</strong>, always available, no booking.</p>
-        </article>
-        <article class="panel">
-          <p class="eyebrow">Security</p>
-          <p style="font-size:15px;">24/7 manned guard, CCTV and intercom. This matters most on the
-          Wednesday return from Braamfontein, and it is the one benefit that has no equivalent at
-          Petra Nera until you have seen that building&rsquo;s setup in person.</p>
-        </article>
-        <article class="panel">
-          <p class="eyebrow">The quiet saving &mdash; now confirmed</p>
-          <p style="font-size:15px;">Water heating is typically <strong>30&ndash;40% of a household electricity
-          bill</strong>. SoHo&rsquo;s geyser sits on the communal account; Petra Nera&rsquo;s does not.
-          The real figures bear it out almost exactly &mdash; <strong>R700 at SoHo against R1,000 at
-          Petra Nera</strong>, despite Petra Nera being 50% larger. That R300 gap is the communal geyser,
-          and it is a permanent monthly saving that does not appear anywhere in either advert.</p>
-        </article>
-      </div>
+    <div class="flag" style="margin-top:24px;">
+      <p class="flag-title">One assumption doing a lot of work</p>
+      <p>
+        The R8,800 listing <strong>does not state the levies</strong>. The R900 sanitation and R500
+        refuse/security are carried across from the R9,500 listing for the same complex &mdash; these
+        are body-corporate charges, so they should be identical, but that is an inference rather than
+        a quoted figure. <strong>Confirm both before signing.</strong>
+      </p>
     </div>
   </section>
 
@@ -573,10 +524,10 @@
   <section>
     <div class="sec-head">
       <p class="eyebrow">Transport &mdash; Uber</p>
-      <h2>The gym trips cancel the church walk</h2>
+      <h2>Location is most of the difference</h2>
       <p class="lede measure" style="font-size:1.02rem;">
         Three days a week to CRC &mdash; Monday, Tuesday, Thursday. Wednesday to Wits, with no CRC on
-        campus days. Fares below are the ones you quoted; the gym fare is estimated from the others.
+        campus days. Both SoHo units share fares; Meander is further from both.
       </p>
     </div>
 
@@ -584,12 +535,12 @@
       <div class="table-scroll">
         <table>
           <caption>Fares and monthly Uber spend</caption>
-          <thead><tr><th>Trip</th><th class="r">Fare each way</th><th class="r">Round trips<br>per month</th><th class="r">A &mdash; SoHo</th><th class="r">B &mdash; Petra Nera</th></tr></thead>
+          <thead><tr><th>Trip</th><th class="r">Round trips</th><th class="r">B &mdash; Petra Nera</th><th class="r">SoHo, either unit</th><th class="r">D &mdash; Meander</th></tr></thead>
           <tbody>
-            <tr><td>Home &rarr; CRC</td><td class="r">R50 <span class="dim">(A)</span></td><td class="r">13</td><td class="r">R1,300</td><td class="r"><strong class="c-b">R0 &mdash; walk</strong></td></tr>
-            <tr><td>Home &rarr; Wits Braamfontein</td><td class="r">~R95</td><td class="r">4.3</td><td class="r">R823</td><td class="r">R823</td></tr>
-            <tr><td>Home &rarr; Planet Fitness Fourways</td><td class="r">~R45 <span class="dim">(est.)</span></td><td class="r">13</td><td class="r">R0<span class="cell-note">gym is on site</span></td><td class="r">R1,170</td></tr>
-            <tr class="total"><td>Monthly Uber spend</td><td class="r"></td><td class="r"></td><td class="r c-a">R2,123</td><td class="r c-b">R1,993</td></tr>
+            <tr><td>Home &rarr; CRC<span class="cell-note">fare each way</span></td><td class="r">13</td><td class="r"><strong class="c-b">R0 &mdash; walk</strong></td><td class="r">R1,300<span class="cell-note">R50 &mdash; your figure</span></td><td class="r">R1,560<span class="cell-note">~R60 &mdash; estimated</span></td></tr>
+            <tr><td>Home &rarr; Wits Braamfontein</td><td class="r">4.3</td><td class="r">R823<span class="cell-note">~R95 &mdash; your figure</span></td><td class="r">R823<span class="cell-note">~R95 &mdash; your figure</span></td><td class="r">R953<span class="cell-note">~R110 &mdash; estimated</span></td></tr>
+            <tr><td>Home &rarr; Planet Fitness Fourways</td><td class="r">13</td><td class="r">R1,170<span class="cell-note">~R45 &mdash; estimated</span></td><td class="r">R0<span class="cell-note">gym on site</span></td><td class="r">R0<span class="cell-note">gym on site</span></td></tr>
+            <tr class="total"><td>Monthly Uber spend</td><td class="r"></td><td class="r c-b">R1,993</td><td class="r c-c">R2,123</td><td class="r c-d">R2,513</td></tr>
           </tbody>
         </table>
       </div>
@@ -597,63 +548,57 @@
       <div class="flag dark">
         <p class="flag-title">The counter-intuitive result</p>
         <p>
-          Walking to CRC saves <strong>R1,300 a month</strong> &mdash; the single biggest line difference
-          anywhere in this comparison. But Ubering to the gym costs <strong>R1,170</strong> of it straight back.
-          Net transport difference: <strong>R130 a month</strong>. Petra Nera&rsquo;s location advantage is
-          almost entirely spent on getting to a gym that SoHo would have given you for free.
+          Walking to CRC saves <strong>R1,300 a month</strong> against SoHo &mdash; the single biggest
+          line difference here. But Ubering to the gym costs <strong>R1,170</strong> of it straight back.
+          Net transport difference: <strong>R130 a month</strong>. Petra Nera&rsquo;s location advantage
+          is almost entirely spent reaching a gym that the other three give you for free.
         </p>
       </div>
 
       <div class="grid-2">
         <article class="panel">
-          <p class="eyebrow">How often you go to gym changes this</p>
-          <div class="table-scroll" style="border:none; background:transparent;">
+          <p class="eyebrow">Gym frequency decides B against C</p>
+          <div class="table-scroll" style="border:none;background:transparent;">
             <table style="min-width:0;">
-              <thead><tr><th>Gym visits</th><th class="r">B monthly total</th><th class="r">Gap</th></tr></thead>
+              <thead><tr><th>Visits a week</th><th class="r">B total</th><th class="r">vs C (R13,873)</th></tr></thead>
               <tbody>
-                <tr><td>2&times; a week</td><td class="r">R12,403</td><td class="r">R1,370</td></tr>
-                <tr><td><strong>3&times; a week</strong></td><td class="r"><strong>R12,793</strong></td><td class="r"><strong>R980</strong></td></tr>
-                <tr><td>4&times; a week</td><td class="r">R13,183</td><td class="r">R590</td></tr>
-                <tr><td>5&times; a week</td><td class="r">R13,573</td><td class="r">R200</td></tr>
-                <tr><td>6&times; a week</td><td class="r">R13,963</td><td class="r c-a">&minus;R190</td></tr>
+                <tr><td>2&times;</td><td class="r">R13,203</td><td class="r">B ahead R670</td></tr>
+                <tr><td><strong>3&times;</strong></td><td class="r"><strong>R13,593</strong></td><td class="r"><strong>B ahead R280</strong></td></tr>
+                <tr><td><strong>3.7&times;</strong></td><td class="r">~R13,873</td><td class="r"><strong>Dead even</strong></td></tr>
+                <tr><td>4&times;</td><td class="r">R13,983</td><td class="r c-c">C ahead R110</td></tr>
+                <tr><td>5&times;</td><td class="r">R14,373</td><td class="r c-c">C ahead R500</td></tr>
+                <tr><td>6&times;</td><td class="r">R14,763</td><td class="r c-c">C ahead R890</td></tr>
               </tbody>
             </table>
           </div>
-          <p class="note">SoHo now draws level at roughly <strong>5.5 gym visits a week</strong>, and is
-          cheaper beyond that. On the earlier utility figures the crossover was 6.4 visits and effectively
-          unreachable &mdash; it is now well within range if either of you trains seriously.</p>
+          <p class="note">The crossover was 6.4 visits a week against the R9,500 unit, 5.5 after the
+          utility correction, and <strong>3.7</strong> now &mdash; barely more than three times a week.</p>
         </article>
 
         <article class="panel">
           <p class="eyebrow">Distances &mdash; context only</p>
-          <div class="table-scroll" style="border:none; background:transparent;">
+          <div class="table-scroll" style="border:none;background:transparent;">
             <table style="min-width:0;">
               <tbody>
-                <tr><td style="padding-left:0;">SoHo &rarr; CRC</td><td class="r">~5 km</td></tr>
-                <tr><td style="padding-left:0;">SoHo &rarr; Wits</td><td class="r">~25 km</td></tr>
                 <tr><td style="padding-left:0;">Petra Nera &rarr; CRC</td><td class="r"><strong>~500 m &mdash; 6 min walk</strong></td></tr>
+                <tr><td style="padding-left:0;">SoHo &rarr; CRC</td><td class="r">~5 km</td></tr>
+                <tr><td style="padding-left:0;">Meander &rarr; CRC</td><td class="r">~10 km</td></tr>
                 <tr><td style="padding-left:0;">Petra Nera &rarr; Wits</td><td class="r">~24 km</td></tr>
+                <tr><td style="padding-left:0;">SoHo &rarr; Wits</td><td class="r">~25 km</td></tr>
+                <tr><td style="padding-left:0;">Meander &rarr; Wits</td><td class="r">~32 km</td></tr>
                 <tr><td style="padding-left:0;">Petra Nera &rarr; gym</td><td class="r">~3.5 km</td></tr>
               </tbody>
             </table>
           </div>
-          <p class="note">Because you are using Uber, the fares drive the numbers and these
-          distances are indicative only. They are shown to sense-check the fares, not to compute them.</p>
+          <p class="note">Fares drive the model, not kilometres &mdash; these are shown to sense-check
+          the fares. Local travel time is roughly 6.5 hrs a month at SoHo, 7.3 at Petra Nera and
+          about 9 at Meander.</p>
         </article>
-      </div>
-
-      <div class="flag">
-        <p class="flag-title">Time, not money</p>
-        <p>
-          Local travel comes to roughly <strong>6.5 hours a month at SoHo</strong> against
-          <strong>7.3 at Petra Nera</strong> &mdash; the CRC walk is short, but thirteen gym round trips
-          are not. Wits is near-identical either way at about seven hours a month. On time, this is a wash.
-        </p>
       </div>
     </div>
   </section>
 
-  <!-- ===== UPFRONT ===== -->
+  <!-- ===== CASH ===== -->
   <section>
     <div class="sec-head">
       <p class="eyebrow">Cash</p>
@@ -664,78 +609,84 @@
       <div class="table-scroll">
         <table>
           <caption>Cash needed to move in</caption>
-          <thead><tr><th>Item</th><th class="r">A &mdash; SoHo Junction</th><th class="r">B &mdash; Petra Nera</th></tr></thead>
+          <colgroup><col><col><col class="hi"><col><col></colgroup>
+          <thead><tr><th>Item</th><th class="r">B &mdash; Petra Nera</th><th class="r">C &mdash; SoHo 8,800</th><th class="r">A &mdash; SoHo 9,500</th><th class="r">D &mdash; Meander</th></tr></thead>
           <tbody>
-            <tr><td>Deposit<span class="cell-note">refundable</span></td><td class="r">R10,000<span class="cell-note">R20,000 if semi-furnished</span></td><td class="r">R9,000<span class="cell-note">confirmed</span></td></tr>
-            <tr><td>First month&rsquo;s rent</td><td class="r">R9,500</td><td class="r">R9,000</td></tr>
-            <tr><td>Admin / lease initiation fee</td><td class="r">~R1,250<span class="cell-note">to confirm</span></td><td class="r"><strong>R2,000</strong><span class="cell-note">confirmed &mdash; above market</span></td></tr>
-            <tr><td>Credit check</td><td class="r">~R300</td><td class="r">included?</td></tr>
-            <tr><td>Meter activation, access tags</td><td class="r">~R500</td><td class="r">~R500</td></tr>
-            <tr><td>Gym joining fee</td><td class="r">R0</td><td class="r">~R350</td></tr>
-            <tr><td>Fibre install + router</td><td class="r">R0 &ndash; R1,800</td><td class="r">R0 &ndash; R1,800</td></tr>
-            <tr><td>Moving costs</td><td class="r">R3,000 &ndash; R6,000</td><td class="r">R3,000 &ndash; R6,000</td></tr>
-            <tr class="total"><td>Cash needed</td><td class="r c-a">R24,550 &ndash; R29,350</td><td class="r c-b">R23,850 &ndash; R28,650</td></tr>
+            <tr><td>Deposit<span class="cell-note">refundable</span></td><td class="r">R9,000</td><td class="r">R9,000</td><td class="r">R10,000</td><td class="r"><strong class="c-d">R0</strong></td></tr>
+            <tr><td>First month&rsquo;s rent</td><td class="r">R9,000</td><td class="r">R8,800</td><td class="r">R9,500</td><td class="r">R10,500</td></tr>
+            <tr><td>Admin / lease initiation</td><td class="r"><strong>R2,000</strong><span class="cell-note">above market</span></td><td class="r">~R1,250</td><td class="r">~R1,250</td><td class="r">~R1,250</td></tr>
+            <tr><td>Credit check</td><td class="r">included?</td><td class="r">~R300</td><td class="r">~R300</td><td class="r">~R300</td></tr>
+            <tr><td>Meter activation, tags</td><td class="r">~R500</td><td class="r">~R500</td><td class="r">~R500</td><td class="r">~R500</td></tr>
+            <tr><td>Gym joining fee</td><td class="r">~R350</td><td class="r">R0</td><td class="r">R0</td><td class="r">R0</td></tr>
+            <tr><td>Fibre install + router</td><td class="r">R0 &ndash; R1,800</td><td class="r">R0 &ndash; R1,800</td><td class="r">R0 &ndash; R1,800</td><td class="r"><strong class="c-d">R0</strong></td></tr>
+            <tr><td>Moving costs</td><td class="r">R3,000 &ndash; 6,000</td><td class="r">R3,000 &ndash; 6,000</td><td class="r">R3,000 &ndash; 6,000</td><td class="r">R3,000 &ndash; 6,000</td></tr>
+            <tr class="total"><td>Cash needed</td><td class="r c-b">R23,850 &ndash; 28,650</td><td class="r c-c">R22,850 &ndash; 27,650</td><td class="r c-a">R24,550 &ndash; 29,350</td><td class="r c-d"><strong>R15,550 &ndash; 18,550</strong></td></tr>
           </tbody>
         </table>
       </div>
 
-      <p class="note measure">
-        Move-in cash is essentially the same. Petra Nera&rsquo;s lower deposit and rent are almost
-        exactly offset by its R2,000 admin fee and the gym joining fee &mdash; a difference of about
-        R700, which is not a deciding factor either way.
-      </p>
+      <div class="flag gold">
+        <p class="flag-title">The one place Meander wins outright</p>
+        <p>
+          <strong>R7,300 to R9,000 less cash to move in</strong> than any other option &mdash; a zero
+          deposit and no fibre installation. If the constraint right now is what you can put on the
+          table this month rather than what you pay each month, that is a serious advantage. It is
+          cash flow rather than cost, though: the deposit elsewhere comes back at the end.
+        </p>
+      </div>
 
       <div class="table-scroll">
         <table>
           <caption>Year-one total</caption>
-          <thead><tr><th></th><th class="r">A &mdash; SoHo Junction</th><th class="r">B &mdash; Petra Nera</th></tr></thead>
+          <colgroup><col><col><col class="hi"><col><col></colgroup>
+          <thead><tr><th></th><th class="r">B &mdash; Petra Nera</th><th class="r">C &mdash; SoHo 8,800</th><th class="r">A &mdash; SoHo 9,500</th><th class="r">D &mdash; Meander</th></tr></thead>
           <tbody>
-            <tr><td>Twelve months of running cost</td><td class="r">R165,276</td><td class="r">R153,516</td></tr>
-            <tr><td>Non-refundable once-off costs</td><td class="r">~R7,450</td><td class="r">~R7,750</td></tr>
-            <tr class="total"><td>Year-one cash out</td><td class="r c-a">~R172,700</td><td class="r c-b">~R161,300</td></tr>
-            <tr><td>Plus deposit held</td><td class="r">R10,000</td><td class="r">R9,000</td></tr>
-            <tr class="total"><td>Difference over year one</td><td class="r" colspan="2">R11,500 &middot; R5,700 each</td></tr>
+            <tr><td>Twelve months of running cost</td><td class="r">R163,116</td><td class="r">R166,476</td><td class="r">R174,876</td><td class="r">R183,336</td></tr>
+            <tr><td>Non-refundable once-offs</td><td class="r">~R7,750</td><td class="r">~R7,450</td><td class="r">~R7,450</td><td class="r">~R6,550</td></tr>
+            <tr class="total"><td>Year-one cash out</td><td class="r c-b">~R170,900</td><td class="r c-c">~R173,900</td><td class="r c-a">~R182,300</td><td class="r c-d">~R189,900</td></tr>
+            <tr><td>Plus deposit held</td><td class="r">R9,000</td><td class="r">R9,000</td><td class="r">R10,000</td><td class="r"><strong class="c-d">R0</strong></td></tr>
+            <tr class="total"><td>Difference vs Petra Nera</td><td class="r">&mdash;</td><td class="r c-c">R3,000<span class="cell-note">R1,500 each</span></td><td class="r c-a">R11,400</td><td class="r c-d">R19,000<span class="cell-note">R9,500 each</span></td></tr>
           </tbody>
         </table>
       </div>
     </div>
   </section>
 
-  <!-- ===== SENSITIVITY ===== -->
+  <!-- ===== STRESS TEST ===== -->
   <section>
     <div class="sec-head">
       <p class="eyebrow">Stress test</p>
-      <h2>What would flip this decision</h2>
+      <h2>What would flip this</h2>
       <p class="lede measure" style="font-size:1.02rem;">
-        The R980 gap is thin. One unresolved question and one lifestyle choice can each
-        close it on their own &mdash; and either would make SoHo Junction the cheaper flat.
+        Petra Nera leads the R8,800 SoHo unit by R280 a month. At that margin almost anything
+        flips it &mdash; and it flips in one direction far more easily than the other.
       </p>
     </div>
 
     <div class="table-scroll">
       <table>
-        <caption>Sensitivity &mdash; each scenario applied on its own</caption>
+        <caption>Sensitivity &mdash; Petra Nera against SoHo R8,800, each scenario on its own</caption>
         <thead><tr><th>If&hellip;</th><th class="r">B monthly</th><th class="r">Gap</th><th>Verdict</th></tr></thead>
         <tbody>
-          <tr><td><strong>Base case</strong> &mdash; utilities R1,150, gym 3&times; a week</td><td class="r">R12,793</td><td class="r">R980</td><td>Petra Nera ahead</td></tr>
-          <tr><td>SoHo&rsquo;s electricity is R900 rather than R700</td><td class="r">R12,793</td><td class="r">R1,180<span class="cell-note">A rises to R13,973</span></td><td>Petra Nera further ahead</td></tr>
-          <tr><td>You go to gym twice a week rather than three times</td><td class="r">R12,403</td><td class="r">R1,370</td><td>Petra Nera furthest ahead</td></tr>
-          <tr><td>Petra Nera bills sanitation and refuse on top, at R700</td><td class="r">R13,493</td><td class="r">R280</td><td><strong>Effectively a tie</strong></td></tr>
-          <tr><td>You go to gym 5.5 times a week</td><td class="r">~R13,770</td><td class="r">~R0</td><td><strong>Dead even</strong></td></tr>
-          <tr><td>You go to gym six times a week</td><td class="r">R13,963</td><td class="r c-a">&minus;R190</td><td><strong>SoHo cheaper</strong></td></tr>
-          <tr><td>Petra Nera bills sanitation and refuse at SoHo&rsquo;s level, R1,400</td><td class="r">R14,193</td><td class="r c-a">&minus;R420</td><td><strong>SoHo cheaper</strong></td></tr>
+          <tr><td>You go to gym twice a week rather than three times</td><td class="r">R13,203</td><td class="r">R670</td><td>Petra Nera ahead</td></tr>
+          <tr><td><strong>Base case</strong> &mdash; utilities R1,150, gym 3&times; a week</td><td class="r">R13,593</td><td class="r">R280</td><td>Petra Nera marginally ahead</td></tr>
+          <tr><td>SoHo&rsquo;s electricity is R900 rather than R700</td><td class="r">R13,593</td><td class="r">R480</td><td>Petra Nera ahead</td></tr>
+          <tr><td>You go to gym 3.7 times a week</td><td class="r">~R13,873</td><td class="r">~R0</td><td><strong>Dead even</strong></td></tr>
+          <tr><td>You go to gym four times a week</td><td class="r">R13,983</td><td class="r c-c">&minus;R110</td><td><strong>SoHo cheaper</strong></td></tr>
+          <tr><td>The gym Uber fare is R60 each way, not R45</td><td class="r">R13,983</td><td class="r c-c">&minus;R110</td><td><strong>SoHo cheaper</strong></td></tr>
+          <tr><td>Petra Nera bills sanitation and refuse on top, at R700</td><td class="r">R14,293</td><td class="r c-c">&minus;R420</td><td><strong>SoHo cheaper</strong></td></tr>
+          <tr><td>Petra Nera bills them at SoHo&rsquo;s level, R1,400</td><td class="r">R14,993</td><td class="r c-c">&minus;R1,120</td><td><strong>SoHo much cheaper</strong></td></tr>
         </tbody>
       </table>
     </div>
 
-    <div class="flag dark" style="margin-top:24px;">
-      <p class="flag-title">One question decides this</p>
+    <div class="flag" style="margin-top:24px;">
+      <p class="flag-title">Read this row by row</p>
       <p>
-        The utilities are now settled at R1,150. What is not settled is whether Petra Nera bills
-        <strong>sanitation and refuse on top</strong>, as SoHo does at R900 and R500. Anything above
-        roughly <strong>R980 a month</strong> on that line and SoHo Junction becomes the cheaper flat.
-        Ask this before anything else &mdash; it is worth more than the rent difference, the gym
-        membership and every Uber fare in this document combined.
+        Five of eight scenarios make SoHo the cheaper flat, and the two that favour Petra Nera most
+        require you to use the gym <em>less</em>. <strong>Petra Nera&rsquo;s cost advantage has
+        essentially disappeared.</strong> The case for it now rests on the third bedroom and the walk
+        to church &mdash; both real, neither financial.
       </p>
     </div>
   </section>
@@ -744,46 +695,45 @@
   <section>
     <div class="sec-head">
       <p class="eyebrow">Pros and cons</p>
-      <h2>The honest ledger on each</h2>
+      <h2>The three live options</h2>
+      <p class="note measure">The R9,500 SoHo unit is left out here &mdash; it is the same building as
+      the R8,800 unit for R700 more a month. It only comes back into play if you need the second
+      parking bay or the confirmed 62&nbsp;m&sup2;.</p>
     </div>
 
     <div class="grid-2">
       <div class="pc-col">
         <div class="pc-head">
-          <span class="tag tag-a">Option A</span>
-          <h3>SoHo Junction &mdash; R9,500</h3>
-          <p class="addr">2 bed / 2 bath / 62&nbsp;m&sup2;</p>
+          <span class="tag tag-c">Option C</span>
+          <h3>SoHo Junction &mdash; R8,800</h3>
+          <p class="addr">2 bed / 2 bath, Broadacres &middot; R13,873 all-in</p>
         </div>
         <div class="pc-body">
           <div>
             <h4>In favour</h4>
             <ul class="tick pro">
-              <li><strong>The gym costs you nothing to reach.</strong> At Petra Nera staying fit runs R1,820 a month once Uber is counted. This is the strongest financial argument for SoHo</li>
-              <li>Sauna, steam room and pool on the same terms &mdash; zero travel, zero friction</li>
-              <li>Business centre &mdash; a quiet powered workspace for Wits work, on the property</li>
-              <li>Function room for hosting without needing a big flat</li>
-              <li>24/7 guarded security, CCTV and intercom &mdash; real value on the Wednesday return from Braamfontein</li>
-              <li><strong>Two parking bays included</strong>, one covered &mdash; worth R250&ndash;R500 a month, and useful the moment either of you gets a car</li>
-              <li>Central geyser with electricity included &mdash; R250&ndash;R400 a month back</li>
-              <li>North-facing: better light, lower winter heating</li>
-              <li>Newer and better presented &mdash; nicer to live in, nicer to host in</li>
-              <li>Every cost is documented on the listing. You know what you are signing</li>
+              <li><strong>Within R280 a month of the cheapest option</strong> &mdash; R140 each. Cost no longer separates it from Petra Nera</li>
+              <li><strong>The gym costs nothing to reach.</strong> At Petra Nera staying fit runs R1,820 a month once Uber is counted</li>
+              <li>Pool, clubhouse and jungle gym on the same terms &mdash; zero travel, zero friction</li>
+              <li>24-hour manned security with a guard house</li>
+              <li>Central geyser with electricity included &mdash; R300 a month below Petra Nera&rsquo;s bill</li>
+              <li><strong>Available 1 August</strong> &mdash; no gap, no overlap month, no storage</li>
+              <li>Closer to CRC than Meander, at R1,300 a month against R1,560</li>
+              <li>R700 a month cheaper than the other unit in the same building, for the same facilities</li>
+              <li>Private balcony, open-plan living, gas/electric stove</li>
             </ul>
           </div>
           <div>
             <h4>Against</h4>
             <ul class="tick con">
-              <li><strong>R980 a month more &mdash; R11,760 a year, R490 each</strong></li>
-              <li><strong>R1,400 a month of fixed levies sit outside the advertised rent</strong></li>
-              <li><strong>R1,300 a month in Uber fares to CRC</strong> that Petra Nera simply does not have</li>
-              <li>Pre-paid water <em>and</em> electricity &mdash; no grace period, supply cuts when credit runs out</li>
-              <li><strong>One fewer bedroom.</strong> With two of you, that is the difference between having a study and not</li>
-              <li>62&nbsp;m&sup2; is compact for two people sharing</li>
-              <li>Deposit doubles to R20,000 on the semi-furnished option</li>
-              <li>R33,000 gross minimum income &mdash; a hard gate you both have to clear</li>
-              <li>Cats only &mdash; no dogs</li>
-              <li>The body corporate can raise a special levy at any time</li>
-              <li>Only available 1 October &mdash; possible gap or overlap month</li>
+              <li><strong>One bedroom fewer than Petra Nera</strong> &mdash; the difference between having a study and not</li>
+              <li><strong>Only one parking bay</strong>, and <strong>floor size not stated</strong></li>
+              <li>The levies are inferred from the sister listing, not quoted</li>
+              <li>R1,400 a month of fixed levies outside the advertised rent</li>
+              <li>R1,300 a month in Uber fares to CRC</li>
+              <li>No pets &middot; pre-paid water and electricity with no grace period</li>
+              <li>No confirmed load-shedding or water backup, unlike Meander</li>
+              <li>Available now also means it will go quickly</li>
             </ul>
           </div>
         </div>
@@ -793,36 +743,70 @@
         <div class="pc-head">
           <span class="tag tag-b">Option B</span>
           <h3>Petra Nera &mdash; R9,000</h3>
-          <p class="addr">3 bed / 2 bath, 14 Riverbend Rd</p>
+          <p class="addr">3 bed / 2 bath, Riverbend Rd &middot; R13,593 all-in</p>
         </div>
         <div class="pc-body">
           <div>
             <h4>In favour</h4>
             <ul class="tick pro">
-              <li><strong>Walking distance to CRC</strong> &mdash; R1,300 a month saved, and the single biggest line difference in the whole comparison</li>
-              <li><strong>R980 a month cheaper</strong> all-in &mdash; R11,760 a year, R490 each</li>
-              <li><strong>A third bedroom for two people.</strong> A permanent study, always available &mdash; which answers SoHo&rsquo;s business centre with something better</li>
-              <li>More space, less money</li>
-              <li>No transport decision before church. You can be involved in midweek and evening activity without a fare attached to every visit</li>
-              <li>Utilities now confirmed at R1,150 &mdash; and they corroborate SoHo&rsquo;s estimate rather than contradicting it</li>
-              <li>Lower deposit and lower rent</li>
-              <li>Available now rather than October, most likely &mdash; worth confirming</li>
+              <li><strong>Walking distance to CRC</strong> &mdash; R1,300 a month saved, and nothing between you and being there</li>
+              <li><strong>A third bedroom for two people</strong> &mdash; a permanent study, always available</li>
+              <li>Still the cheapest of the four, by R280 a month</li>
+              <li>More space for the money than either SoHo unit</li>
+              <li>No transport decision before church &mdash; midweek involvement carries no fare</li>
+              <li>Utilities confirmed at R1,150, and they corroborate SoHo&rsquo;s estimate</li>
+              <li>Least exposed if Uber fares rise</li>
             </ul>
           </div>
           <div>
             <h4>Against</h4>
             <ul class="tick con">
-              <li><strong>Not attractive</strong> &mdash; and this is where you both live and host every day. Over twelve months that is not a rounding error</li>
-              <li><strong>Staying fit costs R1,820 a month</strong> &mdash; R650 membership plus R1,170 in Uber fares, plus about 4.3 hours of travel</li>
-              <li><strong>Utilities came in R350 above the first quote</strong> &mdash; R1,150, not R800 &mdash; which cut the advantage from R1,330 to R980</li>
-              <li><strong>Sanitation and refuse are still unaccounted for.</strong> SoHo charges R1,400 for these. Anything above R980 here and Petra Nera loses outright</li>
-              <li><strong>R2,000 admin fee</strong> &mdash; roughly R500&ndash;R1,000 above market, non-refundable</li>
-              <li>No pool, sauna, steam room, business centre or function room</li>
-              <li>The gym becomes a decision with a fare attached, every single time. Off-site memberships lapse</li>
-              <li>Security arrangements unknown &mdash; must be seen and compared against SoHo&rsquo;s 24/7 guard</li>
-              <li>Parking allocation unknown</li>
-              <li>Walking to CRC after dark needs an honest safety assessment before it counts as a benefit</li>
-              <li>Older or less-maintained stock may mean higher niggle-cost &mdash; geyser, plumbing, damp</li>
+              <li><strong>The cost advantage is now R280 a month</strong> &mdash; R140 each. It was R1,672 when this comparison started</li>
+              <li><strong>Not attractive</strong> &mdash; and this is where you both live and host every day</li>
+              <li><strong>Staying fit costs R1,820 a month</strong> &mdash; membership plus Uber, plus ~4.3 hours of travel</li>
+              <li><strong>Sanitation and refuse still unaccounted for.</strong> Anything above R280 and SoHo wins outright</li>
+              <li><strong>R2,000 admin fee</strong> &mdash; roughly double market rate, non-refundable</li>
+              <li>Pays for its own geyser: R1,000 electricity against SoHo&rsquo;s R700</li>
+              <li>No pool, clubhouse, gym or backup power</li>
+              <li>Security arrangements unknown &mdash; must be seen</li>
+              <li>Walking to CRC after dark needs an honest safety assessment first</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="pc-col">
+        <div class="pc-head">
+          <span class="tag tag-d">Option D</span>
+          <h3>Meander Lifestyle &mdash; R10,500</h3>
+          <p class="addr">2 bed / 2 bath / 68&nbsp;m&sup2;, Midrand &middot; R15,278 all-in</p>
+        </div>
+        <div class="pc-body">
+          <div>
+            <h4>In favour</h4>
+            <ul class="tick pro">
+              <li><strong>Zero deposit</strong> &mdash; R7,300&ndash;R9,000 less cash to move in than anything else here</li>
+              <li><strong>Month-to-month lease.</strong> The only option with no twelve-month lock-in and no cancellation penalty &mdash; genuinely valuable if anything might change within the year</li>
+              <li><strong>Free uncapped internet</strong> &mdash; R800 a month, no installation</li>
+              <li><strong>Solar backup and water backup.</strong> The only option with confirmed load-shedding and outage protection</li>
+              <li><strong>68&nbsp;m&sup2;</strong> &mdash; the largest two-bed of the four, with two secure bays</li>
+              <li>Levies stated at R1,365 rather than inferred, with security included and no special levy</li>
+              <li>By far the biggest amenity offer &mdash; gym with classes, padel, pools, sports field, clubhouse, restaurant, coffee shop, meeting rooms</li>
+              <li>Gas hobs, en-suite bathrooms, walk-in closet, available now</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Against</h4>
+            <ul class="tick con">
+              <li><strong>The most expensive to run &mdash; R1,685 a month above Petra Nera, R1,405 above the R8,800 SoHo.</strong> About R19,000 more over year one</li>
+              <li><strong>Furthest from everywhere you go.</strong> R1,560 a month to CRC and R953 to Wits &mdash; roughly R2,513 in fares against SoHo&rsquo;s R2,123</li>
+              <li><strong>Those fares are my estimate, not yours</strong> &mdash; and they are the main reason it lands last. Check both in the app</li>
+              <li>Rent is R1,700 above the R8,800 SoHo unit for the same number of bedrooms</li>
+              <li>Electricity and water not stated &mdash; both are estimates</li>
+              <li>Month-to-month cuts both ways: the landlord can also end it, and rent may be revised more often</li>
+              <li>&ldquo;Zero deposit <em>available</em>&rdquo; &mdash; confirm it applies to this unit and that no fee or insurance product replaces it</li>
+              <li>Still only two bedrooms, so no study &mdash; the same limitation as SoHo, at a higher price</li>
+              <li>No pets &middot; furthest from CRC of all four, and the longest travel time at ~9 hrs a month</li>
             </ul>
           </div>
         </div>
@@ -834,62 +818,63 @@
   <section>
     <div class="sec-head">
       <p class="eyebrow">Verdict</p>
-      <h2>Petra Nera &mdash; on a margin now thin enough to be uncomfortable</h2>
+      <h2>Two real contenders, and a third if flexibility matters more than money</h2>
     </div>
 
     <div class="verdict">
       <p class="say">
-        Petra Nera is R980 a month cheaper &mdash; R490 each. It gives the two of you a third room to
-        use as a study and removes the church commute entirely. On the numbers as they now stand, it
-        still wins.
+        Petra Nera and the R8,800 SoHo unit are R280 a month apart &mdash; R140 each. That is no
+        longer a financial decision. Meander costs about R19,000 more over a year, and buys
+        flexibility rather than value.
       </p>
       <p class="measure" style="color:var(--ink-2);">
-        But the margin has halved twice. It was R1,672 on a private car with the original utility quote;
-        R1,330 once Uber replaced the car; and <strong>R980 now that Petra Nera&rsquo;s real utility bill
-        came in R350 higher</strong>. Two forces did that. The gym at Petra Nera costs
-        <strong>R1,820 a month</strong> once Uber is counted, which cancels almost all of the
-        walking-distance saving. And Petra Nera pays for its own geyser where SoHo does not.
+        The gap has closed steadily: R1,672 when this started, R1,330 once Uber replaced the car,
+        R980 when Petra Nera&rsquo;s real utility bill arrived, and R280 now that the cheaper SoHo
+        unit is on the table. It is fragile in one direction only &mdash; five of eight stress-test
+        scenarios make SoHo cheaper, while the ones favouring Petra Nera need you to use the gym less.
       </p>
       <p class="measure" style="color:var(--ink-2);">
-        R980 is roughly the value of <em>one</em> unanswered question. If sanitation and refuse are
-        billed on top at Petra Nera the way they are at SoHo, the decision reverses.
+        So the live choice is a straight trade, and both sides are real:
+        <strong>a third bedroom and a six-minute walk to church</strong>, against
+        <strong>a gym, a pool, a guard house and a flat you would rather come home to</strong>.
+        Meander only wins if what you need is a short lease and low move-in cash.
       </p>
 
       <div>
-        <p class="eyebrow" style="margin-bottom:16px;">Three questions decide it</p>
+        <p class="eyebrow" style="margin-bottom:16px;">Four questions decide it</p>
         <div class="qlist">
-          <div class="q">
-            <span class="q-n">Q1</span>
+          <div class="q"><span class="q-n">Q1</span>
+            <p><strong>How big is the R8,800 SoHo unit?</strong> The R9,500 flat is 62&nbsp;m&sup2;;
+            this one does not say. If it is materially smaller the R700 is not a saving, and Petra
+            Nera&rsquo;s three bedrooms pull ahead. Quick to ask, and it could end the comparison.</p></div>
+          <div class="q"><span class="q-n">Q2</span>
             <p><strong>Does Petra Nera bill sanitation and refuse on top of the R1,150?</strong>
-            SoHo charges R900 and R500 for exactly these. Anything above R980 on that line and
-            SoHo Junction is the cheaper flat. Get it in writing before anything else &mdash; this
-            single answer outweighs the rent, the gym and every fare in this document.</p>
-          </div>
-          <div class="q">
-            <span class="q-n">Q2</span>
-            <p><strong>How seriously will you train?</strong> At two visits a week Petra Nera is
-            R1,370 ahead. At 5.5 the two are dead even; at six, SoHo is cheaper. That crossover used
-            to be out of reach &mdash; it no longer is. If either of you trains properly, SoHo&rsquo;s
-            gym is not a perk, it is a line item worth R1,820 a month.</p>
-          </div>
-          <div class="q">
-            <span class="q-n">Q3</span>
-            <p><strong>Is R490 each enough to buy the flat you like less?</strong> That is what the
-            decision now costs. R490 a month is real money, but it is no longer the kind of gap that
-            settles an argument on its own &mdash; and Petra Nera is the plainer place to come home to.
-            Set against it: nothing stands between you and church. No booking, no fare, no waiting.
-            That is the strongest thing Petra Nera has, and it is not on this spreadsheet.</p>
-          </div>
+            SoHo charges R1,400 for exactly these. Anything above R280 and SoHo is cheaper outright
+            &mdash; a low bar to clear.</p></div>
+          <div class="q"><span class="q-n">Q3</span>
+            <p><strong>Will you train more than three times a week?</strong> At 3.7 visits the two
+            are level; past that SoHo is cheaper <em>and</em> has the gym downstairs.</p></div>
+          <div class="q"><span class="q-n">Q4</span>
+            <p><strong>Do you need to be able to leave?</strong> If there is a real chance you move
+            within twelve months, Meander&rsquo;s month-to-month lease and zero deposit are worth
+            more than the R1,405 a month it costs over SoHo. If you are settling for a year or more,
+            they are not.</p></div>
         </div>
       </div>
 
       <p class="measure" style="color:var(--ink-2);">
-        <strong>Recommendation:</strong> Petra Nera &mdash; conditional on confirming in writing that
-        sanitation and refuse are <em>not</em> billed on top, seeing the security setup in person, and
-        walking the Riverbend Road route to CRC after dark yourselves. But this is now a close call
-        rather than a clear one. If that levy question comes back at more than about R980, or if you
-        both intend to train five or six days a week, <strong>choose SoHo Junction</strong> &mdash; on
-        those numbers it is both cheaper and materially better to live in.
+        <strong>Recommendation:</strong> the <strong>R8,800 SoHo unit</strong>, unless the floor size
+        comes back materially below 62&nbsp;m&sup2; or the third bedroom genuinely matters more than
+        the amenities. It is R700 a month below the unit you first looked at, available now,
+        cheapest of the Fourways options to move into, and it costs R140 each a month more than
+        Petra Nera for a gym, a pool and a manned guard house. <strong>Move quickly &mdash; it was
+        available from 1 August.</strong>
+      </p>
+      <p class="measure" style="color:var(--ink-2);">
+        Choose <strong>Petra Nera</strong> if the third room is genuinely load-bearing, or if walking
+        to church matters more than any of this. Choose <strong>Meander</strong> if you cannot or do
+        not want to commit to twelve months, or if move-in cash is the binding constraint &mdash; but
+        price the two Uber trips first, because they are what put it last.
       </p>
     </div>
   </section>
@@ -898,26 +883,27 @@
   <section>
     <div class="sec-head">
       <p class="eyebrow">Before signing</p>
-      <h2>Questions to ask each landlord</h2>
+      <h2>Questions to ask</h2>
     </div>
 
     <div class="grid-2">
       <div class="pc-col">
-        <div class="pc-head"><span class="tag tag-a">SoHo Junction</span></div>
+        <div class="pc-head"><span class="tag tag-c">SoHo Junction &mdash; R8,800</span></div>
         <div class="pc-body">
           <ol class="qs">
-            <li>Are the R900 sanitation and R500 refuse/security fixed, or do they escalate annually?</li>
-            <li>What is a realistic monthly electricity spend for a two-bed here, given the central geyser? Ask for a current tenant&rsquo;s actual figure.</li>
-            <li>Are both parking bays included at no extra charge, and allocated in the lease?</li>
-            <li>What is the annual escalation percentage, and does it apply to the levies too?</li>
-            <li>Are any special levies planned? Can we see the last two AGM minutes and the reserve-fund balance?</li>
-            <li>What are the Activity Centre, gym and pool hours, and is there any additional access charge?</li>
-            <li>Is the business centre bookable, and is there a fee?</li>
-            <li>What is the deposit interest arrangement, and which account is it held in?</li>
-            <li>What is the total once-off cost &mdash; lease admin, credit checks for two, access tags, meter activation?</li>
-            <li>Does the complex have a generator or inverter for load-shedding, and water tanks for Joburg Water outages?</li>
-            <li>What is the early-cancellation penalty, and can it be capped in writing?</li>
-            <li>Is the R10,000 deposit confirmed for the unfurnished option?</li>
+            <li><strong>What is the floor size?</strong> The other unit in this complex is 62&nbsp;m&sup2;.</li>
+            <li><strong>Confirm the levies</strong> &mdash; is sanitation R900 and refuse/security R500, as on the sister listing?</li>
+            <li>Do the levies escalate annually, and by how much?</li>
+            <li>Are the sauna, steam room, business centre and function room available to this unit?</li>
+            <li>Realistic monthly electricity for this unit, given the central geyser? Ask for a current tenant&rsquo;s figure.</li>
+            <li>Is the carport allocated, and can a second bay be rented? At what cost?</li>
+            <li>What is the annual escalation percentage?</li>
+            <li>Any special levies planned? Can we see the last two AGM minutes and the reserve-fund balance?</li>
+            <li>Total once-off cost &mdash; lease admin, credit checks for two, tags, meter activation?</li>
+            <li>Deposit interest arrangement, and which account is it held in?</li>
+            <li>Generator or inverter for load-shedding, and water tanks for outages?</li>
+            <li>Early-cancellation penalty &mdash; can it be capped in writing?</li>
+            <li><strong>Is it still available?</strong></li>
           </ol>
         </div>
       </div>
@@ -926,18 +912,38 @@
         <div class="pc-head"><span class="tag tag-b">Petra Nera</span></div>
         <div class="pc-body">
           <ol class="qs">
-            <li><strong>Are sanitation, sewerage and refuse billed on top of the R1,150, or included?</strong> This is the decisive question &mdash; SoHo charges R1,400 for these.</li>
-            <li>If they are billed separately, what did they come to last month?</li>
-            <li>Can we see a recent utility bill or statement for the unit, so the R1,150 is confirmed rather than estimated?</li>
+            <li><strong>Are sanitation, sewerage and refuse billed on top of the R1,150, or included?</strong> Decisive &mdash; anything above R280 and SoHo wins.</li>
+            <li>If billed separately, what did they come to last month?</li>
+            <li>Can we see a recent utility bill, so the R1,150 is confirmed rather than estimated?</li>
             <li><strong>What does the R2,000 admin fee cover, and is it negotiable?</strong> Market rate is R950&ndash;R1,500.</li>
             <li>What is the annual escalation percentage?</li>
-            <li>What is the security setup &mdash; guard, access control, CCTV, perimeter?</li>
-            <li>How many parking bays, and are they covered or allocated?</li>
-            <li>Backup power and water storage during load-shedding and municipal outages?</li>
-            <li>Age and condition of the geyser, plumbing and roof &mdash; and who pays for repairs?</li>
-            <li>Will the landlord contribute to repainting or basic cosmetic improvement given the condition?</li>
-            <li>What is the exact walking route and distance to the CRC entrance, and is it lit at night?</li>
-            <li>When is it available, and is the R9,000 held for a 12-month lease?</li>
+            <li>Security setup &mdash; guard, access control, CCTV, perimeter?</li>
+            <li>How many parking bays, covered or allocated?</li>
+            <li>Backup power and water storage during load-shedding and outages?</li>
+            <li>Age and condition of geyser, plumbing and roof &mdash; who pays for repairs?</li>
+            <li>Will the landlord contribute to repainting given the condition?</li>
+            <li>Exact walking route to the CRC entrance &mdash; is it lit at night?</li>
+            <li>When is it available, and is R9,000 held for a 12-month lease?</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="pc-col">
+        <div class="pc-head"><span class="tag tag-d">Meander Lifestyle</span></div>
+        <div class="pc-body">
+          <ol class="qs">
+            <li><strong>Does the zero-deposit offer apply to this unit?</strong> And does a fee, insurance product or higher rent replace it?</li>
+            <li><strong>What notice period applies on the month-to-month lease</strong>, for you and for the landlord? How often can rent be revised?</li>
+            <li><strong>Does the R1,365 levy include sanitation, sewerage and refuse</strong> &mdash; or are those billed on top?</li>
+            <li>What does a two-person flat here actually spend on electricity a month? Is the geyser electric, gas or solar?</li>
+            <li>Is water metered per unit, and roughly what does it come to?</li>
+            <li>Does the solar backup power the whole unit or only essentials, and for how long?</li>
+            <li>What does the water backup cover during a municipal outage?</li>
+            <li>Is the gym, padel court and clubhouse access genuinely free, or is there a facility fee?</li>
+            <li>Are both carport bays allocated and secure?</li>
+            <li>Do the levies escalate, and by how much?</li>
+            <li>Total once-off cost &mdash; admin, credit checks for two, biometric registration?</li>
+            <li>Is the restaurant and coffee shop on the estate, and are the meeting rooms bookable free?</li>
           </ol>
         </div>
       </div>
@@ -948,30 +954,42 @@
   <section>
     <div class="sec-head">
       <p class="eyebrow">Method</p>
-      <h2>How the utility figures were checked</h2>
+      <h2>How the figures were checked</h2>
     </div>
 
     <div class="stack-lg">
       <div class="grid-2">
         <article class="panel">
-          <p class="eyebrow">Water &mdash; R50 confirmed</p>
+          <p class="eyebrow">Water</p>
           <p style="font-size:15px;">Johannesburg Water gives the <strong>first 6&nbsp;kL a month free</strong>
-          to residential customers, then charges R16.45/kL from 6 to 10&nbsp;kL. Two people typically use
-          6&ndash;8&nbsp;kL, so the metered cost really is in the tens of rands. <strong>R50 is right</strong>
-          &mdash; the earlier R350 estimate was wrong. Watch only for the demand-management levy, which rose
-          to about R108 a month in July 2026 and may sit on the body-corporate account rather than yours.</p>
+          to residential customers, then R16.45/kL from 6 to 10&nbsp;kL. Two people typically use
+          6&ndash;8&nbsp;kL, so the metered cost really is in the tens of rands. Watch for the
+          demand-management levy, which rose to about R108 a month in July 2026 and may sit on the
+          body-corporate account.</p>
         </article>
         <article class="panel">
-          <p class="eyebrow">Electricity &mdash; R120 is the fixed charge, not the bill</p>
-          <p style="font-size:15px;">City Power&rsquo;s 2026/27 prepaid residential tariff runs
-          <strong>R3.06&ndash;R4.37 per kWh</strong>, plus roughly R200 a month in fixed charges &mdash; a
-          R70 service charge and a <strong>R130 network capacity charge</strong>. That R130 is almost
-          certainly the R120 figure you had in mind. Actual consumption sits on top of it. A two-person
-          flat uses 300&ndash;450&nbsp;kWh a month; strip out the geyser at 30&ndash;40% and SoHo lands
-          around <strong>200&ndash;280&nbsp;kWh, or R650&ndash;R900</strong>. R700 is used here.
-          <strong>Petra Nera&rsquo;s actual R1,000</strong> &mdash; a larger flat, heating its own water
-          &mdash; sits almost exactly where this model predicts, which is good evidence the R700 estimate
-          for SoHo is sound. Still worth asking the agent for a current tenant&rsquo;s real number.</p>
+          <p class="eyebrow">Electricity &mdash; the figures corroborate</p>
+          <p style="font-size:15px;">City Power&rsquo;s 2026/27 prepaid tariff runs
+          <strong>R3.06&ndash;R4.37 per kWh</strong> plus about R200 a month fixed &mdash; a R70 service
+          charge and a R130 network capacity charge. A two-person flat uses 300&ndash;450&nbsp;kWh;
+          strip the geyser at 30&ndash;40% and SoHo lands at 200&ndash;280&nbsp;kWh, or R650&ndash;R900.
+          <strong>Petra Nera&rsquo;s actual R1,000</strong> &mdash; larger, heating its own water &mdash;
+          sits where this model predicts, which is good evidence the estimates are sound.</p>
+        </article>
+        <article class="panel">
+          <p class="eyebrow">Uber fares</p>
+          <p style="font-size:15px;">Your two figures &mdash; R50 over about 5&nbsp;km, R95 over about
+          25&nbsp;km &mdash; fit a fare of roughly <strong>R39 plus R2.25 a kilometre</strong>. That
+          model produces the Meander and gym fares. It is the weakest link in the comparison and the
+          reason Meander lands last, so <strong>price those trips in the app</strong> before relying on it.</p>
+        </article>
+        <article class="panel">
+          <p class="eyebrow">Internet &mdash; new this round</p>
+          <p style="font-size:15px;">Meander includes free uncapped internet, which showed that
+          internet had not been costed anywhere. Uncapped home fibre runs
+          <strong>R600&ndash;R900 a month</strong> in 2026; R800 is used for the three options that do
+          not include it. This raised every total by R800 but left the gaps between Petra Nera and the
+          SoHo units unchanged.</p>
         </article>
       </div>
 
@@ -982,22 +1000,27 @@
             <table>
               <thead><tr><th>Assumption</th><th>Value</th><th>Source / change it if&hellip;</th></tr></thead>
               <tbody>
-                <tr><td>Occupancy</td><td>Two people, both flats</td><td>Third room at Petra Nera used as a study, not let</td></tr>
-                <tr><td>Transport mode</td><td>Uber for everything</td><td>If either of you gets a car, SoHo&rsquo;s two free parking bays start to matter and the gap narrows further</td></tr>
+                <tr><td>Occupancy</td><td>Two people, all four flats</td><td>Third room at Petra Nera used as a study, not let</td></tr>
+                <tr><td>Transport mode</td><td>Uber for everything</td><td>If either of you gets a car, parking matters and Meander&rsquo;s and SoHo A&rsquo;s two bays come into play</td></tr>
                 <tr><td>Uber &mdash; SoHo to CRC</td><td>R50 each way</td><td>Your figure</td></tr>
-                <tr><td>Uber &mdash; either flat to Wits</td><td>~R95 each way</td><td>Your figure &mdash; &ldquo;just under R100&rdquo;</td></tr>
-                <tr><td>Uber &mdash; Petra Nera to gym</td><td>~R45 each way</td><td>Estimated from your other fares over ~3.5 km. The one fare not confirmed &mdash; worth checking in the app</td></tr>
+                <tr><td>Uber &mdash; Petra Nera / SoHo to Wits</td><td>~R95 each way</td><td>Your figure &mdash; &ldquo;just under R100&rdquo;</td></tr>
+                <tr><td>Uber &mdash; Meander to CRC</td><td>~R60 each way</td><td><strong>Estimated</strong> over ~10 km. Check in the app</td></tr>
+                <tr><td>Uber &mdash; Meander to Wits</td><td>~R110 each way</td><td><strong>Estimated</strong> over ~32 km. Check in the app</td></tr>
+                <tr><td>Uber &mdash; Petra Nera to gym</td><td>~R45 each way</td><td><strong>Estimated</strong> over ~3.5 km. At R60 the two lead options are already level</td></tr>
                 <tr><td>CRC trips</td><td>13 round trips a month</td><td>Mon, Tue, Thu &times; 4.33 weeks</td></tr>
                 <tr><td>Wits trips</td><td>4.3 round trips a month</td><td>Wednesdays, no CRC on campus days</td></tr>
-                <tr><td>Gym visits</td><td>3&times; a week &mdash; 13 round trips</td><td>See the sensitivity table for 2, 4 and 6</td></tr>
-                <tr><td>SoHo electricity</td><td>R700/month</td><td>City Power 2026/27 tariff, geyser excluded. Range R650&ndash;R900</td></tr>
-                <tr><td>SoHo water</td><td>R50/month</td><td>Johannesburg Water &mdash; first 6&nbsp;kL free</td></tr>
-                <tr><td>SoHo sanitation &amp; refuse</td><td>R900 + R500</td><td>Stated on the Property24 listing</td></tr>
-                <tr><td>Petra Nera electricity</td><td>R1,000/month</td><td>Your figure. Consistent with a three-bed heating its own water at City Power rates</td></tr>
-                <tr><td>Petra Nera water</td><td>R150/month</td><td>Your figure</td></tr>
-                <tr><td>Petra Nera sanitation &amp; refuse</td><td><strong>Unknown</strong></td><td>Not yet established whether these are billed on top. Worth up to R1,400 &mdash; the biggest remaining risk in the model</td></tr>
+                <tr><td>Gym visits</td><td>3&times; a week</td><td>See the sensitivity table for 2, 3.7, 4, 5 and 6</td></tr>
+                <tr><td>Internet</td><td>R800/month</td><td>B, C and A. R0 at Meander &mdash; included</td></tr>
+                <tr><td><strong>SoHo R8,800 levies</strong></td><td>R900 + R500</td><td><strong>Inferred</strong> from the R9,500 listing for the same complex &mdash; not quoted. Confirm before signing</td></tr>
+                <tr><td>SoHo electricity / water</td><td>R700 / R50</td><td>City Power tariff with geyser excluded; Joburg Water first 6&nbsp;kL free</td></tr>
+                <tr><td>SoHo R8,800 floor size</td><td><strong>Unknown</strong></td><td>Not stated. The R9,500 unit is 62&nbsp;m&sup2;</td></tr>
+                <tr><td>Petra Nera electricity / water</td><td>R1,000 / R150</td><td>Your figures</td></tr>
+                <tr><td>Petra Nera sanitation &amp; refuse</td><td><strong>Unknown</strong></td><td>Worth up to R1,400 &mdash; the biggest remaining risk in the comparison</td></tr>
                 <tr><td>Petra Nera deposit &amp; admin</td><td>R9,000 + R2,000</td><td>Your figures</td></tr>
-                <tr><td>Planet Fitness</td><td>R650/month</td><td>Single-club range is R400&ndash;R900; Fourways is a Megaclub. Vitality, Multiply and Reality discount up to 75%</td></tr>
+                <tr><td>Meander levies</td><td>R1,365</td><td>Stated on the listing, security included, special levy R0</td></tr>
+                <tr><td>Meander electricity / water</td><td>~R800 / ~R100</td><td><strong>Estimated.</strong> Not stated. Gas hobs and solar should hold electricity below a fully electric flat</td></tr>
+                <tr><td>Meander deposit</td><td>R0</td><td>&ldquo;Zero deposit apartments available&rdquo; &mdash; confirm for this unit</td></tr>
+                <tr><td>Planet Fitness</td><td>R650/month</td><td>Single-club range R400&ndash;R900; Fourways is a Megaclub. Vitality, Multiply and Reality discount up to 75%</td></tr>
                 <tr><td>Weeks per month</td><td>4.33</td><td>&mdash;</td></tr>
                 <tr><td>Distances</td><td>Indicative only</td><td>Road-route estimates from the address pins. Fares drive the model, not kilometres</td></tr>
               </tbody>
@@ -1013,11 +1036,13 @@
   <div class="wrap">
     <p class="eyebrow" style="margin-bottom:10px;">Sources</p>
     <ul>
-      <li><a href="https://www.property24.com/to-rent/fourways/sandton/gauteng/5811/117458624">Property24 listing &mdash; SoHo Junction, Fourways</a> &mdash; rent, deposit, sanitation, refuse and security, amenities, income requirement, pet policy, availability</li>
-      <li><a href="https://www.johannesburgwater.co.za/resource-centre/water-tarrifs/">Johannesburg Water tariffs</a> and the <a href="https://joburg.org.za/documents_/Documents/TARIFFS/Approved-Tariffs-20262027.pdf">City of Johannesburg approved 2026/27 tariffs</a> &mdash; first 6&nbsp;kL free, R16.45/kL thereafter, demand-management levy</li>
+      <li><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/112143116">Property24 &mdash; SoHo Junction, Broadacres, R8,800</a> &mdash; rent, deposit, parking, amenities, pet policy, availability</li>
+      <li><a href="https://www.property24.com/to-rent/fourways/sandton/gauteng/5811/117458624">Property24 &mdash; SoHo Junction, Fourways, R9,500</a> &mdash; sanitation, refuse and security levies, 62&nbsp;m&sup2;, income requirement, sauna / steam room / business centre</li>
+      <li><a href="https://www.property24.com/to-rent/treesbank-ah/midrand/gauteng/298/117368111">Property24 &mdash; Meander Lifestyle Apartments, Treesbank AH, Midrand</a> &mdash; rent, levies, zero deposit, month-to-month, 68&nbsp;m&sup2;, amenities, free uncapped internet</li>
+      <li><a href="https://www.houss.co.za/meander-lifestyle-apartments/">Houss Rentals &mdash; Meander Lifestyle Apartments</a> &mdash; location off Erling Road, solar and water backup, free facility access</li>
+      <li><a href="https://www.johannesburgwater.co.za/resource-centre/water-tarrifs/">Johannesburg Water tariffs</a> and the <a href="https://joburg.org.za/documents_/Documents/TARIFFS/Approved-Tariffs-20262027.pdf">City of Johannesburg approved 2026/27 tariffs</a> &mdash; first 6&nbsp;kL free, R16.45/kL thereafter</li>
       <li><a href="https://energybee.co.za/news/city-power-tariffs-july-2026-bill-breakdown">City Power July 2026 tariffs</a> &mdash; R3.34&ndash;R4.37/kWh incl. VAT, R70 service charge, R130 network capacity charge</li>
-      <li><a href="https://www.planetfitness.co.za/gyms/fourways-megaclub/">Planet Fitness Fourways Megaclub</a> &mdash; cnr Witkoppen Rd &amp; Nerine Dr, The Buzz Shopping Centre</li>
-      <li><a href="https://businesstech.co.za/news/lifestyle/847540/gym-prices-in-2026-virgin-active-vs-planet-fitness/">Gym prices in 2026 &mdash; BusinessTech</a> &mdash; R400&ndash;R900 a month, single club</li>
+      <li><a href="https://www.planetfitness.co.za/gyms/fourways-megaclub/">Planet Fitness Fourways Megaclub</a> &mdash; cnr Witkoppen Rd &amp; Nerine Dr</li>
       <li><a href="https://www.christianrevival.church/locations/crc-johannesburg">CRC Johannesburg</a> &mdash; cnr Witkoppen &amp; Riverbend Road, Fourways</li>
     </ul>
   </div>
