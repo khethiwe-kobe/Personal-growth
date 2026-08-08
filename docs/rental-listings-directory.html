@@ -77,6 +77,17 @@
   .dim { color:var(--muted); }
   .c-c { color:var(--c); }
 
+  .map-fig { margin:0; border:1px solid var(--rule); background:var(--surface); padding:10px 6px 4px; }
+  .map-fig svg { width:100%; height:auto; display:block; color:var(--ink); }
+  .map-fig .lb { font-family:var(--sans); font-size:12.5px; font-weight:500; fill:currentColor; }
+  .map-fig .lb-star { font-family:var(--sans); font-size:14px; font-weight:650; fill:var(--c); }
+  .map-fig .lb-ref { font-family:var(--sans); font-size:12.5px; font-weight:500; fill:currentColor; opacity:.55; }
+  .map-fig .lb-r { font-family:var(--mono); font-size:11px; fill:var(--muted); }
+  .map-fig .ring { font-family:var(--mono); font-size:10px; fill:var(--muted); letter-spacing:.1em; }
+  .map-fig .crc { font-family:var(--sans); font-size:13.5px; font-weight:650; fill:currentColor; }
+  .map-fig .cap { font-family:var(--mono); font-size:10px; fill:var(--muted); letter-spacing:.14em; }
+  .map-fig figcaption { padding:12px 14px 8px; font-size:13.5px; line-height:1.55; color:var(--muted); }
+
   .flag { border-left:3px solid var(--c-fill); background:var(--c-tint);
     padding:17px 21px; display:flex; flex-direction:column; gap:8px; }
   .flag.grey { border-left-color:var(--g-fill); background:var(--g-tint); }
@@ -137,6 +148,112 @@
 </header>
 
 <main class="wrap">
+
+  <!-- MAP -->
+  <section>
+    <div class="sec-head">
+      <p class="eyebrow">Figure 1</p>
+      <h2>Distance from CRC</h2>
+      <p class="note">Every complex placed by distance and rough direction from CRC Johannesburg.
+      Rings are 2&nbsp;km apart.</p>
+    </div>
+
+    <figure class="map-fig">
+      <svg viewBox="0 0 980 820" role="img" aria-label="Radial diagram centred on CRC Johannesburg with rings at 2, 4, 6, 8 and 10 kilometres. Douglasdale complexes including Kalgaro sit 2 to 3 km south. Planet Fitness is 3.5 km east. Beverley is 4 km north-east. SoHo Junction is 5 km north-west, highlighted. Rosewood is 5 km north. Helderfontein Nexus is 7 km north-west and Meander 10 km north. Wits Braamfontein lies 25 km south, off scale.">
+        <defs>
+          <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/>
+          </marker>
+        </defs>
+
+        <circle cx="470" cy="430" r="70" fill="none" stroke="currentColor" stroke-width="1" opacity=".16" stroke-dasharray="3 4"/>
+        <circle cx="470" cy="430" r="140" fill="none" stroke="currentColor" stroke-width="1" opacity=".16" stroke-dasharray="3 4"/>
+        <circle cx="470" cy="430" r="210" fill="none" stroke="currentColor" stroke-width="1" opacity=".16" stroke-dasharray="3 4"/>
+        <circle cx="470" cy="430" r="280" fill="none" stroke="currentColor" stroke-width="1" opacity=".16" stroke-dasharray="3 4"/>
+        <circle cx="470" cy="430" r="350" fill="none" stroke="currentColor" stroke-width="1" opacity=".16" stroke-dasharray="3 4"/>
+        <text x="519" y="484" text-anchor="middle" class="ring">2 KM</text>
+        <text x="569" y="533" text-anchor="middle" class="ring">4 KM</text>
+        <text x="618" y="582" text-anchor="middle" class="ring">6 KM</text>
+        <text x="668" y="632" text-anchor="middle" class="ring">8 KM</text>
+        <text x="731" y="673" text-anchor="middle" class="ring">10 KM</text>
+
+        <g opacity=".5">
+          <line x1="880" y1="120" x2="880" y2="62" stroke="currentColor" stroke-width="1.4" marker-end="url(#ar)"/>
+          <text x="880" y="140" text-anchor="middle" class="cap">N</text>
+        </g>
+
+        <line x1="470" y1="512" x2="470" y2="700" stroke="currentColor" stroke-width="1.2"
+              stroke-dasharray="5 5" opacity=".4" marker-end="url(#ar)"/>
+        <text x="482" y="706" class="lb" opacity=".65">Wits Braamfontein<tspan class="lb-r" dx="6">~25 km, off scale</tspan></text>
+
+        <circle cx="485.2" cy="516.2" r="3.4" fill="currentColor" opacity=".62"/>
+        <circle cx="451.8" cy="515.6" r="3.4" fill="currentColor" opacity=".62"/>
+        <circle cx="508.3" cy="520.2" r="3.4" fill="currentColor" opacity=".62"/>
+        <circle cx="427.3" cy="525.9" r="3.4" fill="currentColor" opacity=".62"/>
+        <circle cx="534.6" cy="512.7" r="3.4" fill="currentColor" opacity=".62"/>
+        <circle cx="592.0" cy="440.7" r="4" fill="none" stroke="currentColor" stroke-width="1.4" stroke-dasharray="2 2" opacity=".7"/>
+        <circle cx="560.0" cy="322.8" r="3.4" fill="currentColor" opacity=".62"/>
+        <circle cx="588.7" cy="355.8" r="3.4" fill="currentColor" opacity=".62"/>
+        <circle cx="452.9" cy="291.0" r="3.4" fill="currentColor" opacity=".62"/>
+        <circle cx="373.0" cy="305.9" r="3.4" fill="currentColor" opacity=".62"/>
+        <circle cx="541.5" cy="289.7" r="3.4" fill="currentColor" opacity=".62"/>
+        <circle cx="429.1" cy="252.7" r="3.4" fill="currentColor" opacity=".62"/>
+        <circle cx="348.4" cy="304.1" r="3.4" fill="currentColor" opacity=".62"/>
+        <circle cx="491.3" cy="256.3" r="3.4" fill="currentColor" opacity=".62"/>
+        <circle cx="372.7" cy="268.0" r="3.4" fill="currentColor" opacity=".62"/>
+        <circle cx="537.0" cy="245.8" r="3.4" fill="currentColor" opacity=".62"/>
+        <circle cx="613.3" cy="296.3" r="3.4" fill="currentColor" opacity=".62"/>
+        <circle cx="514.4" cy="221.2" r="3.4" fill="currentColor" opacity=".62"/>
+        <circle cx="657.1" cy="334.7" r="3.4" fill="currentColor" opacity=".62"/>
+        <circle cx="365.1" cy="224.2" r="3.4" fill="currentColor" opacity=".62"/>
+        <circle cx="332.8" cy="218.7" r="3.4" fill="currentColor" opacity=".62"/>
+        <circle cx="427.3" cy="82.6" r="3.4" fill="currentColor" opacity=".62"/>
+
+        <line x1="470" y1="430" x2="401.6" y2="268.9" stroke="var(--c)" stroke-width="1.4" opacity=".45"/>
+        <circle cx="401.6" cy="268.9" r="9" fill="none" stroke="var(--c)" stroke-width="1.6" opacity=".55"/>
+        <circle cx="401.6" cy="268.9" r="5.5" fill="var(--c)"/>
+
+        <g>
+          <path d="M 470 418 L 482 430 L 470 442 L 458 430 Z" fill="currentColor"/>
+          <text x="470" y="466" text-anchor="middle" class="crc">CRC Johannesburg</text>
+          <text x="470" y="482" text-anchor="middle" class="lb-r">Witkoppen &amp; Riverbend</text>
+        </g>
+
+        <text x="499.2" y="506.2" text-anchor="start" class="lb">Hornbill Rd<tspan class="lb-r" dx="6">R8,500</tspan></text>
+        <text x="413.3" y="541.9" text-anchor="end" class="lb">Kalgaro<tspan class="lb-r" dx="6">R9,500</tspan></text>
+        <text x="606.0" y="444.7" text-anchor="start" class="lb-ref">Planet Fitness<tspan class="lb-r" dx="6">gym</tspan></text>
+        <text x="573.0" y="320.8" text-anchor="start" class="lb">Beverley<tspan class="lb-r" dx="6">R9,000</tspan></text>
+        <text x="465.9" y="281.0" text-anchor="start" class="lb">Olea View<tspan class="lb-r" dx="6">R11,000</tspan></text>
+        <text x="360.0" y="325.9" text-anchor="end" class="lb">The William<tspan class="lb-r" dx="6">R11,000</tspan></text>
+        <text x="385.6" y="262.9" text-anchor="end" class="lb-star">SoHo Junction<tspan class="lb-r" dx="6">R8,800</tspan></text>
+        <text x="441.1" y="234.7" text-anchor="start" class="lb">Rosewood<tspan class="lb-r" dx="6">R8,200</tspan></text>
+        <text x="551.0" y="261.8" text-anchor="start" class="lb">Palm View<tspan class="lb-r" dx="6">R14,500</tspan></text>
+        <text x="670.1" y="338.7" text-anchor="start" class="lb">Madikwe<tspan class="lb-r" dx="6">R13,000</tspan></text>
+        <text x="319.8" y="220.7" text-anchor="end" class="lb">Helderfontein Nexus<tspan class="lb-r" dx="6">R10,500</tspan></text>
+        <text x="440.3" y="84.6" text-anchor="start" class="lb">Meander<tspan class="lb-r" dx="6">R12,000</tspan></text>
+
+        <text x="30" y="770" class="cap">SCHEMATIC &mdash; DISTANCES APPROXIMATE, BEARINGS ROUGHER STILL</text>
+        <text x="30" y="792" class="lb-r">Unlabelled dots are the remaining complexes in Table 2</text>
+      </svg>
+      <figcaption>
+        <strong>SoHo Junction sits about 5&nbsp;km north-west of CRC</strong> &mdash; further out than the
+        Douglasdale cluster at 2&ndash;3&nbsp;km, closer than Helderfontein Nexus at 7&nbsp;km or Meander
+        at 10. Rosewood at R8,200 is the only cheaper two-bed, at a similar distance, and it has one
+        bathroom.
+      </figcaption>
+    </figure>
+
+    <div class="flag" style="margin-top:18px;">
+      <p class="flag-title">Read this as a diagram, not a map</p>
+      <p>
+        Artifacts cannot load map tiles, so this is drawn from address estimates rather than routed
+        distances. <strong>The rings are reliable to within roughly a kilometre; the compass bearings
+        are rougher</strong> &mdash; good enough to see that Douglasdale is nearer and Midrand is
+        further, not good enough to navigate by. For real distances, drop the addresses in Table 2
+        into Google Maps.
+      </p>
+    </div>
+  </section>
 
   <!-- SOHO -->
   <section>
