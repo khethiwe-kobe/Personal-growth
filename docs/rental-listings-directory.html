@@ -1,0 +1,337 @@
+<title>SoHo Junction & Fourways Area — Rental Listings Directory</title>
+<style>
+  :root {
+    --paper:#FAF7F1; --surface:#FFFFFF; --beige:#F1EADD; --beige-deep:#E5DAC7;
+    --ink:#17130F; --ink-2:#453A2F; --muted:#7D6E5D;
+    --rule:#E2D8C7; --rule-soft:#EFE8DC;
+    --c:#9C4A16; --c-fill:#C9814A; --c-tint:#F8EDE1;
+    --g:#2B211A; --g-fill:#55432F; --g-tint:#EBE5D9;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, "Cascadia Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --paper:#14110D; --surface:#1C1712; --beige:#26201A; --beige-deep:#2F2820;
+      --ink:#F3ECE1; --ink-2:#D3C7B7; --muted:#A2907C; --rule:#332B22; --rule-soft:#272119;
+      --c:#E28B4A; --c-fill:#B0663A; --c-tint:#2B1C12;
+      --g:#EFE6D8; --g-fill:#C0AE93; --g-tint:#221D17; }
+  }
+  :root[data-theme="dark"] { --paper:#14110D; --surface:#1C1712; --beige:#26201A; --beige-deep:#2F2820;
+    --ink:#F3ECE1; --ink-2:#D3C7B7; --muted:#A2907C; --rule:#332B22; --rule-soft:#272119;
+    --c:#E28B4A; --c-fill:#B0663A; --c-tint:#2B1C12;
+    --g:#EFE6D8; --g-fill:#C0AE93; --g-tint:#221D17; }
+  :root[data-theme="light"] { --paper:#FAF7F1; --surface:#FFFFFF; --beige:#F1EADD; --beige-deep:#E5DAC7;
+    --ink:#17130F; --ink-2:#453A2F; --muted:#7D6E5D; --rule:#E2D8C7; --rule-soft:#EFE8DC;
+    --c:#9C4A16; --c-fill:#C9814A; --c-tint:#F8EDE1;
+    --g:#2B211A; --g-fill:#55432F; --g-tint:#EBE5D9; }
+
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--paper); color:var(--ink); font-family:var(--sans);
+    font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased; }
+  .wrap { max-width:1000px; margin:0 auto; padding:0 30px; }
+  .measure { max-width:64ch; }
+
+  .eyebrow { font-family:var(--mono); font-size:11px; letter-spacing:.18em;
+    text-transform:uppercase; color:var(--muted); margin:0; }
+  h1,h2 { margin:0; font-weight:600; text-wrap:balance; letter-spacing:-.02em; }
+  h1 { font-size:clamp(1.9rem,4.4vw,2.6rem); line-height:1.08; }
+  h2 { font-size:clamp(1.18rem,2.4vw,1.4rem); line-height:1.25; }
+  p { margin:0; }
+  strong { font-weight:650; }
+  a { color:var(--ink); text-underline-offset:3px; text-decoration-color:var(--beige-deep); }
+  a:hover { text-decoration-color:currentColor; }
+  a:focus-visible { outline:2px solid var(--c); outline-offset:3px; }
+  .note { font-size:14px; line-height:1.55; color:var(--muted); }
+
+  .masthead { border-bottom:1px solid var(--rule); }
+  .masthead-top { display:flex; flex-wrap:wrap; gap:8px 22px;
+    justify-content:space-between; align-items:baseline; padding:24px 0 0; }
+  .hero { padding:36px 0 40px; display:flex; flex-direction:column; gap:18px; }
+  .headline-figs { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:22px 30px; padding-top:10px; border-top:1px solid var(--rule); }
+  .fig { display:flex; flex-direction:column; gap:3px; padding-top:14px; }
+  .fig-n { font-size:1.9rem; line-height:1; letter-spacing:-.035em;
+    font-variant-numeric:tabular-nums; font-weight:600; }
+  .fig-note { font-size:12.5px; line-height:1.45; color:var(--muted); }
+
+  section { padding:38px 0; border-top:1px solid var(--rule); }
+  section:first-of-type { border-top:none; }
+  .sec-head { display:flex; flex-direction:column; gap:7px; margin-bottom:18px; }
+  .stack { display:flex; flex-direction:column; gap:18px; }
+
+  .table-scroll { overflow-x:auto; border:1px solid var(--rule); background:var(--surface); }
+  table { width:100%; border-collapse:collapse; font-size:13.8px; min-width:680px; }
+  caption { text-align:left; padding:14px 18px; font-family:var(--mono);
+    font-size:11px; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--muted); border-bottom:1px solid var(--rule); background:var(--beige); }
+  th,td { padding:8px 14px; text-align:left; border-bottom:1px solid var(--rule-soft); vertical-align:top; }
+  thead th { font-family:var(--mono); font-size:10.5px; font-weight:500;
+    letter-spacing:.1em; text-transform:uppercase; color:var(--muted);
+    border-bottom:1px solid var(--rule); white-space:nowrap; }
+  tbody tr:last-child td { border-bottom:none; }
+  .r { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  th.r, td.r { text-align:right; }
+  tr.band td { background:var(--rule-soft); font-family:var(--mono); font-size:10.5px;
+    letter-spacing:.12em; text-transform:uppercase; color:var(--muted); }
+  tr.pick td { background:var(--c-tint); }
+  .cell-note { display:block; font-size:11.5px; color:var(--muted); line-height:1.4; margin-top:2px; font-weight:400; }
+  .dim { color:var(--muted); }
+  .c-c { color:var(--c); }
+
+  .flag { border-left:3px solid var(--c-fill); background:var(--c-tint);
+    padding:17px 21px; display:flex; flex-direction:column; gap:8px; }
+  .flag.grey { border-left-color:var(--g-fill); background:var(--g-tint); }
+  .flag-title { font-family:var(--mono); font-size:11px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--c); }
+  .flag.grey .flag-title { color:var(--g); }
+  .flag p { font-size:14.5px; line-height:1.6; }
+
+  footer { border-top:1px solid var(--rule); padding:30px 0 56px; color:var(--muted);
+    font-size:13px; line-height:1.6; }
+  footer ul { margin:10px 0 0; padding-left:1.2em; display:flex; flex-direction:column; gap:6px; }
+
+  @media (max-width:620px) { .wrap { padding:0 18px; } section { padding:28px 0; } }
+  @media (prefers-reduced-motion:reduce) { * { animation:none!important; transition:none!important; } }
+
+  @media print {
+    :root { --paper:#FFF; --surface:#FFF; --beige:#F4EEE3; --ink:#17130F; --muted:#6F6152;
+      --rule:#D6CAB6; --rule-soft:#EAE2D4; --c:#8C4212; --c-fill:#C07640; --c-tint:#F9EEE2;
+      --g:#241C14; --g-fill:#4A3A2C; --g-tint:#EBE5D9; }
+    body { font-size:9pt; line-height:1.4; background:#fff; }
+    .wrap { max-width:none; padding:0; }
+    @page { size:A4 landscape; margin:12mm; }
+    h1 { font-size:20pt; } h2 { font-size:12pt; }
+    section { padding:9pt 0; break-inside:auto; }
+    tr,thead { break-inside:avoid; }
+    thead { display:table-header-group; }
+    .table-scroll { overflow:visible; }
+    table { min-width:0; font-size:7.4pt; }
+    th,td { padding:3px 6px; }
+    .flag { break-inside:avoid; }
+    a { text-decoration:none; }
+  }
+</style>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="masthead-top">
+      <p class="eyebrow">Rental listings directory &middot; Fourways, Broadacres, Douglasdale</p>
+      <p class="eyebrow">Swept August 2026</p>
+    </div>
+  </div>
+  <div class="wrap hero">
+    <h1>Every SoHo Junction unit, and everything nearby.</h1>
+    <p class="note measure" style="font-size:15.5px;color:var(--ink-2);">
+      Thirteen SoHo Junction listings are live, plus roughly fifty other apartments within about
+      10&nbsp;km of CRC. <strong>The R8,800 unit is still the only two-bathroom flat at SoHo under
+      R12,000</strong> &mdash; and the cheapest two-bed two-bath anywhere in this sweep.
+    </p>
+    <div class="headline-figs">
+      <div class="fig"><p class="eyebrow">SoHo listings live</p><p class="fig-n">13</p><p class="fig-note">Across Property24 and Private Property</p></div>
+      <div class="fig"><p class="eyebrow">2 bed / 2 bath at SoHo</p><p class="fig-n">3</p><p class="fig-note">R8,800 &middot; R10,500 &middot; R12,000</p></div>
+      <div class="fig"><p class="eyebrow">Your unit&rsquo;s lead</p><p class="fig-n c-c">R1,700</p><p class="fig-note">Below the next 2-bath at SoHo</p></div>
+      <div class="fig"><p class="eyebrow">Nearby flats listed</p><p class="fig-n">~50</p><p class="fig-note">2-bed, within ~10 km of CRC</p></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- SOHO -->
+  <section>
+    <div class="sec-head">
+      <p class="eyebrow">Table 1</p>
+      <h2>Every SoHo Junction listing</h2>
+      <p class="note">4 Poplar Avenue, Broadacres. Cheapest first. All links verified.</p>
+    </div>
+
+    <div class="table-scroll">
+      <table>
+        <caption>SoHo Junction &mdash; live rentals, August 2026</caption>
+        <thead><tr><th class="r">Rent</th><th>Bed</th><th>Bath</th><th>Size</th><th>Parking</th><th>Available</th><th>Listing</th></tr></thead>
+        <tbody>
+          <tr><td class="r">R7,800<span class="cell-note">reduced</span></td><td>1</td><td>1</td><td>48&nbsp;m&sup2;</td><td>1</td><td>1 Sep</td><td><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/110936543">P24 110936543</a><span class="cell-note">GB Properties &middot; too small for two</span></td></tr>
+          <tr class="pick"><td class="r"><strong class="c-c">R8,800</strong></td><td><strong>2</strong></td><td><strong>2</strong></td><td class="dim">not stated</td><td>1 carport</td><td><strong>Now</strong></td><td><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/112143116"><strong>P24 112143116</strong></a><span class="cell-note">yours &mdash; levies included in rent</span></td></tr>
+          <tr><td class="r">R9,100</td><td>2</td><td class="dim">1</td><td class="dim">&mdash;</td><td>1</td><td>1 Sep</td><td><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/117358820">P24 117358820</a></td></tr>
+          <tr><td class="r">R9,100<span class="cell-note">+ R399 refuse<br>+ R890.65 effluent</span></td><td>2</td><td class="dim">1</td><td class="dim">&mdash;</td><td>1</td><td>Now</td><td><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/117418093">P24 117418093</a><span class="cell-note">STSS prepaid water &amp; electricity</span></td></tr>
+          <tr><td class="r">R9,100</td><td>2</td><td class="dim">1</td><td class="dim">&mdash;</td><td>1</td><td>1 Sep</td><td><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/117503575">P24 117503575</a></td></tr>
+          <tr><td class="r">R9,500</td><td>2</td><td class="dim">1</td><td class="dim">&mdash;</td><td class="dim">&mdash;</td><td>1 Jul</td><td><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/117336994">P24 117336994</a><span class="cell-note">pet-friendly, 2nd floor</span></td></tr>
+          <tr><td class="r">R10,000</td><td>2</td><td class="dim">1</td><td class="dim">&mdash;</td><td class="dim">&mdash;</td><td>1 Aug</td><td><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/117458457">P24 117458457</a><span class="cell-note">ground floor</span></td></tr>
+          <tr><td class="r">R10,000</td><td>2</td><td class="dim">1</td><td class="dim">&mdash;</td><td class="dim">&mdash;</td><td class="dim">&mdash;</td><td><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/117184373">P24 117184373</a></td></tr>
+          <tr><td class="r">R10,000</td><td>2</td><td class="dim">1</td><td>77&nbsp;m&sup2;</td><td>2</td><td>Now</td><td><a href="https://www.privateproperty.co.za/to-rent/gauteng/johannesburg/sandton/broadacres/RR4733075">Private Property RR4733075</a><span class="cell-note">eXp &middot; largest floor area at SoHo</span></td></tr>
+          <tr><td class="r">R10,500</td><td>2</td><td class="dim">1</td><td class="dim">&mdash;</td><td>2</td><td>1 Sep</td><td><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/117508480">P24 117508480</a><span class="cell-note">3rd floor &middot; Live Real Estate &middot; newly listed</span></td></tr>
+          <tr><td class="r">R10,500 <span class="dim">headline</span><span class="cell-note">R9,500 + R1,400 charges</span></td><td>2</td><td>2</td><td>62&nbsp;m&sup2;</td><td>2 bays</td><td>1 Oct</td><td><a href="https://www.property24.com/to-rent/fourways/sandton/gauteng/5811/117458624">P24 117458624</a><span class="cell-note">the one you started with</span></td></tr>
+          <tr><td class="r">R12,000</td><td>2</td><td>2</td><td class="dim">&mdash;</td><td>2</td><td>1 Aug</td><td><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/117329860">P24 117329860</a><span class="cell-note">east-facing, no pets</span></td></tr>
+          <tr><td class="r">R13,000</td><td>3</td><td>2</td><td>87&nbsp;m&sup2;</td><td>1 + 1</td><td>Now</td><td><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/117255782">P24 117255782</a><span class="cell-note">corner unit</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="flag" style="margin-top:18px;">
+      <p class="flag-title">What the fuller picture confirms</p>
+      <p>
+        More stock has appeared since the last sweep &mdash; a new R10,500 two-bed and a third R9,100 &mdash;
+        but <strong>nothing has changed the position of your unit</strong>. Of thirteen listings, only three
+        have two bathrooms: yours at R8,800, the R10,500 headline one, and R12,000. Everything cheaper than
+        R8,800 is a one-bedroom.
+      </p>
+      <p>
+        And the R8,800 is the only one where <strong>the levies sit inside the rent</strong>. On a
+        like-for-like all-in basis it is roughly R2,100 a month below the R10,500 unit.
+      </p>
+    </div>
+  </section>
+
+  <!-- NEARBY -->
+  <section>
+    <div class="sec-head">
+      <p class="eyebrow">Table 2</p>
+      <h2>Nearby two-bedroom apartments</h2>
+      <p class="note">Grouped by distance from CRC Johannesburg (cnr Witkoppen &amp; Riverbend Rd).
+      Filtered to two-bedroom units &mdash; the size that matters for you. Distances are road estimates
+      from the street address, not measured routes.</p>
+    </div>
+
+    <div class="table-scroll">
+      <table>
+        <caption>Two-bed rentals within ~10 km of CRC &mdash; cheapest first within each band</caption>
+        <thead><tr><th>Complex / address</th><th class="r">Rent</th><th>Bath</th><th>Size</th><th>Park</th><th>Avail</th><th>Listing</th></tr></thead>
+        <tbody>
+          <tr class="band"><td colspan="7">~2&ndash;3 km &mdash; Douglasdale, closest to CRC</td></tr>
+          <tr><td>110 Hornbill Road</td><td class="r">R8,500</td><td class="dim">1</td><td>65&nbsp;m&sup2;</td><td>2</td><td>Now</td><td><a href="https://www.property24.com/to-rent/douglasdale/sandton/gauteng/3903/110549338">P24 110549338</a></td></tr>
+          <tr><td>Douglasgate, 70 Niven Road</td><td class="r">R9,000</td><td class="dim">1</td><td>65&nbsp;m&sup2;</td><td>2</td><td>Now</td><td><a href="https://www.property24.com/to-rent/douglasdale/sandton/gauteng/3903/108976676">P24 108976676</a></td></tr>
+          <tr><td><strong>Kalgaro Estate</strong>, 69 Swallow Drive<span class="cell-note">gym, pool, 24h security</span></td><td class="r">R9,500</td><td class="dim">1</td><td>67&nbsp;m&sup2;</td><td>2</td><td>1 Sep</td><td><a href="https://www.property24.com/to-rent/douglasdale/sandton/gauteng/3903/117497788">P24 117497788</a></td></tr>
+          <tr><td>Inyati Sands</td><td class="r">R10,000</td><td class="dim">1</td><td>100&nbsp;m&sup2;</td><td>2</td><td>1 Sep</td><td><a href="https://www.property24.com/to-rent/douglasdale/sandton/gauteng/3903/117498993">P24 117498993</a></td></tr>
+          <tr><td>110 Hornbill Road</td><td class="r">R10,000</td><td class="dim">1</td><td>68&nbsp;m&sup2;</td><td>2</td><td>15 Aug</td><td><a href="https://www.property24.com/to-rent/douglasdale/sandton/gauteng/3903/117510777">P24 117510777</a></td></tr>
+          <tr><td>1 Swallow Drive</td><td class="r">R10,000</td><td><strong>2</strong></td><td>72&nbsp;m&sup2;</td><td>2</td><td>1 Sep</td><td><a href="https://www.property24.com/to-rent/fourways/sandton/gauteng/5811/117415758">P24 117415758</a></td></tr>
+          <tr><td>26 Leslie Avenue</td><td class="r">R11,000</td><td class="dim">1</td><td>128&nbsp;m&sup2;</td><td>1</td><td>1 Sep</td><td><a href="https://www.property24.com/to-rent/douglasdale/sandton/gauteng/3903/117172730">P24 117172730</a></td></tr>
+          <tr><td>Marrakesh, 110 Hornbill Road</td><td class="r">R12,000</td><td><strong>2</strong></td><td>121&nbsp;m&sup2;</td><td>2</td><td>1 Sep</td><td><a href="https://www.property24.com/to-rent/douglasdale/sandton/gauteng/3903/117464491">P24 117464491</a></td></tr>
+          <tr><td>Douglasdale Retirement Village</td><td class="r">R12,500</td><td class="dim">1</td><td>65&nbsp;m&sup2;</td><td>1</td><td>1 Sep</td><td><a href="https://www.property24.com/to-rent/douglasdale/sandton/gauteng/3903/117098065">P24 117098065</a><span class="cell-note">age-restricted</span></td></tr>
+
+          <tr class="band"><td colspan="7">~4 km &mdash; Cedar Avenue &amp; central Fourways</td></tr>
+          <tr><td>Beverley, 21 Fountain Road</td><td class="r"><strong>R9,000</strong></td><td><strong>2</strong></td><td>67&nbsp;m&sup2;</td><td>1</td><td>Now</td><td><a href="https://www.property24.com/to-rent/fourways/sandton/gauteng/5811/117384068">P24 117384068</a><span class="cell-note">cheapest 2-bath nearby after SoHo</span></td></tr>
+          <tr><td>43 Frederick Road</td><td class="r">R9,500</td><td class="dim">1</td><td>90&nbsp;m&sup2;</td><td>1</td><td>1 Sep</td><td><a href="https://www.property24.com/to-rent/fourways/sandton/gauteng/5811/117490061">P24 117490061</a></td></tr>
+          <tr><td><strong>Olea View</strong>, 30 Cedar Avenue West</td><td class="r">R11,000</td><td><strong>2</strong></td><td>77&nbsp;m&sup2;</td><td>1</td><td>Now</td><td><a href="https://www.property24.com/to-rent/fourways/sandton/gauteng/5811/117403762">P24 117403762</a><span class="cell-note">pool, braai, no gym</span></td></tr>
+          <tr><td>8 Cedar Avenue West</td><td class="r">R11,500</td><td><strong>2</strong></td><td class="dim">&mdash;</td><td class="dim">&mdash;</td><td>Now</td><td><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/117217404">P24 117217404</a><span class="cell-note">furnished</span></td></tr>
+          <tr><td>Olea View, 30 Cedar Avenue West</td><td class="r">R14,000</td><td><strong>2</strong></td><td>77&nbsp;m&sup2;</td><td>1</td><td>Now</td><td><a href="https://www.property24.com/to-rent/fourways/sandton/gauteng/5811/117403776">P24 117403776</a></td></tr>
+
+          <tr class="band"><td colspan="7">~4&ndash;5 km &mdash; Broadacres Drive, Poplar, Rosewood, Lombardy</td></tr>
+          <tr><td>Rosewood Terraces, 25 Rosewood Road</td><td class="r"><strong>R8,200</strong></td><td class="dim">1</td><td>72&nbsp;m&sup2;</td><td>2</td><td>Now</td><td><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/115377125">P24 115377125</a><span class="cell-note">cheapest 2-bed in the sweep</span></td></tr>
+          <tr><td>Soho Lofts<span class="cell-note">a different complex &mdash; not SoHo Junction</span></td><td class="r">R9,500</td><td class="dim">1</td><td>61&nbsp;m&sup2;</td><td>2</td><td>1 Sep</td><td><a href="https://www.property24.com/to-rent/fourways/sandton/gauteng/5811/117509879">P24 117509879</a></td></tr>
+          <tr><td>The William Estate</td><td class="r"><strong>R9,500</strong></td><td><strong>2</strong></td><td>87&nbsp;m&sup2;</td><td>2</td><td>1 Sep</td><td><a href="https://www.property24.com/to-rent/fourways/sandton/gauteng/5811/112986384">P24 112986384</a></td></tr>
+          <tr><td>Broadacres</td><td class="r">R10,000</td><td class="dim">1</td><td class="dim">&mdash;</td><td>1</td><td>1 Sep</td><td><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/117409066">P24 117409066</a></td></tr>
+          <tr><td>Broadacres</td><td class="r">R10,200</td><td class="dim">1</td><td>70&nbsp;m&sup2;</td><td>1</td><td>Now</td><td><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/117425216">P24 117425216</a></td></tr>
+          <tr><td>Groveacres Estate, 31 Lombardy Road</td><td class="r">R10,500</td><td class="dim">1</td><td>69&nbsp;m&sup2;</td><td class="dim">&mdash;</td><td>1 Nov</td><td><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/117452595">P24 117452595</a></td></tr>
+          <tr><td>Fourways Precinct</td><td class="r">R10,500</td><td><strong>2</strong></td><td>85&nbsp;m&sup2;</td><td>2</td><td>1 Sep</td><td><a href="https://www.property24.com/to-rent/fourways/sandton/gauteng/5811/117502058">P24 117502058</a></td></tr>
+          <tr><td>Broadacres, third floor</td><td class="r">R10,500</td><td class="dim">1</td><td class="dim">&mdash;</td><td>1</td><td>1 Sep</td><td><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/117487335">P24 117487335</a></td></tr>
+          <tr><td>Maroela View, 62 Poplar Avenue</td><td class="r">R11,000</td><td><strong>2</strong></td><td>73&nbsp;m&sup2;</td><td>2</td><td>1 Sep</td><td><a href="https://www.property24.com/to-rent/fourways/sandton/gauteng/5811/117499443">P24 117499443</a></td></tr>
+          <tr><td>The William, 1 Broadacres Drive</td><td class="r">R11,000</td><td class="dim">1</td><td>93&nbsp;m&sup2;</td><td>2</td><td>Now</td><td><a href="https://www.property24.com/to-rent/fourways/sandton/gauteng/5811/114685994">P24 114685994</a></td></tr>
+          <tr><td>Broadacres</td><td class="r">R11,000</td><td><strong>2</strong></td><td>65&nbsp;m&sup2;</td><td>1</td><td>Now</td><td><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/117277886">P24 117277886</a></td></tr>
+          <tr><td>Broadacres</td><td class="r">R11,000</td><td><strong>2</strong></td><td>85&nbsp;m&sup2;</td><td class="dim">&mdash;</td><td>Now</td><td><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/117305086">P24 117305086</a></td></tr>
+          <tr><td>Broadacres</td><td class="r">R11,500</td><td><strong>2</strong></td><td>90&nbsp;m&sup2;</td><td class="dim">&mdash;</td><td>Now</td><td><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/117305100">P24 117305100</a></td></tr>
+          <tr><td>Broadacres</td><td class="r">R11,500</td><td class="dim">1</td><td>62&nbsp;m&sup2;</td><td>2</td><td>Now</td><td><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/117204032">P24 117204032</a></td></tr>
+          <tr><td>The William Apartments, 1 Broadacres Drive</td><td class="r">R11,500</td><td><strong>2</strong></td><td>94&nbsp;m&sup2;</td><td>2</td><td>1 Sep</td><td><a href="https://www.property24.com/to-rent/fourways/sandton/gauteng/5811/117491996">P24 117491996</a></td></tr>
+          <tr><td>The William Lifestyle Estate</td><td class="r">R11,500</td><td><strong>2</strong></td><td>83&nbsp;m&sup2;</td><td>2</td><td>1 Sep</td><td><a href="https://www.property24.com/to-rent/fourways/sandton/gauteng/5811/117487006">P24 117487006</a></td></tr>
+          <tr><td>The William</td><td class="r">R11,500</td><td><strong>2</strong></td><td class="dim">&mdash;</td><td>1</td><td>Now</td><td><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/117408119">P24 117408119</a><span class="cell-note">excludes utilities</span></td></tr>
+          <tr><td>959 Inchanga Road</td><td class="r">R11,500</td><td><strong>2</strong></td><td>80&nbsp;m&sup2;</td><td>2</td><td>1 Sep</td><td><a href="https://www.property24.com/to-rent/fourways/sandton/gauteng/5811/117449715">P24 117449715</a></td></tr>
+          <tr><td>The William</td><td class="r">R11,800</td><td><strong>2</strong></td><td class="dim">&mdash;</td><td>2</td><td>Now</td><td><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/117493375">P24 117493375</a></td></tr>
+          <tr><td>The William, 1 Broadacres Drive</td><td class="r">R12,000</td><td><strong>2</strong></td><td>87&nbsp;m&sup2;</td><td>2</td><td>Now</td><td><a href="https://www.property24.com/to-rent/fourways/sandton/gauteng/5811/114004274">P24 114004274</a></td></tr>
+          <tr><td>Broadacres, first floor</td><td class="r">R12,000</td><td><strong>2</strong></td><td class="dim">&mdash;</td><td>2</td><td>Now</td><td><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/117413450">P24 117413450</a></td></tr>
+          <tr><td>Broadacres, furnished</td><td class="r">R12,250</td><td class="dim">1</td><td class="dim">&mdash;</td><td>2</td><td>Now</td><td><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/116494030">P24 116494030</a></td></tr>
+          <tr><td>The William, 1 Broadacres Drive</td><td class="r">R12,500</td><td><strong>2</strong></td><td>87&nbsp;m&sup2;</td><td>2</td><td>Now</td><td><a href="https://www.property24.com/to-rent/fourways/sandton/gauteng/5811/117424754">P24 117424754</a></td></tr>
+          <tr><td>1 Rosewood Street</td><td class="r">R12,500</td><td><strong>2</strong></td><td class="dim">&mdash;</td><td class="dim">&mdash;</td><td>Now</td><td><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/117486666">P24 117486666</a></td></tr>
+          <tr><td>Broadacres</td><td class="r">R12,500</td><td><strong>2</strong></td><td>90&nbsp;m&sup2;</td><td class="dim">&mdash;</td><td>Now</td><td><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/117305205">P24 117305205</a></td></tr>
+          <tr><td>Broadacres</td><td class="r">R12,750</td><td><strong>2</strong></td><td class="dim">&mdash;</td><td class="dim">&mdash;</td><td>Now</td><td><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/117305193">P24 117305193</a></td></tr>
+          <tr><td>Broadacres, furnished corporate</td><td class="r">R13,000</td><td><strong>2</strong></td><td>80&nbsp;m&sup2;</td><td class="dim">&mdash;</td><td>Now</td><td><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/116086496">P24 116086496</a></td></tr>
+          <tr><td>The Poplar, Broadacres</td><td class="r">R13,000</td><td><strong>2</strong></td><td class="dim">&mdash;</td><td>2</td><td>1 Sep</td><td><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/117498045">P24 117498045</a></td></tr>
+          <tr><td>15 Lombardy Road</td><td class="r">R13,500</td><td><strong>2</strong></td><td class="dim">&mdash;</td><td>2</td><td>Now</td><td><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/117317746">P24 117317746</a></td></tr>
+          <tr><td>Broadacres, ultra-modern</td><td class="r">R13,500</td><td><strong>2</strong></td><td class="dim">&mdash;</td><td>2</td><td>Now</td><td><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/117456738">P24 117456738</a></td></tr>
+          <tr><td>The View, 87 Broadacres Drive</td><td class="r">R13,500</td><td class="dim">1</td><td class="dim">&mdash;</td><td>2</td><td>Now</td><td><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/117256594">P24 117256594</a><span class="cell-note">loft</span></td></tr>
+          <tr><td>Tocara Lifestyle Estate, Birch Road</td><td class="r">R13,800</td><td><strong>2</strong></td><td>65&nbsp;m&sup2;</td><td class="dim">&mdash;</td><td>1 Sep</td><td><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/117414130">P24 117414130</a></td></tr>
+          <tr><td>7 Poplar Avenue</td><td class="r">R13,800</td><td><strong>2</strong></td><td>87&nbsp;m&sup2;</td><td>2</td><td>Now</td><td><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/117367704">P24 117367704</a></td></tr>
+          <tr><td>Broadacres, garden unit</td><td class="r">R16,000</td><td><strong>2</strong></td><td class="dim">&mdash;</td><td>1</td><td>1 Sep</td><td><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/117444807">P24 117444807</a></td></tr>
+          <tr><td>The William, William Nicol Drive</td><td class="r">R17,999</td><td><strong>2</strong></td><td class="dim">&mdash;</td><td>2</td><td>Now</td><td><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/117509282">P24 117509282</a><span class="cell-note">fully furnished</span></td></tr>
+          <tr><td>The William, William Nicol Drive</td><td class="r">R18,800</td><td><strong>2</strong></td><td>89&nbsp;m&sup2;</td><td>2</td><td>Now</td><td><a href="https://www.property24.com/to-rent/fourways/sandton/gauteng/5811/109962457">P24 109962457</a></td></tr>
+
+          <tr class="band"><td colspan="7">~5&ndash;6 km &mdash; Richard Street, Othello, Campbell, Maroelael</td></tr>
+          <tr><td>Key Largo Lifestyle Estate, 30 Othello Ave</td><td class="r">R12,500</td><td><strong>2</strong></td><td>83&nbsp;m&sup2;</td><td>2</td><td>Now</td><td><a href="https://www.property24.com/to-rent/fourways/sandton/gauteng/5811/117308618">P24 117308618</a></td></tr>
+          <tr><td>Ss Madikwe, 69 Campbell Road</td><td class="r">R13,000</td><td><strong>2</strong></td><td>126&nbsp;m&sup2;</td><td>3</td><td>1 Sep</td><td><a href="https://www.property24.com/to-rent/fourways/sandton/gauteng/5811/117393172">P24 117393172</a></td></tr>
+          <tr><td>Palm View Estate, 23 Richard Street</td><td class="r">R14,500</td><td><strong>2</strong></td><td>89&nbsp;m&sup2;</td><td>2</td><td>Now</td><td><a href="https://www.property24.com/to-rent/fourways/sandton/gauteng/5811/117441646">P24 117441646</a></td></tr>
+          <tr><td>Ventura, 19 Maroelael Street</td><td class="r">R15,000</td><td><strong>2</strong></td><td>98&nbsp;m&sup2;</td><td>2</td><td>Now</td><td><a href="https://www.property24.com/to-rent/fourways/sandton/gauteng/5811/117487762">P24 117487762</a></td></tr>
+          <tr><td>Palmview Estate, 23 Richard Road</td><td class="r">R16,000</td><td><strong>2</strong></td><td class="dim">&mdash;</td><td>1</td><td>Now</td><td><a href="https://www.property24.com/to-rent/fourways/sandton/gauteng/5811/117498219">P24 117498219</a></td></tr>
+
+          <tr class="band"><td colspan="7">~7 km &mdash; Dainfern / Helderfontein &middot; ~10 km &mdash; Treesbank, Midrand</td></tr>
+          <tr><td>The View, 73 Broadacres Drive</td><td class="r">R20,000</td><td class="dim">1</td><td>128&nbsp;m&sup2;</td><td>2</td><td class="dim">&mdash;</td><td><a href="https://www.property24.com/to-rent/fourways/sandton/gauteng/5811/117503652">P24 117503652</a></td></tr>
+          <tr><td><strong>Helderfontein Nexus</strong>, 20 Broadacres Drive<span class="cell-note">gym, padel, pools, free uncapped internet</span></td><td class="r">from R10,500</td><td><strong>2</strong></td><td>68&nbsp;m&sup2;</td><td>2</td><td>Now</td><td><a href="https://www.property24.com/new-developments-to-rent/helderfontein-estate/midrand/gauteng/helderfontein-nexus-lifestyle-apartments/15179/5196">P24 development</a> &middot; <a href="https://www.houss.co.za/helderfontein-nexus-lifestyle-apartments/">Houss</a></td></tr>
+          <tr><td><strong>Meander Lifestyle</strong>, 1 Celery Drive<span class="cell-note">zero deposit, month-to-month, free internet</span></td><td class="r">R12,000</td><td><strong>2</strong></td><td>68&nbsp;m&sup2;</td><td>1</td><td>1 Sep</td><td><a href="https://www.property24.com/to-rent/fourways/sandton/gauteng/5811/117492203">P24 117492203</a></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- READ -->
+  <section>
+    <div class="sec-head">
+      <p class="eyebrow">Reading the table</p>
+      <h2>Where R8,800 sits</h2>
+    </div>
+    <div class="stack">
+      <div class="table-scroll">
+        <table>
+          <caption>Cheapest two-bed two-bath in the sweep</caption>
+          <thead><tr><th>Complex</th><th class="r">Rent</th><th>Levies</th><th>Distance</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr class="pick"><td><strong>SoHo Junction</strong></td><td class="r"><strong class="c-c">R8,800</strong></td><td><strong class="c-c">included</strong></td><td>~5 km</td><td>Gym, pool, sauna, steam room, business centre, 24h guard. Levies in the rent</td></tr>
+            <tr><td>Beverley, 21 Fountain Road</td><td class="r">R9,000</td><td class="dim">unknown</td><td>~4 km</td><td>67&nbsp;m&sup2;, 1 bay. Add R1,000&ndash;1,400 if levies are billed on top</td></tr>
+            <tr><td>The William Estate</td><td class="r">R9,500</td><td class="dim">unknown</td><td>~4.5 km</td><td>87&nbsp;m&sup2;, 2 bays. Larger, but likely levies on top</td></tr>
+            <tr><td>1 Swallow Drive, Douglasdale</td><td class="r">R10,000</td><td class="dim">unknown</td><td>~3 km</td><td>72&nbsp;m&sup2;, 2 bays. Closest to CRC of the 2-bath options</td></tr>
+            <tr><td>Fourways Precinct</td><td class="r">R10,500</td><td class="dim">unknown</td><td>~4.5 km</td><td>85&nbsp;m&sup2;, 2 bays</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="flag">
+        <p class="flag-title">Two honest caveats</p>
+        <p>
+          <strong>Beverley at R9,000 is the only headline price close to yours</strong>, and it is a
+          kilometre nearer CRC. But no listing in this table except SoHo states whether levies are
+          included &mdash; and at SoHo those run R1,290&ndash;R1,400. If Beverley bills them on top it
+          lands around R10,300 against your R8,800. Worth one call if you want to be certain, though
+          the amenity gap is wide.
+        </p>
+        <p>
+          <strong>Rosewood Terraces at R8,200 is the cheapest two-bed anywhere here</strong> &mdash;
+          but it has one bathroom, and you have set two as a requirement.
+        </p>
+      </div>
+
+      <div class="flag grey">
+        <p class="flag-title">What this sweep covers, and what it does not</p>
+        <p>
+          Property24 and Private Property across Broadacres, Fourways and Douglasdale, filtered to
+          two-bedroom units, August 2026. <strong>Not exhaustive:</strong> Gumtree, agency-only listings
+          and word-of-mouth units are not here, and most listings state neither levies nor bathroom count
+          reliably. Distances are road estimates from the street address, not measured routes &mdash;
+          check yours in Maps before relying on them.
+        </p>
+        <p>
+          Stock moves fast: this sweep found two SoHo units that did not exist a few days ago, and two
+          earlier ones have gone. Re-run the search links below if you need it current.
+        </p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="eyebrow" style="margin-bottom:9px;">Search pages &mdash; re-run these for current stock</p>
+    <ul>
+      <li><a href="https://www.property24.com/apartments-to-rent/broadacres/sandton/gauteng/4530">Property24 &mdash; Broadacres apartments</a> &mdash; 3 pages, where most SoHo Junction units appear</li>
+      <li><a href="https://www.property24.com/apartments-to-rent/fourways/sandton/gauteng/5811">Property24 &mdash; Fourways apartments</a> &mdash; 8 pages</li>
+      <li><a href="https://www.property24.com/apartments-to-rent/douglasdale/sandton/gauteng/3903">Property24 &mdash; Douglasdale apartments</a> &mdash; closest suburb to CRC</li>
+      <li><a href="https://www.privateproperty.co.za/apartments-to-rent/broadacres/1299">Private Property &mdash; Broadacres</a> &mdash; carries listings Property24 does not</li>
+      <li><a href="https://www.privateproperty.co.za/apartments-to-rent/helderfontein-estate/2965">Private Property &mdash; Helderfontein Estate</a></li>
+      <li><a href="https://www.christianrevival.church/locations/crc-johannesburg">CRC Johannesburg</a> &mdash; cnr Witkoppen &amp; Riverbend Road, the distance reference point</li>
+    </ul>
+  </div>
+</footer>
