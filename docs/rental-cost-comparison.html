@@ -147,7 +147,9 @@
     caption { padding:6px 7px; }
     .flag,.table-scroll,.qcol { break-inside:avoid; }
     footer { padding:14pt 0 0; }
-    a { text-decoration:none; }
+    a { color:var(--c); text-decoration:underline; text-decoration-color:currentColor;
+      text-underline-offset:2px; }
+    a::after { content:""; }
   }
 </style>
 
