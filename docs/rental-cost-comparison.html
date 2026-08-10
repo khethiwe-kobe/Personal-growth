@@ -1,33 +1,33 @@
-<title>Petra Nera vs SoHo Junction R8,800 — Cost Comparison</title>
+<title>SoHo Junction vs Telford Court — Cost Comparison</title>
 <style>
   :root {
     --paper:#FAF7F1; --surface:#FFFFFF; --beige:#F1EADD; --beige-deep:#E5DAC7;
     --ink:#17130F; --ink-2:#453A2F; --muted:#7D6E5D;
     --rule:#E2D8C7; --rule-soft:#EFE8DC;
-    --b:#2B211A; --b-fill:#55432F; --b-tint:#EBE5D9; --b-rgb:85 67 47;
     --c:#9C4A16; --c-fill:#C9814A; --c-tint:#F8EDE1; --c-rgb:201 129 74;
+    --t:#2B4A3F; --t-fill:#5C8073; --t-tint:#E7EEEB; --t-rgb:92 128 115;
     --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     --mono: ui-monospace, "SF Mono", SFMono-Regular, "Cascadia Mono", Menlo, Consolas, "Liberation Mono", monospace;
   }
   @media (prefers-color-scheme: dark) {
     :root { --paper:#14110D; --surface:#1C1712; --beige:#26201A; --beige-deep:#2F2820;
       --ink:#F3ECE1; --ink-2:#D3C7B7; --muted:#A2907C; --rule:#332B22; --rule-soft:#272119;
-      --b:#EFE6D8; --b-fill:#C0AE93; --b-tint:#221D17; --b-rgb:192 174 147;
-      --c:#E28B4A; --c-fill:#B0663A; --c-tint:#2B1C12; --c-rgb:176 102 58; }
+      --c:#E28B4A; --c-fill:#B0663A; --c-tint:#2B1C12; --c-rgb:176 102 58;
+      --t:#7FB8A4; --t-fill:#4E7768; --t-tint:#15211D; --t-rgb:78 119 104; }
   }
   :root[data-theme="dark"] { --paper:#14110D; --surface:#1C1712; --beige:#26201A; --beige-deep:#2F2820;
     --ink:#F3ECE1; --ink-2:#D3C7B7; --muted:#A2907C; --rule:#332B22; --rule-soft:#272119;
-    --b:#EFE6D8; --b-fill:#C0AE93; --b-tint:#221D17; --b-rgb:192 174 147;
-    --c:#E28B4A; --c-fill:#B0663A; --c-tint:#2B1C12; --c-rgb:176 102 58; }
+    --c:#E28B4A; --c-fill:#B0663A; --c-tint:#2B1C12; --c-rgb:176 102 58;
+    --t:#7FB8A4; --t-fill:#4E7768; --t-tint:#15211D; --t-rgb:78 119 104; }
   :root[data-theme="light"] { --paper:#FAF7F1; --surface:#FFFFFF; --beige:#F1EADD; --beige-deep:#E5DAC7;
     --ink:#17130F; --ink-2:#453A2F; --muted:#7D6E5D; --rule:#E2D8C7; --rule-soft:#EFE8DC;
-    --b:#2B211A; --b-fill:#55432F; --b-tint:#EBE5D9; --b-rgb:85 67 47;
-    --c:#9C4A16; --c-fill:#C9814A; --c-tint:#F8EDE1; --c-rgb:201 129 74; }
+    --c:#9C4A16; --c-fill:#C9814A; --c-tint:#F8EDE1; --c-rgb:201 129 74;
+    --t:#2B4A3F; --t-fill:#5C8073; --t-tint:#E7EEEB; --t-rgb:92 128 115; }
 
   * { box-sizing:border-box; }
   body { margin:0; background:var(--paper); color:var(--ink); font-family:var(--sans);
     font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased; }
-  .wrap { max-width:900px; margin:0 auto; padding:0 30px; }
+  .wrap { max-width:920px; margin:0 auto; padding:0 30px; }
   .measure { max-width:64ch; }
 
   .eyebrow { font-family:var(--mono); font-size:11px; letter-spacing:.18em;
@@ -45,36 +45,37 @@
   .masthead { border-bottom:1px solid var(--rule); }
   .masthead-top { display:flex; flex-wrap:wrap; gap:8px 22px;
     justify-content:space-between; align-items:baseline; padding:24px 0 0; }
-  .hero { padding:38px 0 42px; display:flex; flex-direction:column; gap:20px; }
-
-  .headline-figs { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  .hero { padding:36px 0 40px; display:flex; flex-direction:column; gap:20px; }
+  .headline-figs { display:grid; grid-template-columns:repeat(auto-fit,minmax(155px,1fr));
     gap:22px 30px; padding-top:10px; border-top:1px solid var(--rule); }
   .fig { display:flex; flex-direction:column; gap:3px; padding-top:14px; }
-  .fig-n { font-size:1.95rem; line-height:1; letter-spacing:-.035em;
+  .fig-n { font-size:1.9rem; line-height:1; letter-spacing:-.035em;
     font-variant-numeric:tabular-nums; font-weight:600; }
   .fig-note { font-size:12.5px; line-height:1.45; color:var(--muted); }
 
-  section { padding:40px 0; border-top:1px solid var(--rule); }
+  section { padding:38px 0; border-top:1px solid var(--rule); }
   section:first-of-type { border-top:none; }
   .sec-head { display:flex; flex-direction:column; gap:7px; margin-bottom:18px; }
   .stack { display:flex; flex-direction:column; gap:20px; }
-  .grid-2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(275px,1fr)); gap:18px; }
+  .grid-2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:18px; }
 
   .tag { font-family:var(--mono); font-size:10px; letter-spacing:.14em;
     text-transform:uppercase; padding:3px 8px; display:inline-block;
     white-space:nowrap; border:1px solid; align-self:flex-start; }
-  .tag-b { color:var(--b); border-color:var(--b-fill); background:var(--b-tint); }
   .tag-c { color:var(--c); border-color:var(--c-fill); background:var(--c-tint); }
-  .c-b{color:var(--b)} .c-c{color:var(--c)}
+  .tag-t { color:var(--t); border-color:var(--t-fill); background:var(--t-tint); }
+  .c-c{color:var(--c)} .c-t{color:var(--t)}
 
+  .t-units table { table-layout:fixed; }
+  .t-units td, .t-units td.r { white-space:normal; }
   .table-scroll { overflow-x:auto; border:1px solid var(--rule); background:var(--surface); }
-  table { width:100%; border-collapse:collapse; font-size:14.2px; min-width:520px; }
+  table { width:100%; border-collapse:collapse; font-size:14px; min-width:600px; }
   caption { text-align:left; padding:14px 18px; font-family:var(--mono);
     font-size:11px; letter-spacing:.16em; text-transform:uppercase;
     color:var(--muted); border-bottom:1px solid var(--rule); background:var(--beige); }
-  th,td { padding:9px 16px; text-align:left; border-bottom:1px solid var(--rule-soft); vertical-align:top; }
+  th,td { padding:9px 15px; text-align:left; border-bottom:1px solid var(--rule-soft); vertical-align:top; }
   thead th { font-family:var(--mono); font-size:10.5px; font-weight:500;
-    letter-spacing:.12em; text-transform:uppercase; color:var(--muted);
+    letter-spacing:.1em; text-transform:uppercase; color:var(--muted);
     border-bottom:1px solid var(--rule); white-space:nowrap; }
   tbody tr:last-child td { border-bottom:none; }
   .r { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
@@ -83,26 +84,15 @@
   tr.sub td { background:var(--rule-soft); font-weight:600; }
   .cell-note { display:block; font-size:11.5px; color:var(--muted); line-height:1.4; margin-top:2px; font-weight:400; }
   .dim { color:var(--muted); }
-  col.hi { background:var(--b-tint); }
+  col.hi { background:var(--c-tint); }
 
-  .flag { border-left:3px solid var(--b-fill); background:var(--b-tint);
+  .flag { border-left:3px solid var(--c-fill); background:var(--c-tint);
     padding:17px 21px; display:flex; flex-direction:column; gap:8px; }
-  .flag.warm { border-left-color:var(--c-fill); background:var(--c-tint); }
+  .flag.tel { border-left-color:var(--t-fill); background:var(--t-tint); }
   .flag-title { font-family:var(--mono); font-size:11px; letter-spacing:.16em;
-    text-transform:uppercase; color:var(--b); }
-  .flag.warm .flag-title { color:var(--c); }
+    text-transform:uppercase; color:var(--c); }
+  .flag.tel .flag-title { color:var(--t); }
   .flag p { font-size:14.5px; line-height:1.6; }
-
-  .bars { display:flex; flex-direction:column; gap:14px; }
-  .bar-row { display:flex; flex-direction:column; gap:7px; }
-  .bar-label { display:flex; justify-content:space-between; align-items:baseline; gap:14px; font-size:13.5px; }
-  .bar-track { display:flex; height:22px; }
-  .seg { display:block; height:100%; }
-  .b1{background:rgb(var(--b-rgb)/1)} .b2{background:rgb(var(--b-rgb)/.6)} .b3{background:rgb(var(--b-rgb)/.36)} .b4{background:rgb(var(--b-rgb)/.18)}
-  .c1{background:rgb(var(--c-rgb)/1)} .c2{background:rgb(var(--c-rgb)/.6)} .c3{background:rgb(var(--c-rgb)/.36)} .c4{background:rgb(var(--c-rgb)/.18)}
-  .legend { display:flex; flex-wrap:wrap; gap:5px 20px; font-size:12.5px; color:var(--muted); }
-  .legend span { display:inline-flex; align-items:center; gap:7px; }
-  .swatch { width:10px; height:10px; background:var(--muted); flex:none; }
 
   ol.qs { margin:0; padding-left:1.4em; display:flex; flex-direction:column; gap:8px;
     font-size:14.2px; line-height:1.55; }
@@ -115,485 +105,252 @@
     font-size:13px; line-height:1.6; }
   footer ul { margin:10px 0 0; padding-left:1.2em; display:flex; flex-direction:column; gap:6px; }
 
-  @media (max-width:620px) {
-    .wrap { padding:0 18px; }
-    section { padding:30px 0; }
-    .qbody,.qhead { padding-left:18px; padding-right:18px; }
-  }
+  @media (max-width:620px) { .wrap { padding:0 18px; } section { padding:28px 0; }
+    .qbody,.qhead { padding-left:18px; padding-right:18px; } }
   @media (prefers-reduced-motion:reduce) { * { animation:none!important; transition:none!important; } }
 
   @media print {
-    :root { --paper:#FFF; --surface:#FFF; --beige:#F4EEE3; --beige-deep:#E5DAC7;
-      --ink:#17130F; --ink-2:#453A2F; --muted:#6F6152; --rule:#D6CAB6; --rule-soft:#EAE2D4;
-      --b:#241C14; --b-fill:#4A3A2C; --b-tint:#EBE5D9; --b-rgb:74 58 44;
-      --c:#8C4212; --c-fill:#C07640; --c-tint:#F9EEE2; --c-rgb:192 118 64; }
-    body { font-size:9.6pt; line-height:1.45; background:#fff; }
+    :root { --paper:#FFF; --surface:#FFF; --beige:#F4EEE3; --ink:#17130F; --muted:#6F6152;
+      --rule:#D6CAB6; --rule-soft:#EAE2D4; --c:#8C4212; --c-fill:#C07640; --c-tint:#F9EEE2;
+      --t:#26433A; --t-fill:#557667; --t-tint:#E9F0ED; }
+    body { font-size:9.4pt; line-height:1.42; background:#fff; }
     .wrap { max-width:none; padding:0; }
-    @page { size:A4; margin:14mm 12mm; }
-    h1 { font-size:21pt; } h2 { font-size:12.5pt; }
-    .fig-n { font-size:14pt; }
-    .headline-figs { grid-template-columns:repeat(4,1fr); gap:10pt; }
-    .fig-note { font-size:7.2pt; }
-    section { padding:10pt 0; break-inside:auto; }
-    .hero { padding:12pt 0 13pt; }
-    .sec-head { margin-bottom:8pt; }
+    @page { size:A4; margin:13mm 12mm; }
+    h1 { font-size:20pt; } h2 { font-size:12pt; }
+    .fig-n { font-size:13pt; }
+    .headline-figs { grid-template-columns:repeat(4,1fr); gap:9pt; }
+    .fig-note { font-size:7pt; }
+    section { padding:9pt 0; break-inside:auto; }
+    .hero { padding:11pt 0 12pt; }
+    .sec-head { margin-bottom:7pt; }
     h2,.sec-head { break-after:avoid; }
     tr,thead { break-inside:avoid; }
     thead { display:table-header-group; }
-    .stack { gap:11pt; } .grid-2 { gap:9pt; }
+    .stack { gap:10pt; } .grid-2 { gap:8pt; }
     .table-scroll { overflow:visible; }
-    table { min-width:0; font-size:7.9pt; }
-    th,td { padding:4px 7px; }
-    caption { padding:6px 7px; }
-    .flag,.table-scroll,.qcol { break-inside:avoid; }
-    footer { padding:14pt 0 0; }
-    a { color:var(--c); text-decoration:underline; text-decoration-color:currentColor;
-      text-underline-offset:2px; }
-    a::after { content:""; }
+    table { min-width:0; font-size:7.7pt; }
+    th,td { padding:4px 6px; }
+    .flag,.qcol { break-inside:avoid; }
+    a { color:var(--c); text-decoration:underline; text-decoration-color:currentColor; text-underline-offset:2px; }
+    footer { padding:13pt 0 0; }
   }
 </style>
 
 <header class="masthead">
   <div class="wrap">
     <div class="masthead-top">
-      <p class="eyebrow">Petra Nera vs SoHo Junction R8,800 &middot; Two people &middot; No gym</p>
+      <p class="eyebrow">SoHo Junction vs Telford Court &middot; Two people &middot; Uber &middot; No gym</p>
       <p class="eyebrow">August 2026</p>
     </div>
   </div>
   <div class="wrap hero">
-    <h1>On the house alone, SoHo is cheaper. Transport is the whole story.</h1>
+    <h1>Same money, 45% more flat &mdash; if the levies hold.</h1>
     <p class="note measure" style="font-size:15.5px;color:var(--ink-2);">
-      Separating the two makes it clear. <strong>SoHo&rsquo;s house costs are R580 a month lower</strong>
-      &mdash; its rent already covers sanitation, refuse and security, and its electricity is well under
-      Petra Nera&rsquo;s. Petra Nera wins overall only because nobody Ubers to church.
+      Telford Court&rsquo;s R7,980 unit lands within <strong>R38 a month of SoHo</strong> &mdash; a dead
+      heat &mdash; for <strong>90&nbsp;m&sup2; against roughly 62</strong>. The catch is that its rent
+      saving is eaten by electricity, and unlike SoHo it has not confirmed what the rent covers.
     </p>
 
     <div class="headline-figs">
-      <div class="fig">
-        <p class="eyebrow">House costs</p>
-        <p class="fig-n c-c">&minus;R580</p>
-        <p class="fig-note">SoHo cheaper per month</p>
-      </div>
-      <div class="fig">
-        <p class="eyebrow">Transport</p>
-        <p class="fig-n c-b">+R1,300</p>
-        <p class="fig-note">SoHo dearer &mdash; all of it the CRC run</p>
-      </div>
-      <div class="fig">
-        <p class="eyebrow">Net</p>
-        <p class="fig-n c-b">R720</p>
-        <p class="fig-note">Petra Nera ahead &middot; R8,690 a year</p>
-      </div>
-      <div class="fig">
-        <p class="eyebrow">The other person</p>
-        <p class="fig-n c-c">&minus;R290</p>
-        <p class="fig-note">Better off at SoHo, per month</p>
-      </div>
+      <div class="fig"><p class="eyebrow">SoHo R8,800</p><p class="fig-n c-c">R12,504</p><p class="fig-note">~62&nbsp;m&sup2; &middot; levies included</p></div>
+      <div class="fig"><p class="eyebrow">Telford R7,980</p><p class="fig-n c-t">R12,466</p><p class="fig-note">90&nbsp;m&sup2; &middot; levies unknown</p></div>
+      <div class="fig"><p class="eyebrow">Telford R8,500</p><p class="fig-n c-t">R12,986</p><p class="fig-note">95&nbsp;m&sup2; &middot; levies unknown</p></div>
+      <div class="fig"><p class="eyebrow">The swing factor</p><p class="fig-n">R1,300</p><p class="fig-note">If Telford bills levies on top, SoHo wins</p></div>
     </div>
   </div>
 </header>
 
 <main class="wrap">
 
-  <!-- HOUSE -->
+  <!-- THE FLATS -->
   <section>
     <div class="sec-head">
       <p class="eyebrow">Table 1</p>
-      <h2>House costs only</h2>
-      <p class="note">Everything you pay to live there. No transport.</p>
+      <h2>The three units</h2>
     </div>
+    <div class="table-scroll t-units">
+      <table>
+        <caption>What you get</caption>
+        <colgroup><col style="width:20%"><col class="hi" style="width:27%"><col style="width:26.5%"><col style="width:26.5%"></colgroup>
+        <thead><tr><th></th><th class="r">SoHo Junction</th><th class="r">Telford Court</th><th class="r">Telford Court</th></tr></thead>
+        <tbody>
+          <tr><td>Advertised rent</td><td class="r"><strong>R8,800</strong></td><td class="r"><strong>R7,980</strong></td><td class="r"><strong>R8,500</strong></td></tr>
+          <tr><td>Address</td><td class="r">4 Poplar Ave<span class="cell-note">Broadacres</span></td><td class="r" colspan="2" style="text-align:center;">Hyperion Rd, off Witkoppen<span class="cell-note">Noordhang, Randburg</span></td></tr>
+          <tr><td><strong>Floor size</strong></td><td class="r dim">not stated<span class="cell-note">sister unit is 62&nbsp;m&sup2;</span></td><td class="r"><strong class="c-t">90&nbsp;m&sup2;</strong></td><td class="r"><strong class="c-t">95&nbsp;m&sup2;</strong></td></tr>
+          <tr><td>Bed / bath</td><td class="r">2 / 2</td><td class="r">2 / 2<span class="cell-note">main en-suite, both renovated</span></td><td class="r">2 / 2</td></tr>
+          <tr><td>Parking</td><td class="r">1 carport</td><td class="r">1 garage</td><td class="r"><strong>1 garage + 2 bays</strong></td></tr>
+          <tr><td>Distance to CRC<span class="cell-note">estimated</span></td><td class="r">~5 km</td><td class="r" colspan="2" style="text-align:center;">~6 km &mdash; straight run along Witkoppen</td></tr>
+          <tr><td>Available</td><td class="r"><strong>Now</strong></td><td class="r">1 Sep</td><td class="r"><strong>Now</strong><span class="cell-note">13 July</span></td></tr>
+          <tr><td>Facilities</td><td class="r">Gym, sauna, steam room, pool, clubhouse, business centre, 24h manned guard</td><td class="r" colspan="2" style="text-align:center;">Pool, tennis and squash courts, basketball ring, braai, controlled access</td></tr>
+          <tr><td>Fittings</td><td class="r"><strong>Gas hob, central geyser</strong>, LED</td><td class="r dim" colspan="2" style="text-align:center;">Not stated &mdash; assumed own geyser and electric stove</td></tr>
+          <tr><td>Agency</td><td class="r">Match! Property</td><td class="r">Rawson Northcliff</td><td class="r">Trafalgar</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
 
+  <!-- HOUSE -->
+  <section>
+    <div class="sec-head">
+      <p class="eyebrow">Table 2</p>
+      <h2>House costs</h2>
+      <p class="note">No transport. Telford&rsquo;s electricity is estimated at a full-electric load &mdash;
+      own geyser, electric stove &mdash; because neither listing states otherwise.</p>
+    </div>
     <div class="stack">
       <div class="table-scroll">
         <table>
           <caption>Monthly house costs</caption>
-          <colgroup><col><col class="hi"><col></colgroup>
-          <thead><tr><th>Line item</th><th class="r">Petra Nera</th><th class="r">SoHo R8,800</th></tr></thead>
+          <colgroup><col><col class="hi"><col><col></colgroup>
+          <thead><tr><th>Line item</th><th class="r">SoHo R8,800</th><th class="r">Telford R7,980</th><th class="r">Telford R8,500</th></tr></thead>
           <tbody>
-            <tr><td>Rent</td><td class="r">R9,000</td><td class="r">R8,800</td></tr>
-            <tr><td>Sanitation / sewerage</td><td class="r dim">unknown &mdash; ask</td><td class="r"><strong class="c-c">included in rent</strong></td></tr>
-            <tr><td>Refuse &amp; security</td><td class="r dim">unknown &mdash; ask</td><td class="r"><strong class="c-c">included in rent</strong></td></tr>
-            <tr><td>Electricity<span class="cell-note">Petra Nera: your figure &middot; SoHo: derived, Table 4</span></td><td class="r">R1,000</td><td class="r"><strong class="c-c">R620</strong></td></tr>
-            <tr><td>Water<span class="cell-note">SoHo: derived, Table 4</span></td><td class="r">R150</td><td class="r">R150</td></tr>
-            <tr><td>Internet<span class="cell-note">50 Mbps uncapped &mdash; see Table 4b</span></td><td class="r">R550</td><td class="r">R550</td></tr>
-            <tr class="total"><td>House total</td><td class="r c-b">R10,700</td><td class="r c-c">R10,120</td></tr>
-            <tr class="total"><td>Per person</td><td class="r c-b">R5,350</td><td class="r c-c">R5,060</td></tr>
-            <tr class="total"><td>Difference</td><td class="r" colspan="2"><strong class="c-c">SoHo cheaper by R580 a month</strong> &mdash; R6,960 a year</td></tr>
+            <tr><td>Rent</td><td class="r">R8,800</td><td class="r">R7,980</td><td class="r">R8,500</td></tr>
+            <tr><td>Sanitation, refuse, security</td><td class="r"><strong class="c-c">included in rent</strong></td><td class="r dim" colspan="2" style="text-align:center;"><strong>unknown &mdash; the decisive question</strong></td></tr>
+            <tr><td>Electricity<span class="cell-note">SoHo: central geyser + gas hob &middot; Telford: full electric assumed</span></td><td class="r"><strong class="c-c">R620</strong></td><td class="r">R1,200</td><td class="r">R1,200</td></tr>
+            <tr><td>Water<span class="cell-note">SoHo: free 6 kL confirmed &middot; Telford: unconfirmed</span></td><td class="r"><strong class="c-c">R0</strong></td><td class="r">R150</td><td class="r">R150</td></tr>
+            <tr><td>Internet<span class="cell-note">50 Mbps uncapped</span></td><td class="r">R550</td><td class="r">R550</td><td class="r">R550</td></tr>
+            <tr class="total"><td>House total</td><td class="r c-c">R9,970</td><td class="r c-t">R9,880</td><td class="r c-t">R10,400</td></tr>
           </tbody>
         </table>
-      </div>
-
-      <div class="flag warm">
-        <p class="flag-title">Why SoHo&rsquo;s house is cheaper</p>
-        <p>
-          Two reasons, both structural. <strong>The R8,800 covers sanitation, refuse and security</strong>,
-          which the other SoHo unit bills at R1,400 on top. And <strong>electricity runs R380 lower</strong>
-          because the geyser sits on the body corporate&rsquo;s account and the hobs are gas &mdash; Petra
-          Nera heats its own water. Rent is nearly identical; everything under it is not.
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- TRANSPORT -->
-  <section>
-    <div class="sec-head">
-      <p class="eyebrow">Table 2</p>
-      <h2>Transport, calculated separately</h2>
-      <p class="note">One person travels to CRC. Wits is two Wednesdays together in one car, two
-      Wednesdays separately in two.</p>
-    </div>
-
-    <div class="stack">
-      <div class="table-scroll">
-        <table>
-          <caption>Monthly Uber &mdash; 4.33 weeks, R100 per round trip to CRC, R190 to Wits</caption>
-          <colgroup><col><col><col class="hi"><col></colgroup>
-          <thead><tr><th>Trip</th><th class="r">Cars &times; days</th><th class="r">Petra Nera</th><th class="r">SoHo R8,800</th></tr></thead>
-          <tbody>
-            <tr><td><strong>CRC</strong> &mdash; one person<span class="cell-note">Mon, Tue, Thu</span></td><td class="r">1 &times; 13</td><td class="r"><strong class="c-b">R0 &mdash; 6 min walk</strong></td><td class="r">R1,300</td></tr>
-            <tr><td><strong>Wits</strong> &mdash; together<span class="cell-note">2 Wednesdays, one car, fare split</span></td><td class="r">1 &times; 2.17</td><td class="r">R411</td><td class="r">R411</td></tr>
-            <tr><td><strong>Wits</strong> &mdash; separately<span class="cell-note">2 Wednesdays, one car each</span></td><td class="r">2 &times; 2.17</td><td class="r">R823</td><td class="r">R823</td></tr>
-            <tr class="sub"><td>Wits subtotal</td><td class="r"></td><td class="r">R1,234</td><td class="r">R1,234</td></tr>
-            <tr class="total"><td>Transport total</td><td class="r c-b">R1,234</td><td class="r c-c">R2,534</td></tr>
-            <tr class="total"><td>Difference</td><td class="r" colspan="3"><strong class="c-b">SoHo dearer by R1,300</strong> &mdash; entirely the CRC run</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="grid-2">
-        <div class="flag">
-          <p class="flag-title">Who pays it</p>
-          <p>
-            The Wits cost is <strong>R617 each</strong> at both places &mdash; R206 for the two shared
-            Wednesdays, R411 for the two you travel separately. Identical either way.
-          </p>
-          <p>
-            The CRC R1,300 falls on <strong>one person</strong>. That is the entire difference between
-            the two flats, carried by whoever makes the church run.
-          </p>
-        </div>
-        <div class="flag warm">
-          <p class="flag-title">A note on the month</p>
-          <p>
-            These use <strong>4.33 weeks</strong> &mdash; the true yearly average, not a 4-week month.
-            Your &ldquo;two together, two apart&rdquo; pattern is applied as a 50/50 split, so 2.17
-            Wednesdays each way. A clean 4-Wednesday month would read R380 shared and R760 separate,
-            about 8% lower than shown.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- COMBINED -->
-  <section>
-    <div class="sec-head">
-      <p class="eyebrow">Table 3</p>
-      <h2>Combined, and who pays what</h2>
-    </div>
-
-    <div class="stack">
-      <div class="table-scroll">
-        <table>
-          <caption>House plus transport</caption>
-          <colgroup><col><col class="hi"><col></colgroup>
-          <thead><tr><th></th><th class="r">Petra Nera</th><th class="r">SoHo R8,800</th></tr></thead>
-          <tbody>
-            <tr><td>House &mdash; Table 1</td><td class="r">R10,700</td><td class="r"><strong class="c-c">R10,120</strong></td></tr>
-            <tr><td>Transport &mdash; Table 2</td><td class="r"><strong class="c-b">R1,234</strong></td><td class="r">R2,534</td></tr>
-            <tr class="total"><td>Monthly total</td><td class="r c-b">R11,934</td><td class="r c-c">R12,654</td></tr>
-            <tr class="total"><td>Gap</td><td class="r" colspan="2"><strong class="c-b">Petra Nera ahead by R720 a month</strong> &mdash; R8,690 a year</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="table-scroll">
-        <table>
-          <caption>Per person &mdash; CRC borne by the traveller, house and Wits split</caption>
-          <colgroup><col><col class="hi"><col></colgroup>
-          <thead><tr><th></th><th class="r">Petra Nera</th><th class="r">SoHo R8,800</th></tr></thead>
-          <tbody>
-            <tr><td>House, halved</td><td class="r">R5,350</td><td class="r">R5,060</td></tr>
-            <tr><td>Wits, per person</td><td class="r">R617</td><td class="r">R617</td></tr>
-            <tr><td>CRC &mdash; traveller only</td><td class="r"><strong class="c-b">R0</strong></td><td class="r">R1,300</td></tr>
-            <tr class="total"><td><strong>The CRC traveller pays</strong></td><td class="r c-b">R5,967</td><td class="r c-c">R6,977</td></tr>
-            <tr class="total"><td><strong>The other person pays</strong></td><td class="r c-b">R5,967</td><td class="r c-c"><strong>R5,677</strong></td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="bars">
-        <div class="bar-row">
-          <div class="bar-label"><span><span class="tag tag-b">Petra Nera</span></span><span class="c-b"><strong>R11,934</strong></span></div>
-          <div class="bar-track" style="width:94.3%;" role="img" aria-label="Petra Nera: rent R9,000, utilities R1,150, internet R550, transport R1,234">
-            <span class="seg b1" style="flex:9000"></span><span class="seg b2" style="flex:1150"></span><span class="seg b3" style="flex:550"></span><span class="seg b4" style="flex:1234"></span>
-          </div>
-        </div>
-        <div class="bar-row">
-          <div class="bar-label"><span><span class="tag tag-c">SoHo R8,800</span></span><span class="c-c"><strong>R12,654</strong></span></div>
-          <div class="bar-track" style="width:100%;" role="img" aria-label="SoHo: rent R8,800 including levies, utilities R770, internet R550, transport R2,534">
-            <span class="seg c1" style="flex:8800"></span><span class="seg c2" style="flex:770"></span><span class="seg c3" style="flex:550"></span><span class="seg c4" style="flex:2534"></span>
-          </div>
-        </div>
-        <div class="legend">
-          <span><i class="swatch"></i>Rent</span>
-          <span><i class="swatch" style="opacity:.6"></i>Water &amp; electricity</span>
-          <span><i class="swatch" style="opacity:.36"></i>Internet</span>
-          <span><i class="swatch" style="opacity:.18"></i>Transport</span>
-        </div>
       </div>
 
       <div class="flag">
-        <p class="flag-title">The split is lopsided</p>
+        <p class="flag-title">Where Telford&rsquo;s rent saving goes</p>
         <p>
-          The <strong>non-CRC person is R290 a month better off at SoHo</strong> &mdash; R5,677 against
-          R5,967. The CRC traveller is R1,010 worse off. So SoHo is not more expensive for the
-          household so much as more expensive <em>for one of you</em>, and cheaper for the other.
-          Worth settling how you would handle that before signing either lease.
+          The R7,980 unit is <strong>R820 a month cheaper in rent</strong> than SoHo. But SoHo&rsquo;s
+          geyser sits on the body corporate&rsquo;s account and its hobs are gas, so its electricity runs
+          about <strong>R580 lower</strong> &mdash; and its water is free inside 6&nbsp;kL where
+          Telford&rsquo;s is unknown. By the time you reach the house total the R820 advantage has shrunk
+          to <strong>R90</strong>.
         </p>
       </div>
     </div>
   </section>
 
-  <!-- UTILITIES DERIVATION -->
+  <!-- TRANSPORT + TOTAL -->
   <section>
     <div class="sec-head">
-      <p class="eyebrow">Table 4</p>
-      <h2>SoHo prepaid water and electricity</h2>
-      <p class="note">Built from the published 2026/27 tariffs and the complex&rsquo;s confirmed fittings.
-      Still an estimate &mdash; no tenant figure is published anywhere.</p>
-    </div>
-
-    <div class="stack">
-      <div class="grid-2">
-        <div class="table-scroll">
-          <table>
-            <caption>Electricity &mdash; R620</caption>
-            <thead><tr><th>Step</th><th class="r">Value</th></tr></thead>
-            <tbody>
-              <tr><td>City Power 2026/27 prepaid, block 1<span class="cell-note">0&ndash;350 kWh, council-approved March 2026</span></td><td class="r">290.46 c/kWh<span class="cell-note">excl VAT</span></td></tr>
-              <tr><td>Including VAT</td><td class="r"><strong>R3.34/kWh</strong></td></tr>
-              <tr><td>Two-person flat, fully electric</td><td class="r">300&ndash;450 kWh</td></tr>
-              <tr><td>Less geyser &mdash; central here</td><td class="r">&minus;30 to 40%</td></tr>
-              <tr><td>Less hob &mdash; gas here</td><td class="r">&minus;10%</td></tr>
-              <tr><td>Less lighting &mdash; LED here</td><td class="r">&minus;3%</td></tr>
-              <tr><td>Remaining load<span class="cell-note">fridge, washer, oven, kettle, electronics, standby</span></td><td class="r">140&ndash;235 kWh</td></tr>
-              <tr class="total"><td>Range</td><td class="r">R468 &ndash; R785</td></tr>
-              <tr class="total"><td>Estimate used &mdash; 185 kWh</td><td class="r c-c">R620</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="table-scroll">
-          <table>
-            <caption>Water &mdash; R150</caption>
-            <thead><tr><th>Step</th><th class="r">Value</th></tr></thead>
-            <tbody>
-              <tr><td>Johannesburg Water 2026/27, 0&ndash;6 kL</td><td class="r"><strong>free</strong></td></tr>
-              <tr><td>6&ndash;10 kL</td><td class="r">R16.45/kL</td></tr>
-              <tr><td>10&ndash;15 kL</td><td class="r">R20.82/kL</td></tr>
-              <tr><td>Two people, flat, no garden</td><td class="r">4&ndash;7 kL</td></tr>
-              <tr><td>If the free 6 kL reaches your meter</td><td class="r">~R0 &ndash; R20</td></tr>
-              <tr><td>If the scheme reconciles in bulk<span class="cell-note">free allowance spread over ~400 units</span></td><td class="r">~R125 &ndash; R250</td></tr>
-              <tr><td>Demand-management levy<span class="cell-note">may sit on the scheme&rsquo;s account</span></td><td class="r">~R108</td></tr>
-              <tr class="total"><td>Range</td><td class="r">R50 &ndash; R300</td></tr>
-              <tr class="total"><td>Estimate used</td><td class="r c-c">R150</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="flag warm">
-        <p class="flag-title">The one question that would settle water</p>
-        <p>
-          SoHo bills water through <strong>STSS prepaid sub-metering</strong>, so the rate you pay is set
-          by how the body corporate passes on Johannesburg Water&rsquo;s stepped tariff. If it passes the
-          free first 6 kL through per unit, two people would pay <strong>almost nothing</strong>. If it
-          reconciles the whole scheme in bulk, you pay for every kilolitre. That is the difference between
-          R20 and R250 a month &mdash; ask what the STSS rate per kilolitre is.
-        </p>
-        <p>
-          Electricity is firmer: the tariff is published, the fittings are confirmed, and Petra
-          Nera&rsquo;s actual R1,000 for a larger flat heating its own water sits exactly where this model
-          predicts. <strong>R620 is sound to within about R150 either way.</strong>
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- FIBRE -->
-  <section>
-    <div class="sec-head">
-      <p class="eyebrow">Table 4b</p>
-      <h2>Fibre at SoHo</h2>
-      <p class="note">The complex is fibre-ready and the developer specced fibre in, so there is no
-      trenching &mdash; only an activation. That is why installation is normally free.</p>
-    </div>
-
-    <div class="stack">
-      <div class="table-scroll">
-        <table>
-          <caption>Uncapped fibre &mdash; 2026 market rates, Broadacres</caption>
-          <thead><tr><th>Speed</th><th class="r">Monthly</th><th>Suits</th></tr></thead>
-          <tbody>
-            <tr><td>10&ndash;20 Mbps</td><td class="r">R279 &ndash; R339</td><td>One person, light use. Tight for two on video calls</td></tr>
-            <tr><td>25&ndash;30 Mbps</td><td class="r">R389 &ndash; R450</td><td>Two people, streaming and browsing</td></tr>
-            <tr style="background:var(--c-tint);"><td><strong>50 Mbps</strong></td><td class="r"><strong class="c-c">R500 &ndash; R600</strong></td><td><strong>Two people, Wits work, simultaneous calls and streaming &mdash; used here</strong></td></tr>
-            <tr><td>100 Mbps</td><td class="r">R700 &ndash; R800</td><td>More than two people need</td></tr>
-            <tr class="total"><td>Installation</td><td class="r"><strong>R0</strong></td><td>Free on virtually every Openserve and Vumatel package via Webafrica, Afrihost and RSAWEB &mdash; normally worth R1,500&ndash;R2,800</td></tr>
-            <tr class="total"><td>Router</td><td class="r"><strong>R0</strong></td><td>Included on most packages. Wi-Fi 6 is standard above R699</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="grid-2">
-        <div class="flag warm">
-          <p class="flag-title">Revised down from R800</p>
-          <p>
-            The earlier R800 assumed a 100 Mbps line and some installation cost. Neither is right for
-            you: <strong>50 Mbps at about R550 is ample for two people</strong>, and installation on a
-            fibre-ready building is free. That is <strong>R250 a month off both flats</strong> &mdash;
-            the gap between them is unchanged, but both totals come down.
-          </p>
-        </div>
-        <div class="flag">
-          <p class="flag-title">What I could not confirm</p>
-          <p>
-            <strong>Which network actually serves 4 Poplar Avenue.</strong> Openserve covers Broadacres
-            and Fourways, and Vumatel and Frogfoot are both active nearby &mdash; but coverage in
-            Johannesburg changes street by street, and the checkers need the exact address entered live.
-            Run &ldquo;4 Poplar Avenue, Broadacres&rdquo; through Webafrica or Afrihost before you budget.
-          </p>
-          <p>
-            Also ask the agent whether the complex has a <strong>bulk deal with one ISP</strong>. Some
-            do, which can be cheaper &mdash; or can lock you out of shopping around.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CASH -->
-  <section>
-    <div class="sec-head">
-      <p class="eyebrow">Tables 5 and 6</p>
-      <h2>Move-in cash and year one</h2>
+      <p class="eyebrow">Tables 3 and 4</p>
+      <h2>Transport, and the total</h2>
     </div>
     <div class="stack">
       <div class="table-scroll">
         <table>
-          <caption>Table 5 &mdash; cash to move in</caption>
+          <caption>Table 3 &mdash; monthly Uber</caption>
           <colgroup><col><col class="hi"><col></colgroup>
-          <thead><tr><th>Item</th><th class="r">Petra Nera</th><th class="r">SoHo R8,800</th></tr></thead>
+          <thead><tr><th>Trip</th><th class="r">SoHo</th><th class="r">Telford, either unit</th></tr></thead>
           <tbody>
-            <tr><td>Deposit<span class="cell-note">refundable</span></td><td class="r">R9,000</td><td class="r">R9,000</td></tr>
-            <tr><td>First month&rsquo;s rent</td><td class="r">R9,000</td><td class="r">R8,800</td></tr>
-            <tr><td>Admin / lease initiation</td><td class="r"><strong>R2,000</strong><span class="cell-note">above market</span></td><td class="r">~R1,250</td></tr>
-            <tr><td>Credit check</td><td class="r dim">included?</td><td class="r">~R300</td></tr>
-            <tr><td>Meter activation, tags</td><td class="r">~R500</td><td class="r">~R500</td></tr>
-            <tr><td>Fibre install + router</td><td class="r">R0 &ndash; 1,800</td><td class="r">R0 &ndash; 1,800</td></tr>
-            <tr><td>Moving</td><td class="r">R3,000 &ndash; 6,000</td><td class="r">R3,000 &ndash; 6,000</td></tr>
-            <tr class="total"><td>Cash needed</td><td class="r c-b">R23,500 &ndash; 28,300</td><td class="r c-c">R22,850 &ndash; 27,650</td></tr>
+            <tr><td>CRC &mdash; one person, 13 round trips</td><td class="r">R1,300<span class="cell-note">R50 each way</span></td><td class="r">R1,352<span class="cell-note">~R52 each way, ~6 km</span></td></tr>
+            <tr><td>Wits &mdash; 2 Wednesdays shared, 2 separate</td><td class="r">R1,234</td><td class="r">R1,234</td></tr>
+            <tr class="total"><td>Transport</td><td class="r c-c">R2,534</td><td class="r c-t">R2,586</td></tr>
           </tbody>
         </table>
       </div>
+
       <div class="table-scroll">
         <table>
-          <caption>Table 6 &mdash; year one</caption>
-          <colgroup><col><col class="hi"><col></colgroup>
-          <thead><tr><th></th><th class="r">Petra Nera</th><th class="r">SoHo R8,800</th></tr></thead>
+          <caption>Table 4 &mdash; all in</caption>
+          <colgroup><col><col class="hi"><col><col></colgroup>
+          <thead><tr><th></th><th class="r">SoHo R8,800</th><th class="r">Telford R7,980</th><th class="r">Telford R8,500</th></tr></thead>
           <tbody>
-            <tr><td>Twelve months of running cost</td><td class="r">R143,208</td><td class="r">R151,848</td></tr>
-            <tr><td>Non-refundable once-offs</td><td class="r">~R7,400</td><td class="r">~R7,450</td></tr>
-            <tr class="total"><td>Year-one cash out</td><td class="r c-b">~R150,600</td><td class="r c-c">~R159,300</td></tr>
-            <tr><td>Plus deposit held</td><td class="r">R9,000</td><td class="r">R9,000</td></tr>
-            <tr class="total"><td>Difference</td><td class="r" colspan="2">R8,690 &mdash; R4,345 each</td></tr>
+            <tr><td>House</td><td class="r">R9,970</td><td class="r">R9,880</td><td class="r">R10,400</td></tr>
+            <tr><td>Transport</td><td class="r">R2,534</td><td class="r">R2,586</td><td class="r">R2,586</td></tr>
+            <tr class="total"><td>Monthly total</td><td class="r c-c">R12,504</td><td class="r c-t"><strong>R12,466</strong></td><td class="r c-t">R12,986</td></tr>
+            <tr class="total"><td>Gap to SoHo</td><td class="r">&mdash;</td><td class="r c-t">&minus;R38<span class="cell-note">a dead heat</span></td><td class="r c-c">+R482</td></tr>
+            <tr><td>The CRC traveller pays</td><td class="r">R6,902</td><td class="r">R6,909</td><td class="r">R7,169</td></tr>
+            <tr><td>The other person pays</td><td class="r">R5,602</td><td class="r"><strong class="c-t">R5,557</strong></td><td class="r">R5,817</td></tr>
+            <tr class="total"><td>Year one<span class="cell-note">incl. ~R7,450 once-offs</span></td><td class="r c-c">~R157,500</td><td class="r c-t">~R157,000</td><td class="r c-c">~R163,300</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-scroll">
+        <table>
+          <caption>Cost per square metre &mdash; where Telford is genuinely ahead</caption>
+          <colgroup><col><col class="hi"><col><col></colgroup>
+          <thead><tr><th></th><th class="r">SoHo R8,800</th><th class="r">Telford R7,980</th><th class="r">Telford R8,500</th></tr></thead>
+          <tbody>
+            <tr><td>Floor size</td><td class="r">~62&nbsp;m&sup2;<span class="cell-note">assumed from sister unit</span></td><td class="r">90&nbsp;m&sup2;</td><td class="r">95&nbsp;m&sup2;</td></tr>
+            <tr class="total"><td>All-in cost per m&sup2;</td><td class="r c-c">R202</td><td class="r c-t"><strong>R139</strong></td><td class="r c-t"><strong>R137</strong></td></tr>
+            <tr class="total"><td>Extra space for the money</td><td class="r">&mdash;</td><td class="r c-t">+45%</td><td class="r c-t">+53%</td></tr>
           </tbody>
         </table>
       </div>
     </div>
   </section>
 
-  <!-- SENSITIVITY -->
+  <!-- DECISIVE -->
   <section>
     <div class="sec-head">
-      <p class="eyebrow">Table 7</p>
-      <h2>What would change the answer</h2>
-      <p class="note">At R720 apart, three scenarios level it or reverse it.</p>
+      <p class="eyebrow">Table 5</p>
+      <h2>What decides it</h2>
+      <p class="note">At R38 apart, the base case is meaningless on its own. Everything turns on one
+      unanswered question.</p>
     </div>
     <div class="table-scroll">
       <table>
-        <caption>Each scenario on its own</caption>
-        <thead><tr><th>If&hellip;</th><th class="r">Petra Nera</th><th class="r">SoHo</th><th class="r">Gap</th></tr></thead>
+        <caption>Sensitivity &mdash; Telford R7,980 against SoHo R8,800</caption>
+        <thead><tr><th>If&hellip;</th><th class="r">Telford</th><th class="r">SoHo</th><th class="r">Gap</th></tr></thead>
         <tbody>
-          <tr><td><strong>Base case</strong> &mdash; as tabled</td><td class="r">R11,934</td><td class="r">R12,654</td><td class="r c-b"><strong>R720</strong></td></tr>
-          <tr><td>SoHo electricity is 235 kWh, not 185</td><td class="r">R11,934</td><td class="r">R12,819</td><td class="r c-b">R885</td></tr>
-          <tr><td>SoHo water is R300</td><td class="r">R11,934</td><td class="r">R12,804</td><td class="r c-b">R870</td></tr>
-          <tr><td>SoHo water is R50 &mdash; free 6 kL passed through</td><td class="r">R11,934</td><td class="r">R12,554</td><td class="r c-b">R620</td></tr>
-          <tr><td>SoHo electricity is 140 kWh</td><td class="r">R11,934</td><td class="r">R12,504</td><td class="r c-b">R570</td></tr>
-          <tr><td>Petra Nera electricity is R1,300</td><td class="r">R12,234</td><td class="r">R12,654</td><td class="r c-b">R420</td></tr>
-          <tr><td>Petra Nera bills sanitation and refuse at R700</td><td class="r">R12,634</td><td class="r">R12,654</td><td class="r c-b">R20<span class="cell-note">level</span></td></tr>
-          <tr style="background:var(--c-tint);"><td>Petra Nera bills them at R1,400<span class="cell-note">what the other SoHo unit charges</span></td><td class="r">R13,334</td><td class="r">R12,654</td><td class="r c-c"><strong>&minus;R680 &mdash; SoHo cheaper</strong></td></tr>
-          <tr style="background:var(--c-tint);"><td><strong>Either of you joins a gym</strong><span class="cell-note">R650 + R1,170 Uber at Petra Nera; free on site at SoHo</span></td><td class="r">R13,754</td><td class="r">R12,654</td><td class="r c-c"><strong>&minus;R1,100 &mdash; SoHo cheaper</strong></td></tr>
+          <tr><td>Telford&rsquo;s electricity is R900, not R1,200<span class="cell-note">gas stove or solar geyser</span></td><td class="r">R12,166</td><td class="r">R12,504</td><td class="r c-t"><strong>&minus;R338 &mdash; Telford cheaper</strong></td></tr>
+          <tr><td><strong>Base case</strong> &mdash; levies included, full-electric</td><td class="r">R12,466</td><td class="r">R12,504</td><td class="r c-t">&minus;R38<span class="cell-note">dead heat</span></td></tr>
+          <tr style="background:var(--c-tint);"><td>Telford bills sanitation and refuse on top, at R700</td><td class="r">R13,166</td><td class="r">R12,504</td><td class="r c-c"><strong>+R662 &mdash; SoHo cheaper</strong></td></tr>
+          <tr style="background:var(--c-tint);"><td>Telford bills them at R1,300<span class="cell-note">what SoHo&rsquo;s other units charge</span></td><td class="r">R13,766</td><td class="r">R12,504</td><td class="r c-c"><strong>+R1,262 &mdash; SoHo clearly cheaper</strong></td></tr>
+          <tr style="background:var(--c-tint);"><td>Either of you joins a gym<span class="cell-note">R650 + ~R1,560 Uber &mdash; Planet Fitness is ~9.5 km from Noordhang against 0 at SoHo</span></td><td class="r">R14,676</td><td class="r">R12,504</td><td class="r c-c"><strong>+R2,172 &mdash; SoHo much cheaper</strong></td></tr>
         </tbody>
       </table>
     </div>
-    <div class="flag" style="margin-top:18px;">
-      <p class="flag-title">Still one question outstanding</p>
-      <p>
-        SoHo has confirmed what its rent covers. <strong>Petra Nera has not.</strong> If its R1,150
-        excludes sanitation and refuse the way SoHo&rsquo;s R9,500 unit does, the R720 becomes a R680
-        deficit and SoHo wins. That single answer is worth more than every other line on this page.
-      </p>
+
+    <div class="grid-2" style="margin-top:18px;">
+      <div class="flag">
+        <p class="flag-title">The asymmetry that matters</p>
+        <p>
+          <strong>SoHo has answered the levy question; Telford has not.</strong> Neither Telford listing
+          states levies, rates, sanitation, refuse or utilities &mdash; and both are let by managing
+          agents on behalf of individual landlords, where billing sanitation and refuse to the tenant is
+          common. At SoHo&rsquo;s own rate that is R1,290&ndash;R1,400 a month.
+        </p>
+        <p>
+          Three of the five rows above put SoHo ahead, and all three turn on charges Telford has not
+          disclosed. That is not a reason to dismiss Telford &mdash; it is a reason to make one phone call
+          before deciding.
+        </p>
+      </div>
+      <div class="flag tel">
+        <p class="flag-title">What Telford genuinely wins on</p>
+        <p>
+          <strong>Space.</strong> 90&ndash;95&nbsp;m&sup2; against roughly 62 is not a rounding difference
+          &mdash; it is a materially bigger flat, and at <strong>R137&ndash;139 per m&sup2; against
+          R202</strong> it is about a third better value per square metre. The R8,500 unit also has a
+          garage plus two bays where SoHo has one carport.
+        </p>
+        <p>
+          It is also <strong>on Witkoppen Road</strong>, a straight run to CRC with no cross-suburb
+          navigation, and both units have renovated bathrooms and a main en-suite.
+        </p>
+      </div>
     </div>
   </section>
 
   <!-- QUESTIONS -->
   <section>
     <div class="sec-head">
-      <p class="eyebrow">Table 8</p>
-      <h2>Questions to ask</h2>
+      <p class="eyebrow">Table 6</p>
+      <h2>What to ask Telford</h2>
+      <p class="note">Four questions settle this. The first is worth more than the other three together.</p>
     </div>
-    <div class="grid-2">
-      <div class="qcol">
-        <div class="qhead"><span class="tag tag-b">Petra Nera</span></div>
-        <div class="qbody">
-          <ol class="qs">
-            <li><strong>Does the R1,150 cover sanitation, sewerage and refuse, or are those billed on top?</strong> Worth R680 either way &mdash; this decides it.</li>
-            <li>If billed separately, what did they come to last month?</li>
-            <li>Can we see a recent utility bill, so the R1,150 is confirmed rather than quoted?</li>
-            <li><strong>What does the R2,000 admin fee cover, and is it negotiable?</strong> Market is R950&ndash;R1,500.</li>
-            <li>What is the annual escalation percentage?</li>
-            <li>Security setup &mdash; guard, access control, CCTV, perimeter?</li>
-            <li>How many parking bays, covered or allocated?</li>
-            <li>Backup power and water storage during outages?</li>
-            <li>Age of geyser, plumbing and roof &mdash; who pays for repairs?</li>
-            <li>Will the landlord contribute to repainting?</li>
-            <li>Is the walking route to CRC lit at night?</li>
-            <li>Availability, and is R9,000 held for a 12-month lease?</li>
-          </ol>
-        </div>
-      </div>
-      <div class="qcol">
-        <div class="qhead"><span class="tag tag-c">SoHo Junction R8,800</span></div>
-        <div class="qbody">
-          <ol class="qs">
-            <li><strong>Get the levy inclusion written into the lease</strong> &mdash; that sanitation, refuse and security are covered by the R8,800 and cannot be billed separately later.</li>
-            <li>Which fibre network serves the building &mdash; Openserve, Vumatel or Frogfoot? Does the complex have a bulk ISP deal?</li>
-            <li><strong>What is the STSS rate per kilolitre for water?</strong> The difference between the free 6 kL being passed through or not is R20 against R250 a month.</li>
-            <li>What does a two-bed here actually spend on prepaid electricity? Ask a current tenant or the estate manager.</li>
-            <li><strong>What is the floor size?</strong> The other 2-bed 2-bath in the complex is 62&nbsp;m&sup2;.</li>
-            <li>If the body corporate raises the levies mid-lease, who absorbs it?</li>
-            <li>Is the carport allocated, and can a second bay be rented? At what cost?</li>
-            <li>What is the annual escalation percentage?</li>
-            <li>Any special levies planned? Can we see the last two AGM minutes?</li>
-            <li>Total once-off cost &mdash; admin, credit checks for two, tags, meter activation?</li>
-            <li>Deposit interest arrangement, and which account?</li>
-            <li>Generator or inverter for load-shedding, and water tanks for outages?</li>
-            <li>Early-cancellation penalty &mdash; can it be capped in writing?</li>
-          </ol>
-        </div>
+    <div class="qcol">
+      <div class="qhead"><span class="tag tag-t">Telford Court &mdash; both agents</span></div>
+      <div class="qbody">
+        <ol class="qs">
+          <li><strong>Does the rent cover sanitation, sewerage, refuse and the security levy &mdash; or are those billed on top?</strong> Worth up to R1,300 a month. SoHo includes them; if Telford does not, SoHo is cheaper by R662&ndash;R1,262 and the comparison is over.</li>
+          <li><strong>Is the geyser electric, gas or solar, and is the stove gas or electric?</strong> The R580 electricity gap between these flats is almost entirely this. A gas stove or solar geyser at Telford would put it R338 ahead of SoHo instead of level.</li>
+          <li>Is water metered per unit, and does the free first 6&nbsp;kL reach the meter?</li>
+          <li>What is the deposit, the admin fee, and the annual escalation?</li>
+          <li>Is there backup power or water storage? SoHo has none confirmed either &mdash; worth asking both.</li>
+          <li>How old is the complex, and when were the geyser, plumbing and roof last done? Tennis and squash courts suggest 1980s&ndash;90s stock, which usually means more space and more maintenance.</li>
+          <li>Confirm the exact street address for the R7,980 unit &mdash; the listing withholds the number.</li>
+        </ol>
       </div>
     </div>
   </section>
@@ -601,28 +358,25 @@
   <!-- ASSUMPTIONS -->
   <section>
     <div class="sec-head">
-      <p class="eyebrow">Table 9</p>
+      <p class="eyebrow">Table 7</p>
       <h2>Assumptions</h2>
     </div>
     <div class="table-scroll">
       <table>
-        <thead><tr><th>Assumption</th><th>Value</th><th>Source</th></tr></thead>
+        <thead><tr><th>Assumption</th><th>Value</th><th>Basis</th></tr></thead>
         <tbody>
-          <tr><td>Occupancy</td><td>Two people</td><td>Third room at Petra Nera used as a study, not let</td></tr>
-          <tr><td>Gym</td><td><strong>None</strong></td><td>No membership either side. See the last row of Table 7</td></tr>
-          <tr><td>CRC travel</td><td>One person, 13 round trips</td><td>Mon, Tue, Thu &times; 4.33 weeks. Uber prices the trip, not the seat</td></tr>
-          <tr><td>Wits travel</td><td>2.17 shared + 2.17 separate</td><td>Your pattern &mdash; two Wednesdays together, two apart &mdash; over 4.33 Wednesdays</td></tr>
-          <tr><td>Uber to CRC</td><td>R50 each way</td><td>Your figure</td></tr>
-          <tr><td>Uber to Wits</td><td>~R95 each way</td><td>Your figure</td></tr>
-          <tr><td>Internet</td><td>R550/month</td><td>50 Mbps uncapped on Openserve or Vumatel. Installation free on most packages. Range R339&ndash;R800 &mdash; see Table 4b</td></tr>
-          <tr><td><strong>SoHo levies</strong></td><td><strong>R0 &mdash; in the rent</strong></td><td>Confirmed with the agent: R8,800 covers sanitation, refuse and security</td></tr>
-          <tr><td>SoHo electricity</td><td>R620</td><td>City Power block 1 at R3.34/kWh incl VAT &times; 185 kWh. Range R468&ndash;R785</td></tr>
-          <tr><td>SoHo water</td><td>R150</td><td>Johannesburg Water 2026/27 stepped tariff, STSS sub-metered. Range R50&ndash;R300</td></tr>
-          <tr><td>SoHo floor size</td><td><strong>Unknown</strong></td><td>Not stated. The other 2-bed 2-bath is 62&nbsp;m&sup2;</td></tr>
-          <tr><td>Petra Nera electricity / water</td><td>R1,000 / R150</td><td>Your figures</td></tr>
-          <tr><td>Petra Nera sanitation &amp; refuse</td><td><strong>Unknown</strong></td><td>The largest remaining uncertainty &mdash; worth up to R1,400</td></tr>
-          <tr><td>Petra Nera deposit &amp; admin</td><td>R9,000 + R2,000</td><td>Your figures</td></tr>
-          <tr><td>Weeks per month</td><td>4.33</td><td>52 &divide; 12 &mdash; the yearly average</td></tr>
+          <tr><td>Occupancy &middot; gym &middot; transport</td><td>Two people &middot; none &middot; Uber</td><td>As before</td></tr>
+          <tr><td>CRC travel</td><td>One person, 13 round trips</td><td>Mon, Tue, Thu &times; 4.33 weeks</td></tr>
+          <tr><td>Wits travel</td><td>2.17 shared + 2.17 separate</td><td>Your two-and-two pattern over 4.33 Wednesdays</td></tr>
+          <tr><td>Uber to CRC</td><td>R50 SoHo &middot; ~R52 Telford</td><td>Your SoHo figure; Telford fitted at ~R39 + R2.25/km over ~6 km</td></tr>
+          <tr><td><strong>SoHo levies</strong></td><td><strong>R0 &mdash; in the rent</strong></td><td>Confirmed with the agent</td></tr>
+          <tr><td>SoHo electricity / water</td><td>R620 / R0</td><td>City Power block 1 at R3.34/kWh over ~185 kWh; free 6 kL confirmed</td></tr>
+          <tr><td>SoHo floor size</td><td><strong>~62 m&sup2; assumed</strong></td><td>Not stated on the listing. Taken from the sister 2-bed 2-bath in the same complex &mdash; <strong>confirm, it drives the per-m&sup2; figures</strong></td></tr>
+          <tr><td><strong>Telford levies</strong></td><td><strong>R0 assumed</strong></td><td><strong>Unconfirmed.</strong> Neither listing states them. The single largest uncertainty here</td></tr>
+          <tr><td>Telford electricity</td><td>R1,200</td><td>Estimated full-electric load, 300&ndash;450 kWh at R3.34. Range R1,000&ndash;R1,500</td></tr>
+          <tr><td>Telford water</td><td>R150</td><td>Estimated. Unlike SoHo, the metering arrangement is unconfirmed</td></tr>
+          <tr><td>Telford distance to CRC</td><td>~6 km</td><td>Estimated from Hyperion Rd, off Witkoppen. Not a measured route</td></tr>
+          <tr><td>Internet</td><td>R550</td><td>50 Mbps uncapped. Both are fibre-ready; neither includes it</td></tr>
         </tbody>
       </table>
     </div>
@@ -631,14 +385,14 @@
 
 <footer>
   <div class="wrap">
-    <p class="eyebrow" style="margin-bottom:9px;">Sources</p>
+    <p class="eyebrow" style="margin-bottom:9px;">Listings</p>
     <ul>
-      <li><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/112143116">Property24 &mdash; SoHo Junction R8,800</a> &middot; <a href="https://www.property24.com/to-rent/fourways/sandton/gauteng/5811/117458624">SoHo Junction R9,500</a> &mdash; the R9,500 listing itemises the R900 sanitation and R500 refuse the R8,800 unit includes</li>
-      <li><a href="https://energybee.co.za/news/city-power-tariffs-july-2026-bill-breakdown">City Power 2026/27 tariffs</a> &mdash; Residential Prepaid High block 1 (0&ndash;350 kWh) at 290.46 c/kWh excl VAT, council-approved March 2026, effective 1 July 2026</li>
-      <li><a href="https://joburg.org.za/documents_/Documents/Approved-Tarrifs-for-2026-27/Water-Tariffs-2026-2027-final.pdf">Johannesburg Water 2026/27 approved tariffs</a> &middot; <a href="https://www.johannesburgwater.co.za/resource-centre/water-tarrifs/">tariff page</a> &mdash; first 6 kL free, R16.45/kL to 10 kL, R20.82/kL to 15 kL; water up 12.5%, sanitation up 11%</li>
-      <li><a href="https://occproperty.com/2019/03/18/soho-junction-in-broadacres/">OCC Property &mdash; SoHo Junction developer specification</a> &mdash; gas hobs, central water heating, low-energy lights; Activity Centre with gym, sauna, steam room and business centre</li>
-      <li><a href="https://www.waterutilitysolutions.co.za/2022/10/21/water-meters-in-sectional-title-schemes-a-definitive-guide/">Water meters in sectional title schemes</a> &mdash; bulk-metered schemes are billed on an inclining block tariff and reconciled per unit by the body corporate</li>
-      <li><a href="https://www.christianrevival.church/locations/crc-johannesburg">CRC Johannesburg</a> &mdash; cnr Witkoppen &amp; Riverbend Road, Fourways</li>
+      <li><a href="https://www.property24.com/to-rent/broadacres/sandton/gauteng/4530/112143116">SoHo Junction, R8,800</a> &mdash; 4 Poplar Ave, Broadacres &middot; 2 bed 2 bath &middot; levies included in rent</li>
+      <li><a href="https://www.property24.com/to-rent/noordhang/randburg/gauteng/4278/117008649">Telford Court, R7,980</a> &mdash; Hyperion St off Witkoppen, Noordhang &middot; 90 m&sup2; &middot; 1 garage &middot; available 1 Sep &middot; Rawson Northcliff</li>
+      <li><a href="https://www.property24.com/to-rent/noordhang/randburg/gauteng/4278/117404483">Telford Court, R8,500</a> &mdash; 169 Hyperion Rd, Noordhang &middot; 95 m&sup2; &middot; garage + 2 bays &middot; available now &middot; Trafalgar</li>
+      <li><a href="https://energybee.co.za/news/city-power-tariffs-july-2026-bill-breakdown">City Power 2026/27 tariffs</a> &mdash; Residential Prepaid High block 1 at 290.46 c/kWh excl VAT</li>
+      <li><a href="https://joburg.org.za/documents_/Documents/Approved-Tarrifs-for-2026-27/Water-Tariffs-2026-2027-final.pdf">Johannesburg Water 2026/27</a> &mdash; first 6 kL free, R16.45/kL to 10 kL</li>
+      <li><a href="https://www.christianrevival.church/locations/crc-johannesburg">CRC Johannesburg</a> &mdash; cnr Witkoppen &amp; Riverbend Road</li>
     </ul>
   </div>
 </footer>
