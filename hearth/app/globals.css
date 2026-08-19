@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --bg: #f7f4ee;
+  --surface: #fffdf9;
+  --surface-2: #f0ebe1;
+  --border: #e6decf;
+  --ink: #231d18;
+  --muted: #8b8175;
+  --faint: #b5ab9a;
+  --accent: #7a5c3e;
+  --accent-ink: #ffffff;
+  --good: #4c6b52;
+  --warn: #8a5a30;
+  --bad: #96473a;
+  --series-1: #a06024;
+  --series-2: #3a75af;
+}
+
+.dark {
+  --bg: #171310;
+  --surface: #201b17;
+  --surface-2: #2a241e;
+  --border: #382f27;
+  --ink: #ece6dc;
+  --muted: #a2978a;
+  --faint: #6f665b;
+  --accent: #c8a87d;
+  --accent-ink: #241d15;
+  --good: #8fae94;
+  --warn: #cf9a5d;
+  --bad: #c98274;
+  --series-1: #ba7d3d;
+  --series-2: #5590cc;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-border: var(--border);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-good: var(--good);
+  --color-warn: var(--warn);
+  --color-bad: var(--bad);
+  --color-series-1: var(--series-1);
+  --color-series-2: var(--series-2);
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  border-color: var(--border);
+}
+
+::selection {
+  background: color-mix(in oklab, var(--accent) 25%, transparent);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0.5;
+}
+.dark input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.8);
+}
