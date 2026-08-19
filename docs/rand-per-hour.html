@@ -1,0 +1,857 @@
+<title>Rand Per Hour</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --paper: #faf8f4;
+    --card: #ffffff;
+    --line: #ece5d9;
+    --line-soft: #f3eee5;
+    --ink: #2b2420;
+    --soft: #6b6259;
+    --faint: #8a7c6b;
+    --beige: #f4efe6;
+    --brown: #7c5f44;
+    --brown-deep: #5d4633;
+    --brown-soft: #9c7b5c;
+    --sage: #6f7a5e;
+    --sage-bg: #eef0e9;
+    --clay: #b4573a;
+    --clay-bg: #f7ebe6;
+    --shadow: 0 1px 2px rgba(43, 36, 32, .04);
+    --display: Georgia, "Iowan Old Style", "Times New Roman", serif;
+    --body: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #1a1613;
+      --card: #241f1a;
+      --line: #3a3229;
+      --line-soft: #2e2822;
+      --ink: #f2ece2;
+      --soft: #bdb1a2;
+      --faint: #94897b;
+      --beige: #2f2822;
+      --brown: #c9a57f;
+      --brown-deep: #e0c3a2;
+      --brown-soft: #b08e6b;
+      --sage: #a3b088;
+      --sage-bg: #2b3125;
+      --clay: #e08b69;
+      --clay-bg: #3a2621;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .3);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #1a1613;
+    --card: #241f1a;
+    --line: #3a3229;
+    --line-soft: #2e2822;
+    --ink: #f2ece2;
+    --soft: #bdb1a2;
+    --faint: #94897b;
+    --beige: #2f2822;
+    --brown: #c9a57f;
+    --brown-deep: #e0c3a2;
+    --brown-soft: #b08e6b;
+    --sage: #a3b088;
+    --sage-bg: #2b3125;
+    --clay: #e08b69;
+    --clay-bg: #3a2621;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 0 20px 72px; }
+
+  /* ── Masthead ─────────────────────────────────────────────── */
+  header.top { padding: 44px 0 22px; }
+  h1 {
+    font-family: var(--display);
+    font-weight: 400;
+    font-size: clamp(2rem, 6vw, 3rem);
+    letter-spacing: -.015em;
+    margin: 0;
+    text-wrap: balance;
+  }
+  .eyebrow {
+    font-size: .7rem;
+    text-transform: uppercase;
+    letter-spacing: .14em;
+    color: var(--faint);
+    margin: 0 0 10px;
+  }
+  .lede { max-width: 60ch; color: var(--soft); margin: 12px 0 0; }
+
+  /* ── Sticky verdict bar ───────────────────────────────────── */
+  .verdict {
+    position: sticky; top: 0; z-index: 20;
+    background: color-mix(in srgb, var(--paper) 92%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+    margin: 0 -20px;
+    padding: 12px 20px;
+  }
+  .verdict-inner {
+    max-width: 1000px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+  }
+  .vstat .k {
+    font-size: .62rem; text-transform: uppercase; letter-spacing: .12em;
+    color: var(--faint); display: block;
+  }
+  .vstat .v {
+    font-family: var(--display); font-size: clamp(1.1rem, 3.6vw, 1.65rem);
+    display: block; margin-top: 1px; font-variant-numeric: tabular-nums;
+  }
+  .vstat .h { font-size: .68rem; color: var(--soft); display: block; }
+
+  /* ── Tabs ─────────────────────────────────────────────────── */
+  nav.tabs {
+    display: flex; gap: 7px; flex-wrap: wrap;
+    padding: 22px 0 20px;
+  }
+  nav.tabs button {
+    font: inherit; font-size: .85rem;
+    border: 1px solid var(--line); background: var(--card); color: var(--soft);
+    border-radius: 999px; padding: 6px 15px; cursor: pointer;
+    transition: background .18s, color .18s, border-color .18s;
+  }
+  nav.tabs button:hover { color: var(--ink); border-color: var(--brown-soft); }
+  nav.tabs button[aria-selected="true"] {
+    background: var(--brown); border-color: var(--brown); color: var(--card);
+  }
+  :root[data-theme="dark"] nav.tabs button[aria-selected="true"],
+  :root:not([data-theme="light"]) nav.tabs button[aria-selected="true"] { color: #1a1613; }
+
+  /* ── Panels & cards ───────────────────────────────────────── */
+  .stack { display: flex; flex-direction: column; gap: 16px; }
+  .card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 18px; padding: 20px; box-shadow: var(--shadow);
+  }
+  .card > h2 {
+    font-family: var(--display); font-weight: 400; font-size: 1.3rem;
+    margin: 0 0 4px; display: flex; align-items: baseline;
+    justify-content: space-between; gap: 12px; text-wrap: balance;
+  }
+  .card p.note { color: var(--soft); margin: 0 0 16px; font-size: .9rem; max-width: 62ch; }
+  .card p.note:last-child { margin-bottom: 0; }
+
+  /* ── Inputs ───────────────────────────────────────────────── */
+  .fields { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .field label {
+    font-size: .62rem; text-transform: uppercase; letter-spacing: .12em;
+    color: var(--faint); display: block; margin-bottom: 5px;
+  }
+  .field .box { position: relative; }
+  .field .pre, .field .suf {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    font-size: .82rem; color: var(--faint); pointer-events: none;
+  }
+  .field .pre { left: 11px; }
+  .field .suf { right: 11px; }
+  .field input {
+    width: 100%; font: inherit; font-size: .92rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink); background: var(--paper);
+    border: 1px solid var(--line); border-radius: 11px;
+    padding: 8px 11px;
+    transition: border-color .18s;
+  }
+  .field input.has-pre { padding-left: 25px; }
+  .field input:focus-visible { outline: none; border-color: var(--brown-soft); box-shadow: 0 0 0 3px color-mix(in srgb, var(--brown) 15%, transparent); }
+  .field .hint { font-size: .7rem; color: var(--faint); margin-top: 4px; display: block; }
+
+  .toggle {
+    display: inline-flex; align-items: center; gap: 8px;
+    font: inherit; font-size: .8rem; color: var(--soft);
+    background: none; border: 0; cursor: pointer; padding: 0;
+  }
+  .toggle .sw {
+    width: 34px; height: 20px; border-radius: 999px;
+    background: var(--line); border: 1px solid var(--line);
+    position: relative; transition: background .2s;
+  }
+  .toggle .sw::after {
+    content: ""; position: absolute; top: 2px; left: 2px;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--card); transition: transform .2s;
+  }
+  .toggle[aria-pressed="true"] .sw { background: var(--brown); border-color: var(--brown); }
+  .toggle[aria-pressed="true"] .sw::after { transform: translateX(14px); }
+  .toggle:focus-visible .sw { box-shadow: 0 0 0 3px color-mix(in srgb, var(--brown) 20%, transparent); }
+
+  /* ── Line cards ───────────────────────────────────────────── */
+  .lines { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .line { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 16px; box-shadow: var(--shadow); }
+  .line .hd { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .line .nm { font-family: var(--display); font-size: 1.1rem; }
+  .line .sub { font-size: .74rem; color: var(--soft); margin-top: 1px; }
+  .chip {
+    font-size: .68rem; padding: 3px 9px; border-radius: 999px; white-space: nowrap;
+    font-variant-numeric: tabular-nums; letter-spacing: .01em;
+  }
+  .chip.good { background: var(--sage-bg); color: var(--sage); }
+  .chip.ok   { background: var(--beige); color: var(--brown-deep); }
+  .chip.bad  { background: var(--clay-bg); color: var(--clay); }
+  .line dl { margin: 12px 0 0; font-size: .88rem; }
+  .line .row { display: flex; justify-content: space-between; gap: 12px; padding: 1px 0; }
+  .line .row dt { color: var(--soft); }
+  .line .row dd { margin: 0; font-variant-numeric: tabular-nums; }
+  .line .row.cost dd { color: var(--faint); }
+  .line .row.total { border-top: 1px solid var(--line); margin-top: 5px; padding-top: 5px; font-weight: 600; }
+  .line .foot { font-size: .72rem; color: var(--faint); margin: 9px 0 0; }
+
+  /* ── Rate bars, with the R400 floor marked ────────────────── */
+  .bars { display: flex; flex-direction: column; gap: 11px; margin-top: 4px; }
+  .bar-row { display: grid; grid-template-columns: 96px 1fr 70px; gap: 12px; align-items: center; }
+  .bar-row .lbl { font-size: .8rem; color: var(--soft); }
+  .bar-track { position: relative; height: 22px; background: var(--beige); border-radius: 6px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 6px; transition: width .35s cubic-bezier(.4,0,.2,1); }
+  .bar-row .amt { font-size: .82rem; text-align: right; font-variant-numeric: tabular-nums; }
+  .floor {
+    position: absolute; top: -4px; bottom: -4px; width: 1px;
+    background: var(--clay); opacity: .55;
+  }
+  .floor-key { font-size: .7rem; color: var(--faint); margin-top: 12px; display: flex; align-items: center; gap: 7px; }
+  .floor-key i { width: 1px; height: 13px; background: var(--clay); opacity: .55; display: inline-block; }
+
+  /* ── Hour ledger — where the week actually goes ───────────── */
+  .ledger { display: flex; height: 32px; border-radius: 8px; overflow: hidden; background: var(--beige); gap: 2px; }
+  .ledger span {
+    display: flex; align-items: center; justify-content: center;
+    font-size: .7rem; color: var(--card); overflow: hidden; white-space: nowrap;
+    transition: flex-grow .35s cubic-bezier(.4,0,.2,1);
+  }
+  :root[data-theme="dark"] .ledger span,
+  :root:not([data-theme="light"]) .ledger span { color: #1a1613; }
+  .ledger-key { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 11px; font-size: .74rem; color: var(--soft); }
+  .ledger-key b { display: inline-flex; align-items: center; gap: 6px; font-weight: 400; }
+  .ledger-key i { width: 9px; height: 9px; border-radius: 2px; display: inline-block; }
+
+  /* ── Season split ─────────────────────────────────────────── */
+  .seasons { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 18px; }
+  .season { background: var(--beige); border-radius: 13px; padding: 14px 16px; }
+  .season .k { font-size: .62rem; text-transform: uppercase; letter-spacing: .12em; color: var(--faint); }
+  .season .v { font-family: var(--display); font-size: 1.5rem; margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .season .h { font-size: .74rem; color: var(--soft); }
+
+  .minis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
+  .mini { background: var(--beige); border-radius: 13px; padding: 13px 15px; }
+  .mini .k { font-size: .62rem; text-transform: uppercase; letter-spacing: .12em; color: var(--faint); }
+  .mini .v { font-family: var(--display); font-size: 1.35rem; margin-top: 2px; font-variant-numeric: tabular-nums; }
+  .mini .h { font-size: .72rem; color: var(--soft); }
+
+  ol.rules, ul.checks { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 9px; }
+  ol.rules li, ul.checks li { font-size: .89rem; color: var(--soft); display: flex; gap: 11px; max-width: 68ch; }
+  ol.rules li b { color: var(--ink); font-variant-numeric: tabular-nums; flex: none; min-width: 14px; font-weight: 600; }
+  ul.checks li::before { content: "—"; color: var(--brown-soft); flex: none; }
+
+  .btn {
+    font: inherit; font-size: .85rem; cursor: pointer;
+    background: var(--card); color: var(--soft);
+    border: 1px solid var(--line); border-radius: 999px; padding: 6px 15px;
+    transition: border-color .18s, color .18s;
+  }
+  .btn:hover { border-color: var(--brown-soft); color: var(--ink); }
+  .btn:focus-visible { outline: 2px solid var(--brown-soft); outline-offset: 2px; }
+  .foot-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; border-top: 1px solid var(--line); margin-top: 18px; padding-top: 15px; }
+  .foot-row span { font-size: .75rem; color: var(--faint); }
+  code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .85em; color: var(--soft); }
+
+  footer.end { margin-top: 34px; padding-top: 18px; border-top: 1px solid var(--line); font-size: .78rem; color: var(--faint); max-width: 68ch; }
+
+  [hidden] { display: none !important; }
+
+  @media (max-width: 720px) {
+    .fields { grid-template-columns: 1fr 1fr; }
+    .lines, .seasons { grid-template-columns: 1fr; }
+    .minis { grid-template-columns: 1fr; }
+    .verdict-inner { grid-template-columns: 1fr 1fr; gap: 10px 14px; }
+    .bar-row { grid-template-columns: 74px 1fr 62px; gap: 9px; }
+    header.top { padding: 30px 0 16px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow">Side business · Johannesburg</p>
+    <h1>Rand Per Hour</h1>
+    <p class="lede">
+      Model the service business before you commit a single Sunday to it. Change any assumption and watch
+      the one number that decides everything when you already have a full-time job: what an hour of your
+      own time actually earns.
+    </p>
+  </header>
+
+  <div class="verdict">
+    <div class="verdict-inner">
+      <div class="vstat"><span class="k">Revenue / month</span><span class="v" id="v-rev">—</span><span class="h" id="h-rev"></span></div>
+      <div class="vstat"><span class="k">Profit / month</span><span class="v" id="v-net">—</span><span class="h" id="h-net"></span></div>
+      <div class="vstat"><span class="k">Your hours / week</span><span class="v" id="v-hrs">—</span><span class="h" id="h-hrs"></span></div>
+      <div class="vstat"><span class="k">Rand per hour</span><span class="v" id="v-rate">—</span><span class="h" id="h-rate"></span></div>
+    </div>
+  </div>
+
+  <nav class="tabs" role="tablist" id="tabs"></nav>
+
+  <!-- SUMMARY -->
+  <section class="stack" id="p-summary" role="tabpanel">
+    <div class="lines" id="line-cards"></div>
+
+    <div class="card">
+      <h2>Where the week goes</h2>
+      <p class="note">
+        Your hours are the scarce thing, not the money. Each segment is one line's share of your working
+        week, coloured by what that hour earns.
+      </p>
+      <div class="ledger" id="ledger"></div>
+      <div class="ledger-key" id="ledger-key"></div>
+    </div>
+
+    <div class="card">
+      <h2>What an hour earns, by line</h2>
+      <p class="note">
+        The longest bar is where your next hour belongs. The marked line is R400 — anything short of it has
+        to justify itself or be cut.
+      </p>
+      <div class="bars" id="rate-bars"></div>
+      <p class="floor-key"><i></i> R400 an hour — the floor</p>
+    </div>
+
+    <div class="card">
+      <h2>Profit, by line</h2>
+      <div class="bars" id="profit-bars"></div>
+      <div class="seasons">
+        <div class="season">
+          <div class="k">Summer</div>
+          <div class="v" id="s-summer">—</div>
+          <div class="h" id="s-summer-h"></div>
+        </div>
+        <div class="season">
+          <div class="k">Winter — pools are unusable</div>
+          <div class="v" id="s-winter">—</div>
+          <div class="h" id="s-winter-h"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Working assumptions</h2>
+      <div class="fields" id="f-global"></div>
+      <div class="foot-row">
+        <button class="btn" id="reset">Reset to the plan</button>
+        <span>Defaults come from <code>docs/service-business-plan.md</code>. Everything you change saves in this browser.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- MEALS -->
+  <section class="stack" id="p-meals" role="tabpanel" hidden>
+    <div class="card">
+      <h2>Sunday Kitchen <span class="chip ok" id="chip-meals"></span></h2>
+      <p class="note">
+        One menu a week for everyone, three swap slots, collection rather than delivery. Break-even is
+        <b id="breakeven">—</b> — below that the fixed costs eat you.
+      </p>
+      <div class="fields" id="f-meals"></div>
+    </div>
+    <div class="card">
+      <h2>Corporate lunchbox drop <span id="t-corp"></span></h2>
+      <p class="note">
+        The highest-leverage line in the business: many meals, one delivery stop, one invoice. Two office
+        managers a week is the entire sales effort.
+      </p>
+      <div class="fields" id="f-corp"></div>
+    </div>
+    <div class="lines" id="line-meals"></div>
+  </section>
+
+  <!-- SWIM -->
+  <section class="stack" id="p-swim" role="tabpanel" hidden>
+    <div class="card">
+      <h2>Friday Water <span id="t-swim"></span></h2>
+      <p class="note">
+        Prepaid blocks to small groups, never pay-as-you-go privates. A slot is one hour of pool time
+        whatever the lesson length — that is what you are charged for. Pool hire is the assumption to go and
+        verify first: raise it to R550 and watch the line collapse.
+      </p>
+      <div class="fields" id="f-swim"></div>
+    </div>
+    <div class="lines" id="line-swim"></div>
+  </section>
+
+  <!-- SORTED -->
+  <section class="stack" id="p-sorted" role="tabpanel" hidden>
+    <div class="card">
+      <h2>Sorted <span class="chip good" id="chip-sorted"></span></h2>
+      <p class="note">
+        Licence discs, Home Affairs bookings, medical aid claims, insurance quotes. No stock, no premises,
+        done from your phone. The client pays every third-party fee upfront — you never float their money.
+      </p>
+      <div class="fields" id="f-sorted"></div>
+    </div>
+    <div class="lines" id="line-sorted"></div>
+  </section>
+
+  <!-- DIGITAL -->
+  <section class="stack" id="p-digital" role="tabpanel" hidden>
+    <div class="card">
+      <h2>Built once, sold forever</h2>
+      <p class="note">
+        The only line with no hours attached — which makes it the only one that grows without costing you a
+        weekend. You already ship software; most of your competition cannot.
+      </p>
+      <div class="fields" id="f-digital"></div>
+    </div>
+    <div class="lines" id="line-digital"></div>
+  </section>
+
+  <!-- TARGET -->
+  <section class="stack" id="p-target" role="tabpanel" hidden>
+    <div class="card">
+      <h2>What are you actually aiming at?</h2>
+      <div class="fields" id="f-target"></div>
+      <div class="minis">
+        <div class="mini"><div class="k">Gap to target</div><div class="v" id="m-gap">—</div><div class="h" id="m-gap-h"></div></div>
+        <div class="mini"><div class="k">Capital paid back</div><div class="v" id="m-pay">—</div><div class="h" id="m-pay-h"></div></div>
+        <div class="mini"><div class="k">Blended rate</div><div class="v" id="m-rate">—</div><div class="h">Your real hourly wage</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>The rules that protect your time</h2>
+      <ol class="rules">
+        <li><b>1</b><span>One menu a week. Three swap slots. No bespoke menus below Premium.</span></li>
+        <li><b>2</b><span>Prepaid blocks and subscriptions only. No pay-as-you-go, no cash on collection.</span></li>
+        <li><b>3</b><span>Collection first. Delivery is a paid extra that somebody else drives.</span></li>
+        <li><b>4</b><span>Twelve kilometre radius. Hard stop.</span></li>
+        <li><b>5</b><span>Two lines active at once, maximum, until one is genuinely on autopilot.</span></li>
+        <li><b>6</b><span>Admin in one 90-minute block on a Wednesday. Not continuously, all week.</span></li>
+        <li><b>7</b><span>Book capacity, not clients. A waiting list is how you justify the next price rise.</span></li>
+        <li><b>8</b><span>Nothing new gets added unless it beats R400 an hour.</span></li>
+      </ol>
+      <p class="note" id="hours-verdict" style="margin-top:16px;border-top:1px solid var(--line);padding-top:15px;"></p>
+    </div>
+
+    <div class="card">
+      <h2>Before your first paying client</h2>
+      <ul class="checks">
+        <li>Certificate of Acceptability from your municipal health inspector. Longest lead time — start it this week.</li>
+        <li>Food handler hygiene training, and a signed allergy declaration from every meal client.</li>
+        <li>Swim instructor qualification, valid first aid, and public liability cover before anyone enters the water.</li>
+        <li>Three real pool-hire quotes. Every swim figure here rests on a guess until you have them.</li>
+        <li>No filing anyone's tax return for a fee — gathering their documents is fine, submitting is not.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer class="end">
+    Competitor prices behind the defaults are taken from published Johannesburg providers. Ingredient costs,
+    pool hire, insurance and volume assumptions are estimates to test, not quotes.
+  </footer>
+</div>
+
+<script>
+"use strict";
+
+const DEFAULTS = {
+  weeksPerMonth: 4,
+  mpCore: 3, mpPremium: 3, mpMealsPerClient: 10, mpCorePrice: 125, mpPremiumPrice: 150,
+  mpCogs: 54, mpFixed: 1550, mpHelper: 0, mpHours: 7, mpConsults: 2, mpConsultPrice: 650,
+  corpOn: false, corpHeads: 15, corpDrops: 2, corpPrice: 135, corpHours: 2,
+  swOn: true, swAdultSlots: 3, swAdultSize: 4, swAdultBlock: 1680,
+  swKidSlots: 2, swKidSize: 6, swKidBlock: 1080, swFill: 75, swBlockWeeks: 6,
+  swPoolRate: 300, swFixed: 750, swAdminHours: 1,
+  soLite: 6, soLitePrice: 650, soPlus: 3, soPlusPrice: 1500, soPower: 2, soPowerPrice: 750,
+  soFixed: 400, soHours: 14,
+  dgPdf: 15, dgPdfPrice: 249, dgCourse: 6, dgCoursePrice: 499, dgFeePct: 4,
+  startupCost: 28000, targetIncome: 40000
+};
+
+const KEY = "rand-per-hour-model";
+let M = load();
+
+function load() {
+  try {
+    const raw = localStorage.getItem(KEY);
+    return raw ? Object.assign({}, DEFAULTS, JSON.parse(raw)) : Object.assign({}, DEFAULTS);
+  } catch (e) { return Object.assign({}, DEFAULTS); }
+}
+function save() { try { localStorage.setItem(KEY, JSON.stringify(M)); } catch (e) {} }
+
+const r0 = n => Math.round(Number.isFinite(n) ? n : 0);
+const rand = n => "R" + r0(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+/* ── The model ────────────────────────────────────────────── */
+function line(id, name, revenue, variable, variableLabel, fixed, hours, note, active) {
+  const net = revenue - variable - fixed;
+  const monthlyHours = hours * M.weeksPerMonth;
+  return {
+    id, name, note, active, variableLabel,
+    revenue: r0(revenue), variable: r0(variable), fixed: r0(fixed), net: r0(net),
+    hours: Math.round(hours * 10) / 10,
+    perHour: monthlyHours > 0 ? r0(net / monthlyHours) : null
+  };
+}
+
+function compute() {
+  const w = M.weeksPerMonth || 1;
+
+  const clients = M.mpCore + M.mpPremium;
+  const mealsWeek = clients * M.mpMealsPerClient;
+  const meals = line("meals", "Meal prep",
+    M.mpMealsPerClient * (M.mpCore * M.mpCorePrice + M.mpPremium * M.mpPremiumPrice) * w
+      + M.mpConsults * M.mpConsultPrice,
+    mealsWeek * M.mpCogs * w, "Ingredients",
+    M.mpFixed + M.mpHelper, M.mpHours,
+    clients + " client" + (clients === 1 ? "" : "s") + " · " + r0(mealsWeek) + " meals a week",
+    clients > 0);
+
+  const corpWeek = M.corpHeads * M.corpDrops;
+  const corp = line("corp", "Corporate drop",
+    M.corpOn ? corpWeek * M.corpPrice * w : 0,
+    M.corpOn ? corpWeek * M.mpCogs * w : 0, "Ingredients",
+    0, M.corpOn ? M.corpHours : 0,
+    M.corpHeads + " people × " + M.corpDrops + " drop" + (M.corpDrops === 1 ? "" : "s") + " a week · one stop",
+    M.corpOn);
+
+  const fill = M.swFill / 100;
+  const bw = Math.max(1, M.swBlockWeeks);
+  const contact = M.swAdultSlots + M.swKidSlots;
+  const swimWeek = M.swAdultSlots * M.swAdultSize * fill * (M.swAdultBlock / bw)
+                 + M.swKidSlots * M.swKidSize * fill * (M.swKidBlock / bw);
+  const places = Math.round((M.swAdultSlots * M.swAdultSize + M.swKidSlots * M.swKidSize) * fill);
+  const swim = line("swim", "Swim blocks",
+    M.swOn ? swimWeek * w : 0,
+    M.swOn ? contact * M.swPoolRate * w : 0, "Pool hire",
+    M.swOn ? M.swFixed : 0, M.swOn ? contact + M.swAdminHours : 0,
+    places + " swimmers · " + contact + "h in the water a week",
+    M.swOn);
+
+  const soRev = M.soLite * M.soLitePrice + M.soPlus * M.soPlusPrice + M.soPower * M.soPowerPrice;
+  const soClients = M.soLite + M.soPlus;
+  const sorted = line("sorted", "Admin retainer", soRev, 0, "Costs", M.soFixed, M.soHours / w,
+    soClients + " retainer client" + (soClients === 1 ? "" : "s") + " · " + M.soPower +
+    " power hour" + (M.soPower === 1 ? "" : "s"),
+    soRev > 0);
+
+  const dgRev = M.dgPdf * M.dgPdfPrice + M.dgCourse * M.dgCoursePrice;
+  const digital = line("digital", "Digital products", dgRev, dgRev * (M.dgFeePct / 100),
+    "Payment fees", 0, 0,
+    M.dgPdf + " plans + " + M.dgCourse + " courses · built once", dgRev > 0);
+
+  const lines = [meals, corp, swim, sorted, digital];
+  const active = lines.filter(l => l.active);
+  const revenue = active.reduce((s, l) => s + l.revenue, 0);
+  const net = active.reduce((s, l) => s + l.net, 0);
+  const hours = active.reduce((s, l) => s + l.hours, 0);
+  const monthlyHours = hours * w;
+  const perClient = M.mpMealsPerClient * (M.mpCorePrice - M.mpCogs) * w;
+  const gap = Math.max(0, M.targetIncome - net);
+
+  return {
+    lines, active,
+    revenue: r0(revenue), net: r0(net),
+    hours: Math.round(hours * 10) / 10,
+    perHour: monthlyHours > 0 ? r0(net / monthlyHours) : 0,
+    winterNet: r0(net - (swim.active ? swim.net : 0)),
+    winterHours: Math.round((hours - (swim.active ? swim.hours : 0)) * 10) / 10,
+    payback: net > 0 ? Math.round((M.startupCost / net) * 10) / 10 : 0,
+    gap: r0(gap),
+    clientsToTarget: perClient > 0 ? Math.ceil(gap / perClient) : 0,
+    breakEven: perClient > 0 ? Math.ceil((M.mpFixed + M.mpHelper) / perClient) : 0
+  };
+}
+
+/* ── Field definitions ────────────────────────────────────── */
+const F = {
+  global: [
+    ["weeksPerMonth", "Delivery weeks a month", "", "", "4 = a week off each quarter", .5],
+    ["mpCogs", "Ingredient cost a meal", "R", "", "Protein, starch, veg, container"],
+    ["startupCost", "Startup capital", "R", "", "Everything before your first sale"]
+  ],
+  meals: [
+    ["mpCore", "Core clients"],
+    ["mpPremium", "Premium clients", "", "", "With consultation"],
+    ["mpMealsPerClient", "Meals a client, a week"],
+    ["mpCorePrice", "Core price a meal", "R"],
+    ["mpPremiumPrice", "Premium price a meal", "R", "", "Market tops out near R210"],
+    ["mpCogs", "Ingredient cost a meal", "R"],
+    ["mpConsults", "Consults a month"],
+    ["mpConsultPrice", "Consult fee", "R"],
+    ["mpFixed", "Fixed costs a month", "R", "", "Gas, marketing, insurance"],
+    ["mpHelper", "Helper a month", "R", "", "Hire past 80 meals"],
+    ["mpHours", "Your hours a week", "", "", "Shop, cook, portion, hand over"]
+  ],
+  corp: [
+    ["corpHeads", "People in the office"],
+    ["corpDrops", "Drops a week"],
+    ["corpPrice", "Price a meal", "R"],
+    ["corpHours", "Extra hours a week"]
+  ],
+  swim: [
+    ["swAdultSlots", "Adult slots a week"],
+    ["swAdultSize", "Adults a slot", "", "", "Hard cap of 4"],
+    ["swAdultBlock", "Adult block price", "R", "", "Per person, prepaid"],
+    ["swKidSlots", "Kids slots a week"],
+    ["swKidSize", "Kids a slot"],
+    ["swKidBlock", "Kids block price", "R"],
+    ["swBlockWeeks", "Weeks in a block"],
+    ["swFill", "Places filled", "", "%", "Be honest for cycle one"],
+    ["swPoolRate", "Pool hire an hour", "R", "", "Get three quotes"],
+    ["swFixed", "Fixed costs a month", "R", "", "Liability cover, marketing"],
+    ["swAdminHours", "Admin hours a week"]
+  ],
+  sorted: [
+    ["soLite", "Lite clients", "", "", "3 tasks a month"],
+    ["soLitePrice", "Lite price", "R"],
+    ["soPlus", "Plus clients", "", "", "8 tasks + WhatsApp"],
+    ["soPlusPrice", "Plus price", "R"],
+    ["soPower", "Power hours a month"],
+    ["soPowerPrice", "Power hour price", "R"],
+    ["soFixed", "Costs a month", "R", "", "Data, tools, fees"],
+    ["soHours", "Your hours a month"]
+  ],
+  digital: [
+    ["dgPdf", "Meal plan PDFs a month"],
+    ["dgPdfPrice", "PDF price", "R"],
+    ["dgCourse", "Video courses a month"],
+    ["dgCoursePrice", "Course price", "R"],
+    ["dgFeePct", "Payment fees", "", "%"]
+  ],
+  target: [
+    ["targetIncome", "Target profit a month", "R"],
+    ["startupCost", "Startup capital", "R"]
+  ]
+};
+
+function buildFields(host, defs) {
+  host.innerHTML = "";
+  defs.forEach(function (d) {
+    const key = d[0], label = d[1], pre = d[2] || "", suf = d[3] || "", hint = d[4] || "", step = d[5] || 1;
+    const wrap = document.createElement("div");
+    wrap.className = "field";
+    const id = host.id + "-" + key;
+    wrap.innerHTML =
+      '<label for="' + id + '">' + label + "</label>" +
+      '<div class="box">' +
+        (pre ? '<span class="pre">' + pre + "</span>" : "") +
+        '<input id="' + id + '" type="number" inputmode="decimal" min="0" step="' + step +
+          '" class="' + (pre ? "has-pre" : "") + '">' +
+        (suf ? '<span class="suf">' + suf + "</span>" : "") +
+      "</div>" +
+      (hint ? '<span class="hint">' + hint + "</span>" : "");
+    const input = wrap.querySelector("input");
+    input.value = M[key];
+    input.dataset.key = key;
+    input.addEventListener("input", function () {
+      M[key] = input.value === "" ? 0 : Number(input.value);
+      save();
+      render();
+    });
+    host.appendChild(wrap);
+  });
+}
+
+function buildToggle(host, key, onLabel, offLabel) {
+  const b = document.createElement("button");
+  b.className = "toggle";
+  b.type = "button";
+  const paint = function () {
+    b.setAttribute("aria-pressed", String(!!M[key]));
+    b.innerHTML = '<span class="sw"></span><span>' + (M[key] ? onLabel : offLabel) + "</span>";
+  };
+  b.addEventListener("click", function () { M[key] = !M[key]; save(); paint(); render(); });
+  paint();
+  host.innerHTML = "";
+  host.appendChild(b);
+  return paint;
+}
+
+/* ── Rendering ────────────────────────────────────────────── */
+const RATE_COLOR = function (rate) {
+  if (rate === null) return "var(--sage)";
+  if (rate >= 500) return "var(--sage)";
+  if (rate >= 400) return "var(--brown)";
+  return "var(--clay)";
+};
+const rateClass = function (rate) {
+  if (rate === null || rate >= 500) return "good";
+  return rate >= 400 ? "ok" : "bad";
+};
+
+function lineCard(l) {
+  const free = l.perHour === null;
+  const margin = l.revenue > 0 ? Math.round((l.net / l.revenue) * 100) : 0;
+  return '<div class="line">' +
+    '<div class="hd"><div><div class="nm">' + l.name + '</div><div class="sub">' + l.note + "</div></div>" +
+    '<span class="chip ' + rateClass(l.perHour) + '">' + (free ? "No hours" : rand(l.perHour) + "/hr") + "</span></div>" +
+    "<dl>" +
+      '<div class="row"><dt>Revenue</dt><dd>' + rand(l.revenue) + "</dd></div>" +
+      (l.variable > 0 ? '<div class="row cost"><dt>' + l.variableLabel + "</dt><dd>−" + rand(l.variable) + "</dd></div>" : "") +
+      (l.fixed > 0 ? '<div class="row cost"><dt>Fixed costs</dt><dd>−' + rand(l.fixed) + "</dd></div>" : "") +
+      '<div class="row total"><dt>Profit</dt><dd>' + rand(l.net) + "</dd></div>" +
+    "</dl>" +
+    '<p class="foot">' + (free ? "None of your time" :
+      l.hours + " hrs a week · " + Math.round(l.hours * M.weeksPerMonth) + " a month") +
+      " · " + margin + "% margin</p></div>";
+}
+
+function bars(host, rows, max, floorAt) {
+  host.innerHTML = "";
+  const top = Math.max(max, 1);
+  rows.forEach(function (row) {
+    const el = document.createElement("div");
+    el.className = "bar-row";
+    el.innerHTML =
+      '<span class="lbl">' + row.label + "</span>" +
+      '<div class="bar-track"><div class="bar-fill" style="width:' +
+        Math.max(2, (row.value / top) * 100) + "%;background:" + row.color + '"></div>' +
+        (floorAt ? '<span class="floor" style="left:' + (floorAt / top) * 100 + '%"></span>' : "") +
+      "</div>" +
+      '<span class="amt">' + row.text + "</span>";
+    host.appendChild(el);
+  });
+}
+
+function render() {
+  const s = compute();
+
+  document.getElementById("v-rev").textContent = rand(s.revenue);
+  document.getElementById("h-rev").textContent = s.active.length + " active line" + (s.active.length === 1 ? "" : "s");
+  document.getElementById("v-net").textContent = rand(s.net);
+  document.getElementById("h-net").textContent = rand(s.winterNet) + " in winter";
+  document.getElementById("v-hrs").textContent = s.hours;
+  document.getElementById("h-hrs").textContent = s.hours > 20 ? "Above the 16-hour cap" : "Within the cap";
+  document.getElementById("v-rate").textContent = rand(s.perHour);
+  document.getElementById("h-rate").textContent = s.perHour >= 400 ? "Worth your Sunday" : "Below the R400 floor";
+
+  document.getElementById("line-cards").innerHTML = s.active.map(lineCard).join("");
+
+  /* Hour ledger */
+  const timed = s.active.filter(function (l) { return l.hours > 0; });
+  const ledger = document.getElementById("ledger");
+  const key = document.getElementById("ledger-key");
+  ledger.innerHTML = timed.map(function (l) {
+    return '<span style="flex:' + l.hours + ";background:" + RATE_COLOR(l.perHour) + '">' +
+      (l.hours >= 2 ? l.hours + "h" : "") + "</span>";
+  }).join("");
+  key.innerHTML = timed.map(function (l) {
+    return "<b><i style=\"background:" + RATE_COLOR(l.perHour) + '"></i>' + l.name + " · " + l.hours + "h</b>";
+  }).join("") + (s.hours > 0 ? "<b>= " + s.hours + " hours a week</b>" : "");
+
+  /* Rate + profit bars */
+  const rated = s.active.filter(function (l) { return l.perHour !== null; });
+  bars(document.getElementById("rate-bars"),
+    rated.map(function (l) {
+      return { label: l.name, value: l.perHour, text: rand(l.perHour), color: RATE_COLOR(l.perHour) };
+    }),
+    Math.max.apply(null, rated.map(function (l) { return l.perHour; }).concat([400])),
+    400);
+
+  bars(document.getElementById("profit-bars"),
+    s.active.map(function (l) {
+      return { label: l.name, value: l.net, text: rand(l.net), color: "var(--brown-soft)" };
+    }),
+    Math.max.apply(null, s.active.map(function (l) { return l.net; }).concat([1])),
+    0);
+
+  document.getElementById("s-summer").textContent = rand(s.net);
+  document.getElementById("s-summer-h").textContent = s.hours + " hrs a week, everything running";
+  document.getElementById("s-winter").textContent = rand(s.winterNet);
+  document.getElementById("s-winter-h").textContent = s.winterHours + " hrs a week — push meal prep here";
+
+  /* Per-tab cards */
+  const byId = function (id) { return s.lines.filter(function (l) { return l.id === id; })[0]; };
+  document.getElementById("line-meals").innerHTML =
+    [byId("meals"), byId("corp")].filter(function (l) { return l.active; }).map(lineCard).join("");
+  document.getElementById("line-swim").innerHTML = byId("swim").active ? lineCard(byId("swim")) : "";
+  document.getElementById("line-sorted").innerHTML = byId("sorted").active ? lineCard(byId("sorted")) : "";
+  document.getElementById("line-digital").innerHTML = byId("digital").active ? lineCard(byId("digital")) : "";
+
+  const mealsRate = byId("meals").perHour;
+  const chipM = document.getElementById("chip-meals");
+  chipM.textContent = mealsRate === null ? "No hours" : rand(mealsRate) + "/hr";
+  chipM.className = "chip " + rateClass(mealsRate);
+  const soRate = byId("sorted").perHour;
+  const chipS = document.getElementById("chip-sorted");
+  chipS.textContent = soRate === null ? "No hours" : rand(soRate) + "/hr";
+  chipS.className = "chip " + rateClass(soRate);
+
+  document.getElementById("breakeven").textContent =
+    s.breakEven + " client" + (s.breakEven === 1 ? "" : "s");
+
+  document.getElementById("m-gap").textContent = s.gap === 0 ? "Cleared" : rand(s.gap);
+  document.getElementById("m-gap-h").textContent = s.gap === 0
+    ? "Raise the target" : s.clientsToTarget + " more meal clients";
+  document.getElementById("m-pay").textContent = s.payback > 0 ? s.payback + " mo" : "—";
+  document.getElementById("m-pay-h").textContent = s.payback > 0 && s.payback <= 4
+    ? "Comfortable" : "Slow — trim the startup list";
+  document.getElementById("m-rate").textContent = rand(s.perHour) + "/hr";
+
+  document.getElementById("hours-verdict").textContent =
+    "This model has you working " + s.hours + " hours a week on top of your job. " +
+    (s.hours > 20
+      ? "That will not survive contact with a bad month — cut a line or hire help."
+      : "That is sustainable.");
+}
+
+/* ── Tabs ─────────────────────────────────────────────────── */
+const TABS = [
+  ["summary", "Summary"], ["meals", "Meal prep"], ["swim", "Swimming"],
+  ["sorted", "Retainer"], ["digital", "Digital"], ["target", "Target & payback"]
+];
+const tabBar = document.getElementById("tabs");
+TABS.forEach(function (t) {
+  const b = document.createElement("button");
+  b.type = "button";
+  b.textContent = t[1];
+  b.setAttribute("role", "tab");
+  b.dataset.panel = t[0];
+  b.addEventListener("click", function () { showTab(t[0]); });
+  tabBar.appendChild(b);
+});
+function showTab(id) {
+  TABS.forEach(function (t) {
+    document.getElementById("p-" + t[0]).hidden = t[0] !== id;
+  });
+  Array.prototype.forEach.call(tabBar.children, function (b) {
+    b.setAttribute("aria-selected", String(b.dataset.panel === id));
+  });
+}
+
+/* ── Wire up ──────────────────────────────────────────────── */
+buildFields(document.getElementById("f-global"), F.global);
+buildFields(document.getElementById("f-meals"), F.meals);
+buildFields(document.getElementById("f-corp"), F.corp);
+buildFields(document.getElementById("f-swim"), F.swim);
+buildFields(document.getElementById("f-sorted"), F.sorted);
+buildFields(document.getElementById("f-digital"), F.digital);
+buildFields(document.getElementById("f-target"), F.target);
+let repaintCorp = buildToggle(document.getElementById("t-corp"), "corpOn", "On", "Off");
+let repaintSwim = buildToggle(document.getElementById("t-swim"), "swOn", "In season", "Off season");
+
+document.getElementById("reset").addEventListener("click", function () {
+  M = Object.assign({}, DEFAULTS);
+  save();
+  document.querySelectorAll("input[data-key]").forEach(function (i) { i.value = M[i.dataset.key]; });
+  repaintCorp(); repaintSwim();
+  render();
+});
+
+showTab("summary");
+render();
+</script>
