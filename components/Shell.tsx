@@ -37,7 +37,6 @@ const NAV: { group: string; items: { href: string; label: string }[] }[] = [
     items: [
       { href: "/habits", label: "Habits" },
       { href: "/goals", label: "Goals" },
-      { href: "/business", label: "Side Business" },
       { href: "/relationships", label: "Relationships" },
       { href: "/vision", label: "Vision Board" },
       { href: "/reflection", label: "Reflection" },
