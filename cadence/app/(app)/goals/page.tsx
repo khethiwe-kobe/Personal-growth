@@ -13,8 +13,11 @@ export const dynamic = "force-dynamic";
 export default async function GoalsPage() {
   const user = await requireUser();
   const today = todayInTz(user.timezone);
-  const goals = allGoalStats(user.id, today);
-  const cats = new Map(categoriesFor(user.id).map((c) => [c.id, c]));
+  const [goals, categories] = await Promise.all([
+    allGoalStats(user.id, today),
+    categoriesFor(user.id),
+  ]);
+  const cats = new Map(categories.map((c) => [c.id, c]));
 
   const active = goals.filter((g) => g.goal.status === "active");
   const paused = goals.filter((g) => g.goal.status === "paused");

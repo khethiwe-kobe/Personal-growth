@@ -1,6 +1,6 @@
 import { requireUser } from "@/lib/auth";
 import { timetableFor } from "@/lib/repo";
-import { getDb } from "@/lib/db";
+import { all } from "@/lib/db";
 import { fmtClock } from "@/lib/time";
 import { PageTitle, Card, SectionHeading, Button, EmptyState } from "@/components/ui";
 import TimetableImport from "@/components/TimetableImport";
@@ -17,10 +17,13 @@ const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
 
 export default async function TimetablePage() {
   const user = await requireUser();
-  const entries = timetableFor(user.id);
-  const uploads = getDb()
-    .prepare("SELECT id, filename, mime, created_at FROM timetable_uploads WHERE user_id=? ORDER BY id DESC")
-    .all(user.id) as { id: number; filename: string; mime: string; created_at: string }[];
+  const [entries, uploads] = await Promise.all([
+    timetableFor(user.id),
+    all<{ id: number; filename: string; mime: string; created_at: string }>(
+      "SELECT id, filename, mime, created_at FROM timetable_uploads WHERE user_id=? ORDER BY id DESC",
+      [user.id]
+    ),
+  ]);
 
   const byDay = new Map<number, typeof entries>();
   for (const e of entries) {

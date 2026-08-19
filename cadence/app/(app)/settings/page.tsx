@@ -1,5 +1,5 @@
 import { requireUser, getGroupForUser } from "@/lib/auth";
-import { getDb } from "@/lib/db";
+import { get } from "@/lib/db";
 import { categoriesFor } from "@/lib/repo";
 import { PageTitle, Card, SectionHeading, Button } from "@/components/ui";
 import Avatar from "@/components/Avatar";
@@ -28,12 +28,14 @@ const NOTIF_OPTIONS: [string, string][] = [
 
 export default async function SettingsPage() {
   const user = await requireUser();
-  const group = getGroupForUser(user.id);
-  const categories = categoriesFor(user.id);
-  const db = getDb();
-  const me = db.prepare("SELECT is_demo FROM users WHERE id=?").get(user.id) as { is_demo: number };
-  const settings = db.prepare("SELECT notification_prefs FROM user_settings WHERE user_id=?")
-    .get(user.id) as { notification_prefs: string } | undefined;
+  const [group, categories, me, settings] = await Promise.all([
+    getGroupForUser(user.id),
+    categoriesFor(user.id),
+    get<{ is_demo: number }>("SELECT is_demo FROM users WHERE id=?", [user.id]),
+    get<{ notification_prefs: string }>(
+      "SELECT notification_prefs FROM user_settings WHERE user_id=?", [user.id]
+    ),
+  ]);
   let prefs: Record<string, boolean> = {};
   try { prefs = JSON.parse(settings?.notification_prefs || "{}"); } catch {}
 
@@ -91,6 +93,22 @@ export default async function SettingsPage() {
             the Focus page asks when needed. No emails, no SMS.
           </p>
         </form>
+      </Card>
+
+      <SectionHeading>Your data</SectionHeading>
+      <Card>
+        <p className="text-sm text-ink-2">
+          Everything you own — tasks, goals, check-ins, events, timetable, focus
+          history and monthly reviews, private notes included — as one JSON file.
+          Nothing here is ever deleted by the app; keep a copy anyway.
+        </p>
+        <a
+          href="/api/export"
+          download
+          className="mt-3 inline-flex items-center justify-center gap-1.5 rounded-xl border border-transparent bg-accent-soft px-3.5 py-2 text-sm font-medium text-accent-ink"
+        >
+          Download a full backup
+        </a>
       </Card>
 
       <SectionHeading>Security</SectionHeading>

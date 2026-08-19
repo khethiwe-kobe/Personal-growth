@@ -25,13 +25,16 @@ export default async function TodayPage({
   const isToday = date === today;
   const isPast = date < today;
 
-  const tasks = tasksForDay(user.id, date);
-  const blocks = blocksForDay(user.id, date);
-  const categories = categoriesFor(user.id);
+  const [tasks, blocks, categories, summary, goals, timetable] = await Promise.all([
+    tasksForDay(user.id, date),
+    blocksForDay(user.id, date),
+    categoriesFor(user.id),
+    daySummaryFor(user.id, date, user.timezone),
+    isToday ? goalsDueToday(user.id, today) : Promise.resolve(null),
+    timetableFor(user.id),
+  ]);
   const catMap = new Map(categories.map((c) => [c.id, c]));
-  const summary = daySummaryFor(user.id, date, user.timezone);
-  const goals = isToday ? goalsDueToday(user.id, today) : null;
-  const hasTimetable = timetableFor(user.id).length > 0;
+  const hasTimetable = timetable.length > 0;
   const nowMin = isToday ? nowMinutesInTz(user.timezone) : null;
 
   const order = { A: 0, B: 1, C: 2 } as const;

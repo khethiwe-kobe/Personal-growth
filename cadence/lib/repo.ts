@@ -1,4 +1,4 @@
-import { getDb } from "./db";
+import { all, get } from "./db";
 import { computeDaySummary, productiveDayStreak, type DaySummary } from "./analytics";
 import { computeGoalStats, type GoalStats } from "./goals";
 import { todayInTz, addDays, startOfWeek, monthOf, monthDates, rangeDates } from "./time";
@@ -22,63 +22,90 @@ export function nowMinutesInTz(tz: string): number {
   return h * 60 + m;
 }
 
-export function getUserTz(userId: number): string {
-  const row = getDb().prepare("SELECT timezone FROM users WHERE id=?").get(userId) as
-    | { timezone: string } | undefined;
+export async function getUserTz(userId: number): Promise<string> {
+  const row = await get<{ timezone: string }>(
+    "SELECT timezone FROM users WHERE id=?", [userId]
+  );
   return row?.timezone ?? "Africa/Johannesburg";
 }
 
-export function tasksForDay(userId: number, date: string): TaskRow[] {
-  return getDb()
-    .prepare(
-      `SELECT * FROM tasks WHERE user_id=? AND date=?
-       ORDER BY (start_min IS NULL), start_min, priority, id`
-    )
-    .all(userId, date) as TaskRow[];
+export function tasksForDay(userId: number, date: string): Promise<TaskRow[]> {
+  return all<TaskRow>(
+    `SELECT * FROM tasks WHERE user_id=? AND date=?
+     ORDER BY (start_min IS NULL), start_min, priority, id`,
+    [userId, date]
+  );
 }
 
-export function blocksForDay(userId: number, date: string): TimeBlockRow[] {
-  return getDb()
-    .prepare("SELECT * FROM time_blocks WHERE user_id=? AND date=? ORDER BY start_min")
-    .all(userId, date) as TimeBlockRow[];
+export function blocksForDay(userId: number, date: string): Promise<TimeBlockRow[]> {
+  return all<TimeBlockRow>(
+    "SELECT * FROM time_blocks WHERE user_id=? AND date=? ORDER BY start_min",
+    [userId, date]
+  );
 }
 
-export function focusForDay(userId: number, date: string): FocusSessionRow[] {
-  return getDb()
-    .prepare("SELECT * FROM focus_sessions WHERE user_id=? AND date=? ORDER BY started_at")
-    .all(userId, date) as FocusSessionRow[];
+export function focusForDay(userId: number, date: string): Promise<FocusSessionRow[]> {
+  return all<FocusSessionRow>(
+    "SELECT * FROM focus_sessions WHERE user_id=? AND date=? ORDER BY started_at",
+    [userId, date]
+  );
 }
 
-export function categoriesFor(userId: number): CategoryRow[] {
-  return getDb()
-    .prepare("SELECT * FROM categories WHERE user_id=? AND archived=0 ORDER BY position, id")
-    .all(userId) as CategoryRow[];
+export function categoriesFor(userId: number): Promise<CategoryRow[]> {
+  return all<CategoryRow>(
+    "SELECT * FROM categories WHERE user_id=? AND archived=0 ORDER BY position, id",
+    [userId]
+  );
 }
 
-export function goalsFor(userId: number, includeArchived = false): GoalRow[] {
+export function goalsFor(userId: number, includeArchived = false): Promise<GoalRow[]> {
   const where = includeArchived ? "" : "AND status != 'archived'";
-  return getDb()
-    .prepare(`SELECT * FROM goals WHERE user_id=? ${where} ORDER BY status='active' DESC, id`)
-    .all(userId) as GoalRow[];
+  return all<GoalRow>(
+    `SELECT * FROM goals WHERE user_id=? ${where} ORDER BY status='active' DESC, id`,
+    [userId]
+  );
 }
 
-export function checkinsFor(goalId: number): CheckinRow[] {
-  return getDb()
-    .prepare("SELECT * FROM goal_checkins WHERE goal_id=? ORDER BY date")
-    .all(goalId) as CheckinRow[];
+export function checkinsFor(goalId: number): Promise<CheckinRow[]> {
+  return all<CheckinRow>(
+    "SELECT * FROM goal_checkins WHERE goal_id=? ORDER BY date", [goalId]
+  );
 }
 
-export function goalWithStats(goal: GoalRow, today: string) {
-  return { goal, stats: computeGoalStats(goal, checkinsFor(goal.id), today) };
+/** All check-ins for a user, grouped by goal — one query instead of N. */
+async function checkinsByGoal(userId: number): Promise<Map<number, CheckinRow[]>> {
+  const rows = await all<CheckinRow>(
+    "SELECT * FROM goal_checkins WHERE user_id=? ORDER BY goal_id, date", [userId]
+  );
+  const map = new Map<number, CheckinRow[]>();
+  for (const r of rows) {
+    const arr = map.get(r.goal_id);
+    if (arr) arr.push(r);
+    else map.set(r.goal_id, [r]);
+  }
+  return map;
 }
 
-export function allGoalStats(userId: number, today: string) {
-  return goalsFor(userId).map((g) => goalWithStats(g, today));
+export async function goalWithStats(goal: GoalRow, today: string) {
+  return { goal, stats: computeGoalStats(goal, await checkinsFor(goal.id), today) };
+}
+
+export async function allGoalStats(
+  userId: number, today: string, includeArchived = false
+): Promise<{ goal: GoalRow; stats: GoalStats }[]> {
+  const [goals, checkins] = await Promise.all([
+    goalsFor(userId, includeArchived),
+    checkinsByGoal(userId),
+  ]);
+  return goals.map((goal) => ({
+    goal,
+    stats: computeGoalStats(goal, checkins.get(goal.id) ?? [], today),
+  }));
 }
 
 /** Count of daily goals due today + how many were completed. */
-export function goalsDueToday(userId: number, today: string) {
-  const items = allGoalStats(userId, today).filter(
+export async function goalsDueToday(userId: number, today: string) {
+  const items = (await allGoalStats(userId, today)).filter(
     (g) => g.stats.todayTarget !== null
   );
   return {
@@ -88,14 +115,18 @@ export function goalsDueToday(userId: number, today: string) {
   };
 }
 
-export function daySummaryFor(userId: number, date: string, tz: string): DaySummary {
+export async function daySummaryFor(
+  userId: number, date: string, tz: string
+): Promise<DaySummary> {
   const today = todayInTz(tz);
-  const g = goalsDueForDate(userId, date, today);
+  const [tasks, blocks, focus, g] = await Promise.all([
+    tasksForDay(userId, date),
+    blocksForDay(userId, date),
+    focusForDay(userId, date),
+    goalsDueForDate(userId, date, today),
+  ]);
   return computeDaySummary({
-    date,
-    tasks: tasksForDay(userId, date),
-    blocks: blocksForDay(userId, date),
-    focus: focusForDay(userId, date),
+    date, tasks, blocks, focus,
     goalsDue: g.due,
     goalsCompleted: g.completed,
     nowMin: date === today ? nowMinutesInTz(tz) : date > today ? 0 : null,
@@ -103,16 +134,12 @@ export function daySummaryFor(userId: number, date: string, tz: string): DaySumm
 }
 
 /** Goals that were due on an arbitrary (possibly past) date. */
-function goalsDueForDate(userId: number, date: string, today: string) {
-  const goals = goalsFor(userId, true);
+async function goalsDueForDate(userId: number, date: string, today: string) {
+  const items = await allGoalStats(userId, today, true);
   let due = 0, completed = 0;
-  for (const goal of goals) {
+  for (const { goal, stats } of items) {
     if (goal.frequency !== "daily") continue;
-    if (goal.start_date > date) continue;
-    if (goal.deadline && goal.deadline < date) continue;
     if (goal.status === "archived") continue;
-    if (goal.status === "completed" && goal.completed_at && goal.completed_at.slice(0, 10) < date) continue;
-    const stats = computeGoalStats(goal, checkinsFor(goal.id), today);
     const p = stats.periods.find((pp) => pp.key === date);
     if (!p) continue;
     due++;
@@ -121,8 +148,63 @@ function goalsDueForDate(userId: number, date: string, today: string) {
   return { due, completed };
 }
 
-export function summariesForRange(userId: number, start: string, end: string, tz: string) {
-  return rangeDates(start, end).map((d) => daySummaryFor(userId, d, tz));
+/**
+ * Day summaries for a date range. Loads each table once for the whole range
+ * rather than per day — important now that every query is a network round trip.
+ */
+export async function summariesForRange(
+  userId: number, start: string, end: string, tz: string
+): Promise<DaySummary[]> {
+  const today = todayInTz(tz);
+  const [tasks, blocks, focus, goalItems] = await Promise.all([
+    all<TaskRow>(
+      "SELECT * FROM tasks WHERE user_id=? AND date>=? AND date<=?", [userId, start, end]
+    ),
+    all<TimeBlockRow>(
+      "SELECT * FROM time_blocks WHERE user_id=? AND date>=? AND date<=?", [userId, start, end]
+    ),
+    all<FocusSessionRow>(
+      "SELECT * FROM focus_sessions WHERE user_id=? AND date>=? AND date<=?", [userId, start, end]
+    ),
+    allGoalStats(userId, today, true),
+  ]);
+
+  const byDate = <T extends { date: string }>(rows: T[]) => {
+    const m = new Map<string, T[]>();
+    for (const r of rows) {
+      const arr = m.get(r.date);
+      if (arr) arr.push(r);
+      else m.set(r.date, [r]);
+    }
+    return m;
+  };
+  const t = byDate(tasks), b = byDate(blocks), f = byDate(focus);
+
+  // Daily-goal due/complete counts per date, from already-computed periods.
+  const goalDue = new Map<string, { due: number; completed: number }>();
+  for (const { goal, stats } of goalItems) {
+    if (goal.frequency !== "daily" || goal.status === "archived") continue;
+    for (const p of stats.periods) {
+      if (p.key < start || p.key > end) continue;
+      const e = goalDue.get(p.key) ?? { due: 0, completed: 0 };
+      e.due++;
+      if (p.value >= goal.period_target) e.completed++;
+      goalDue.set(p.key, e);
+    }
+  }
+
+  return rangeDates(start, end).map((date) => {
+    const g = goalDue.get(date) ?? { due: 0, completed: 0 };
+    return computeDaySummary({
+      date,
+      tasks: t.get(date) ?? [],
+      blocks: b.get(date) ?? [],
+      focus: f.get(date) ?? [],
+      goalsDue: g.due,
+      goalsCompleted: g.completed,
+      nowMin: date === today ? nowMinutesInTz(tz) : date > today ? 0 : null,
+    });
+  });
 }
 
 // ---------- Shared (aggregate-only) views ----------
@@ -141,11 +223,11 @@ export type SharedToday = {
   productiveStreak: number;
 };
 
-export function sharedToday(userId: number): SharedToday {
-  const tz = getUserTz(userId);
+export async function sharedToday(userId: number): Promise<SharedToday> {
+  const tz = await getUserTz(userId);
   const today = todayInTz(tz);
-  const s = daySummaryFor(userId, today, tz);
-  const past = summariesForRange(userId, addDays(today, -30), today, tz);
+  const past = await summariesForRange(userId, addDays(today, -30), today, tz);
+  const s = past[past.length - 1];
   return {
     userId, date: today, score: s.score,
     tasksCompleted: s.tasksCompleted, tasksPlanned: s.tasksPlanned,
@@ -175,18 +257,21 @@ export type SharedGoal = {
 };
 
 /** Shared goal list: titles + numbers only. why/evidence/notes never leave. */
-export function sharedGoals(userId: number): SharedGoal[] {
-  const tz = getUserTz(userId);
+export async function sharedGoals(userId: number): Promise<SharedGoal[]> {
+  const tz = await getUserTz(userId);
   const today = todayInTz(tz);
-  const cats = new Map(categoriesFor(userId).map((c) => [c.id, c]));
-  return goalsFor(userId)
-    .filter((g) => g.share_progress && g.status !== "archived")
-    .map((g) => {
-      const stats = computeGoalStats(g, checkinsFor(g.id), today);
-      const cat = g.category_id ? cats.get(g.category_id) : undefined;
+  const [items, cats] = await Promise.all([
+    allGoalStats(userId, today),
+    categoriesFor(userId),
+  ]);
+  const catMap = new Map(cats.map((c) => [c.id, c]));
+  return items
+    .filter(({ goal }) => goal.share_progress && goal.status !== "archived")
+    .map(({ goal, stats }) => {
+      const cat = goal.category_id ? catMap.get(goal.category_id) : undefined;
       return {
-        goalId: g.id,
-        title: g.title,
+        goalId: goal.id,
+        title: goal.title,
         categoryName: cat?.name ?? "General",
         categoryColor: cat?.color ?? "#b8b8b0",
         overallPct: stats.overallPct,
@@ -195,11 +280,11 @@ export function sharedGoals(userId: number): SharedGoal[] {
         longestStreak: stats.longestStreak,
         weekValue: Math.round(stats.weekValue * 10) / 10,
         weekTarget: stats.weekTarget,
-        frequency: g.frequency,
-        periodTarget: g.period_target,
-        unit: g.unit,
-        trackingType: g.tracking_type,
-        status: g.status,
+        frequency: goal.frequency,
+        periodTarget: goal.period_target,
+        unit: goal.unit,
+        trackingType: goal.tracking_type,
+        status: goal.status,
       };
     });
 }
@@ -212,15 +297,17 @@ export type SharedWeek = {
   daysPlanned: number;
 };
 
-export function sharedWeek(userId: number, weekStart?: string): SharedWeek {
-  const tz = getUserTz(userId);
+export async function sharedWeek(userId: number, weekStart?: string): Promise<SharedWeek> {
+  const tz = await getUserTz(userId);
   const today = todayInTz(tz);
   const ws = weekStart ?? startOfWeek(today);
   const we = addDays(ws, 6);
   const end = we < today ? we : today;
-  const sums = summariesForRange(userId, ws, end, tz);
+  const [sums, goals] = await Promise.all([
+    summariesForRange(userId, ws, end, tz),
+    allGoalStats(userId, today),
+  ]);
   const active = sums.filter((s) => s.tasksPlanned > 0 || s.goalsDue > 0);
-  const goals = allGoalStats(userId, today);
   let due = 0, done = 0;
   for (const g of goals) {
     for (const p of g.stats.periods) {
@@ -249,16 +336,21 @@ export type SharedMonth = {
   reviewSubmitted: boolean;
 };
 
-export function sharedMonth(userId: number, month?: string): SharedMonth {
-  const tz = getUserTz(userId);
+export async function sharedMonth(userId: number, month?: string): Promise<SharedMonth> {
+  const tz = await getUserTz(userId);
   const today = todayInTz(tz);
   const m = month ?? monthOf(today);
   const dates = monthDates(m).filter((d) => d <= today);
-  const sums = dates.length
-    ? summariesForRange(userId, dates[0], dates[dates.length - 1], tz)
-    : [];
+  const [sums, goals, review] = await Promise.all([
+    dates.length
+      ? summariesForRange(userId, dates[0], dates[dates.length - 1], tz)
+      : Promise.resolve([]),
+    allGoalStats(userId, today),
+    get<{ submitted_at: string | null }>(
+      "SELECT submitted_at FROM monthly_reviews WHERE user_id=? AND month=?", [userId, m]
+    ),
+  ]);
   const active = sums.filter((s) => s.tasksPlanned > 0 || s.goalsDue > 0);
-  const goals = allGoalStats(userId, today);
   let due = 0, done = 0;
   for (const g of goals)
     for (const p of g.stats.periods)
@@ -266,9 +358,6 @@ export function sharedMonth(userId: number, month?: string): SharedMonth {
         due++;
         if (p.complete) done++;
       }
-  const review = getDb()
-    .prepare("SELECT submitted_at FROM monthly_reviews WHERE user_id=? AND month=?")
-    .get(userId, m) as { submitted_at: string | null } | undefined;
   return {
     month: m,
     avgScore: Math.round(avgNum(active.map((s) => s.score))),
@@ -282,36 +371,34 @@ export function sharedMonth(userId: number, month?: string): SharedMonth {
 
 // ---------- Calendar / timetable / events ----------
 
-export function eventsFor(userId: number, from: string, to: string): EventRow[] {
-  return getDb()
-    .prepare(
-      "SELECT * FROM calendar_events WHERE user_id=? AND date>=? AND date<=? ORDER BY date, start_min"
-    )
-    .all(userId, from, to) as EventRow[];
+export function eventsFor(userId: number, from: string, to: string): Promise<EventRow[]> {
+  return all<EventRow>(
+    "SELECT * FROM calendar_events WHERE user_id=? AND date>=? AND date<=? ORDER BY date, start_min",
+    [userId, from, to]
+  );
 }
 
-export function countdownEvents(userId: number, today: string): EventRow[] {
-  return getDb()
-    .prepare(
-      `SELECT * FROM calendar_events
-        WHERE user_id=? AND countdown_slot IS NOT NULL AND date >= ?
-        ORDER BY countdown_slot`
-    )
-    .all(userId, today) as EventRow[];
+export function countdownEvents(userId: number, today: string): Promise<EventRow[]> {
+  return all<EventRow>(
+    `SELECT * FROM calendar_events
+      WHERE user_id=? AND countdown_slot IS NOT NULL AND date >= ?
+      ORDER BY countdown_slot`,
+    [userId, today]
+  );
 }
 
-export function upcomingEvents(userId: number, today: string, limit = 6): EventRow[] {
-  return getDb()
-    .prepare(
-      "SELECT * FROM calendar_events WHERE user_id=? AND date>=? ORDER BY date, start_min LIMIT ?"
-    )
-    .all(userId, today, limit) as EventRow[];
+export function upcomingEvents(userId: number, today: string, limit = 6): Promise<EventRow[]> {
+  return all<EventRow>(
+    "SELECT * FROM calendar_events WHERE user_id=? AND date>=? ORDER BY date, start_min LIMIT ?",
+    [userId, today, limit]
+  );
 }
 
-export function timetableFor(userId: number): TimetableEntryRow[] {
-  return getDb()
-    .prepare("SELECT * FROM timetable_entries WHERE user_id=? ORDER BY day_of_week, start_min")
-    .all(userId) as TimetableEntryRow[];
+export function timetableFor(userId: number): Promise<TimetableEntryRow[]> {
+  return all<TimetableEntryRow>(
+    "SELECT * FROM timetable_entries WHERE user_id=? ORDER BY day_of_week, start_min",
+    [userId]
+  );
 }
 
 function avgNum(nums: number[]): number {

@@ -12,9 +12,17 @@ export default async function ReviewIndexPage() {
   const user = await requireUser();
   const today = todayInTz(user.timezone);
   const current = monthOf(today);
-  const months = reviewMonthsFor(user.id);
+  const months = await reviewMonthsFor(user.id);
   const dayOfMonth = Number(today.slice(8));
   const nearEnd = dayOfMonth >= daysInMonth(current) - 4;
+  const currentReview = await getReview(user.id, current);
+  const rows = await Promise.all(
+    months.map(async (m) => ({
+      month: m,
+      review: await getReview(user.id, m),
+      metrics: await monthMetrics(user.id, m),
+    }))
+  );
 
   return (
     <div className="fade-up mx-auto max-w-2xl">
@@ -22,7 +30,7 @@ export default async function ReviewIndexPage() {
         title="Monthly Review"
         subtitle="Once a month, look yourself in the eye. Rate honestly, reflect properly, then read what the data says."
       />
-      {nearEnd && !getReview(user.id, current)?.submitted_at && (
+      {nearEnd && !currentReview?.submitted_at && (
         <Card className="mb-4 border-accent/40 bg-accent-soft/40">
           <p className="text-sm font-medium">
             {fmtMonth(current)} is nearly over — time for your review.
@@ -30,9 +38,7 @@ export default async function ReviewIndexPage() {
         </Card>
       )}
       <div className="space-y-3">
-        {months.map((m) => {
-          const review = getReview(user.id, m);
-          const metrics = monthMetrics(user.id, m);
+        {rows.map(({ month: m, review, metrics }) => {
           const submitted = !!review?.submitted_at;
           return (
             <Card key={m} className="flex items-center gap-4">

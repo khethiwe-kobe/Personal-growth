@@ -21,7 +21,7 @@ export default async function ReviewMonthPage({
   const today = todayInTz(user.timezone);
   if (month > monthOf(today)) notFound();
 
-  const review = getReview(user.id, month);
+  const review = await getReview(user.id, month);
   const submitted = !!review?.submitted_at;
   let answers: Record<string, unknown> = {};
   try { answers = JSON.parse(review?.answers_json ?? "{}"); } catch {}
@@ -44,8 +44,10 @@ export default async function ReviewMonthPage({
   }
 
   // ---------- report ----------
-  const metrics = monthMetrics(user.id, month);
-  const prev = monthMetrics(user.id, addMonths(month, -1));
+  const [metrics, prev] = await Promise.all([
+    monthMetrics(user.id, month),
+    monthMetrics(user.id, addMonths(month, -1)),
+  ]);
   const insights = monthInsights(metrics, prev);
   const ratings = (answers.ratings ?? {}) as Record<string, number>;
   const yesno = (answers.yesno ?? {}) as Record<string, boolean>;

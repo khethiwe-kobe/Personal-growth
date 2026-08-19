@@ -1,4 +1,4 @@
-import { getDb } from "@/lib/db";
+import { get } from "@/lib/db";
 import { getSessionUser, getGroupForUser } from "@/lib/auth";
 
 /** Avatars are visible to the owner and their group members only. */
@@ -12,13 +12,13 @@ export async function GET(
   const targetId = Number(id);
   if (!Number.isInteger(targetId)) return new Response("Bad request", { status: 400 });
   if (targetId !== user.id) {
-    const group = getGroupForUser(user.id);
+    const group = await getGroupForUser(user.id);
     if (!group || !group.members.some((m) => m.id === targetId))
       return new Response("Forbidden", { status: 403 });
   }
-  const row = getDb()
-    .prepare("SELECT avatar_blob, avatar_mime FROM users WHERE id=?")
-    .get(targetId) as { avatar_blob: Buffer | null; avatar_mime: string | null } | undefined;
+  const row = await get<{ avatar_blob: ArrayBuffer | null; avatar_mime: string | null }>(
+    "SELECT avatar_blob, avatar_mime FROM users WHERE id=?", [targetId]
+  );
   if (!row?.avatar_blob) return new Response("Not found", { status: 404 });
   return new Response(new Uint8Array(row.avatar_blob), {
     headers: {

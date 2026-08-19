@@ -15,12 +15,12 @@ export default async function SharedGoalPage({
 }: { params: Promise<{ username: string; goalId: string }> }) {
   const user = await requireUser();
   const { username, goalId } = await params;
-  const group = getGroupForUser(user.id);
+  const group = await getGroupForUser(user.id);
   const member = group?.members.find(
     (m) => m.username.toLowerCase() === username.toLowerCase()
   );
   if (!member) notFound();
-  const goal = sharedGoals(member.id).find((g) => g.goalId === Number(goalId));
+  const goal = (await sharedGoals(member.id)).find((g) => g.goalId === Number(goalId));
   if (!goal) notFound();
 
   const per = goal.frequency === "daily" ? "day" : goal.frequency === "weekly" ? "week" : "month";

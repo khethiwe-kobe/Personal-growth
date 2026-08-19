@@ -25,7 +25,10 @@ export default async function CalendarPage({
   const gridStart = addDays(dates[0], -weekdayIndex(dates[0]));
   const cells: string[] = [];
   for (let d = gridStart; cells.length < 42; d = addDays(d, 1)) cells.push(d);
-  const events = eventsFor(user.id, cells[0], cells[cells.length - 1]);
+  const [events, pinned] = await Promise.all([
+    eventsFor(user.id, cells[0], cells[cells.length - 1]),
+    countdownEvents(user.id, today),
+  ]);
   const byDate = new Map<string, typeof events>();
   for (const e of events) {
     const arr = byDate.get(e.date) ?? [];
@@ -33,7 +36,6 @@ export default async function CalendarPage({
     byDate.set(e.date, arr);
   }
   const dayEvents = byDate.get(selected) ?? [];
-  const pinned = countdownEvents(user.id, today);
   const pinnedSlots = pinned.map((p) => p.countdown_slot as number);
   const upcoming = events.filter((e) => e.date >= today).slice(0, 8);
 

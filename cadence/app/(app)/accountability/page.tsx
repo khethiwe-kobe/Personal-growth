@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 
 export default async function AccountabilityPage() {
   const user = await requireUser();
-  const group = getGroupForUser(user.id);
+  const group = await getGroupForUser(user.id);
   if (!group) {
     return (
       <div className="fade-up">
@@ -21,17 +21,21 @@ export default async function AccountabilityPage() {
     );
   }
   const today = todayInTz(user.timezone);
-  const rows = group.members.map((m) => ({
-    member: m,
-    today: sharedToday(m.id),
-    week: sharedWeek(m.id),
-    lastWeek: sharedWeek(m.id, addDays(startOfWeek(todayInTz(m.timezone)), -7)),
-    month: sharedMonth(m.id),
-    lastMonth: sharedMonth(m.id, addMonths(monthOf(todayInTz(m.timezone)), -1)),
-  }));
+  const rows = await Promise.all(
+    group.members.map(async (m) => {
+      const [t, week, lastWeek, month, lastMonth] = await Promise.all([
+        sharedToday(m.id),
+        sharedWeek(m.id),
+        sharedWeek(m.id, addDays(startOfWeek(todayInTz(m.timezone)), -7)),
+        sharedMonth(m.id),
+        sharedMonth(m.id, addMonths(monthOf(todayInTz(m.timezone)), -1)),
+      ]);
+      return { member: m, today: t, week, lastWeek, month, lastMonth };
+    })
+  );
 
   // Awards — improvement matters as much as raw score.
-  const by = <T,>(arr: typeof rows, f: (r: (typeof rows)[0]) => number) =>
+  const by = (arr: typeof rows, f: (r: (typeof rows)[0]) => number) =>
     [...arr].sort((a, b) => f(b) - f(a))[0];
   const awards: { title: string; r: (typeof rows)[0]; detail: string }[] = [];
   const consistent = by(rows, (r) => r.week.goalConsistency);

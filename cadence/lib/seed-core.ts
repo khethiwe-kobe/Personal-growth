@@ -1,4 +1,4 @@
-import { getDb } from "./db";
+import { getClient, initDb, all, run, batch } from "./db";
 import { hashPassword } from "./auth";
 import { todayInTz, addDays, weekdayIndex } from "./time";
 
@@ -24,72 +24,82 @@ function rng(seed: number) {
   };
 }
 
-export function wipeDemoData() {
-  const db = getDb();
-  const ids = (db.prepare("SELECT id FROM users WHERE is_demo=1").all() as { id: number }[])
-    .map((r) => r.id);
-  const tx = db.transaction(() => {
-    for (const id of ids) db.prepare("DELETE FROM users WHERE id=?").run(id); // cascades
-    db.prepare(
-      "DELETE FROM groups WHERE id NOT IN (SELECT DISTINCT group_id FROM group_members)"
-    ).run();
-  });
-  tx();
+export async function wipeDemoData() {
+  await initDb();
+  const ids = (await all<{ id: number }>("SELECT id FROM users WHERE is_demo=1")).map((r) => r.id);
+  await batch([
+    ...ids.map((id) => ({ sql: "DELETE FROM users WHERE id=?", args: [id] })), // cascades
+    {
+      sql: "DELETE FROM groups WHERE id NOT IN (SELECT DISTINCT group_id FROM group_members)",
+      args: [],
+    },
+  ]);
 }
 
-export function seedDemoData() {
-  const db = getDb();
+export async function seedDemoData() {
+  await initDb();
   const today = todayInTz(TZ);
   const start = addDays(today, -HISTORY_DAYS);
 
-  const tx = db.transaction(() => {
-    // ----- group -----
-    const g = db.prepare(
-      "INSERT INTO groups (name, invite_code) VALUES ('The Three', 'GROW-TOGETHER')"
-    ).run();
-    const groupId = Number(g.lastInsertRowid);
+  // Collect every statement first, then send them as one atomic batch — far
+  // fewer round trips than executing one at a time against a remote database.
+  const stmts: { sql: string; args: (string | number | null)[] }[] = [];
+  const push = (sql: string, args: (string | number | null)[]) => stmts.push({ sql, args });
 
-    const mkUser = (
+  {
+    // ----- group -----
+    // These few inserts run one at a time because later rows need the ids
+    // they generate; the bulk history below goes out in batches.
+    const g = await run(
+      "INSERT INTO groups (name, invite_code) VALUES ('The Three', 'GROW-TOGETHER')"
+    );
+    const groupId = g.lastInsertRowid;
+
+    const mkUser = async (
       username: string, name: string, role: string, bio: string, accent: string
     ) => {
-      const info = db.prepare(
+      const info = await run(
         `INSERT INTO users (username, display_name, password_hash, role, bio, timezone, accent, is_demo)
-         VALUES (?,?,?,?,?,?,?,1)`
-      ).run(username, name, hashPassword(`${username}-demo`), role, bio, TZ, accent);
-      const id = Number(info.lastInsertRowid);
-      db.prepare("INSERT INTO user_settings (user_id) VALUES (?)").run(id);
-      db.prepare("INSERT INTO group_members (group_id, user_id) VALUES (?,?)").run(groupId, id);
+         VALUES (?,?,?,?,?,?,?,1)`,
+        [username, name, hashPassword(`${username}-demo`), role, bio, TZ, accent]
+      );
+      const id = info.lastInsertRowid;
+      await batch([
+        { sql: "INSERT INTO user_settings (user_id) VALUES (?)", args: [id] },
+        { sql: "INSERT INTO group_members (group_id, user_id) VALUES (?,?)", args: [groupId, id] },
+      ]);
       return id;
     };
 
-    const khethiwe = mkUser("khethiwe", "Khethiwe", "working",
+    const khethiwe = await mkUser("khethiwe", "Khethiwe", "working",
       "Working, building, growing. One planned day at a time.", "sage");
-    const lethabo = mkUser("lethabo", "Lethabo", "student",
+    const lethabo = await mkUser("lethabo", "Lethabo", "student",
       "Final-year student. Discipline over motivation.", "blue");
-    const aldonia = mkUser("aldonia", "Aldonia", "student",
+    const aldonia = await mkUser("aldonia", "Aldonia", "student",
       "Student. Faith first, then the books.", "blush");
 
     // ----- categories -----
-    const mkCats = (userId: number, cats: [string, string][]) => {
+    const mkCats = async (userId: number, cats: [string, string][]) => {
       const map = new Map<string, number>();
-      cats.forEach(([name, color], i) => {
-        const r = db.prepare(
-          "INSERT INTO categories (user_id, name, color, position) VALUES (?,?,?,?)"
-        ).run(userId, name, color, i);
-        map.set(name, Number(r.lastInsertRowid));
-      });
+      for (const [i, [name, color]] of cats.entries()) {
+        const r = await run(
+          "INSERT INTO categories (user_id, name, color, position) VALUES (?,?,?,?)",
+          [userId, name, color, i]
+        );
+        map.set(name, r.lastInsertRowid);
+      }
       return map;
     };
 
-    const kCats = mkCats(khethiwe, [
+    const kCats = await mkCats(khethiwe, [
       ["Work", "#b7c4d6"], ["Spiritual", "#cbb9d9"], ["Exercise", "#a8c5b4"],
       ["Finance", "#d9c9a8"], ["Personal", "#d6bcb4"], ["Admin", "#c4c4bc"],
     ]);
-    const lCats = mkCats(lethabo, [
+    const lCats = await mkCats(lethabo, [
       ["Academic", "#b7c4d6"], ["Spiritual", "#cbb9d9"], ["Exercise", "#a8c5b4"],
       ["Social", "#d9b8c4"], ["Personal", "#d6bcb4"], ["Admin", "#c4c4bc"],
     ]);
-    const aCats = mkCats(aldonia, [
+    const aCats = await mkCats(aldonia, [
       ["Academic", "#b7c4d6"], ["Spiritual", "#cbb9d9"], ["Social", "#d9b8c4"],
       ["Exercise", "#a8c5b4"], ["Personal", "#d6bcb4"], ["Admin", "#c4c4bc"],
     ]);
@@ -101,21 +111,22 @@ export function seedDemoData() {
       overall?: number; action: string; evidence: string; days?: string;
       rate: number; // demo completion probability
     };
-    const mkGoal = (userId: number, s: GoalSpec) => {
-      const r = db.prepare(
+    const mkGoal = async (userId: number, s: GoalSpec) => {
+      const r = await run(
         `INSERT INTO goals (user_id, category_id, title, why, measurement, tracking_type,
           unit, frequency, period_target, minimum_target, overall_target, daily_action,
           evidence, start_date, active_days)
-         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
-      ).run(
-        userId, s.cat ?? null, s.title, s.why, s.measurement, s.type, s.unit, s.freq,
-        s.target, s.minimum, s.overall ?? null, s.action, s.evidence, start,
-        s.days ?? "0,1,2,3,4,5,6"
+         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+        [
+          userId, s.cat ?? null, s.title, s.why, s.measurement, s.type, s.unit, s.freq,
+          s.target, s.minimum, s.overall ?? null, s.action, s.evidence, start,
+          s.days ?? "0,1,2,3,4,5,6",
+        ]
       );
-      return { id: Number(r.lastInsertRowid), spec: s, userId };
+      return { id: r.lastInsertRowid, spec: s, userId };
     };
 
-    const goals = [
+    const goals = await Promise.all([
       // Khethiwe — working
       mkGoal(khethiwe, {
         cat: kCats.get("Spiritual"), title: "Bible reading",
@@ -198,13 +209,12 @@ export function seedDemoData() {
         action: "Coffee/call with someone Tue + Sun.",
         evidence: "Log it same day.", rate: 0.75,
       }),
-    ];
+    ]);
 
     // ----- goal check-ins -----
     const rand = rng(42);
-    const insCheckin = db.prepare(
-      "INSERT INTO goal_checkins (goal_id, user_id, date, value) VALUES (?,?,?,?)"
-    );
+    const insCheckin = { run: (...a: (string | number | null)[]) =>
+      push("INSERT INTO goal_checkins (goal_id, user_id, date, value) VALUES (?,?,?,?)", a) };
     for (const { id, spec, userId } of goals) {
       const activeDays = new Set((spec.days ?? "0,1,2,3,4,5,6").split(",").map(Number));
       for (let d = start; d <= today; d = addDays(d, 1)) {
@@ -232,19 +242,16 @@ export function seedDemoData() {
     }
 
     // ----- daily tasks + time blocks + focus history -----
-    const insTask = db.prepare(
-      `INSERT INTO tasks (user_id, date, name, category_id, priority, planned_minutes,
+    const insTask = { run: (...a: (string | number | null)[]) =>
+      push(`INSERT INTO tasks (user_id, date, name, category_id, priority, planned_minutes,
         start_min, end_min, completed, completed_at, notes)
-       VALUES (?,?,?,?,?,?,?,?,?,?,?)`
-    );
-    const insBlock = db.prepare(
-      "INSERT INTO time_blocks (user_id, date, start_min, end_min, kind, label) VALUES (?,?,?,?,?,?)"
-    );
-    const insFocus = db.prepare(
-      `INSERT INTO focus_sessions (user_id, date, started_at, ended_at, planned_minutes,
+       VALUES (?,?,?,?,?,?,?,?,?,?,?)`, a) };
+    const insBlock = { run: (...a: (string | number | null)[]) =>
+      push("INSERT INTO time_blocks (user_id, date, start_min, end_min, kind, label) VALUES (?,?,?,?,?,?)", a) };
+    const insFocus = { run: (...a: (string | number | null)[]) =>
+      push(`INSERT INTO focus_sessions (user_id, date, started_at, ended_at, planned_minutes,
         focus_seconds, status, interrupt_reason, label)
-       VALUES (?,?,?,?,?,?,?,?,?)`
-    );
+       VALUES (?,?,?,?,?,?,?,?,?)`, a) };
 
     type DayPlan = {
       name: string; cat: number | undefined; pri: string; mins: number;
@@ -351,11 +358,10 @@ export function seedDemoData() {
     }
 
     // ----- calendar events + countdowns -----
-    const insEvent = db.prepare(
-      `INSERT INTO calendar_events (user_id, title, date, start_min, end_min, category,
+    const insEvent = { run: (...a: (string | number | null)[]) =>
+      push(`INSERT INTO calendar_events (user_id, title, date, start_min, end_min, category,
         color, notes, reminder_minutes, countdown_slot)
-       VALUES (?,?,?,?,?,?,?,?,?,?)`
-    );
+       VALUES (?,?,?,?,?,?,?,?,?,?)`, a) };
     insEvent.run(khethiwe, "Quarterly review presentation", addDays(today, 9), 540, 600,
       "deadline", "#d9c9a8", "Slides due to manager two days before.", 1440, 1);
     insEvent.run(khethiwe, "Church conference", addDays(today, 16), 480, 900,
@@ -376,12 +382,11 @@ export function seedDemoData() {
       "personal", "#a8c5b4", "", null, 3);
 
     // ----- timetables (students) -----
-    const insTT = db.prepare(
-      `INSERT INTO timetable_entries (user_id, day_of_week, start_min, end_min, title, location, color, source)
-       VALUES (?,?,?,?,?,?,?, 'manual')`
-    );
+    const insTT = { run: (...a: (string | number | null)[]) =>
+      push(`INSERT INTO timetable_entries (user_id, day_of_week, start_min, end_min, title, location, color, source)
+       VALUES (?,?,?,?,?,?,?, 'manual')`, a) };
     // Lethabo — CS student
-    insTT.run(lethabo, 0, 480, 600, "Software Engineering", "B2 Lecture Hall", "#b7c4d6", );
+    insTT.run(lethabo, 0, 480, 600, "Software Engineering", "B2 Lecture Hall", "#b7c4d6");
     insTT.run(lethabo, 0, 660, 780, "Databases", "Lab 4", "#b7c4d6");
     insTT.run(lethabo, 1, 540, 660, "Networks", "B1", "#b7c4d6");
     insTT.run(lethabo, 2, 480, 600, "Software Engineering", "B2", "#b7c4d6");
@@ -397,10 +402,9 @@ export function seedDemoData() {
 
     // ----- monthly reviews for the previous month -----
     const prevMonth = addDays(today.slice(0, 7) + "-01", -1).slice(0, 7);
-    const insReview = db.prepare(
-      `INSERT INTO monthly_reviews (user_id, month, answers_json, submitted_at)
-       VALUES (?,?,?,?)`
-    );
+    const insReview = { run: (...a: (string | number | null)[]) =>
+      push(`INSERT INTO monthly_reviews (user_id, month, answers_json, submitted_at)
+       VALUES (?,?,?,?)`, a) };
     const mkAnswers = (o: Record<string, unknown>) => JSON.stringify(o);
     insReview.run(khethiwe, prevMonth, mkAnswers({
       ratings: { work: 7, structure: 6, spiritual: 8, social: 6, financial: 8, physical: 5 },
@@ -433,6 +437,12 @@ export function seedDemoData() {
       stop: "Phone in the library.", start: "A 20-minute walk after classes.",
       continue: "Early assignment starts.", priority: "Pass stats test with 70%+.",
     }), prevMonth + "-30T10:00:00.000Z");
-  });
-  tx();
+  }
+
+  // Send the generated history in chunks so a remote database gets a handful of
+  // round trips instead of thousands.
+  const CHUNK = 400;
+  for (let i = 0; i < stmts.length; i += CHUNK) {
+    await batch(stmts.slice(i, i + CHUNK));
+  }
 }

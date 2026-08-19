@@ -1,4 +1,4 @@
-import { getDb } from "./db";
+import { all, get, run } from "./db";
 import crypto from "crypto";
 import { cookies } from "next/headers";
 import { cache } from "react";
@@ -48,11 +48,11 @@ function tokenHash(token: string): string {
 export async function createSession(userId: number): Promise<void> {
   const token = crypto.randomBytes(32).toString("hex");
   const expires = new Date(Date.now() + SESSION_DAYS * 86400_000);
-  getDb()
-    .prepare(
-      "INSERT INTO sessions (token_hash, user_id, expires_at) VALUES (?, ?, ?)"
-    )
-    .run(tokenHash(token), userId, expires.toISOString());
+  await run("INSERT INTO sessions (token_hash, user_id, expires_at) VALUES (?, ?, ?)", [
+    tokenHash(token),
+    userId,
+    expires.toISOString(),
+  ]);
   const jar = await cookies();
   jar.set(COOKIE, token, {
     httpOnly: true,
@@ -67,7 +67,7 @@ export async function destroySession(): Promise<void> {
   const jar = await cookies();
   const token = jar.get(COOKIE)?.value;
   if (token) {
-    getDb().prepare("DELETE FROM sessions WHERE token_hash = ?").run(tokenHash(token));
+    await run("DELETE FROM sessions WHERE token_hash = ?", [tokenHash(token)]);
   }
   jar.delete(COOKIE);
 }
@@ -77,21 +77,20 @@ export const getSessionUser = cache(async (): Promise<SessionUser | null> => {
   const jar = await cookies();
   const token = jar.get(COOKIE)?.value;
   if (!token) return null;
-  const row = getDb()
-    .prepare(
-      `SELECT u.id, u.username, u.display_name, u.role, u.bio, u.timezone,
-              u.appearance, u.accent, u.email,
-              (u.avatar_blob IS NOT NULL) AS has_avatar,
-              s.expires_at
-         FROM sessions s JOIN users u ON u.id = s.user_id
-        WHERE s.token_hash = ?`
-    )
-    .get(tokenHash(token)) as
+  const row = (await get(
+    `SELECT u.id, u.username, u.display_name, u.role, u.bio, u.timezone,
+            u.appearance, u.accent, u.email,
+            (u.avatar_blob IS NOT NULL) AS has_avatar,
+            s.expires_at
+       FROM sessions s JOIN users u ON u.id = s.user_id
+      WHERE s.token_hash = ?`,
+    [tokenHash(token)]
+  )) as
     | (Omit<SessionUser, "has_avatar"> & { expires_at: string; has_avatar: number })
     | undefined;
   if (!row) return null;
   if (new Date(row.expires_at) < new Date()) {
-    getDb().prepare("DELETE FROM sessions WHERE token_hash = ?").run(tokenHash(token));
+    await run("DELETE FROM sessions WHERE token_hash = ?", [tokenHash(token)]);
     return null;
   }
   const { expires_at: _e, ...rest } = row;
@@ -108,26 +107,23 @@ export async function requireUser(): Promise<SessionUser> {
 }
 
 /** Group members (active) for the group the user belongs to. */
-export function getGroupForUser(userId: number) {
-  const db = getDb();
-  const group = db
-    .prepare(
-      `SELECT g.* FROM groups g
-        JOIN group_members gm ON gm.group_id = g.id
-       WHERE gm.user_id = ? AND gm.left_at IS NULL
-       LIMIT 1`
-    )
-    .get(userId) as { id: number; name: string; invite_code: string } | undefined;
+export async function getGroupForUser(userId: number) {
+  const group = (await get(
+    `SELECT g.* FROM groups g
+      JOIN group_members gm ON gm.group_id = g.id
+     WHERE gm.user_id = ? AND gm.left_at IS NULL
+     LIMIT 1`,
+    [userId]
+  )) as { id: number; name: string; invite_code: string } | undefined;
   if (!group) return null;
-  const members = db
-    .prepare(
-      `SELECT u.id, u.username, u.display_name, u.role, u.bio, u.accent, u.timezone,
-              (u.avatar_blob IS NOT NULL) AS has_avatar
-         FROM group_members gm JOIN users u ON u.id = gm.user_id
-        WHERE gm.group_id = ? AND gm.left_at IS NULL
-        ORDER BY gm.joined_at`
-    )
-    .all(group.id) as {
+  const members = (await all(
+    `SELECT u.id, u.username, u.display_name, u.role, u.bio, u.accent, u.timezone,
+            (u.avatar_blob IS NOT NULL) AS has_avatar
+       FROM group_members gm JOIN users u ON u.id = gm.user_id
+      WHERE gm.group_id = ? AND gm.left_at IS NULL
+      ORDER BY gm.joined_at`,
+    [group.id]
+  )) as {
     id: number; username: string; display_name: string; role: string;
     bio: string; accent: string; timezone: string; has_avatar: number;
   }[];

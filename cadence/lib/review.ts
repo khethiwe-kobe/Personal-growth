@@ -1,4 +1,4 @@
-import { getDb } from "./db";
+import { all, get } from "./db";
 import { sharedMonth, summariesForRange, getUserTz, allGoalStats, categoriesFor } from "./repo";
 import { monthDates, monthOf, todayInTz, fmtMonth, addMonths, fmtMinutes } from "./time";
 
@@ -53,16 +53,18 @@ export type MonthMetrics = {
   focusCompleted: number;
 };
 
-export function monthMetrics(userId: number, month: string): MonthMetrics {
-  const tz = getUserTz(userId);
+export async function monthMetrics(userId: number, month: string): Promise<MonthMetrics> {
+  const tz = await getUserTz(userId);
   const today = todayInTz(tz);
   const dates = monthDates(month).filter((d) => d <= today);
-  const sums = dates.length
-    ? summariesForRange(userId, dates[0], dates[dates.length - 1], tz)
-    : [];
+  const [sums, shared] = await Promise.all([
+    dates.length
+      ? summariesForRange(userId, dates[0], dates[dates.length - 1], tz)
+      : Promise.resolve([]),
+    sharedMonth(userId, month),
+  ]);
   const active = sums.filter((s) => s.tasksPlanned > 0 || s.goalsDue > 0);
   const sorted = [...active].sort((a, b) => b.score - a.score);
-  const shared = sharedMonth(userId, month);
   return {
     month,
     avgScore: shared.avgScore,
@@ -113,20 +115,22 @@ export function monthInsights(cur: MonthMetrics, prev: MonthMetrics): string[] {
 }
 
 export function getReview(userId: number, month: string) {
-  return getDb()
-    .prepare("SELECT * FROM monthly_reviews WHERE user_id=? AND month=?")
-    .get(userId, month) as
-    | { id: number; month: string; answers_json: string; submitted_at: string | null }
-    | undefined;
+  return get<{ id: number; month: string; answers_json: string; submitted_at: string | null }>(
+    "SELECT * FROM monthly_reviews WHERE user_id=? AND month=?",
+    [userId, month]
+  );
 }
 
-export function reviewMonthsFor(userId: number): string[] {
-  const tz = getUserTz(userId);
+export async function reviewMonthsFor(userId: number): Promise<string[]> {
+  const tz = await getUserTz(userId);
   const today = todayInTz(tz);
   const current = monthOf(today);
-  const withReviews = (getDb()
-    .prepare("SELECT month FROM monthly_reviews WHERE user_id=? ORDER BY month DESC")
-    .all(userId) as { month: string }[]).map((r) => r.month);
+  const withReviews = (
+    await all<{ month: string }>(
+      "SELECT month FROM monthly_reviews WHERE user_id=? ORDER BY month DESC",
+      [userId]
+    )
+  ).map((r) => r.month);
   const set = new Set([current, addMonths(current, -1), ...withReviews]);
   return [...set].sort().reverse();
 }

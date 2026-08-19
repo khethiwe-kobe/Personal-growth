@@ -14,16 +14,18 @@ export default async function MemberPage({
 }: { params: Promise<{ username: string }> }) {
   const user = await requireUser();
   const { username } = await params;
-  const group = getGroupForUser(user.id);
+  const group = await getGroupForUser(user.id);
   const member = group?.members.find(
     (m) => m.username.toLowerCase() === username.toLowerCase()
   );
   if (!member) notFound(); // only group members are visible — ever
 
-  const today = sharedToday(member.id);
-  const week = sharedWeek(member.id);
-  const month = sharedMonth(member.id);
-  const goals = sharedGoals(member.id);
+  const [today, week, month, goals] = await Promise.all([
+    sharedToday(member.id),
+    sharedWeek(member.id),
+    sharedMonth(member.id),
+    sharedGoals(member.id),
+  ]);
   const isMe = member.id === user.id;
 
   return (

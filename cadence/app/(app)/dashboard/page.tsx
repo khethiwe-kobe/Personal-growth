@@ -20,19 +20,23 @@ export const dynamic = "force-dynamic";
 export default async function DashboardPage() {
   const user = await requireUser();
   const today = todayInTz(user.timezone);
-  const summary = daySummaryFor(user.id, today, user.timezone);
-  const goalsToday = goalsDueToday(user.id, today);
-  const me = sharedToday(user.id);
-  const group = getGroupForUser(user.id);
+  const [summary, me, group, countdowns, upcomingRaw, trend, goalStats] = await Promise.all([
+    daySummaryFor(user.id, today, user.timezone),
+    sharedToday(user.id),
+    getGroupForUser(user.id),
+    countdownEvents(user.id, today),
+    upcomingEvents(user.id, today, 5),
+    summariesForRange(user.id, addDays(today, -13), today, user.timezone),
+    allGoalStats(user.id, today),
+  ]);
   const friends = (group?.members ?? []).filter((m) => m.id !== user.id);
-  const friendSnaps = friends.map((f) => ({ member: f, snap: sharedToday(f.id) }));
+  const friendSnaps = await Promise.all(
+    friends.map(async (f) => ({ member: f, snap: await sharedToday(f.id) }))
+  );
   const messages = messagesForMe(me, friendSnaps.map((f) => f.snap));
-  const countdowns = countdownEvents(user.id, today);
-  const upcoming = upcomingEvents(user.id, today, 5)
-    .filter((e) => !countdowns.some((c) => c.id === e.id));
-  const trend = summariesForRange(user.id, addDays(today, -13), today, user.timezone);
+  const upcoming = upcomingRaw.filter((e) => !countdowns.some((c) => c.id === e.id));
   const streak = productiveDayStreak(trend, today);
-  const goalHighlights = allGoalStats(user.id, today)
+  const goalHighlights = goalStats
     .filter((g) => g.goal.status === "active")
     .sort((a, b) => (b.stats.todayTarget !== null ? 1 : 0) - (a.stats.todayTarget !== null ? 1 : 0))
     .slice(0, 4);

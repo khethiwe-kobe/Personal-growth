@@ -17,6 +17,10 @@ npm run seed     # creates the demo group + 3 demo accounts with 75 days of hist
 npm run dev      # http://localhost:3100
 ```
 
+No configuration needed locally: with no `TURSO_*` variables set the app uses a
+SQLite file at `./data/cadence.db`. The same code runs against Turso in
+production — identical SQL, different endpoint.
+
 Demo accounts (change the passwords in Settings):
 
 | username  | password        |
@@ -44,42 +48,70 @@ Environment (`.env.example`):
 - `CADENCE_SESSION_SECRET` — cookie-session secret, required in production
 - `CADENCE_OPEN_SIGNUP=1` — allow sign-up without an invite code (default off)
 
-## Deploying to Render
+## Deploying (free, and nothing gets erased)
 
-The repo root has a `render.yaml` blueprint that provisions everything.
+The app runs on **Vercel** (free Hobby plan) with its data in **Turso** (free
+plan — hosted SQLite). Both are free, neither sleeps your data, and the database
+lives independently of the server, so redeploys can never wipe it.
 
-1. Push this branch to GitHub (already done).
-2. In Render: **New → Blueprint**, pick this repository, choose this branch.
-3. Render reads `render.yaml` and asks for one value: **`CADENCE_INVITE_CODE`** —
-   the code your group types at `/join`. Pick something memorable, e.g. `THREE-2026`.
-4. Click **Apply**. First build takes a few minutes.
-5. Open the service URL. It lands on `/login`; go to **Join with an invite code**,
-   enter your code, and create the first account. Share the same code with the
-   other two — everyone lands in the same group automatically.
+### 1. Create the database (Turso)
 
-The blueprint sets everything else for you: `CADENCE_SESSION_SECRET` is generated
-once and kept secret, `CADENCE_DB_PATH` points at `/var/data/cadence.db` on a 1 GB
-persistent disk, and sign-up stays invite-only.
+1. Sign up at [turso.tech](https://turso.tech) and create a database.
+2. Copy its **URL** (`libsql://…`) and create an **auth token**. Keep both.
 
-### About the plan
+### 2. Deploy the app (Vercel)
 
-`render.yaml` specifies `plan: starter` (currently $7/month) **because Render only
-attaches persistent disks to paid instance types**. SQLite lives on that disk, so
-on the free plan every deploy, restart or idle spin-down would erase all accounts,
-tasks, goals and history. If you want to try it free first, change `plan: starter`
-to `plan: free` and delete the `disk:` block — but treat it as a demo, not
-somewhere to keep real data. Moving to a hosted Postgres later would allow a free
-instance with durable data; that is a code change (better-sqlite3 → `pg`), not a
-config change.
+1. Sign up at [vercel.com](https://vercel.com) with your GitHub account.
+2. **Add New → Project**, import this repository.
+3. Set **Root Directory** to `cadence` (important — the app is a subfolder).
+4. Add these Environment Variables:
 
-Verified against a fresh deployment simulation: first-boot group creation, invite-only
-sign-up, a second member joining the same group, and accounts plus group membership
-surviving a restart with no duplicate group created.
+   | Name | Value |
+   |------|-------|
+   | `TURSO_DATABASE_URL` | the `libsql://…` URL from Turso |
+   | `TURSO_AUTH_TOKEN` | the token from Turso |
+   | `CADENCE_SESSION_SECRET` | any long random string you make up |
+   | `CADENCE_INVITE_CODE` | the code your group will type at `/join`, e.g. `THREE-2026` |
+   | `CADENCE_GROUP_NAME` | e.g. `The Three` |
+
+5. **Deploy.** On the first request the app creates its tables and your group
+   automatically.
+6. Open the URL, click **Join with an invite code**, and create the first
+   account. Share the same code with the other two — everyone lands in the
+   same group.
+
+### Why your data can't be erased
+
+- **The database is separate from the server.** Vercel redeploys replace the
+  app, never the data. Turso's free plan has no inactivity-pause-then-delete
+  policy and includes 1-day point-in-time restore.
+- **Nothing in the app hard-deletes history.** Removing a category archives it
+  so past analytics keep their labels, archiving a goal keeps every check-in,
+  and an interrupted focus session is marked rather than dropped. The only
+  destructive actions are deleting an individual task or event, which you asked
+  for explicitly.
+- **You can hold your own copies.** **Settings → Your data → Download a full
+  backup** gives each person a JSON file of everything they own, private notes
+  included. For a whole-database copy, run from your laptop:
+
+  ```bash
+  cd cadence
+  TURSO_DATABASE_URL=... TURSO_AUTH_TOKEN=... npm run backup
+  ```
+
+  which writes `backups/cadence-YYYY-MM-DD.json` (every table, no password
+  hashes). Do that occasionally and you have an off-platform copy no provider
+  controls.
+
+Verified against a simulated fresh deployment: first-boot group creation,
+invite-only sign-up, a second member joining the same group, and accounts plus
+group membership surviving a restart with no duplicate group created.
 
 ### Demo data on a real deployment
 
-Don't run `npm run seed` on your live instance — it creates the three demo
-accounts with published passwords. The bootstrap group is all a real deployment needs.
+Don't run `npm run seed` against your live database — it creates the three demo
+accounts with published passwords. The bootstrap group is all a real deployment
+needs.
 
 ## What's inside
 
@@ -107,7 +139,9 @@ Any goal can additionally be hidden from the group entirely.
 ## Architecture
 
 - **Next.js 16 (App Router) + React 19** — server components read, server actions write
-- **SQLite** via better-sqlite3 (`lib/db.ts` holds the full schema: users, groups,
+- **SQLite everywhere** via libSQL (`@libsql/client`): a local file in
+  development, [Turso](https://turso.tech) in production, same queries either way
+  (`lib/db.ts` holds the full schema: users, groups,
   group_members, categories, tasks, time_blocks, goals, goal_checkins,
   calendar_events, timetable_entries/uploads, focus_sessions, monthly_reviews,
   sessions, user_settings)

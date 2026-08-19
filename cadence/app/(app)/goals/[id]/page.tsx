@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireUser } from "@/lib/auth";
-import { getDb } from "@/lib/db";
+import { get } from "@/lib/db";
 import { categoriesFor, checkinsFor } from "@/lib/repo";
 import { computeGoalStats, trimNum, goalDueLabel } from "@/lib/goals";
 import { todayInTz, fmtDateShort, addDays } from "@/lib/time";
@@ -19,15 +19,17 @@ export default async function GoalDetailPage({
 }: { params: Promise<{ id: string }> }) {
   const user = await requireUser();
   const { id } = await params;
-  const goal = getDb()
-    .prepare("SELECT * FROM goals WHERE id=? AND user_id=?")
-    .get(Number(id), user.id) as GoalRow | undefined;
+  const goal = await get<GoalRow>(
+    "SELECT * FROM goals WHERE id=? AND user_id=?", [Number(id), user.id]
+  );
   if (!goal) notFound();
 
   const today = todayInTz(user.timezone);
-  const checkins = checkinsFor(goal.id);
+  const [checkins, categories] = await Promise.all([
+    checkinsFor(goal.id),
+    categoriesFor(user.id),
+  ]);
   const stats = computeGoalStats(goal, checkins, today);
-  const categories = categoriesFor(user.id);
   const cat = goal.category_id ? categories.find((c) => c.id === goal.category_id) : undefined;
   const recent = stats.periods.slice(-42); // last ~6 weeks of periods
   const yesterday = addDays(today, -1);

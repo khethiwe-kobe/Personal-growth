@@ -11,15 +11,20 @@ export const dynamic = "force-dynamic";
 export default async function AnalyticsPage() {
   const user = await requireUser();
   const today = todayInTz(user.timezone);
-  const last14 = summariesForRange(user.id, addDays(today, -13), today, user.timezone);
+  const weekStartEarly = startOfWeek(today);
+  const [last14, cats, goalStats, all8] = await Promise.all([
+    summariesForRange(user.id, addDays(today, -13), today, user.timezone),
+    categoriesFor(user.id),
+    allGoalStats(user.id, today),
+    summariesForRange(user.id, addDays(weekStartEarly, -49), today, user.timezone),
+  ]);
   const last7 = last14.slice(-7);
   const todaySum = last14[last14.length - 1];
-  const cats = categoriesFor(user.id);
   const catMap = new Map(cats.map((c) => [c.id, c]));
-  const goals = allGoalStats(user.id, today).filter((g) => g.goal.status === "active");
+  const goals = goalStats.filter((g) => g.goal.status === "active");
 
   // hours by category, this week
-  const weekStart = startOfWeek(today);
+  const weekStart = weekStartEarly;
   const week = last14.filter((s) => s.date >= weekStart);
   const catAgg = new Map<number | null, { planned: number; completed: number }>();
   for (const s of week)
@@ -39,8 +44,6 @@ export default async function AnalyticsPage() {
     .slice(0, 8);
 
   // weekly avg scores for 8 weeks
-  const eightWeeksAgo = addDays(weekStart, -49);
-  const all8 = summariesForRange(user.id, eightWeeksAgo, today, user.timezone);
   const weekBuckets = new Map<string, number[]>();
   for (const s of all8) {
     if (s.tasksPlanned === 0 && s.goalsDue === 0) continue;

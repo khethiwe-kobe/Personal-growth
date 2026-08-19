@@ -1,10 +1,16 @@
-import Database from "better-sqlite3";
+import { createClient, type Client, type InArgs, type InStatement } from "@libsql/client";
 import path from "path";
 import fs from "fs";
 import crypto from "crypto";
 
 /**
- * SQLite connection (singleton per process).
+ * Database access (libSQL / SQLite).
+ *
+ * One codebase, two backends, identical SQL:
+ *   - locally, a plain SQLite file (`file:./data/cadence.db`)
+ *   - in production, Turso — hosted SQLite reached over HTTP, so the data lives
+ *     independently of whatever server happens to be running the app and is
+ *     never tied to a disposable filesystem.
  *
  * Schema philosophy:
  *  - Users belong to accountability groups via group_members (many-to-many),
@@ -16,20 +22,74 @@ import crypto from "crypto";
  *    progress/streaks/consistency are computed from check-ins, not typed in.
  */
 
-const DB_PATH =
-  process.env.CADENCE_DB_PATH || path.join(process.cwd(), "data", "cadence.db");
+let client: Client | null = null;
+let ready: Promise<void> | null = null;
 
-let db: Database.Database | null = null;
+function databaseUrl(): string {
+  const remote = process.env.TURSO_DATABASE_URL?.trim();
+  if (remote) return remote;
+  const file = process.env.CADENCE_DB_PATH || path.join(process.cwd(), "data", "cadence.db");
+  fs.mkdirSync(path.dirname(file), { recursive: true });
+  return "file:" + file;
+}
 
-export function getDb(): Database.Database {
-  if (db) return db;
-  fs.mkdirSync(path.dirname(DB_PATH), { recursive: true });
-  db = new Database(DB_PATH);
-  db.pragma("journal_mode = WAL");
-  db.pragma("foreign_keys = ON");
-  migrate(db);
-  ensureBootstrapGroup(db);
-  return db;
+export function getClient(): Client {
+  if (!client) {
+    client = createClient({
+      url: databaseUrl(),
+      authToken: process.env.TURSO_AUTH_TOKEN,
+    });
+  }
+  return client;
+}
+
+/** Applies the schema once per process. Every query below awaits this. */
+export function initDb(): Promise<void> {
+  if (!ready) {
+    ready = (async () => {
+      await getClient().executeMultiple(SCHEMA);
+      await ensureBootstrapGroup();
+    })().catch((err) => {
+      ready = null; // let a later request retry rather than wedging the process
+      throw err;
+    });
+  }
+  return ready;
+}
+
+/** libSQL rows are array-like; hand plain objects to the rest of the app. */
+function plain<T>(rows: unknown[]): T[] {
+  return rows.map((r) => ({ ...(r as object) })) as T[];
+}
+
+export async function all<T>(sql: string, args: InArgs = []): Promise<T[]> {
+  await initDb();
+  const rs = await getClient().execute({ sql, args });
+  return plain<T>(rs.rows);
+}
+
+export async function get<T>(sql: string, args: InArgs = []): Promise<T | undefined> {
+  const rows = await all<T>(sql, args);
+  return rows[0];
+}
+
+export async function run(
+  sql: string,
+  args: InArgs = []
+): Promise<{ lastInsertRowid: number; changes: number }> {
+  await initDb();
+  const rs = await getClient().execute({ sql, args });
+  return {
+    lastInsertRowid: rs.lastInsertRowid !== undefined ? Number(rs.lastInsertRowid) : 0,
+    changes: Number(rs.rowsAffected ?? 0),
+  };
+}
+
+/** Runs statements atomically. Use for multi-row writes with no dependencies. */
+export async function batch(statements: InStatement[]): Promise<void> {
+  if (!statements.length) return;
+  await initDb();
+  await getClient().batch(statements, "write");
 }
 
 /**
@@ -38,22 +98,30 @@ export function getDb(): Database.Database {
  * On first boot only, create one group whose code comes from
  * CADENCE_INVITE_CODE (or a random one, printed to the logs).
  */
-function ensureBootstrapGroup(d: Database.Database) {
-  const existing = d.prepare("SELECT COUNT(*) AS n FROM groups").get() as { n: number };
-  if (existing.n > 0) return;
+async function ensureBootstrapGroup() {
+  const rs = await getClient().execute("SELECT COUNT(*) AS n FROM groups");
+  if (Number((rs.rows[0] as unknown as { n: number }).n) > 0) return;
   const code =
     (process.env.CADENCE_INVITE_CODE || "").trim() ||
     "JOIN-" + crypto.randomBytes(4).toString("hex").toUpperCase();
   const name = process.env.CADENCE_GROUP_NAME?.trim() || "Accountability group";
-  d.prepare("INSERT INTO groups (name, invite_code) VALUES (?, ?)").run(name, code);
+  await getClient().execute({
+    sql: "INSERT INTO groups (name, invite_code) VALUES (?, ?)",
+    args: [name, code],
+  });
   console.log(
     `[cadence] Created the first accountability group "${name}". ` +
       `Invite code: ${code} — share it with your group so they can sign up at /join.`
   );
 }
 
-function migrate(d: Database.Database) {
-  d.exec(`
+/** Test/scripts helper: forget the cached client (e.g. after changing env). */
+export function _resetDb() {
+  client = null;
+  ready = null;
+}
+
+const SCHEMA = `
   CREATE TABLE IF NOT EXISTS users (
     id            INTEGER PRIMARY KEY AUTOINCREMENT,
     username      TEXT NOT NULL UNIQUE COLLATE NOCASE,
@@ -249,11 +317,4 @@ function migrate(d: Database.Database) {
     notification_prefs TEXT NOT NULL DEFAULT '{}',
     dashboard_sections TEXT NOT NULL DEFAULT '["today","goals","accountability","upcoming","focus"]'
   );
-  `);
-}
-
-/** Test helper: use an isolated in-memory DB. */
-export function _setTestDb(instance: Database.Database) {
-  db = instance;
-  migrate(instance);
-}
+  `;

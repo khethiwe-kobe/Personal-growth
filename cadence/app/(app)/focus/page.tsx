@@ -1,5 +1,5 @@
 import { requireUser } from "@/lib/auth";
-import { getDb } from "@/lib/db";
+import { all, get } from "@/lib/db";
 import { summariesForRange } from "@/lib/repo";
 import { todayInTz, addDays, startOfWeek, monthOf, monthDates, fmtMinutes, fmtDateShort } from "@/lib/time";
 import { PageTitle, Card, SectionHeading, Stat } from "@/components/ui";
@@ -20,30 +20,37 @@ export default async function FocusPage() {
   const weekStart = startOfWeek(today);
   const monthStart = monthOf(today) + "-01";
 
-  const db = getDb();
-  const settings = db.prepare("SELECT focus_defaults FROM user_settings WHERE user_id=?")
-    .get(user.id) as { focus_defaults: string } | undefined;
-  let defaults = {};
-  try { defaults = JSON.parse(settings?.focus_defaults || "{}"); } catch {}
-
+  type Agg = { sec: number; n: number; done: number; interrupted: number };
   const agg = (from: string) =>
-    db.prepare(
+    get<Agg>(
       `SELECT COALESCE(SUM(focus_seconds),0) AS sec,
               COUNT(*) AS n,
-              SUM(status='completed') AS done,
-              SUM(status='interrupted') AS interrupted
+              COALESCE(SUM(status='completed'),0) AS done,
+              COALESCE(SUM(status='interrupted'),0) AS interrupted
          FROM focus_sessions
-        WHERE user_id=? AND date>=? AND date<=? AND status!='active'`
-    ).get(user.id, from, today) as { sec: number; n: number; done: number; interrupted: number };
+        WHERE user_id=? AND date>=? AND date<=? AND status!='active'`,
+      [user.id, from, today]
+    );
 
-  const dayAgg = agg(today);
-  const weekAgg = agg(weekStart);
-  const monthAgg = agg(monthStart);
-
-  const recent = db.prepare(
-    `SELECT * FROM focus_sessions WHERE user_id=? AND status!='active'
-     ORDER BY started_at DESC LIMIT 8`
-  ).all(user.id) as FocusSessionRow[];
+  const [settings, dayAggRaw, weekAggRaw, monthAggRaw, recent] = await Promise.all([
+    get<{ focus_defaults: string }>(
+      "SELECT focus_defaults FROM user_settings WHERE user_id=?", [user.id]
+    ),
+    agg(today),
+    agg(weekStart),
+    agg(monthStart),
+    all<FocusSessionRow>(
+      `SELECT * FROM focus_sessions WHERE user_id=? AND status!='active'
+       ORDER BY started_at DESC LIMIT 8`,
+      [user.id]
+    ),
+  ]);
+  let defaults = {};
+  try { defaults = JSON.parse(settings?.focus_defaults || "{}"); } catch {}
+  const empty: Agg = { sec: 0, n: 0, done: 0, interrupted: 0 };
+  const dayAgg = dayAggRaw ?? empty;
+  const weekAgg = weekAggRaw ?? empty;
+  const monthAgg = monthAggRaw ?? empty;
 
   return (
     <div className="fade-up">
