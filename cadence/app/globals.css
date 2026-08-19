@@ -1,0 +1,141 @@
+@import "tailwindcss";
+
+/* Cadence — pastel-neutral, calm, premium.
+   Light is the default; dark is a designed theme, not an inversion. */
+
+:root {
+  --bg: #f7f5f1;            /* warm off-white */
+  --surface: #fdfcfa;       /* cards */
+  --surface-2: #f1eee8;     /* subtle wells */
+  --ink: #33322e;           /* charcoal text */
+  --ink-2: #6b6960;         /* secondary text */
+  --ink-3: #98958a;         /* muted text */
+  --line: #e7e3da;          /* borders */
+  --line-2: #dcd7cc;
+  --accent: #8fa892;        /* muted sage */
+  --accent-ink: #4d6a52;
+  --accent-soft: #e2eae2;
+  --danger: #b3564d;
+  --danger-soft: #f3e0dd;
+  --warn: #a8823f;
+  --warn-soft: #f2e8d5;
+  --ok: #5d7d62;
+  --ok-soft: #e2ebe2;
+  /* chart series (validated palette, light steps) */
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a;
+  --ring-track: #e9e5dc;
+  --shadow: 0 1px 2px rgb(51 50 46 / 0.04), 0 4px 16px rgb(51 50 46 / 0.05);
+}
+
+[data-theme="dark"] {
+  --bg: #191917;
+  --surface: #211f1e;
+  --surface-2: #292725;
+  --ink: #ece9e2;
+  --ink-2: #b0ada3;
+  --ink-3: #807d74;
+  --line: #33312e;
+  --line-2: #403d39;
+  --accent: #93ac96;
+  --accent-ink: #b5c9b8;
+  --accent-soft: #2b332c;
+  --danger: #d08379;
+  --danger-soft: #3a2a27;
+  --warn: #c9a45e;
+  --warn-soft: #383021;
+  --ok: #8fac93;
+  --ok-soft: #283029;
+  --s1: #3987e5; --s2: #d95926; --s3: #199e70;
+  --ring-track: #33312e;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 6px 20px rgb(0 0 0 / 0.25);
+}
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-line: var(--line);
+  --color-line-2: var(--line-2);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-warn: var(--warn);
+  --color-warn-soft: var(--warn-soft);
+  --color-ok: var(--ok);
+  --color-ok-soft: var(--ok-soft);
+  --font-sans: var(--font-ui), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: var(--font-display), var(--font-ui), ui-sans-serif, system-ui, sans-serif;
+}
+
+html { color-scheme: light; }
+html[data-theme="dark"] { color-scheme: dark; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection { background: var(--accent-soft); color: var(--accent-ink); }
+
+/* Soft, quick transitions everywhere interactive */
+button, a, input, select, textarea {
+  transition: background-color 140ms ease, border-color 140ms ease,
+              color 140ms ease, opacity 140ms ease, transform 140ms ease,
+              box-shadow 140ms ease;
+}
+
+input, select, textarea {
+  background: var(--surface);
+  border: 1px solid var(--line-2);
+  border-radius: 10px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  color: var(--ink);
+  width: 100%;
+}
+input::placeholder, textarea::placeholder { color: var(--ink-3); }
+input:focus-visible, select:focus-visible, textarea:focus-visible, button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+input[type="checkbox"] { width: auto; }
+input[type="color"] { padding: 0.15rem; height: 2.35rem; width: 3rem; cursor: pointer; }
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fade-up 220ms ease both; }
+
+@keyframes check-pop {
+  0% { transform: scale(0.6); }
+  60% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+.check-pop { animation: check-pop 240ms ease; }
+
+@keyframes ring-in {
+  from { stroke-dashoffset: var(--ring-c, 100); }
+}
+.ring-anim { animation: ring-in 700ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
+
+.scrollbar-thin { scrollbar-width: thin; scrollbar-color: var(--line-2) transparent; }
+
+[data-theme="dark"] .avatar-initials {
+  background: var(--av-bg-d, var(--surface-2)) !important;
+  color: var(--av-fg-d, var(--ink-2)) !important;
+}
