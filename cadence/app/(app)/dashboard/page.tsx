@@ -6,7 +6,7 @@ import {
 } from "@/lib/repo";
 import { messagesForMe, messageForFriend } from "@/lib/encourage";
 import { productiveDayStreak } from "@/lib/analytics";
-import { todayInTz, addDays, fmtDateLong, fmtMinutes, fmtDateShort, diffDays } from "@/lib/time";
+import { todayInTz, addDays, fmtDateLong, fmtMinutes, fmtDateShort, diffDays, safeTz } from "@/lib/time";
 import { trimNum } from "@/lib/goals";
 import { Card, SectionHeading, Ring, Stat, ProgressBar, Chip, LinkButton, EmptyState } from "@/components/ui";
 import { Sparkline } from "@/components/charts";
@@ -43,7 +43,7 @@ export default async function DashboardPage() {
 
   const firstName = user.display_name.split(" ")[0];
   const hourNow = Number(
-    new Intl.DateTimeFormat("en-GB", { timeZone: user.timezone, hour: "2-digit", hour12: false })
+    new Intl.DateTimeFormat("en-GB", { timeZone: safeTz(user.timezone), hour: "2-digit", hour12: false })
       .format(new Date())
   );
   const greeting = hourNow < 12 ? "Good morning" : hourNow < 17 ? "Good afternoon" : "Good evening";

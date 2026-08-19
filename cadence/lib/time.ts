@@ -5,9 +5,35 @@
  * Week = Monday–Sunday.
  */
 
+/**
+ * A timezone string we can hand to Intl without it throwing.
+ *
+ * Timezones arrive from the browser at sign-up and from the profile form, and
+ * Intl throws a RangeError on anything it doesn't recognise. An unusable value
+ * stored against one account must never take that account's pages down, so
+ * anything invalid falls back to the default instead.
+ */
+export const FALLBACK_TZ = "Africa/Johannesburg";
+const tzValid = new Map<string, boolean>();
+
+export function safeTz(tz: string | null | undefined): string {
+  if (!tz) return FALLBACK_TZ;
+  let ok = tzValid.get(tz);
+  if (ok === undefined) {
+    try {
+      new Intl.DateTimeFormat("en", { timeZone: tz });
+      ok = true;
+    } catch {
+      ok = false;
+    }
+    tzValid.set(tz, ok);
+  }
+  return ok ? tz : FALLBACK_TZ;
+}
+
 export function todayInTz(tz: string, now: Date = new Date()): string {
   // en-CA gives YYYY-MM-DD
-  return new Intl.DateTimeFormat("en-CA", { timeZone: tz }).format(now);
+  return new Intl.DateTimeFormat("en-CA", { timeZone: safeTz(tz) }).format(now);
 }
 
 export function addDays(iso: string, n: number): string {

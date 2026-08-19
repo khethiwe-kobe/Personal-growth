@@ -1,7 +1,7 @@
 import { all, get } from "./db";
 import { computeDaySummary, productiveDayStreak, type DaySummary } from "./analytics";
 import { computeGoalStats, type GoalStats } from "./goals";
-import { todayInTz, addDays, startOfWeek, monthOf, monthDates, rangeDates } from "./time";
+import { todayInTz, addDays, startOfWeek, monthOf, monthDates, rangeDates, safeTz } from "./time";
 import type {
   TaskRow, TimeBlockRow, FocusSessionRow, GoalRow, CheckinRow,
   CategoryRow, EventRow, TimetableEntryRow,
@@ -15,7 +15,7 @@ import type {
 
 export function nowMinutesInTz(tz: string): number {
   const parts = new Intl.DateTimeFormat("en-GB", {
-    timeZone: tz, hour: "2-digit", minute: "2-digit", hour12: false,
+    timeZone: safeTz(tz), hour: "2-digit", minute: "2-digit", hour12: false,
   }).formatToParts(new Date());
   const h = Number(parts.find((p) => p.type === "hour")?.value ?? 0) % 24;
   const m = Number(parts.find((p) => p.type === "minute")?.value ?? 0);

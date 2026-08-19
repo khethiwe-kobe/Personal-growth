@@ -5,7 +5,7 @@ import {
   createSession, destroySession, getSessionUser, hashPassword,
   verifyPassword, requireUser, getGroupForUser,
 } from "@/lib/auth";
-import { todayInTz, parseClock } from "@/lib/time";
+import { safeTz, todayInTz, parseClock } from "@/lib/time";
 import { parseTimetableText } from "@/lib/timetable-parse";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -44,7 +44,8 @@ export async function signupAction(_prev: unknown, fd: FormData) {
   const password = typeof fd.get("password") === "string" ? (fd.get("password") as string) : "";
   const invite = str(fd, "invite", 40);
   const role = str(fd, "role", 10) === "working" ? "working" : "student";
-  const timezone = str(fd, "timezone", 60) || "Africa/Johannesburg";
+  // Whatever the browser reports, only ever store a zone Intl accepts.
+  const timezone = safeTz(str(fd, "timezone", 60));
 
   if (!/^[a-z0-9_.-]{2,40}$/.test(username))
     return { error: "Username: 2–40 characters, letters/numbers/._- only." };
