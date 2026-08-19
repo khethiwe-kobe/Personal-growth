@@ -44,6 +44,43 @@ Environment (`.env.example`):
 - `CADENCE_SESSION_SECRET` — cookie-session secret, required in production
 - `CADENCE_OPEN_SIGNUP=1` — allow sign-up without an invite code (default off)
 
+## Deploying to Render
+
+The repo root has a `render.yaml` blueprint that provisions everything.
+
+1. Push this branch to GitHub (already done).
+2. In Render: **New → Blueprint**, pick this repository, choose this branch.
+3. Render reads `render.yaml` and asks for one value: **`CADENCE_INVITE_CODE`** —
+   the code your group types at `/join`. Pick something memorable, e.g. `THREE-2026`.
+4. Click **Apply**. First build takes a few minutes.
+5. Open the service URL. It lands on `/login`; go to **Join with an invite code**,
+   enter your code, and create the first account. Share the same code with the
+   other two — everyone lands in the same group automatically.
+
+The blueprint sets everything else for you: `CADENCE_SESSION_SECRET` is generated
+once and kept secret, `CADENCE_DB_PATH` points at `/var/data/cadence.db` on a 1 GB
+persistent disk, and sign-up stays invite-only.
+
+### About the plan
+
+`render.yaml` specifies `plan: starter` (currently $7/month) **because Render only
+attaches persistent disks to paid instance types**. SQLite lives on that disk, so
+on the free plan every deploy, restart or idle spin-down would erase all accounts,
+tasks, goals and history. If you want to try it free first, change `plan: starter`
+to `plan: free` and delete the `disk:` block — but treat it as a demo, not
+somewhere to keep real data. Moving to a hosted Postgres later would allow a free
+instance with durable data; that is a code change (better-sqlite3 → `pg`), not a
+config change.
+
+Verified against a fresh deployment simulation: first-boot group creation, invite-only
+sign-up, a second member joining the same group, and accounts plus group membership
+surviving a restart with no duplicate group created.
+
+### Demo data on a real deployment
+
+Don't run `npm run seed` on your live instance — it creates the three demo
+accounts with published passwords. The bootstrap group is all a real deployment needs.
+
 ## What's inside
 
 | Area | What it does |

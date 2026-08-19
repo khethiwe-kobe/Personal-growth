@@ -1,6 +1,7 @@
 import Database from "better-sqlite3";
 import path from "path";
 import fs from "fs";
+import crypto from "crypto";
 
 /**
  * SQLite connection (singleton per process).
@@ -27,7 +28,28 @@ export function getDb(): Database.Database {
   db.pragma("journal_mode = WAL");
   db.pragma("foreign_keys = ON");
   migrate(db);
+  ensureBootstrapGroup(db);
   return db;
+}
+
+/**
+ * A brand-new database has no groups, and sign-up requires an invite code that
+ * matches one — so without this nobody could ever create the first account.
+ * On first boot only, create one group whose code comes from
+ * CADENCE_INVITE_CODE (or a random one, printed to the logs).
+ */
+function ensureBootstrapGroup(d: Database.Database) {
+  const existing = d.prepare("SELECT COUNT(*) AS n FROM groups").get() as { n: number };
+  if (existing.n > 0) return;
+  const code =
+    (process.env.CADENCE_INVITE_CODE || "").trim() ||
+    "JOIN-" + crypto.randomBytes(4).toString("hex").toUpperCase();
+  const name = process.env.CADENCE_GROUP_NAME?.trim() || "Accountability group";
+  d.prepare("INSERT INTO groups (name, invite_code) VALUES (?, ?)").run(name, code);
+  console.log(
+    `[cadence] Created the first accountability group "${name}". ` +
+      `Invite code: ${code} — share it with your group so they can sign up at /join.`
+  );
 }
 
 function migrate(d: Database.Database) {

@@ -1,0 +1,43 @@
+# Render Blueprint for Cadence (the app in ./cadence).
+#
+# Deploy: Render Dashboard → New → Blueprint → pick this repo.
+# Render reads this file, creates the service and its disk, and asks you to
+# fill in the values marked `sync: false`.
+#
+# Note on plans: a persistent disk requires a paid instance type (Starter).
+# SQLite lives on that disk, so on the free plan every deploy or restart would
+# wipe all accounts and history. See cadence/README.md for the trade-off.
+
+services:
+  - type: web
+    name: cadence
+    runtime: node
+    plan: starter
+    rootDir: cadence
+    # --include=dev: the build needs TypeScript and Tailwind, which are devDependencies
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm run start
+    # "/" redirects (307) to /login, which Render's health check would not accept.
+    healthCheckPath: /login
+    disk:
+      name: cadence-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      # Signs session cookies. Render generates this once and keeps it secret.
+      - key: CADENCE_SESSION_SECRET
+        generateValue: true
+      # The SQLite file, on the persistent disk above.
+      - key: CADENCE_DB_PATH
+        value: /var/data/cadence.db
+      # Invite code for the first group, created automatically on first boot.
+      # Render prompts you for this; pick something you can share with the group.
+      - key: CADENCE_INVITE_CODE
+        sync: false
+      - key: CADENCE_GROUP_NAME
+        value: The Three
+      # 0 = sign-up requires the invite code. Leave it at 0.
+      - key: CADENCE_OPEN_SIGNUP
+        value: "0"

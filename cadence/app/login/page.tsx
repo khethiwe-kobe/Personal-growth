@@ -1,12 +1,16 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import Link from "next/link";
 import { loginAction } from "@/app/actions";
 import { Button } from "@/components/ui";
 
 export default function LoginPage() {
   const [state, action, pending] = useActionState(loginAction, null as { error?: string } | null);
+  // Controlled: React resets the form after the action, which would clear the
+  // username on every failed attempt.
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   return (
     <div className="flex min-h-dvh items-center justify-center px-4">
       <div className="fade-up w-full max-w-sm">
@@ -22,11 +26,13 @@ export default function LoginPage() {
         <form action={action} className="space-y-3 rounded-2xl border border-line bg-surface p-6" style={{ boxShadow: "var(--shadow)" }}>
           <div>
             <label className="mb-1 block text-xs font-medium text-ink-2" htmlFor="username">Username</label>
-            <input id="username" name="username" autoComplete="username" autoFocus required />
+            <input id="username" name="username" autoComplete="username" autoFocus required
+              value={username} onChange={(e) => setUsername(e.target.value)} />
           </div>
           <div>
             <label className="mb-1 block text-xs font-medium text-ink-2" htmlFor="password">Password</label>
-            <input id="password" name="password" type="password" autoComplete="current-password" required />
+            <input id="password" name="password" type="password" autoComplete="current-password" required
+              value={password} onChange={(e) => setPassword(e.target.value)} />
           </div>
           {state?.error && <p className="text-xs text-danger">{state.error}</p>}
           <Button className="w-full" disabled={pending}>
