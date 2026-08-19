@@ -33,11 +33,49 @@ test("mergeIntervals merges overlapping task times", () => {
   assert.deepEqual(merged, [{ start: 480, end: 660 }, { start: 700, end: 720 }]);
 });
 
-test("unaccounted gaps computed within the 06:00–22:00 window", () => {
+test("unaccounted gaps span the full day, midnight to midnight", () => {
+  // A day accounted for only 06:00–20:00 leaves the night at both ends.
   const gaps = unaccountedGaps([{ start: 360, end: 1200 }]);
-  assert.deepEqual(gaps, [{ start: 1200, end: ACCOUNT_END }]);
+  assert.deepEqual(gaps, [
+    { start: ACCOUNT_START, end: 360 },
+    { start: 1200, end: ACCOUNT_END },
+  ]);
+  assert.equal(ACCOUNT_START, 0);
+  assert.equal(ACCOUNT_END, 24 * 60);
+
   const none = unaccountedGaps([{ start: 0, end: 24 * 60 }]);
   assert.deepEqual(none, []);
+});
+
+test("logged sleep counts as accounted time", () => {
+  // 23:00–24:00 + 00:00–06:30 sleep, awake and accounted for the rest.
+  const withSleep = unaccountedGaps([
+    { start: 0, end: 390 },      // sleep
+    { start: 390, end: 1380 },   // the waking day
+    { start: 1380, end: 1440 },  // sleep again
+  ]);
+  assert.deepEqual(withSleep, [], "a fully logged day, sleep included, has no gaps");
+
+  // The same day without logging sleep leaves those hours unaccounted.
+  const withoutSleep = unaccountedGaps([{ start: 390, end: 1380 }]);
+  assert.deepEqual(withoutSleep, [
+    { start: 0, end: 390 },
+    { start: 1380, end: 1440 },
+  ]);
+});
+
+test("a day summary reaches zero unaccounted when sleep is logged", () => {
+  const blocks = [
+    block(0, 390, "sleep"),
+    block(390, 1380, "focus"),
+    block(1380, 1440, "sleep"),
+  ];
+  const s = computeDaySummary({
+    date: "2026-08-10", tasks: [], blocks, focus: [],
+    goalsDue: 0, goalsCompleted: 0, nowMin: null,
+  });
+  assert.equal(s.unaccountedMinutes, 0);
+  assert.equal(s.allocatedMinutes, 24 * 60);
 });
 
 test("day summary: counts, percentages, priorities, score parts", () => {

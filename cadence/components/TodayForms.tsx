@@ -78,8 +78,9 @@ export function AddTaskForm({
 }
 
 const BLOCK_KINDS = [
-  ["break", "Break"], ["rest", "Rest"], ["travel", "Travel"], ["social", "Social"],
-  ["personal", "Personal"], ["unplanned", "Unplanned"], ["sleep", "Sleep"], ["other", "Other"],
+  ["sleep", "Sleep"], ["focus", "Focused work"], ["break", "Break"], ["rest", "Rest"],
+  ["travel", "Travel"], ["social", "Social"], ["personal", "Personal"],
+  ["unplanned", "Unplanned"], ["other", "Other"],
 ] as const;
 
 export function AddBlockForm({ date }: { date: string }) {
@@ -91,7 +92,7 @@ export function AddBlockForm({ date }: { date: string }) {
         onClick={() => setOpen(true)}
         className="text-xs font-medium text-accent-ink hover:underline"
       >
-        + Account for time (break, travel, rest…)
+        + Account for time (sleep, break, travel…)
       </button>
     );
   }

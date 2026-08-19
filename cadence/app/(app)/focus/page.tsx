@@ -1,9 +1,11 @@
 import { requireUser } from "@/lib/auth";
 import { all, get } from "@/lib/db";
-import { summariesForRange } from "@/lib/repo";
+import { summariesForRange, tasksForDay, categoriesFor } from "@/lib/repo";
 import { todayInTz, addDays, startOfWeek, monthOf, monthDates, fmtMinutes, fmtDateShort } from "@/lib/time";
 import { PageTitle, Card, SectionHeading, Stat } from "@/components/ui";
 import FocusTimer from "@/components/FocusTimer";
+import FocusTasks from "@/components/FocusTasks";
+import Stopwatch from "@/components/Stopwatch";
 import type { FocusSessionRow } from "@/lib/types";
 
 export const metadata = { title: "Focus" };
@@ -45,6 +47,10 @@ export default async function FocusPage() {
       [user.id]
     ),
   ]);
+  const [todayTasks, categories] = await Promise.all([
+    tasksForDay(user.id, today),
+    categoriesFor(user.id),
+  ]);
   let defaults = {};
   try { defaults = JSON.parse(settings?.focus_defaults || "{}"); } catch {}
   const empty: Agg = { sec: 0, n: 0, done: 0, interrupted: 0 };
@@ -59,7 +65,20 @@ export default async function FocusPage() {
         subtitle="Your timer, your rules — 25/5 rounds or a six-hour block with no breaks."
       />
 
-      <FocusTimer defaults={defaults} />
+      <FocusTimer
+        defaults={defaults}
+        tasks={todayTasks}
+        categories={categories}
+        date={today}
+      />
+
+      <SectionHeading>Account for the hour</SectionHeading>
+      <div className="grid gap-3 md:grid-cols-2">
+        <Stopwatch />
+        <Card>
+          <FocusTasks tasks={todayTasks} categories={categories} date={today} />
+        </Card>
+      </div>
 
       <SectionHeading>Your focus time</SectionHeading>
       <div className="grid gap-3 sm:grid-cols-3">

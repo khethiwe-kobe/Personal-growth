@@ -148,8 +148,11 @@ export default async function TodayPage({
             </div>
           </Card>
           <p className="mt-2 text-[11px] leading-relaxed text-ink-3">
-            Unaccounted time is measured between 06:00 and 22:00. Breaks, rest and travel
-            count as accounted — not every minute has to be "productive", it just has to be intentional.
+            Every one of the 24 hours counts, midnight to midnight — sleep included. Log
+            it and it is accounted for: sleep, breaks, rest and travel all count. Not every
+            minute has to be &quot;productive&quot;, it just has to be intentional. The figure at
+            the top of the page counts only the hours that have already passed today; the
+            timeline covers the whole day.
           </p>
         </div>
       </div>

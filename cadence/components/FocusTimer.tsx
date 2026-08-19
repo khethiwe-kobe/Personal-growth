@@ -6,6 +6,8 @@ import {
   interruptFocusAction, sweepStaleFocusAction,
 } from "@/app/actions";
 import { Button, Ring, Card } from "./ui";
+import FocusTasks from "./FocusTasks";
+import type { TaskRow, CategoryRow } from "@/lib/types";
 import { IconPlay, IconX } from "./icons";
 import { useRouter } from "next/navigation";
 
@@ -70,8 +72,16 @@ function fmt(s: number): string {
   return `${m}:${String(sec).padStart(2, "0")}`;
 }
 
-export default function FocusTimer({ defaults }: { defaults: Partial<Config> }) {
+export default function FocusTimer({
+  defaults, tasks = [], categories = [], date,
+}: {
+  defaults: Partial<Config>;
+  tasks?: TaskRow[];
+  categories?: CategoryRow[];
+  date: string;
+}) {
   const router = useRouter();
+  const [immersive, setImmersive] = useState(false);
   const [cfg, setCfg] = useState<Config>({
     focusMinutes: 50, breakMinutes: 10, sessions: 2, longBreakMinutes: 20,
     breaksEnabled: true, autoStart: true, sound: true, notify: false, label: "",
@@ -203,7 +213,15 @@ export default function FocusTimer({ defaults }: { defaults: Partial<Config> }) 
     router.refresh();
   };
 
-  const fullscreen = () => {
+  const exitImmersive = () => {
+    setImmersive(false);
+    if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {});
+  };
+
+  const enterImmersive = () => {
+    setImmersive(true);
+    // Browser fullscreen is a bonus; the overlay stands on its own if the
+    // request is refused (Safari on iOS, permissions policies).
     document.documentElement.requestFullscreen?.().catch(() => {});
   };
 
@@ -245,6 +263,84 @@ export default function FocusTimer({ defaults }: { defaults: Partial<Config> }) 
     const pct = ((total - remaining) / total) * 100;
     const focusPhases = phases.filter((p) => p.kind === "focus").length;
     const focusDone = phases.slice(0, phaseIdx).filter((p) => p.kind === "focus").length;
+
+    // Immersive mode: the timer takes the whole viewport, with today's list
+    // beside it so the session stays tied to what it is actually for.
+    if (immersive) {
+      const isFocus = phase?.kind === "focus";
+      const accentVar = isFocus || finished ? "var(--accent)" : "var(--warn)";
+      return (
+        <div className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-bg px-5 py-6">
+          <div className="flex items-start justify-between gap-4">
+            <p className="text-xs font-medium uppercase tracking-[0.16em] text-ink-3">
+              {finished ? "Complete" : isFocus ? (cfg.label || "Focus") : "Break"}
+              {!finished && focusPhases > 1 &&
+                ` \u00b7 session ${Math.min(focusDone + 1, focusPhases)}/${focusPhases}`}
+            </p>
+            <button
+              type="button"
+              onClick={exitImmersive}
+              className="rounded-lg border border-line px-2.5 py-1 text-xs text-ink-2"
+            >
+              Exit full screen
+            </button>
+          </div>
+
+          <div className="flex flex-1 flex-col items-center justify-center gap-10 py-8 md:flex-row md:gap-16">
+            <div className="text-center">
+              <p
+                className="font-display font-medium leading-none tabular-nums"
+                style={{ fontSize: "clamp(4rem, 17vw, 11rem)" }}
+              >
+                {finished ? "Done" : fmt(remaining)}
+              </p>
+              <div className="mx-auto mt-6 h-1.5 w-64 max-w-full overflow-hidden rounded-full bg-surface-2">
+                <div
+                  className="h-full rounded-full transition-[width] duration-1000 ease-linear"
+                  style={{ width: `${finished ? 100 : pct}%`, background: accentVar }}
+                />
+              </div>
+              <div className="mt-7 flex flex-wrap items-center justify-center gap-2">
+                {finished ? (
+                  <Button type="button" onClick={() => {
+                    setSessionId(null); setPhases([]); setFinished(false); exitImmersive();
+                  }}>
+                    Set up another session
+                  </Button>
+                ) : waiting ? (
+                  <Button type="button" onClick={() => { setWaiting(false); setRunning(true); }}>
+                    <IconPlay size={15} /> Start {isFocus ? "focus" : "break"}
+                  </Button>
+                ) : (
+                  <>
+                    {running ? (
+                      <Button variant="ghost" type="button" onClick={() => setRunning(false)}>Pause</Button>
+                    ) : (
+                      <Button type="button" onClick={() => setRunning(true)}>
+                        <IconPlay size={15} /> Resume
+                      </Button>
+                    )}
+                    <Button variant="danger" type="button" onClick={giveUp}>
+                      <IconX size={14} /> End early
+                    </Button>
+                  </>
+                )}
+              </div>
+            </div>
+
+            <div className="w-full max-w-sm rounded-2xl border border-line bg-surface p-4">
+              <FocusTasks tasks={tasks} categories={categories} date={date} compact />
+            </div>
+          </div>
+
+          {!finished && (
+            <p className="text-center text-[11px] text-ink-3">
+              Leaving this tab for more than 30 seconds during focus counts as an interruption.
+            </p>
+          )}
+        </div>
+      );
+    }
     return (
       <Card className="mx-auto max-w-md text-center">
         <p className="text-xs font-medium uppercase tracking-[0.14em] text-ink-3">
@@ -278,7 +374,9 @@ export default function FocusTimer({ defaults }: { defaults: Partial<Config> }) 
             ) : (
               <Button type="button" onClick={() => setRunning(true)}><IconPlay size={15} /> Resume</Button>
             )}
-            <Button variant="ghost" type="button" onClick={fullscreen}>Full screen</Button>
+            {!immersive && (
+              <Button variant="ghost" type="button" onClick={enterImmersive}>Full screen</Button>
+            )}
             <Button variant="danger" type="button" onClick={giveUp}><IconX size={14} /> End early</Button>
           </div>
         )}

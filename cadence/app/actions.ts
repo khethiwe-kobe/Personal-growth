@@ -308,7 +308,11 @@ async function ownCategory(userId: number, categoryId: number | null): Promise<n
 
 // ---------------- Time blocks ----------------
 
-const BLOCK_KINDS = ["break", "rest", "travel", "social", "personal", "unplanned", "other", "sleep"];
+// "focus" = real work you tracked with the stopwatch, as opposed to time you
+// deliberately set aside for something else.
+const BLOCK_KINDS = [
+  "focus", "break", "rest", "travel", "social", "personal", "unplanned", "other", "sleep",
+];
 
 export async function createBlockAction(fd: FormData) {
   const user = await requireUser();
@@ -323,6 +327,53 @@ export async function createBlockAction(fd: FormData) {
     [user.id, date, start, end, kind, label]
   );
   revalidatePath("/today");
+}
+
+/**
+ * Logs time you actually spent, from the stopwatch, into today's schedule.
+ *
+ * This is the "every hour must be accounted for" path: rather than planning a
+ * block in advance, you run a stopwatch on whatever you are really doing and
+ * the elapsed time becomes a block on today's timeline. When it was real work,
+ * it also lands in focus history so the focus totals stay honest.
+ */
+export async function logTrackedTimeAction(input: {
+  label: string;
+  kind: string;
+  startMin: number;
+  endMin: number;
+  countAsFocus: boolean;
+}) {
+  const user = await requireUser();
+  const date = todayInTz(user.timezone);
+  const kind = BLOCK_KINDS.includes(input.kind) ? input.kind : "focus";
+  const start = Math.max(0, Math.min(Math.round(input.startMin), 24 * 60 - 1));
+  // A stopwatch left running past midnight is logged up to midnight rather
+  // than wrapping into a negative-length block.
+  const end = Math.max(start + 1, Math.min(Math.round(input.endMin), 24 * 60));
+  const label = String(input.label ?? "").slice(0, 80);
+
+  await run(
+    "INSERT INTO time_blocks (user_id, date, start_min, end_min, kind, label) VALUES (?,?,?,?,?,?)",
+    [user.id, date, start, end, kind, label]
+  );
+
+  if (input.countAsFocus) {
+    const seconds = (end - start) * 60;
+    const endedAt = new Date();
+    const startedAt = new Date(endedAt.getTime() - seconds * 1000);
+    await run(
+      `INSERT INTO focus_sessions (user_id, date, started_at, ended_at, planned_minutes,
+         focus_seconds, status, label)
+       VALUES (?,?,?,?,?,?, 'completed', ?)`,
+      [user.id, date, startedAt.toISOString(), endedAt.toISOString(),
+       end - start, seconds, label || "Tracked"]
+    );
+  }
+
+  revalidatePath("/today");
+  revalidatePath("/focus");
+  revalidatePath("/dashboard");
 }
 
 export async function deleteBlockAction(fd: FormData) {

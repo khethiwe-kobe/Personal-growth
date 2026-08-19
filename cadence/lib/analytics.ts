@@ -16,10 +16,11 @@ import type { TaskRow, TimeBlockRow, FocusSessionRow } from "./types";
  * can show exactly how the number was produced.
  */
 
-// Hours between these bounds are expected to be accounted for.
-// Sleep outside the window is nobody's business.
-export const ACCOUNT_START = 6 * 60;   // 06:00
-export const ACCOUNT_END = 22 * 60;    // 22:00
+// The whole day is accounted for: every one of the 24 hours, midnight to
+// midnight. Sleep is not an absence of accounting — it is logged like anything
+// else (a 'sleep' time block), so a well-planned day reaches 0 unaccounted.
+export const ACCOUNT_START = 0;          // 00:00
+export const ACCOUNT_END = 24 * 60;      // 24:00
 
 export type ScorePart = {
   key: "tasks" | "time" | "goals";

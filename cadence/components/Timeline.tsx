@@ -4,12 +4,20 @@ import { fmtClock, fmtMinutes } from "@/lib/time";
 import { deleteBlockAction } from "@/app/actions";
 
 const KIND_LABEL: Record<string, string> = {
-  break: "Break", rest: "Rest", travel: "Travel", social: "Social",
-  personal: "Personal", unplanned: "Unplanned", other: "Other", sleep: "Sleep",
+  focus: "Focused work", break: "Break", rest: "Rest", travel: "Travel",
+  social: "Social", personal: "Personal", unplanned: "Unplanned",
+  other: "Other", sleep: "Sleep",
+};
+
+// Tracked work reads as productive; sleep recedes; everything else is neutral.
+const KIND_CLASS: Record<string, string> = {
+  focus: "border-transparent bg-accent-soft text-accent-ink",
+  sleep: "border-line bg-surface-2 text-ink-3",
 };
 
 /**
- * The 24-hour day, drawn 06:00–22:00 by default (extends if items go beyond).
+ * The full 24-hour day, midnight to midnight — every hour is accountable,
+ * sleep included.
  * Tasks are colored by category; intentional blocks are muted; gaps between
  * the accounting bounds are explicitly labeled "unaccounted".
  */
@@ -24,18 +32,12 @@ export default function Timeline({
   const catMap = new Map(categories.map((c) => [c.id, c]));
   const scheduled = tasks.filter((t) => t.start_min !== null && t.end_min !== null);
 
-  const startBound = Math.min(
-    ACCOUNT_START,
-    ...scheduled.map((t) => t.start_min as number),
-    ...blocks.map((b) => b.start_min)
-  );
-  const endBound = Math.max(
-    ACCOUNT_END,
-    ...scheduled.map((t) => t.end_min as number),
-    ...blocks.map((b) => b.end_min)
-  );
+  const startBound = ACCOUNT_START;
+  const endBound = ACCOUNT_END;
   const span = endBound - startBound;
-  const PX_PER_MIN = 1.05;
+  // A full day at the old scale would be ~1500px; this keeps it readable
+  // without turning the page into an endless scroll.
+  const PX_PER_MIN = 0.72;
   const height = span * PX_PER_MIN;
   const y = (min: number) => (min - startBound) * PX_PER_MIN;
 
@@ -69,10 +71,10 @@ export default function Timeline({
     <div>
       <div className="mb-3 flex items-center justify-between text-xs">
         <span className="text-ink-3">
-          {fmtClock(startBound)} – {fmtClock(endBound)}
+          {fmtClock(startBound)} – {endBound >= 24 * 60 ? "24:00" : fmtClock(endBound)}
         </span>
         <span className={totalGap > 0 ? "font-medium text-warn" : "font-medium text-ok"}>
-          {totalGap > 0 ? `${fmtMinutes(totalGap)} unaccounted` : "Every hour accounted for"}
+          {totalGap > 0 ? `${fmtMinutes(totalGap)} unaccounted across the day` : "Every hour accounted for"}
         </span>
       </div>
       <div className="relative" style={{ height }}>
@@ -137,7 +139,9 @@ export default function Timeline({
             <form
               key={`b-${it.block.id}`}
               action={deleteBlockAction}
-              className="group absolute overflow-hidden rounded-lg border border-line bg-surface-2 px-2 py-1 text-[11px] leading-tight text-ink-2"
+              className={`group absolute overflow-hidden rounded-lg border px-2 py-1 text-[11px] leading-tight ${
+                KIND_CLASS[it.block.kind] ?? "border-line bg-surface-2 text-ink-2"
+              }`}
               style={common}
               title={`${KIND_LABEL[it.block.kind] ?? it.block.kind} · ${fmtClock(it.start)}–${fmtClock(it.end)}`}
             >
