@@ -16,7 +16,7 @@ function task(over: Partial<TaskRow> = {}): TaskRow {
   };
 }
 function block(start: number, end: number, kind = "break"): TimeBlockRow {
-  return { id: nextId++, user_id: 1, date: "2026-08-10", start_min: start, end_min: end, kind, label: "" };
+  return { id: nextId++, user_id: 1, date: "2026-08-10", start_min: start, end_min: end, kind, label: "", note: "" };
 }
 function focus(seconds: number, status: FocusSessionRow["status"]): FocusSessionRow {
   return {

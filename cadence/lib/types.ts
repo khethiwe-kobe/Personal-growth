@@ -34,6 +34,7 @@ export type TimeBlockRow = {
   end_min: number;
   kind: string;
   label: string;
+  note: string;   // private — never leaves the owner's own views
 };
 
 export type GoalRow = {

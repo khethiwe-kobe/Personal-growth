@@ -411,6 +411,7 @@ export async function logTrackedTimeAction(input: {
   startMin: number;
   endMin: number;
   countAsFocus: boolean;
+  note?: string;
 }) {
   const user = await requireUser();
   const date = todayInTz(user.timezone);
@@ -420,10 +421,11 @@ export async function logTrackedTimeAction(input: {
   // than wrapping into a negative-length block.
   const end = Math.max(start + 1, Math.min(Math.round(input.endMin), 24 * 60));
   const label = String(input.label ?? "").slice(0, 80);
+  const note = String(input.note ?? "").slice(0, 2000);
 
   await run(
-    "INSERT INTO time_blocks (user_id, date, start_min, end_min, kind, label) VALUES (?,?,?,?,?,?)",
-    [user.id, date, start, end, kind, label]
+    "INSERT INTO time_blocks (user_id, date, start_min, end_min, kind, label, note) VALUES (?,?,?,?,?,?,?)",
+    [user.id, date, start, end, kind, label, note]
   );
 
   if (input.countAsFocus) {

@@ -48,6 +48,7 @@ export function initDb(): Promise<void> {
   if (!ready) {
     ready = (async () => {
       await getClient().executeMultiple(SCHEMA);
+      await addMissingColumns();
       await ensureBootstrapGroup();
     })().catch((err) => {
       ready = null; // let a later request retry rather than wedging the process
@@ -90,6 +91,28 @@ export async function batch(statements: InStatement[]): Promise<void> {
   if (!statements.length) return;
   await initDb();
   await getClient().batch(statements, "write");
+}
+
+/**
+ * Columns added after a database already exists.
+ *
+ * CREATE TABLE IF NOT EXISTS does nothing to a table that is already there, so
+ * new columns need adding explicitly. Each entry is applied only when missing,
+ * which makes this safe to run on every boot and non-destructive to live data.
+ */
+const ADDED_COLUMNS: { table: string; column: string; definition: string }[] = [
+  { table: "time_blocks", column: "note", definition: "TEXT NOT NULL DEFAULT ''" },
+];
+
+async function addMissingColumns() {
+  const client = getClient();
+  for (const { table, column, definition } of ADDED_COLUMNS) {
+    const info = await client.execute(`PRAGMA table_info(${table})`);
+    const has = info.rows.some((r) => (r as unknown as { name: string }).name === column);
+    if (has) continue;
+    await client.execute(`ALTER TABLE ${table} ADD COLUMN ${column} ${definition}`);
+    console.log(`[cadence] Added column ${table}.${column}`);
+  }
 }
 
 /**
@@ -198,8 +221,9 @@ const SCHEMA = `
     start_min INTEGER NOT NULL,
     end_min   INTEGER NOT NULL,
     kind      TEXT NOT NULL DEFAULT 'break',
-    -- 'break'|'rest'|'travel'|'social'|'personal'|'unplanned'|'other'|'sleep'
-    label     TEXT NOT NULL DEFAULT ''
+    -- 'focus'|'break'|'rest'|'travel'|'social'|'personal'|'unplanned'|'other'|'sleep'
+    label     TEXT NOT NULL DEFAULT '',
+    note      TEXT NOT NULL DEFAULT ''   -- private; what happened in that time
   );
   CREATE INDEX IF NOT EXISTS idx_blocks_user_date ON time_blocks(user_id, date);
 

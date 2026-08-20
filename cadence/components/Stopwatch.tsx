@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { logTrackedTimeAction } from "@/app/actions";
 import { Button, Card } from "./ui";
 import { useRouter } from "next/navigation";
@@ -32,10 +33,15 @@ export default function Stopwatch() {
   const [label, setLabel] = useState("");
   const [kind, setKind] = useState("focus");
   const [countAsFocus, setCountAsFocus] = useState(true);
+  const [note, setNote] = useState("");
+  const [immersive, setImmersive] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const labelRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
     if (!startedAt) return;
@@ -70,10 +76,13 @@ export default function Stopwatch() {
       await logTrackedTimeAction({
         label: label.trim() || KINDS.find((k) => k[0] === kind)?.[1] || "Tracked",
         kind, startMin, endMin, countAsFocus: countAsFocus && kind === "focus",
+        note: note.trim(),
       });
       setSaved(`${hhmm(startedAt)}–${hhmm(ended)} logged to today`);
       setStartedAt(null);
       setLabel("");
+      setNote("");
+      setImmersive(false);
       router.refresh();
     } catch {
       // Keep the stopwatch running so the elapsed time isn't lost — the user
@@ -87,7 +96,76 @@ export default function Stopwatch() {
     }
   };
 
-  const discard = () => { setStartedAt(null); setSaved(null); };
+  const discard = () => { setStartedAt(null); setSaved(null); setNote(""); setImmersive(false); };
+
+  const enterFull = () => {
+    setImmersive(true);
+    document.documentElement.requestFullscreen?.().catch(() => {});
+  };
+  const exitFull = () => {
+    setImmersive(false);
+    if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {});
+  };
+
+  const what = label.trim() || KINDS.find((k) => k[0] === kind)?.[1] || "Tracked";
+
+  if (immersive && mounted && startedAt) {
+    return createPortal(
+      <div className="fixed inset-0 z-[100] flex flex-col overflow-y-auto bg-bg px-5 py-6">
+        <div className="flex items-start justify-between gap-4">
+          <p className="text-xs font-medium uppercase tracking-[0.16em] text-ink-3">
+            Tracking · started {hhmm(startedAt)}
+          </p>
+          <button type="button" onClick={exitFull}
+            className="rounded-lg border border-line px-2.5 py-1 text-xs text-ink-2">
+            Exit full screen
+          </button>
+        </div>
+
+        <div className="flex flex-1 flex-col items-center justify-center gap-8 py-8 md:flex-row md:gap-16">
+          <div className="text-center">
+            <p className="font-display font-medium leading-none tabular-nums"
+              style={{ fontSize: "clamp(4rem, 17vw, 11rem)" }}>
+              {elapsedLabel(seconds)}
+            </p>
+            <p className="mt-5 font-display text-2xl font-medium">{what}</p>
+            <p className="mt-1 text-xs text-ink-3">
+              {KINDS.find((k) => k[0] === kind)?.[1]}
+              {countAsFocus && kind === "focus" ? " · counts towards focus hours" : ""}
+            </p>
+            <div className="mt-7 flex flex-wrap items-center justify-center gap-2">
+              <Button type="button" onClick={stop} disabled={saving}>
+                {saving ? "Saving…" : "Stop & log it"}
+              </Button>
+              <Button variant="ghost" type="button" onClick={discard} disabled={saving}>
+                Discard
+              </Button>
+            </div>
+            {error && (
+              <p className="mt-3 rounded-lg bg-danger-soft px-3 py-2 text-xs text-danger">{error}</p>
+            )}
+          </div>
+
+          <div className="w-full max-w-sm rounded-2xl border border-line bg-surface p-4">
+            <label className="mb-1 block text-sm font-medium" htmlFor="sw-note-full">
+              Notes
+            </label>
+            <p className="mb-2 text-[11px] text-ink-3">
+              Saved with this block. Private — only you ever see it.
+            </p>
+            <textarea
+              id="sw-note-full" value={note} onChange={(e) => setNote(e.target.value)}
+              rows={10} maxLength={2000}
+              placeholder="What you got through, what interrupted you, what to pick up next…"
+              className="w-full text-sm"
+            />
+            <p className="mt-1 text-right text-[11px] text-ink-3">{note.length}/2000</p>
+          </div>
+        </div>
+      </div>,
+      document.body
+    );
+  }
 
   return (
     <Card>
@@ -98,14 +176,20 @@ export default function Stopwatch() {
 
       {startedAt ? (
         <div className="text-center">
-          <p className="text-xs font-medium uppercase tracking-[0.14em] text-ink-3">
-            {label.trim() || KINDS.find((k) => k[0] === kind)?.[1]}
-          </p>
+          <p className="text-xs font-medium uppercase tracking-[0.14em] text-ink-3">{what}</p>
           <p className="my-3 font-display text-5xl font-medium tabular-nums">{elapsedLabel(seconds)}</p>
-          <p className="mb-4 text-xs text-ink-3">started {hhmm(startedAt)}</p>
+          <p className="mb-3 text-xs text-ink-3">started {hhmm(startedAt)}</p>
+          <textarea
+            value={note} onChange={(e) => setNote(e.target.value)} rows={2} maxLength={2000}
+            placeholder="Notes — what you got through, what got in the way (private)"
+            className="mb-3 w-full text-left text-sm"
+          />
           <div className="flex flex-wrap items-center justify-center gap-2">
             <Button type="button" onClick={stop} disabled={saving}>
               {saving ? "Saving…" : "Stop & log it"}
+            </Button>
+            <Button variant="ghost" type="button" onClick={enterFull} disabled={saving}>
+              Full screen
             </Button>
             <Button variant="ghost" type="button" onClick={discard} disabled={saving}>
               Discard
