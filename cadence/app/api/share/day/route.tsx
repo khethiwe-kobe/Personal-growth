@@ -71,22 +71,21 @@ export async function GET(req: Request) {
   ]);
   const catMap = new Map(categories.map((c) => [c.id, c]));
 
-  // Planned: every task that has a time on it.
+  // Planned: every task that has a time on it, ticked ones marked.
+  // Actual: only what you logged — a tick is a claim, a logged block is a
+  // record, so the two columns answer different questions.
   const planned: Item[] = [];
-  // Actual: time you logged, plus tasks you actually completed.
   const actual: Item[] = [];
 
   for (const t of tasks) {
     if (t.start_min === null || t.end_min === null) continue;
     const cat = t.category_id ? catMap.get(t.category_id) : undefined;
-    const item: Item = {
+    planned.push({
       start: t.start_min, end: t.end_min,
-      label: showLabels ? t.name : (cat?.name ?? "Task"),
+      label: `${t.completed ? "✓ " : ""}${showLabels ? t.name : (cat?.name ?? "Task")}`,
       color: cat?.color ?? "#b8b8b0",
-      faint: false,
-    };
-    planned.push({ ...item, faint: !t.completed });
-    if (t.completed) actual.push(item);
+      faint: !t.completed,
+    });
   }
   for (const b of blocks) {
     actual.push({
@@ -118,6 +117,9 @@ export async function GET(req: Request) {
       // Give the text an explicit line budget for the height available and
       // truncate past it.
       const LINE = 26;
+      // Below one full line there is no honest way to show text: Satori will
+      // not clip it, so a short bar keeps its colour and drops its label.
+      const showText = height >= LINE;
       const lines = Math.max(1, Math.floor((height - 8) / LINE));
       const single = lines === 1;
       return (
@@ -127,16 +129,18 @@ export async function GET(req: Request) {
           padding: "0 12px", borderRadius: 10, overflow: "hidden",
           background: it.color, opacity: it.faint ? 0.45 : 1,
         }}>
-          <div style={{
-            fontSize: 21, color: "#1f1f19", lineHeight: `${LINE}px`,
-            width: laneW - 30, overflow: "hidden",
-            ...(single
-              ? { whiteSpace: "nowrap" as const, textOverflow: "ellipsis" as const }
-              : { display: "-webkit-box", WebkitBoxOrient: "vertical" as const,
-                  WebkitLineClamp: lines, maxHeight: lines * LINE }),
-          }}>
-            {it.label}
-          </div>
+          {showText && (
+            <div style={{
+              fontSize: 21, color: "#1f1f19", lineHeight: `${LINE}px`,
+              width: laneW - 30, overflow: "hidden",
+              ...(single
+                ? { whiteSpace: "nowrap" as const, textOverflow: "ellipsis" as const }
+                : { display: "-webkit-box", WebkitBoxOrient: "vertical" as const,
+                    WebkitLineClamp: lines, maxHeight: lines * LINE }),
+            }}>
+              {it.label}
+            </div>
+          )}
         </div>
       );
     });
@@ -205,7 +209,7 @@ export async function GET(req: Request) {
         position: "absolute", left: 48, bottom: 30, width: W - 96,
         display: "flex", justifyContent: "space-between", fontSize: 20, color: "#a0a098",
       }}>
-        <div>Cadence · faded = planned but not done</div>
+        <div>Cadence · ✓ done · faded = not done · Actual = logged time</div>
         <div>
           {summary.unaccountedMinutes === 0
             ? "Every hour accounted for"

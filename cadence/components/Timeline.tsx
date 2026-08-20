@@ -2,6 +2,7 @@ import type { TaskRow, TimeBlockRow, CategoryRow } from "@/lib/types";
 import { unaccountedGaps, ACCOUNT_START, ACCOUNT_END } from "@/lib/analytics";
 import { fmtClock, fmtMinutes } from "@/lib/time";
 import { deleteBlockAction } from "@/app/actions";
+import { IconCheck } from "./icons";
 
 const KIND_LABEL: Record<string, string> = {
   focus: "Focused work", break: "Break", rest: "Rest", travel: "Travel",
@@ -63,12 +64,13 @@ export default function Timeline({
   const plannedItems: Item[] = scheduled.map((t) => ({
     kind: "task" as const, start: t.start_min!, end: t.end_min!, task: t,
   }));
-  const actualItems: Item[] = [
-    ...scheduled
-      .filter((t) => t.completed)
-      .map((t) => ({ kind: "task" as const, start: t.start_min!, end: t.end_min!, task: t })),
-    ...blocks.map((b) => ({ kind: "block" as const, start: b.start_min, end: b.end_min, block: b })),
-  ];
+  // Actual is what you logged, and only that — a tick is a claim, a logged
+  // block is a record. Completed tasks are marked on the planned side instead
+  // of being copied across, so the two columns answer different questions:
+  // what did I intend, and what did I actually put time into.
+  const actualItems: Item[] = blocks.map((b) => ({
+    kind: "block" as const, start: b.start_min, end: b.end_min, block: b,
+  }));
 
   /** Side-by-side lanes so overlapping items within a column never stack. */
   const laneOut = (list: Item[]) => {
@@ -113,8 +115,10 @@ export default function Timeline({
       </div>
       <div className="mb-1 flex text-[10px] font-medium uppercase tracking-[0.1em] text-ink-3">
         <span className="w-[3.25rem] shrink-0" />
-        <span className="flex-1">Planned</span>
-        <span className="flex-1 border-l border-line pl-2">Actual</span>
+        <span className="flex-1">Planned <span className="normal-case text-ink-3">· ✓ done</span></span>
+        <span className="flex-1 border-l border-line pl-2">
+          Actual <span className="normal-case text-ink-3">· logged</span>
+        </span>
       </div>
       <div className="relative" style={{ height }}>
         {/* divider between the two columns */}
@@ -157,6 +161,10 @@ export default function Timeline({
             // Never grow past whatever starts next in this lane, though.
             const room = y(it.nextStart) - y(it.start) - 2;
             const height = Math.min(Math.max(rawHeight, 26), Math.max(room, rawHeight));
+            // Below this there is not enough room for a legible line, so the
+            // bar carries its colour and its tooltip and no text at all —
+            // better than a row of letters sliced through the middle.
+            const noText = height < 20;
             // Only one line fits: keep it on one row and truncate.
             const tight = height < 36;
             // Half the track each, offset by which column this is.
@@ -173,9 +181,8 @@ export default function Timeline({
               const color = cat?.color ?? "#b8b8b0";
               const done = !!it.task.completed;
               const overdue = !done && nowMin !== null && it.end < nowMin;
-              // In the planned column an unfinished task is faded — a plan
-              // that has not become actual yet.
-              const faded = col.key === "planned" && !done;
+              // An unfinished plan recedes; a completed one is solid and ticked.
+              const faded = !done;
               return (
                 <div
                   key={`${col.key}-t-${it.task.id}`}
@@ -191,17 +198,20 @@ export default function Timeline({
                     col.key === "actual" ? " · completed" : ""
                   }`}
                 >
-                  <div className="flex min-w-0 items-baseline gap-1">
-                    <span className="min-w-0 truncate font-medium">{it.task.name}</span>
-                    {!tight && (
-                      <span className="shrink-0 text-ink-3">
-                        {fmtClock(it.start)}–{fmtClock(it.end)}
-                      </span>
-                    )}
-                  </div>
-                  {!tight && overdue && col.key === "planned" && (
-                    <span className="font-medium text-danger">overdue</span>
+                  {!noText && (
+                    <div className="flex min-w-0 items-baseline gap-1">
+                      {done && (
+                        <IconCheck size={10} className="shrink-0 text-ok" aria-label="completed" />
+                      )}
+                      <span className="min-w-0 truncate font-medium">{it.task.name}</span>
+                      {!tight && (
+                        <span className="shrink-0 text-ink-3">
+                          {fmtClock(it.start)}–{fmtClock(it.end)}
+                        </span>
+                      )}
+                    </div>
                   )}
+                  {!tight && overdue && <span className="font-medium text-danger">overdue</span>}
                 </div>
               );
             }
@@ -216,16 +226,18 @@ export default function Timeline({
                 title={`${KIND_LABEL[it.block.kind] ?? it.block.kind} · ${fmtClock(it.start)}–${fmtClock(it.end)}`}
               >
                 <input type="hidden" name="id" value={it.block.id} />
-                <div className="flex min-w-0 items-baseline gap-1">
-                  <span className="min-w-0 truncate font-medium">
-                    {it.block.label || KIND_LABEL[it.block.kind] || it.block.kind}
-                  </span>
-                  {!tight && (
-                    <span className="shrink-0 text-ink-3">
-                      {fmtClock(it.start)}–{fmtClock(it.end)}
+                {!noText && (
+                  <div className="flex min-w-0 items-baseline gap-1">
+                    <span className="min-w-0 truncate font-medium">
+                      {it.block.label || KIND_LABEL[it.block.kind] || it.block.kind}
                     </span>
-                  )}
-                </div>
+                    {!tight && (
+                      <span className="shrink-0 text-ink-3">
+                        {fmtClock(it.start)}–{fmtClock(it.end)}
+                      </span>
+                    )}
+                  </div>
+                )}
                 <button
                   type="submit"
                   aria-label="Remove block"

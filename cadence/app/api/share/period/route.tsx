@@ -158,8 +158,9 @@ async function weekImage(user: U, today: string, showLabels: boolean) {
           if (t.start_min === null || t.end_min === null) continue;
           const cat = t.category_id ? catMap.get(t.category_id) : undefined;
           const color = cat?.color ?? "#b8b8b0";
+          // Planned shows intent (solid once ticked); actual shows only
+          // logged time, so the two strips stay independent claims.
           planned.push({ s: t.start_min, e: t.end_min, color, faint: !t.completed });
-          if (t.completed) actual.push({ s: t.start_min, e: t.end_min, color, faint: false });
         }
         for (const b of d.blocks) {
           actual.push({
@@ -183,7 +184,7 @@ async function weekImage(user: U, today: string, showLabels: boolean) {
       })}
 
       <Footer
-        left="Cadence · each day: planned | actual · faded = not done"
+        left="Cadence · each day: planned | actual (logged) · faded = not done"
         right={`${active.length} day${active.length === 1 ? "" : "s"} planned`}
       />
     </div>,
