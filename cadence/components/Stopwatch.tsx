@@ -34,6 +34,7 @@ export default function Stopwatch() {
   const [countAsFocus, setCountAsFocus] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const labelRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -64,6 +65,7 @@ export default function Stopwatch() {
     const startMin = minsOf(startedAt);
     const endMin = Math.max(startMin + 1, minsOf(ended));
     setSaving(true);
+    setError(null);
     try {
       await logTrackedTimeAction({
         label: label.trim() || KINDS.find((k) => k[0] === kind)?.[1] || "Tracked",
@@ -73,6 +75,13 @@ export default function Stopwatch() {
       setStartedAt(null);
       setLabel("");
       router.refresh();
+    } catch {
+      // Keep the stopwatch running so the elapsed time isn't lost — the user
+      // can reload and stop it again rather than losing the record.
+      setError(
+        `Couldn't save it — the server call failed. Your ${hhmm(startedAt)} start is ` +
+          "still running, so reload the page (Ctrl+Shift+R) and stop it again."
+      );
     } finally {
       setSaving(false);
     }
@@ -102,6 +111,11 @@ export default function Stopwatch() {
               Discard
             </Button>
           </div>
+          {error && (
+            <p className="mt-3 rounded-lg bg-danger-soft px-3 py-2 text-left text-xs text-danger">
+              {error}
+            </p>
+          )}
         </div>
       ) : (
         <div className="space-y-3">

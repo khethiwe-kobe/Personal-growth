@@ -1,13 +1,15 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   startFocusAction, focusHeartbeatAction, completeFocusAction,
   interruptFocusAction, sweepStaleFocusAction,
 } from "@/app/actions";
 import { Button, Ring, Card } from "./ui";
 import FocusTasks from "./FocusTasks";
-import type { TaskRow, CategoryRow } from "@/lib/types";
+import type { TaskRow, CategoryRow, FocusSessionRow, TimeBlockRow } from "@/lib/types";
+import { fmtClock, fmtMinutes } from "@/lib/time";
 import { IconPlay, IconX } from "./icons";
 import { useRouter } from "next/navigation";
 
@@ -73,15 +75,20 @@ function fmt(s: number): string {
 }
 
 export default function FocusTimer({
-  defaults, tasks = [], categories = [], date,
+  defaults, tasks = [], categories = [], date, todaySessions = [], todayBlocks = [],
 }: {
   defaults: Partial<Config>;
   tasks?: TaskRow[];
   categories?: CategoryRow[];
   date: string;
+  todaySessions?: FocusSessionRow[];
+  todayBlocks?: TimeBlockRow[];
 }) {
   const router = useRouter();
   const [immersive, setImmersive] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [starting, setStarting] = useState(false);
+  const [startError, setStartError] = useState<string | null>(null);
   const [cfg, setCfg] = useState<Config>({
     focusMinutes: 50, breakMinutes: 10, sessions: 2, longBreakMinutes: 20,
     breaksEnabled: true, autoStart: true, sound: true, notify: false, label: "",
@@ -111,18 +118,33 @@ export default function FocusTimer({
   const phase = phases[phaseIdx];
 
   const start = async () => {
-    const focusTotal = cfg.focusMinutes * cfg.sessions;
-    const id = await startFocusAction({ ...cfg, focusMinutes: focusTotal });
-    const p = buildPhases(cfg);
-    focusAccrued.current = 0;
-    setSessionId(id);
-    setPhases(p);
-    setPhaseIdx(0);
-    setRemaining(p[0].seconds);
-    setRunning(true);
-    setFinished(false);
-    if (cfg.notify && "Notification" in window && Notification.permission === "default")
-      Notification.requestPermission();
+    if (starting) return;
+    setStarting(true);
+    setStartError(null);
+    try {
+      const focusTotal = cfg.focusMinutes * cfg.sessions;
+      const id = await startFocusAction({ ...cfg, focusMinutes: focusTotal });
+      const p = buildPhases(cfg);
+      focusAccrued.current = 0;
+      setSessionId(id);
+      setPhases(p);
+      setPhaseIdx(0);
+      setRemaining(p[0].seconds);
+      setRunning(true);
+      setFinished(false);
+      if (cfg.notify && "Notification" in window && Notification.permission === "default")
+        Notification.requestPermission();
+    } catch {
+      // Most often this is a page left open across a deployment: the server
+      // action it was built against no longer exists. Say so rather than
+      // leaving a button that appears to do nothing.
+      setStartError(
+        "Couldn't start the session — the connection to the server failed. " +
+          "Reload the page (Ctrl+Shift+R) and try again."
+      );
+    } finally {
+      setStarting(false);
+    }
   };
 
   const notifyMsg = useCallback((title: string, body: string) => {
@@ -213,6 +235,9 @@ export default function FocusTimer({
     router.refresh();
   };
 
+  // document.body only exists on the client; the portal waits for mount.
+  useEffect(() => { setMounted(true); }, []);
+
   const exitImmersive = () => {
     setImmersive(false);
     if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {});
@@ -264,13 +289,40 @@ export default function FocusTimer({
     const focusPhases = phases.filter((p) => p.kind === "focus").length;
     const focusDone = phases.slice(0, phaseIdx).filter((p) => p.kind === "focus").length;
 
+    // What today already holds: finished focus sessions and stopwatch-tracked
+    // blocks, newest first, so the screen shows the day's work and not only
+    // the current countdown.
+    const loggedMinutes = todaySessions
+      .filter((f) => f.status !== "active")
+      .reduce((sum, f) => sum + Math.round(f.focus_seconds / 60), 0);
+    const logEntries = [
+      ...todaySessions
+        .filter((f) => f.status !== "active")
+        .map((f) => ({
+          key: `s${f.id}`,
+          label: f.label || "Focus",
+          time: fmtMinutes(Math.round(f.focus_seconds / 60)),
+          interrupted: f.status === "interrupted",
+          sort: f.started_at,
+        })),
+      ...todayBlocks
+        .filter((bl) => bl.kind === "focus")
+        .map((bl) => ({
+          key: `b${bl.id}`,
+          label: bl.label || "Tracked",
+          time: `${fmtClock(bl.start_min)}–${fmtClock(bl.end_min)}`,
+          interrupted: false,
+          sort: String(bl.start_min).padStart(4, "0"),
+        })),
+    ].sort((a, b) => (a.sort < b.sort ? 1 : -1));
+
     // Immersive mode: the timer takes the whole viewport, with today's list
     // beside it so the session stays tied to what it is actually for.
-    if (immersive) {
+    if (immersive && mounted) {
       const isFocus = phase?.kind === "focus";
       const accentVar = isFocus || finished ? "var(--accent)" : "var(--warn)";
-      return (
-        <div className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-bg px-5 py-6">
+      return createPortal(
+        <div className="fixed inset-0 z-[100] flex flex-col overflow-y-auto bg-bg px-5 py-6">
           <div className="flex items-start justify-between gap-4">
             <p className="text-xs font-medium uppercase tracking-[0.16em] text-ink-3">
               {finished ? "Complete" : isFocus ? (cfg.label || "Focus") : "Break"}
@@ -328,8 +380,37 @@ export default function FocusTimer({
               </div>
             </div>
 
-            <div className="w-full max-w-sm rounded-2xl border border-line bg-surface p-4">
-              <FocusTasks tasks={tasks} categories={categories} date={date} compact />
+            <div className="flex w-full max-w-sm flex-col gap-3">
+              <div className="rounded-2xl border border-line bg-surface p-4">
+                <FocusTasks tasks={tasks} categories={categories} date={date} compact />
+              </div>
+              <div className="rounded-2xl border border-line bg-surface p-4">
+                <div className="mb-2 flex items-baseline justify-between gap-3">
+                  <h3 className="text-sm font-medium">Logged today</h3>
+                  <span className="text-[11px] text-ink-3">
+                    {loggedMinutes > 0 ? fmtMinutes(loggedMinutes) + " focused" : "nothing yet"}
+                  </span>
+                </div>
+                {logEntries.length === 0 ? (
+                  <p className="text-xs text-ink-3">
+                    This session will appear here when it finishes.
+                  </p>
+                ) : (
+                  <ul className="max-h-56 space-y-1 overflow-y-auto text-xs">
+                    {logEntries.map((e) => (
+                      <li key={e.key} className="flex items-center gap-2">
+                        <span
+                          className={`h-1.5 w-1.5 shrink-0 rounded-full ${
+                            e.interrupted ? "bg-danger" : "bg-ok"
+                          }`}
+                        />
+                        <span className="min-w-0 flex-1 truncate text-ink-2">{e.label}</span>
+                        <span className="shrink-0 tabular-nums text-ink-3">{e.time}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             </div>
           </div>
 
@@ -338,7 +419,8 @@ export default function FocusTimer({
               Leaving this tab for more than 30 seconds during focus counts as an interruption.
             </p>
           )}
-        </div>
+        </div>,
+        document.body
       );
     }
     return (
@@ -457,10 +539,13 @@ export default function FocusTimer({
         <p className="text-xs text-ink-3">
           Total focus: <strong>{Math.round(cfg.focusMinutes * cfg.sessions / 6) / 10}h</strong>
         </p>
-        <Button type="button" onClick={start} disabled={cfg.focusMinutes < 5}>
-          <IconPlay size={15} /> Start focusing
+        <Button type="button" onClick={start} disabled={cfg.focusMinutes < 5 || starting}>
+          <IconPlay size={15} /> {starting ? "Starting…" : "Start focusing"}
         </Button>
       </div>
+      {startError && (
+        <p className="mt-3 rounded-lg bg-danger-soft px-3 py-2 text-xs text-danger">{startError}</p>
+      )}
     </Card>
   );
 }

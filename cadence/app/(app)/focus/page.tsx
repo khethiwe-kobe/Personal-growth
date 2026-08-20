@@ -1,6 +1,6 @@
 import { requireUser } from "@/lib/auth";
 import { all, get } from "@/lib/db";
-import { summariesForRange, tasksForDay, categoriesFor } from "@/lib/repo";
+import { summariesForRange, tasksForDay, categoriesFor, focusForDay, blocksForDay } from "@/lib/repo";
 import { todayInTz, addDays, startOfWeek, monthOf, monthDates, fmtMinutes, fmtDateShort } from "@/lib/time";
 import { PageTitle, Card, SectionHeading, Stat } from "@/components/ui";
 import FocusTimer from "@/components/FocusTimer";
@@ -47,9 +47,11 @@ export default async function FocusPage() {
       [user.id]
     ),
   ]);
-  const [todayTasks, categories] = await Promise.all([
+  const [todayTasks, categories, todaySessions, todayBlocks] = await Promise.all([
     tasksForDay(user.id, today),
     categoriesFor(user.id),
+    focusForDay(user.id, today),
+    blocksForDay(user.id, today),
   ]);
   let defaults = {};
   try { defaults = JSON.parse(settings?.focus_defaults || "{}"); } catch {}
@@ -70,6 +72,8 @@ export default async function FocusPage() {
         tasks={todayTasks}
         categories={categories}
         date={today}
+        todaySessions={todaySessions}
+        todayBlocks={todayBlocks}
       />
 
       <SectionHeading>Account for the hour</SectionHeading>
