@@ -106,9 +106,16 @@ export default function Timeline({
         {/* items */}
         {placed.map((it) => {
           const widthPct = 100 / laneCount;
+          // A 20-minute block is ~14px at this scale, but padding plus one
+          // 11px line needs ~26px — anything less clipped its own label.
+          const rawHeight = y(it.end) - y(it.start) - 2;
+          const height = Math.max(rawHeight, 26);
+          // Only one line fits: keep it on one row and truncate rather than
+          // wrapping into space that isn't there.
+          const tight = height < 36;
           const common = {
             top: y(it.start) + 1,
-            height: Math.max(y(it.end) - y(it.start) - 2, 14),
+            height,
             left: `calc(3.25rem + (100% - 3.25rem) * ${it.lane / laneCount})`,
             width: `calc((100% - 3.25rem) * ${widthPct / 100} - 4px)`,
           } as React.CSSProperties;
@@ -120,7 +127,9 @@ export default function Timeline({
             return (
               <div
                 key={`t-${it.task.id}`}
-                className={`absolute overflow-hidden rounded-lg border px-2 py-1 text-[11px] leading-tight ${done ? "opacity-55" : ""}`}
+                className={`absolute flex flex-col justify-center overflow-hidden rounded-lg border px-2 text-[11px] leading-tight ${
+                  tight ? "py-0" : "py-1"
+                } ${done ? "opacity-55" : ""}`}
                 style={{
                   ...common,
                   background: `color-mix(in oklab, ${color} 26%, var(--surface))`,
@@ -128,10 +137,21 @@ export default function Timeline({
                 }}
                 title={`${it.task.name} · ${fmtClock(it.start)}–${fmtClock(it.end)}`}
               >
-                <span className={`font-medium ${done ? "line-through" : ""}`}>{it.task.name}</span>
-                <span className="ml-1 text-ink-3">{fmtClock(it.start)}–{fmtClock(it.end)}</span>
-                {overdue && <span className="ml-1 font-medium text-danger">overdue</span>}
-                {done && <span className="ml-1 text-ok">done</span>}
+                <div className="flex min-w-0 items-baseline gap-1">
+                  <span className={`min-w-0 truncate font-medium ${done ? "line-through" : ""}`}>
+                    {it.task.name}
+                  </span>
+                  {!tight && (
+                    <span className="shrink-0 text-ink-3">
+                      {fmtClock(it.start)}–{fmtClock(it.end)}
+                    </span>
+                  )}
+                </div>
+                {!tight && (overdue || done) && (
+                  <span className={overdue ? "font-medium text-danger" : "text-ok"}>
+                    {overdue ? "overdue" : "done"}
+                  </span>
+                )}
               </div>
             );
           }
@@ -139,15 +159,23 @@ export default function Timeline({
             <form
               key={`b-${it.block.id}`}
               action={deleteBlockAction}
-              className={`group absolute overflow-hidden rounded-lg border px-2 py-1 text-[11px] leading-tight ${
-                KIND_CLASS[it.block.kind] ?? "border-line bg-surface-2 text-ink-2"
-              }`}
+              className={`group absolute flex flex-col justify-center overflow-hidden rounded-lg border px-2 text-[11px] leading-tight ${
+                tight ? "py-0" : "py-1"
+              } ${KIND_CLASS[it.block.kind] ?? "border-line bg-surface-2 text-ink-2"}`}
               style={common}
               title={`${KIND_LABEL[it.block.kind] ?? it.block.kind} · ${fmtClock(it.start)}–${fmtClock(it.end)}`}
             >
               <input type="hidden" name="id" value={it.block.id} />
-              <span className="font-medium">{it.block.label || KIND_LABEL[it.block.kind] || it.block.kind}</span>
-              <span className="ml-1 text-ink-3">{fmtClock(it.start)}–{fmtClock(it.end)}</span>
+              <div className="flex min-w-0 items-baseline gap-1">
+                <span className="min-w-0 truncate font-medium">
+                  {it.block.label || KIND_LABEL[it.block.kind] || it.block.kind}
+                </span>
+                {!tight && (
+                  <span className="shrink-0 text-ink-3">
+                    {fmtClock(it.start)}–{fmtClock(it.end)}
+                  </span>
+                )}
+              </div>
               <button
                 type="submit"
                 aria-label="Remove block"

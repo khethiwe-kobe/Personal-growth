@@ -5,7 +5,7 @@ import {
   createSession, destroySession, getSessionUser, hashPassword,
   verifyPassword, requireUser, getGroupForUser,
 } from "@/lib/auth";
-import { safeTz, todayInTz, parseClock } from "@/lib/time";
+import { safeTz, todayInTz, parseClock, addDays } from "@/lib/time";
 import { parseTimetableText } from "@/lib/timetable-parse";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
@@ -314,19 +314,54 @@ const BLOCK_KINDS = [
   "focus", "break", "rest", "travel", "social", "personal", "unplanned", "other", "sleep",
 ];
 
-export async function createBlockAction(fd: FormData) {
+export async function createBlockAction(_prev: unknown, fd: FormData) {
   const user = await requireUser();
   const date = str(fd, "date", 10);
   const start = parseClock(str(fd, "start_time"));
   const end = parseClock(str(fd, "end_time"));
   const kind = BLOCK_KINDS.includes(str(fd, "kind")) ? str(fd, "kind") : "break";
   const label = str(fd, "label", 80);
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || start === null || end === null || end <= start) return;
+
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return { error: "That date isn't valid." };
+  if (start === null) return { error: "Add a start time." };
+  if (end === null) return { error: "Add an end time." };
+  if (end === start) return { error: "The start and end times are the same." };
+
+  // Sleep is the obvious thing to log, and sleep crosses midnight: 22:30-06:30
+  // has an end "before" its start. Split it into tonight's portion and
+  // tomorrow morning's rather than rejecting it.
+  if (end < start) {
+    const tomorrow = addDays(date, 1);
+    await batch([
+      {
+        sql: "INSERT INTO time_blocks (user_id, date, start_min, end_min, kind, label) VALUES (?,?,?,?,?,?)",
+        args: [user.id, date, start, 24 * 60, kind, label],
+      },
+      ...(end > 0
+        ? [{
+            sql: "INSERT INTO time_blocks (user_id, date, start_min, end_min, kind, label) VALUES (?,?,?,?,?,?)",
+            args: [user.id, tomorrow, 0, end, kind, label] as (string | number)[],
+          }]
+        : []),
+    ]);
+    revalidatePath("/today");
+    revalidatePath("/dashboard");
+    return {
+      ok: `Logged ${fmtClockLabel(start)}–24:00 today and 00:00–${fmtClockLabel(end)} tomorrow.`,
+    };
+  }
+
   await run(
     "INSERT INTO time_blocks (user_id, date, start_min, end_min, kind, label) VALUES (?,?,?,?,?,?)",
     [user.id, date, start, end, kind, label]
   );
   revalidatePath("/today");
+  revalidatePath("/dashboard");
+  return { ok: "" };
+}
+
+function fmtClockLabel(min: number): string {
+  return `${String(Math.floor(min / 60) % 24).padStart(2, "0")}:${String(min % 60).padStart(2, "0")}`;
 }
 
 /**

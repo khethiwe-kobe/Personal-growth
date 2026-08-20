@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useActionState, useState } from "react";
 import { createTaskAction, createBlockAction, importTimetableToDayAction } from "@/app/actions";
 import type { CategoryRow } from "@/lib/types";
 import { Button } from "./ui";
@@ -85,6 +85,11 @@ const BLOCK_KINDS = [
 
 export function AddBlockForm({ date }: { date: string }) {
   const [open, setOpen] = useState(false);
+  const [state, action, pending] = useActionState(
+    createBlockAction,
+    null as { error?: string; ok?: string } | null
+  );
+
   if (!open) {
     return (
       <button
@@ -96,33 +101,52 @@ export function AddBlockForm({ date }: { date: string }) {
       </button>
     );
   }
+
   return (
-    <form
-      action={async (fd) => { await createBlockAction(fd); setOpen(false); }}
-      className="fade-up mt-2 grid grid-cols-2 gap-2 rounded-xl bg-surface-2 p-3 sm:grid-cols-5"
-    >
+    <form action={action} className="fade-up mt-2 space-y-2 rounded-xl bg-surface-2 p-3">
       <input type="hidden" name="date" value={date} />
+
       <label className="block">
         <span className="mb-1 block text-[11px] text-ink-3">Type</span>
-        <select name="kind" defaultValue="break">
+        <select name="kind" defaultValue="sleep" className="w-full">
           {BLOCK_KINDS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
         </select>
       </label>
+
+      {/* Times get a row to themselves: a native time input needs real width
+          to show anything but its icon. */}
+      <div className="grid grid-cols-2 gap-2">
+        <label className="block">
+          <span className="mb-1 block text-[11px] text-ink-3">From</span>
+          <input name="start_time" type="time" required className="w-full" />
+        </label>
+        <label className="block">
+          <span className="mb-1 block text-[11px] text-ink-3">To</span>
+          <input name="end_time" type="time" required className="w-full" />
+        </label>
+      </div>
+
       <label className="block">
-        <span className="mb-1 block text-[11px] text-ink-3">From</span>
-        <input name="start_time" type="time" required />
-      </label>
-      <label className="block">
-        <span className="mb-1 block text-[11px] text-ink-3">To</span>
-        <input name="end_time" type="time" required />
-      </label>
-      <label className="col-span-2 block sm:col-span-1">
         <span className="mb-1 block text-[11px] text-ink-3">Label (optional)</span>
-        <input name="label" placeholder="e.g. Lunch" />
+        <input name="label" placeholder="e.g. Sleep, Lunch, Drive to campus" className="w-full" />
       </label>
-      <div className="col-span-2 flex items-end gap-2 sm:col-span-1">
-        <Button className="!py-2">Add</Button>
-        <Button variant="ghost" type="button" className="!py-2" onClick={() => setOpen(false)}>×</Button>
+
+      <p className="text-[11px] leading-relaxed text-ink-3">
+        Crossing midnight is fine — 22:30 to 06:30 is split across the two days for you.
+      </p>
+
+      {state?.error && (
+        <p className="rounded-lg bg-danger-soft px-3 py-2 text-[11px] text-danger">{state.error}</p>
+      )}
+      {state?.ok ? <p className="text-[11px] text-ok">{state.ok}</p> : null}
+
+      <div className="flex items-center gap-2 pt-1">
+        <Button className="!py-2 flex-1" disabled={pending}>
+          {pending ? "Adding…" : "Add"}
+        </Button>
+        <Button variant="ghost" type="button" className="!py-2" onClick={() => setOpen(false)}>
+          Cancel
+        </Button>
       </div>
     </form>
   );
