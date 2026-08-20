@@ -189,6 +189,37 @@ export async function createCategoryAction(fd: FormData) {
   revalidatePath("/", "layout");
 }
 
+/**
+ * Creates a category from wherever you happen to need one — the task form,
+ * the goal wizard — and returns its id so the caller can select it straight
+ * away instead of sending you to Settings and back.
+ */
+export async function addCategoryInlineAction(
+  name: string,
+  color: string
+): Promise<{ id: number; name: string; color: string } | { error: string }> {
+  const user = await requireUser();
+  const clean = String(name ?? "").trim().slice(0, 40);
+  if (!clean) return { error: "Give the category a name." };
+  const safe = safeColor(String(color ?? ""));
+
+  const existing = await get<{ id: number }>(
+    "SELECT id FROM categories WHERE user_id=? AND name=? COLLATE NOCASE AND archived=0",
+    [user.id, clean]
+  );
+  if (existing) return { error: "You already have a category with that name." };
+
+  const max = await get<{ m: number }>(
+    "SELECT COALESCE(MAX(position),0) AS m FROM categories WHERE user_id=?", [user.id]
+  );
+  const info = await run(
+    "INSERT INTO categories (user_id, name, color, kind, position) VALUES (?, ?, ?, 'both', ?)",
+    [user.id, clean, safe, Number(max?.m ?? 0) + 1]
+  );
+  revalidatePath("/", "layout");
+  return { id: info.lastInsertRowid, name: clean, color: safe };
+}
+
 export async function updateCategoryAction(fd: FormData) {
   const user = await requireUser();
   const id = num(fd, "id");
@@ -327,27 +358,29 @@ export async function createBlockAction(_prev: unknown, fd: FormData) {
   if (end === null) return { error: "Add an end time." };
   if (end === start) return { error: "The start and end times are the same." };
 
-  // Sleep is the obvious thing to log, and sleep crosses midnight: 22:30-06:30
-  // has an end "before" its start. Split it into tonight's portion and
-  // tomorrow morning's rather than rejecting it.
+  // Sleep crosses midnight, so 22:30-06:30 has an end "before" its start.
+  // You are recording a night that already happened, so the end time belongs
+  // to the day you are looking at: the 06:30 fills this morning's gap, and the
+  // 22:30 goes back to yesterday evening. (To plan a night ahead, log it on
+  // tomorrow's date and it lands the same way.)
   if (end < start) {
-    const tomorrow = addDays(date, 1);
+    const yesterday = addDays(date, -1);
     await batch([
       {
         sql: "INSERT INTO time_blocks (user_id, date, start_min, end_min, kind, label) VALUES (?,?,?,?,?,?)",
-        args: [user.id, date, start, 24 * 60, kind, label],
+        args: [user.id, yesterday, start, 24 * 60, kind, label],
       },
       ...(end > 0
         ? [{
             sql: "INSERT INTO time_blocks (user_id, date, start_min, end_min, kind, label) VALUES (?,?,?,?,?,?)",
-            args: [user.id, tomorrow, 0, end, kind, label] as (string | number)[],
+            args: [user.id, date, 0, end, kind, label] as (string | number)[],
           }]
         : []),
     ]);
     revalidatePath("/today");
     revalidatePath("/dashboard");
     return {
-      ok: `Logged ${fmtClockLabel(start)}–24:00 today and 00:00–${fmtClockLabel(end)} tomorrow.`,
+      ok: `Logged ${fmtClockLabel(start)}–24:00 yesterday and 00:00–${fmtClockLabel(end)} today.`,
     };
   }
 
