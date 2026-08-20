@@ -62,6 +62,17 @@ cp .env.example .env.local   # fill in the two Supabase values
 npm run dev                  # http://localhost:3200
 ```
 
+### Instant preview (no Supabase needed)
+
+```bash
+NEXT_PUBLIC_DEMO=1 npm run dev
+```
+
+Demo mode runs the full app against in-memory sample data (August 2026 for
+Khethiwe and KB) — every page works and is interactive, nothing persists, and
+a "Demo data" badge shows in the sidebar. Never set this flag on a real
+deployment.
+
 ## How money works (the important part)
 
 - Every shared expense stores **who paid** and a **split** (one share per member):

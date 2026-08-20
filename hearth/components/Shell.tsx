@@ -4,6 +4,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useApp } from "@/lib/store";
+import { isDemo } from "@/lib/supabase";
 import { cx } from "./ui";
 
 const NAV: Array<{ group: string | null; items: Array<{ href: string; label: string }> }> = [
@@ -123,6 +124,11 @@ export default function Shell({ children }: { children: ReactNode }) {
       <div className="px-3 pb-6 pt-2">
         <div className="text-lg font-semibold tracking-tight">Hearth</div>
         <div className="mt-0.5 truncate text-xs text-muted">{household.name}</div>
+        {isDemo && (
+          <div className="mt-1.5 inline-block rounded-full border border-border bg-surface-2 px-2 py-0.5 text-[11px] font-medium text-muted">
+            Demo data
+          </div>
+        )}
       </div>
       <div className="flex-1 overflow-y-auto pb-6">
         <NavLinks onNavigate={() => setMenuOpen(false)} />
