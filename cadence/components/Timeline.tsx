@@ -115,7 +115,12 @@ export default function Timeline({
       </div>
       <div className="mb-1 flex text-[10px] font-medium uppercase tracking-[0.1em] text-ink-3">
         <span className="w-[3.25rem] shrink-0" />
-        <span className="flex-1">Planned <span className="normal-case text-ink-3">· ✓ done</span></span>
+        <span className="flex-1 items-center gap-1">
+          Planned
+          <span className="ml-1 inline-flex items-center gap-0.5 normal-case text-ink-3">
+            · <IconCheck size={10} className="text-ok" /> done
+          </span>
+        </span>
         <span className="flex-1 border-l border-line pl-2">
           Actual <span className="normal-case text-ink-3">· logged</span>
         </span>

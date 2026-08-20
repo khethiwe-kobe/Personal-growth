@@ -23,7 +23,10 @@ const GUTTER = 86;        // hour labels
 const GAP = 22;           // between the two columns
 const COL = (W - 96 - GUTTER - GAP) / 2;
 
-type Item = { start: number; end: number; label: string; color: string; faint: boolean };
+type Item = {
+  start: number; end: number; label: string; color: string;
+  faint: boolean; done?: boolean;
+};
 
 /**
  * Lays overlapping items into side-by-side lanes so nothing is drawn on top of
@@ -82,9 +85,10 @@ export async function GET(req: Request) {
     const cat = t.category_id ? catMap.get(t.category_id) : undefined;
     planned.push({
       start: t.start_min, end: t.end_min,
-      label: `${t.completed ? "✓ " : ""}${showLabels ? t.name : (cat?.name ?? "Task")}`,
+      label: showLabels ? t.name : (cat?.name ?? "Task"),
       color: cat?.color ?? "#b8b8b0",
       faint: !t.completed,
+      done: !!t.completed,
     });
   }
   for (const b of blocks) {
@@ -129,10 +133,21 @@ export async function GET(req: Request) {
           padding: "0 12px", borderRadius: 10, overflow: "hidden",
           background: it.color, opacity: it.faint ? 0.45 : 1,
         }}>
+          {it.done && (
+            // Drawn as a path, not typed: the renderer has no font fallback,
+            // so a tick character comes out as an empty box.
+            <svg
+              width="19" height="19" viewBox="0 0 24 24" fill="none"
+              stroke="#3f6b52" strokeWidth="3.4" strokeLinecap="round" strokeLinejoin="round"
+              style={{ marginRight: 8, flexShrink: 0 }}
+            >
+              <path d="M5 12.5 L10 17.5 L19 7" />
+            </svg>
+          )}
           {showText && (
             <div style={{
               fontSize: 21, color: "#1f1f19", lineHeight: `${LINE}px`,
-              width: laneW - 30, overflow: "hidden",
+              width: laneW - 30 - (it.done ? 28 : 0), overflow: "hidden",
               ...(single
                 ? { whiteSpace: "nowrap" as const, textOverflow: "ellipsis" as const }
                 : { display: "-webkit-box", WebkitBoxOrient: "vertical" as const,
@@ -209,7 +224,7 @@ export async function GET(req: Request) {
         position: "absolute", left: 48, bottom: 30, width: W - 96,
         display: "flex", justifyContent: "space-between", fontSize: 20, color: "#a0a098",
       }}>
-        <div>Cadence · ✓ done · faded = not done · Actual = logged time</div>
+        <div>Cadence · ticked = done · faded = not done · Actual = time you logged</div>
         <div>
           {summary.unaccountedMinutes === 0
             ? "Every hour accounted for"

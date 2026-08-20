@@ -114,7 +114,7 @@ export default function ReviewForm({
 
       <div className="sticky bottom-16 mt-6 flex gap-2 rounded-2xl border border-line bg-surface p-3 md:bottom-4" style={{ boxShadow: "var(--shadow)" }}>
         <Button variant="ghost" type="button" onClick={() => save(false)} disabled={pending}>
-          {savedDraft ? "Draft saved ✓" : "Save draft"}
+          {savedDraft ? "Draft saved" : "Save draft"}
         </Button>
         <Button type="button" className="flex-1" onClick={() => save(true)} disabled={pending}>
           {pending ? "Saving…" : "Submit review"}
