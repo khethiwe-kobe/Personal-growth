@@ -9,6 +9,7 @@ import { Card, SectionHeading, ProgressBar, EmptyState, Stat } from "@/component
 import { IconChevronL, IconChevronR } from "@/components/icons";
 import TaskItem from "@/components/TaskItem";
 import Timeline from "@/components/Timeline";
+import ShareDay from "@/components/ShareDay";
 import { AddTaskForm, AddBlockForm } from "@/components/TodayForms";
 import { CheckinRow } from "@/components/GoalCheckin";
 
@@ -147,6 +148,7 @@ export default async function TodayPage({
               <AddBlockForm date={date} />
             </div>
           </Card>
+          <ShareDay date={date} />
           <p className="mt-2 text-[11px] leading-relaxed text-ink-3">
             Every one of the 24 hours counts, midnight to midnight — sleep included. Log
             it and it is accounted for: sleep, breaks, rest and travel all count. Not every
