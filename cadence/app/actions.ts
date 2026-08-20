@@ -358,29 +358,32 @@ export async function createBlockAction(_prev: unknown, fd: FormData) {
   if (end === null) return { error: "Add an end time." };
   if (end === start) return { error: "The start and end times are the same." };
 
-  // Sleep crosses midnight, so 22:30-06:30 has an end "before" its start.
-  // You are recording a night that already happened, so the end time belongs
-  // to the day you are looking at: the 06:30 fills this morning's gap, and the
-  // 22:30 goes back to yesterday evening. (To plan a night ahead, log it on
-  // tomorrow's date and it lands the same way.)
+  // Sleep crosses midnight, so 22:30-06:30 has an end "before" its start, and
+  // which night it belongs to is genuinely ambiguous: logged in the morning it
+  // is the night just gone, logged in the evening it is the night ahead. The
+  // form asks, defaulting to last night.
   if (end < start) {
-    const yesterday = addDays(date, -1);
+    const ahead = str(fd, "night", 10) === "next";
+    const evening = ahead ? date : addDays(date, -1);
+    const morning = ahead ? addDays(date, 1) : date;
     await batch([
       {
         sql: "INSERT INTO time_blocks (user_id, date, start_min, end_min, kind, label) VALUES (?,?,?,?,?,?)",
-        args: [user.id, yesterday, start, 24 * 60, kind, label],
+        args: [user.id, evening, start, 24 * 60, kind, label],
       },
       ...(end > 0
         ? [{
             sql: "INSERT INTO time_blocks (user_id, date, start_min, end_min, kind, label) VALUES (?,?,?,?,?,?)",
-            args: [user.id, date, 0, end, kind, label] as (string | number)[],
+            args: [user.id, morning, 0, end, kind, label] as (string | number)[],
           }]
         : []),
     ]);
     revalidatePath("/today");
     revalidatePath("/dashboard");
     return {
-      ok: `Logged ${fmtClockLabel(start)}–24:00 yesterday and 00:00–${fmtClockLabel(end)} today.`,
+      ok: ahead
+        ? `Logged ${fmtClockLabel(start)}–24:00 tonight and 00:00–${fmtClockLabel(end)} tomorrow.`
+        : `Logged ${fmtClockLabel(start)}–24:00 yesterday and 00:00–${fmtClockLabel(end)} today.`,
     };
   }
 

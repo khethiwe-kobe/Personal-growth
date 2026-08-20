@@ -36,8 +36,15 @@ function laneOut(items: Item[]) {
     let lane = laneEnds.findIndex((end) => end <= it.start);
     if (lane === -1) { lane = laneEnds.length; laneEnds.push(it.end); }
     else laneEnds[lane] = it.end;
-    return { ...it, lane };
+    return { ...it, lane, nextStart: ACCOUNT_END };
   });
+  // Cap how far a short item may grow, so its minimum height cannot reach
+  // whatever starts next in the same lane.
+  for (let i = 0; i < placed.length; i++) {
+    for (let j = i + 1; j < placed.length; j++) {
+      if (placed[j].lane === placed[i].lane) { placed[i].nextStart = placed[j].start; break; }
+    }
+  }
   return { placed, lanes: Math.max(laneEnds.length, 1) };
 }
 
@@ -103,7 +110,16 @@ export async function GET(req: Request) {
     const laneW = COL / data.lanes;
     return data.placed.map((it, i) => {
       const top = y(it.start);
-      const height = Math.max(y(it.end) - top - 3, 26);
+      const raw = y(it.end) - top - 3;
+      const room = y(it.nextStart) - top - 3;
+      const height = Math.min(Math.max(raw, 26), Math.max(room, raw));
+      // Satori does not clip an overflowing child the way a browser does, so a
+      // long name used to spill out of its block and over the one below.
+      // Give the text an explicit line budget for the height available and
+      // truncate past it.
+      const LINE = 26;
+      const lines = Math.max(1, Math.floor((height - 8) / LINE));
+      const single = lines === 1;
       return (
         <div key={`${side}${i}`} style={{
           position: "absolute", left: x0 + it.lane * laneW + 2, top,
@@ -111,7 +127,16 @@ export async function GET(req: Request) {
           padding: "0 12px", borderRadius: 10, overflow: "hidden",
           background: it.color, opacity: it.faint ? 0.45 : 1,
         }}>
-          <div style={{ fontSize: 21, color: "#1f1f19", overflow: "hidden" }}>{it.label}</div>
+          <div style={{
+            fontSize: 21, color: "#1f1f19", lineHeight: `${LINE}px`,
+            width: laneW - 30, overflow: "hidden",
+            ...(single
+              ? { whiteSpace: "nowrap" as const, textOverflow: "ellipsis" as const }
+              : { display: "-webkit-box", WebkitBoxOrient: "vertical" as const,
+                  WebkitLineClamp: lines, maxHeight: lines * LINE }),
+          }}>
+            {it.label}
+          </div>
         </div>
       );
     });

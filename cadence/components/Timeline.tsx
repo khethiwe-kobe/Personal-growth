@@ -47,22 +47,56 @@ export default function Timeline({
   ]);
   const totalGap = gaps.reduce((s, g) => s + (g.end - g.start), 0);
 
-  // simple lane layout for overlapping items
+  /**
+   * Two columns: what you planned, and what actually happened.
+   *
+   * Planned holds every scheduled task. Actual holds the time you logged plus
+   * the tasks you completed — so a faded bar on the left with nothing beside
+   * it is a plan you missed, and a bar on the right with nothing on the left
+   * is time you spent on something you never planned. Drawing both in one
+   * column meant a task and a block at the same hour sat on top of each other.
+   */
   type Item =
     | { kind: "task"; start: number; end: number; task: TaskRow }
     | { kind: "block"; start: number; end: number; block: TimeBlockRow };
-  const items: Item[] = [
-    ...scheduled.map((t) => ({ kind: "task" as const, start: t.start_min!, end: t.end_min!, task: t })),
+
+  const plannedItems: Item[] = scheduled.map((t) => ({
+    kind: "task" as const, start: t.start_min!, end: t.end_min!, task: t,
+  }));
+  const actualItems: Item[] = [
+    ...scheduled
+      .filter((t) => t.completed)
+      .map((t) => ({ kind: "task" as const, start: t.start_min!, end: t.end_min!, task: t })),
     ...blocks.map((b) => ({ kind: "block" as const, start: b.start_min, end: b.end_min, block: b })),
-  ].sort((a, b) => a.start - b.start || b.end - a.end);
-  const lanes: number[] = [];
-  const placed = items.map((it) => {
-    let lane = lanes.findIndex((busyUntil) => busyUntil <= it.start);
-    if (lane === -1) { lane = lanes.length; lanes.push(0); }
-    lanes[lane] = it.end;
-    return { ...it, lane };
-  });
-  const laneCount = Math.max(lanes.length, 1);
+  ];
+
+  /** Side-by-side lanes so overlapping items within a column never stack. */
+  const laneOut = (list: Item[]) => {
+    const sorted = [...list].sort((a, b) => a.start - b.start || b.end - a.end);
+    const ends: number[] = [];
+    const placed = sorted.map((it) => {
+      let lane = ends.findIndex((busyUntil) => busyUntil <= it.start);
+      if (lane === -1) { lane = ends.length; ends.push(0); }
+      ends[lane] = it.end;
+      return { ...it, lane, nextStart: endBound };
+    });
+    // Short items are given a minimum height so their label fits, which would
+    // otherwise push them over whatever starts immediately afterwards. Record
+    // where the next item in the same lane begins so the growth can be capped.
+    for (let i = 0; i < placed.length; i++) {
+      for (let j = i + 1; j < placed.length; j++) {
+        if (placed[j].lane === placed[i].lane) {
+          placed[i].nextStart = placed[j].start;
+          break;
+        }
+      }
+    }
+    return { placed, lanes: Math.max(ends.length, 1) };
+  };
+  const columns = [
+    { key: "planned" as const, ...laneOut(plannedItems) },
+    { key: "actual" as const, ...laneOut(actualItems) },
+  ];
 
   const hours: number[] = [];
   for (let h = Math.ceil(startBound / 60); h * 60 <= endBound; h++) hours.push(h);
@@ -77,7 +111,17 @@ export default function Timeline({
           {totalGap > 0 ? `${fmtMinutes(totalGap)} unaccounted across the day` : "Every hour accounted for"}
         </span>
       </div>
+      <div className="mb-1 flex text-[10px] font-medium uppercase tracking-[0.1em] text-ink-3">
+        <span className="w-[3.25rem] shrink-0" />
+        <span className="flex-1">Planned</span>
+        <span className="flex-1 border-l border-line pl-2">Actual</span>
+      </div>
       <div className="relative" style={{ height }}>
+        {/* divider between the two columns */}
+        <div
+          className="pointer-events-none absolute top-0 w-px bg-line"
+          style={{ left: "calc(3.25rem + (100% - 3.25rem) / 2)", height }}
+        />
         {/* hour grid */}
         {hours.map((h) => (
           <div key={h} className="absolute inset-x-0" style={{ top: y(h * 60) }}>
@@ -103,43 +147,78 @@ export default function Timeline({
             {g.end - g.start >= 25 && `${fmtMinutes(g.end - g.start)} unaccounted`}
           </div>
         ))}
-        {/* items */}
-        {placed.map((it) => {
-          const widthPct = 100 / laneCount;
-          // A 20-minute block is ~14px at this scale, but padding plus one
-          // 11px line needs ~26px — anything less clipped its own label.
-          const rawHeight = y(it.end) - y(it.start) - 2;
-          const height = Math.max(rawHeight, 26);
-          // Only one line fits: keep it on one row and truncate rather than
-          // wrapping into space that isn't there.
-          const tight = height < 36;
-          const common = {
-            top: y(it.start) + 1,
-            height,
-            left: `calc(3.25rem + (100% - 3.25rem) * ${it.lane / laneCount})`,
-            width: `calc((100% - 3.25rem) * ${widthPct / 100} - 4px)`,
-          } as React.CSSProperties;
-          if (it.kind === "task") {
-            const cat = it.task.category_id ? catMap.get(it.task.category_id) : undefined;
-            const color = cat?.color ?? "#b8b8b0";
-            const done = !!it.task.completed;
-            const overdue = !done && nowMin !== null && it.end < nowMin;
+        {/* items, per column */}
+        {columns.flatMap((col, colIndex) =>
+          col.placed.map((it) => {
+            const laneW = 1 / col.lanes;
+            const rawHeight = y(it.end) - y(it.start) - 2;
+            // A 20-minute block is ~14px at this scale, but padding plus one
+            // 11px line needs ~26px — anything less clipped its own label.
+            // Never grow past whatever starts next in this lane, though.
+            const room = y(it.nextStart) - y(it.start) - 2;
+            const height = Math.min(Math.max(rawHeight, 26), Math.max(room, rawHeight));
+            // Only one line fits: keep it on one row and truncate.
+            const tight = height < 36;
+            // Half the track each, offset by which column this is.
+            const colFrac = (colIndex + it.lane * laneW) / 2;
+            const common = {
+              top: y(it.start) + 1,
+              height,
+              left: `calc(3.25rem + (100% - 3.25rem) * ${colFrac} + 2px)`,
+              width: `calc((100% - 3.25rem) * ${laneW / 2} - 6px)`,
+            } as React.CSSProperties;
+
+            if (it.kind === "task") {
+              const cat = it.task.category_id ? catMap.get(it.task.category_id) : undefined;
+              const color = cat?.color ?? "#b8b8b0";
+              const done = !!it.task.completed;
+              const overdue = !done && nowMin !== null && it.end < nowMin;
+              // In the planned column an unfinished task is faded — a plan
+              // that has not become actual yet.
+              const faded = col.key === "planned" && !done;
+              return (
+                <div
+                  key={`${col.key}-t-${it.task.id}`}
+                  className={`absolute flex flex-col justify-center overflow-hidden rounded-lg border px-2 text-[11px] leading-tight ${
+                    tight ? "py-0" : "py-1"
+                  } ${faded ? "opacity-60" : ""}`}
+                  style={{
+                    ...common,
+                    background: `color-mix(in oklab, ${color} 26%, var(--surface))`,
+                    borderColor: `color-mix(in oklab, ${color} 45%, var(--line))`,
+                  }}
+                  title={`${it.task.name} · ${fmtClock(it.start)}–${fmtClock(it.end)}${
+                    col.key === "actual" ? " · completed" : ""
+                  }`}
+                >
+                  <div className="flex min-w-0 items-baseline gap-1">
+                    <span className="min-w-0 truncate font-medium">{it.task.name}</span>
+                    {!tight && (
+                      <span className="shrink-0 text-ink-3">
+                        {fmtClock(it.start)}–{fmtClock(it.end)}
+                      </span>
+                    )}
+                  </div>
+                  {!tight && overdue && col.key === "planned" && (
+                    <span className="font-medium text-danger">overdue</span>
+                  )}
+                </div>
+              );
+            }
             return (
-              <div
-                key={`t-${it.task.id}`}
-                className={`absolute flex flex-col justify-center overflow-hidden rounded-lg border px-2 text-[11px] leading-tight ${
+              <form
+                key={`${col.key}-b-${it.block.id}`}
+                action={deleteBlockAction}
+                className={`group absolute flex flex-col justify-center overflow-hidden rounded-lg border px-2 text-[11px] leading-tight ${
                   tight ? "py-0" : "py-1"
-                } ${done ? "opacity-55" : ""}`}
-                style={{
-                  ...common,
-                  background: `color-mix(in oklab, ${color} 26%, var(--surface))`,
-                  borderColor: `color-mix(in oklab, ${color} 45%, var(--line))`,
-                }}
-                title={`${it.task.name} · ${fmtClock(it.start)}–${fmtClock(it.end)}`}
+                } ${KIND_CLASS[it.block.kind] ?? "border-line bg-surface-2 text-ink-2"}`}
+                style={common}
+                title={`${KIND_LABEL[it.block.kind] ?? it.block.kind} · ${fmtClock(it.start)}–${fmtClock(it.end)}`}
               >
+                <input type="hidden" name="id" value={it.block.id} />
                 <div className="flex min-w-0 items-baseline gap-1">
-                  <span className={`min-w-0 truncate font-medium ${done ? "line-through" : ""}`}>
-                    {it.task.name}
+                  <span className="min-w-0 truncate font-medium">
+                    {it.block.label || KIND_LABEL[it.block.kind] || it.block.kind}
                   </span>
                   {!tight && (
                     <span className="shrink-0 text-ink-3">
@@ -147,45 +226,17 @@ export default function Timeline({
                     </span>
                   )}
                 </div>
-                {!tight && (overdue || done) && (
-                  <span className={overdue ? "font-medium text-danger" : "text-ok"}>
-                    {overdue ? "overdue" : "done"}
-                  </span>
-                )}
-              </div>
+                <button
+                  type="submit"
+                  aria-label="Remove block"
+                  className="absolute right-1 top-1 hidden rounded p-0.5 text-ink-3 hover:text-danger group-hover:block"
+                >
+                  ×
+                </button>
+              </form>
             );
-          }
-          return (
-            <form
-              key={`b-${it.block.id}`}
-              action={deleteBlockAction}
-              className={`group absolute flex flex-col justify-center overflow-hidden rounded-lg border px-2 text-[11px] leading-tight ${
-                tight ? "py-0" : "py-1"
-              } ${KIND_CLASS[it.block.kind] ?? "border-line bg-surface-2 text-ink-2"}`}
-              style={common}
-              title={`${KIND_LABEL[it.block.kind] ?? it.block.kind} · ${fmtClock(it.start)}–${fmtClock(it.end)}`}
-            >
-              <input type="hidden" name="id" value={it.block.id} />
-              <div className="flex min-w-0 items-baseline gap-1">
-                <span className="min-w-0 truncate font-medium">
-                  {it.block.label || KIND_LABEL[it.block.kind] || it.block.kind}
-                </span>
-                {!tight && (
-                  <span className="shrink-0 text-ink-3">
-                    {fmtClock(it.start)}–{fmtClock(it.end)}
-                  </span>
-                )}
-              </div>
-              <button
-                type="submit"
-                aria-label="Remove block"
-                className="absolute right-1 top-1 hidden rounded p-0.5 text-ink-3 hover:text-danger group-hover:block"
-              >
-                ×
-              </button>
-            </form>
-          );
-        })}
+          })
+        )}
         {/* now line */}
         {nowMin !== null && nowMin >= startBound && nowMin <= endBound && (
           <div className="pointer-events-none absolute inset-x-0" style={{ top: y(nowMin) }}>

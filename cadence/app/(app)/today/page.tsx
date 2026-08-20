@@ -77,8 +77,8 @@ export default async function TodayPage({
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-5">
-        <div className="lg:col-span-3">
+      <div className="grid gap-6 lg:grid-cols-12">
+        <div className="lg:col-span-5">
           <AddTaskForm date={date} categories={categories} hasTimetable={hasTimetable} />
 
           {goals && goals.items.length > 0 && (
@@ -140,7 +140,7 @@ export default async function TodayPage({
           )}
         </div>
 
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-7">
           <SectionHeading>Your 24 hours</SectionHeading>
           <Card>
             <Timeline tasks={tasks} blocks={blocks} categories={categories} nowMin={nowMin} />

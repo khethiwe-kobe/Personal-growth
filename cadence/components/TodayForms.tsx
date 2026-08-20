@@ -168,6 +168,10 @@ export function AddBlockForm({ date }: { date: string }) {
     createBlockAction,
     null as { error?: string; ok?: string } | null
   );
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
+  const [night, setNight] = useState("last");
+  const crossesMidnight = !!from && !!to && to < from;
 
   if (!open) {
     return (
@@ -197,13 +201,35 @@ export function AddBlockForm({ date }: { date: string }) {
       <div className="grid grid-cols-2 gap-2">
         <label className="block">
           <span className="mb-1 block text-[11px] text-ink-3">From</span>
-          <input name="start_time" type="time" required className="w-full" />
+          <input name="start_time" type="time" required className="w-full"
+            value={from} onChange={(e) => setFrom(e.target.value)} />
         </label>
         <label className="block">
           <span className="mb-1 block text-[11px] text-ink-3">To</span>
-          <input name="end_time" type="time" required className="w-full" />
+          <input name="end_time" type="time" required className="w-full"
+            value={to} onChange={(e) => setTo(e.target.value)} />
         </label>
       </div>
+
+      {/* Only asked when it matters — when the times actually cross midnight. */}
+      {crossesMidnight && (
+        <div className="rounded-xl bg-surface-2 p-2">
+          <span className="mb-1 block text-[11px] text-ink-3">Which night?</span>
+          <div className="flex flex-wrap gap-3">
+            {([
+              ["last", "Last night", "fills this morning"],
+              ["next", "Tonight", "runs into tomorrow"],
+            ] as [string, string, string][]).map(([v, l, hint]) => (
+              <label key={v} className="flex items-center gap-1.5 text-xs">
+                <input type="radio" name="night" value={v}
+                  checked={night === v} onChange={() => setNight(v)} />
+                <span>{l}</span>
+                <span className="text-[11px] text-ink-3">({hint})</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      )}
 
       <label className="block">
         <span className="mb-1 block text-[11px] text-ink-3">Label (optional)</span>
@@ -211,9 +237,8 @@ export function AddBlockForm({ date }: { date: string }) {
       </label>
 
       <p className="text-[11px] leading-relaxed text-ink-3">
-        Crossing midnight is fine. The end time lands on the day you&apos;re viewing, so
-        22:30 to 06:30 means <strong>last night</strong> — it fills this morning rather than
-        tonight.
+        Crossing midnight is fine — say which night and it is split across the two days
+        for you.
       </p>
 
       {state?.error && (
