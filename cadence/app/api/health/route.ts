@@ -48,6 +48,11 @@ export async function GET() {
     CADENCE_INVITE_CODE: process.env.CADENCE_INVITE_CODE ? "set" : "not set (a random code was generated)",
     node: process.version,
     region: process.env.VERCEL_REGION ?? "local",
+    // Which code is actually serving this request — the answer to "did my
+    // deploy land?" without having to compare dashboards.
+    commit: process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) ?? "local",
+    branch: process.env.VERCEL_GIT_COMMIT_REF ?? "local",
+    deployedMessage: process.env.VERCEL_GIT_COMMIT_MESSAGE?.split("\n")[0]?.slice(0, 80) ?? "",
   };
 
   await step("intl-timezones", async () => {
