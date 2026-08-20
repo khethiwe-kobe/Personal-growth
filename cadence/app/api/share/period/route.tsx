@@ -69,13 +69,13 @@ const ROOT: React.CSSProperties = {
 };
 const OPTS = { width: W, height: H, headers: { "Cache-Control": "no-store" } };
 
-function Footer({ right }: { right: string }) {
+function Footer({ left = "Cadence", right }: { left?: string; right: string }) {
   return (
     <div style={{
       position: "absolute", left: 48, bottom: 30, width: W - 96,
       display: "flex", justifyContent: "space-between", fontSize: 20, color: "#a0a098",
     }}>
-      <div>Cadence</div>
+      <div>{left}</div>
       <div>{right}</div>
     </div>
   );
@@ -148,30 +148,44 @@ async function weekImage(user: U, today: string, showLabels: boolean) {
         </div>
       ))}
 
+      {/* Each day is two half-width strips: planned on the left, what was
+          actually logged on the right. Drawing them in one strip meant a task
+          and a logged block at the same hour sat on top of each other. */}
       {perDay.flatMap((d, i) => {
-        const items: { s: number; e: number; color: string; label: string }[] = [];
+        const planned: { s: number; e: number; color: string; faint: boolean }[] = [];
+        const actual: { s: number; e: number; color: string; faint: boolean }[] = [];
         for (const t of d.tasks) {
           if (t.start_min === null || t.end_min === null) continue;
           const cat = t.category_id ? catMap.get(t.category_id) : undefined;
-          items.push({ s: t.start_min, e: t.end_min, color: cat?.color ?? "#b8b8b0",
-            label: showLabels ? t.name : (cat?.name ?? "") });
+          const color = cat?.color ?? "#b8b8b0";
+          planned.push({ s: t.start_min, e: t.end_min, color, faint: !t.completed });
+          if (t.completed) actual.push({ s: t.start_min, e: t.end_min, color, faint: false });
         }
         for (const b of d.blocks) {
-          items.push({ s: b.start_min, e: b.end_min,
+          actual.push({
+            s: b.start_min, e: b.end_min,
             color: b.kind === "sleep" ? "#cfcfc6" : b.kind === "focus" ? "#a8c5b4" : "#dcdcd4",
-            label: "" });
+            faint: b.kind === "sleep",
+          });
         }
-        return items.map((it, k) => (
-          <div key={`b${i}-${k}`} style={{
-            position: "absolute", left: 48 + GUT + i * colW + 3,
-            top: TOP + it.s * PX, width: colW - 12,
-            height: Math.max((it.e - it.s) * PX - 2, 4),
-            background: it.color, borderRadius: 5,
-          }} />
-        ));
+        const half = (colW - 12) / 2;
+        const draw = (arr: typeof planned, side: 0 | 1) =>
+          arr.map((it, k) => (
+            <div key={`b${i}-${side}-${k}`} style={{
+              position: "absolute",
+              left: 48 + GUT + i * colW + 3 + side * (half + 3),
+              top: TOP + it.s * PX, width: half - 1,
+              height: Math.max((it.e - it.s) * PX - 2, 4),
+              background: it.color, opacity: it.faint ? 0.45 : 1, borderRadius: 4,
+            }} />
+          ));
+        return [...draw(planned, 0), ...draw(actual, 1)];
       })}
 
-      <Footer right={`${active.length} day${active.length === 1 ? "" : "s"} planned`} />
+      <Footer
+        left="Cadence · each day: planned | actual · faded = not done"
+        right={`${active.length} day${active.length === 1 ? "" : "s"} planned`}
+      />
     </div>,
     OPTS
   );

@@ -15,18 +15,39 @@ const KIND_LABEL: Record<string, string> = {
 
 const W = 1080;
 const H = 1500;
-const TOP = 348;          // header height (title + date + stat row)
-const BOTTOM = 96;        // footer, clear of the 24:00 label
+const TOP = 392;          // header + column captions
+const BOTTOM = 96;
 const TRACK = H - TOP - BOTTOM;
 const PX = TRACK / (ACCOUNT_END - ACCOUNT_START);
-const GUTTER = 96;        // hour labels
+const GUTTER = 86;        // hour labels
+const GAP = 22;           // between the two columns
+const COL = (W - 96 - GUTTER - GAP) / 2;
+
+type Item = { start: number; end: number; label: string; color: string; faint: boolean };
 
 /**
- * A shareable picture of one day's 24 hours — for sending to the group chat
- * instead of a cropped screenshot.
+ * Lays overlapping items into side-by-side lanes so nothing is drawn on top of
+ * anything else — the same idea as the in-app timeline.
+ */
+function laneOut(items: Item[]) {
+  const sorted = [...items].sort((a, b) => a.start - b.start || a.end - b.end);
+  const laneEnds: number[] = [];
+  const placed = sorted.map((it) => {
+    let lane = laneEnds.findIndex((end) => end <= it.start);
+    if (lane === -1) { lane = laneEnds.length; laneEnds.push(it.end); }
+    else laneEnds[lane] = it.end;
+    return { ...it, lane };
+  });
+  return { placed, lanes: Math.max(laneEnds.length, 1) };
+}
+
+/**
+ * One day as a picture: what you planned beside what you actually logged.
  *
- * Always the signed-in user's own day. `?labels=off` replaces task names with
- * their category, so a schedule can be shared without publishing what is on it.
+ * Two columns rather than one — a scheduled task and a logged block at the same
+ * hour used to draw over each other, and the comparison is the point anyway.
+ * `?labels=off` swaps names for categories so a schedule can be shared without
+ * publishing what is on it.
  */
 export async function GET(req: Request) {
   const user = await requireUser();
@@ -43,102 +64,132 @@ export async function GET(req: Request) {
   ]);
   const catMap = new Map(categories.map((c) => [c.id, c]));
 
-  type Item = { start: number; end: number; label: string; color: string; sub: string; muted: boolean };
-  const items: Item[] = [];
+  // Planned: every task that has a time on it.
+  const planned: Item[] = [];
+  // Actual: time you logged, plus tasks you actually completed.
+  const actual: Item[] = [];
+
   for (const t of tasks) {
     if (t.start_min === null || t.end_min === null) continue;
     const cat = t.category_id ? catMap.get(t.category_id) : undefined;
-    items.push({
+    const item: Item = {
       start: t.start_min, end: t.end_min,
       label: showLabels ? t.name : (cat?.name ?? "Task"),
       color: cat?.color ?? "#b8b8b0",
-      sub: `${fmtClock(t.start_min)}–${fmtClock(t.end_min)}`,
-      muted: !!t.completed,
-    });
+      faint: false,
+    };
+    planned.push({ ...item, faint: !t.completed });
+    if (t.completed) actual.push(item);
   }
   for (const b of blocks) {
-    items.push({
+    actual.push({
       start: b.start_min, end: b.end_min,
       label: showLabels ? (b.label || KIND_LABEL[b.kind] || b.kind) : (KIND_LABEL[b.kind] ?? b.kind),
-      color: b.kind === "sleep" ? "#cfcfc6" : b.kind === "focus" ? "#a8c5b4" : "#d8d8d0",
-      sub: `${fmtClock(b.start_min)}–${fmtClock(b.end_min)}`,
-      muted: b.kind === "sleep",
+      color: b.kind === "sleep" ? "#cfcfc6" : b.kind === "focus" ? "#a8c5b4" : "#dcdcd4",
+      faint: b.kind === "sleep",
     });
   }
-  items.sort((a, b) => a.start - b.start);
 
+  const L = laneOut(planned);
+  const R = laneOut(actual);
   const y = (m: number) => TOP + (m - ACCOUNT_START) * PX;
   const hours = Array.from({ length: 25 }, (_, i) => i);
 
-  const Stat = ({ label, value }: { label: string; value: string }) => (
-    <div style={{ display: "flex", flexDirection: "column", marginRight: 54 }}>
-      <div style={{ fontSize: 22, color: "#8a8a80" }}>{label}</div>
-      <div style={{ fontSize: 40, color: "#26261f", marginTop: 4 }}>{value}</div>
-    </div>
-  );
+  const column = (
+    side: "left" | "right",
+    data: ReturnType<typeof laneOut>
+  ) => {
+    const x0 = side === "left" ? 48 + GUTTER : 48 + GUTTER + COL + GAP;
+    const laneW = COL / data.lanes;
+    return data.placed.map((it, i) => {
+      const top = y(it.start);
+      const height = Math.max(y(it.end) - top - 3, 26);
+      return (
+        <div key={`${side}${i}`} style={{
+          position: "absolute", left: x0 + it.lane * laneW + 2, top,
+          width: laneW - 6, height, display: "flex", alignItems: "center",
+          padding: "0 12px", borderRadius: 10, overflow: "hidden",
+          background: it.color, opacity: it.faint ? 0.45 : 1,
+        }}>
+          <div style={{ fontSize: 21, color: "#1f1f19", overflow: "hidden" }}>{it.label}</div>
+        </div>
+      );
+    });
+  };
 
   return new ImageResponse(
-    (
-      <div style={{
-        width: W, height: H, display: "flex", flexDirection: "column",
-        background: "#f7f5f1", color: "#26261f", padding: "44px 48px", position: "relative",
-      }}>
-        <div style={{ display: "flex", flexDirection: "column" }}>
-          <div style={{ fontSize: 30, color: "#8a8a80", letterSpacing: 2 }}>YOUR 24 HOURS</div>
-          <div style={{ fontSize: 52, marginTop: 8 }}>{user.display_name}</div>
-          <div style={{ fontSize: 28, color: "#6b6b62", marginTop: 4 }}>{fmtDateLong(date)}</div>
-          <div style={{ display: "flex", marginTop: 26 }}>
-            <Stat label="Done" value={`${summary.tasksCompleted}/${summary.tasksPlanned}`} />
-            <Stat label="Planned" value={fmtMinutes(summary.plannedMinutes)} />
-            <Stat label="Completed" value={fmtMinutes(summary.completedMinutes)} />
-            <Stat label="Unaccounted" value={fmtMinutes(summary.unaccountedMinutes)} />
-          </div>
-        </div>
-
-        {/* hour grid */}
-        {hours.map((h) => (
-          <div key={`h${h}`} style={{
-            position: "absolute", left: 48, top: y(h * 60), width: W - 96,
-            display: "flex", alignItems: "center",
-          }}>
-            <div style={{ width: GUTTER - 16, fontSize: 20, color: "#a0a098" }}>
-              {`${String(h).padStart(2, "0")}:00`}
+    <div style={{
+      width: W, height: H, display: "flex", flexDirection: "column",
+      background: "#f7f5f1", color: "#26261f", padding: "44px 48px", position: "relative",
+    }}>
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        <div style={{ fontSize: 30, color: "#8a8a80", letterSpacing: 2 }}>YOUR 24 HOURS</div>
+        <div style={{ fontSize: 52, marginTop: 8 }}>{user.display_name}</div>
+        <div style={{ fontSize: 28, color: "#6b6b62", marginTop: 4 }}>{fmtDateLong(date)}</div>
+        <div style={{ display: "flex", marginTop: 26 }}>
+          {([
+            ["Done", `${summary.tasksCompleted}/${summary.tasksPlanned}`],
+            ["Planned", fmtMinutes(summary.plannedMinutes)],
+            ["Completed", fmtMinutes(summary.completedMinutes)],
+            ["Unaccounted", fmtMinutes(summary.unaccountedMinutes)],
+          ] as [string, string][]).map(([l, v]) => (
+            <div key={l} style={{ display: "flex", flexDirection: "column", marginRight: 54 }}>
+              <div style={{ fontSize: 22, color: "#8a8a80" }}>{l}</div>
+              <div style={{ fontSize: 40, color: "#26261f", marginTop: 4 }}>{v}</div>
             </div>
-            <div style={{ flex: 1, height: 1, background: "#e6e3dc" }} />
-          </div>
-        ))}
-
-        {/* blocks and tasks */}
-        {items.map((it, i) => {
-          const top = y(it.start);
-          const height = Math.max(y(it.end) - top - 3, 30);
-          return (
-            <div key={`i${i}`} style={{
-              position: "absolute", left: 48 + GUTTER, top, width: W - 96 - GUTTER,
-              height, display: "flex", alignItems: "center", padding: "0 18px",
-              background: it.color, opacity: it.muted ? 0.6 : 1,
-              borderRadius: 12, overflow: "hidden",
-            }}>
-              <div style={{ fontSize: 24, color: "#1f1f19", overflow: "hidden" }}>{it.label}</div>
-              {height >= 44 && (
-                <div style={{ fontSize: 20, color: "#4a4a42", marginLeft: 14 }}>{it.sub}</div>
-              )}
-            </div>
-          );
-        })}
-
-        <div style={{
-          position: "absolute", left: 48, bottom: 30, width: W - 96,
-          display: "flex", justifyContent: "space-between", fontSize: 20, color: "#a0a098",
-        }}>
-          <div>Cadence</div>
-          <div>{summary.unaccountedMinutes === 0 ? "Every hour accounted for" : "Score " + summary.score}</div>
+          ))}
         </div>
       </div>
-    ),
+
+      {/* column captions */}
+      <div style={{
+        position: "absolute", left: 48 + GUTTER, top: TOP - 38, width: COL,
+        fontSize: 22, color: "#8a8a80", letterSpacing: 1, display: "flex",
+      }}>
+        PLANNED
+      </div>
+      <div style={{
+        position: "absolute", left: 48 + GUTTER + COL + GAP, top: TOP - 38, width: COL,
+        fontSize: 22, color: "#8a8a80", letterSpacing: 1, display: "flex",
+      }}>
+        ACTUAL
+      </div>
+
+      {hours.map((h) => (
+        <div key={`h${h}`} style={{
+          position: "absolute", left: 48, top: y(h * 60), width: W - 96,
+          display: "flex", alignItems: "center",
+        }}>
+          <div style={{ width: GUTTER - 14, fontSize: 20, color: "#a0a098" }}>
+            {`${String(h).padStart(2, "0")}:00`}
+          </div>
+          <div style={{ flex: 1, height: 1, background: "#e6e3dc" }} />
+        </div>
+      ))}
+
+      {/* divider between the columns */}
+      <div style={{
+        position: "absolute", left: 48 + GUTTER + COL + GAP / 2, top: TOP,
+        width: 1, height: TRACK, background: "#e0ddd5", display: "flex",
+      }} />
+
+      {column("left", L)}
+      {column("right", R)}
+
+      <div style={{
+        position: "absolute", left: 48, bottom: 30, width: W - 96,
+        display: "flex", justifyContent: "space-between", fontSize: 20, color: "#a0a098",
+      }}>
+        <div>Cadence · faded = planned but not done</div>
+        <div>
+          {summary.unaccountedMinutes === 0
+            ? "Every hour accounted for"
+            : `Score ${summary.score}`}
+        </div>
+      </div>
+    </div>,
     {
-      width: W,
-      height: H,
+      width: W, height: H,
       headers: {
         "Content-Disposition": `attachment; filename="cadence-${date}.png"`,
         "Cache-Control": "no-store",
