@@ -85,6 +85,11 @@ export default function FocusRoom({
   const [immersive, setImmersive] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [camError, setCamError] = useState<string | null>(null);
+  // Peers must not be built until this is settled: a connection created
+  // before the camera finished starting has no tracks and never gains any —
+  // which is how everyone ended up seeing only themselves on real devices,
+  // where a camera takes seconds to start (test cameras start instantly).
+  const [streamState, setStreamState] = useState<"pending" | "ready" | "none">("pending");
   const [cameraOn, setCameraOn] = useState(true);
   const [peerTrouble, setPeerTrouble] = useState<number[]>([]);
   const [shareList, setShareList] = useState(false);
@@ -150,9 +155,11 @@ export default function FocusRoom({
       .then((stream) => {
         if (cancelled) { stream.getTracks().forEach((t) => t.stop()); return; }
         streamRef.current = stream;
+        setStreamState("ready");
         tick((n) => n + 1);
       })
       .catch(() => {
+        setStreamState("none");
         setCameraOn(false);
         setCamError(
           "Camera access is needed for accountability — the others can't see you're here. " +
@@ -210,9 +217,13 @@ export default function FocusRoom({
     [roomId]
   );
 
-  const shouldOffer = useCallback((otherId: number) => meId < otherId, [meId]);
-  const shouldOfferRef = useRef(shouldOffer);
-  shouldOfferRef.current = shouldOffer;
+  // Glare-safe negotiation (the "perfect negotiation" pattern): both sides
+  // may offer at once; the higher id is polite and yields, the lower id's
+  // offer wins. Candidates that arrive before the remote description are
+  // queued instead of dropped.
+  const makingOffer = useRef<Map<number, boolean>>(new Map());
+  const ignoringOffer = useRef<Map<number, boolean>>(new Map());
+  const pendingCands = useRef<Map<number, RTCIceCandidateInit[]>>(new Map());
 
   const peerFor = useCallback(
     (otherId: number) => {
@@ -220,18 +231,25 @@ export default function FocusRoom({
       if (existing) return existing;
       const pc = new RTCPeerConnection(ICE);
       peers.current.set(otherId, pc);
-      streamRef.current?.getTracks().forEach((t) => pc.addTrack(t, streamRef.current!));
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach((t) => pc.addTrack(t, streamRef.current!));
+      } else {
+        // No camera: still receive theirs.
+        pc.addTransceiver("video", { direction: "recvonly" });
+      }
       pc.ontrack = (e) => {
         remoteStreams.current.set(otherId, e.streams[0]);
         tick((n) => n + 1);
       };
       pc.onnegotiationneeded = async () => {
-        if (!shouldOfferRef.current(otherId)) return;
         try {
-          const offer = await pc.createOffer();
-          await pc.setLocalDescription(offer);
+          makingOffer.current.set(otherId, true);
+          await pc.setLocalDescription();
           void send(otherId, { description: pc.localDescription });
-        } catch { /* the poll loop will try again */ }
+        } catch { /* the next negotiation attempt will retry */ }
+        finally {
+          makingOffer.current.set(otherId, false);
+        }
       };
       pc.onicecandidate = (e) => {
         if (e.candidate) void send(otherId, { candidate: e.candidate.toJSON() });
@@ -256,7 +274,7 @@ export default function FocusRoom({
   );
 
   useEffect(() => {
-    if (phase !== "in") return;
+    if (phase !== "in" || streamState === "pending") return;
     let stop = false;
     const loop = async () => {
       try {
@@ -266,17 +284,34 @@ export default function FocusRoom({
             signals: { from: number; payload: Record<string, unknown> }[];
           };
           for (const sig of signals) {
-            const pc = peerFor(sig.from);
+            const from = sig.from;
+            const pc = peerFor(from);
+            const polite = meId > from;
             if (sig.payload.description) {
               const desc = sig.payload.description as RTCSessionDescriptionInit;
+              const collision =
+                desc.type === "offer" &&
+                (makingOffer.current.get(from) || pc.signalingState !== "stable");
+              ignoringOffer.current.set(from, !polite && collision);
+              if (ignoringOffer.current.get(from)) continue;
               await pc.setRemoteDescription(desc);
+              const queued = pendingCands.current.get(from) ?? [];
+              pendingCands.current.set(from, []);
+              for (const cand of queued) await pc.addIceCandidate(cand).catch(() => {});
               if (desc.type === "offer") {
-                const answer = await pc.createAnswer();
-                await pc.setLocalDescription(answer);
-                void send(sig.from, { description: pc.localDescription });
+                await pc.setLocalDescription();
+                void send(from, { description: pc.localDescription });
               }
             } else if (sig.payload.candidate) {
-              await pc.addIceCandidate(sig.payload.candidate as RTCIceCandidateInit).catch(() => {});
+              const cand = sig.payload.candidate as RTCIceCandidateInit;
+              if (!pc.remoteDescription) {
+                // Too early — hold it rather than losing it.
+                pendingCands.current.set(from, [
+                  ...(pendingCands.current.get(from) ?? []), cand,
+                ]);
+              } else {
+                await pc.addIceCandidate(cand).catch(() => {});
+              }
             }
           }
         }
@@ -285,20 +320,16 @@ export default function FocusRoom({
     };
     loop();
     return () => { stop = true; };
-  }, [phase, roomId, peerFor, send]);
+  }, [phase, streamState, roomId, meId, peerFor, send]);
 
+  // Build a connection to everyone here. Both sides construct one; adding
+  // tracks fires negotiation on both, and politeness resolves the collision.
   useEffect(() => {
-    if (phase !== "in") return;
+    if (phase !== "in" || streamState === "pending") return;
     for (const other of others) {
-      if (!other.here || peers.current.has(other.userId) || !shouldOffer(other.userId)) continue;
-      const pc = peerFor(other.userId);
-      void (async () => {
-        const offer = await pc.createOffer();
-        await pc.setLocalDescription(offer);
-        void send(other.userId, { description: pc.localDescription });
-      })();
+      if (other.here && !peers.current.has(other.userId)) peerFor(other.userId);
     }
-  }, [phase, others, peerFor, send, shouldOffer]);
+  }, [phase, streamState, others, peerFor]);
 
   // ---- presence: heartbeats + immediate leave/return detection ----
   useEffect(() => {
