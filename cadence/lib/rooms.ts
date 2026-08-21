@@ -95,3 +95,49 @@ export async function systemMessage(roomId: number, userId: number, body: string
     [roomId, userId, body.slice(0, 200)]
   );
 }
+
+/** Rooms currently open in this user's group, with who is in them. */
+export async function openRoomsFor(userId: number): Promise<
+  { id: number; title: string; date: string; here: string[] }[]
+> {
+  const rooms = await all<{ id: number; title: string; date: string }>(
+    `SELECT r.id, r.title, r.date FROM focus_rooms r
+       JOIN group_members gm ON gm.group_id = r.group_id
+      WHERE gm.user_id = ? AND gm.left_at IS NULL AND r.closed_at IS NULL
+        AND r.created_at > datetime('now', '-12 hours')
+      ORDER BY r.id DESC LIMIT 5`,
+    [userId]
+  );
+  const out = [];
+  for (const r of rooms) {
+    const people = await all<{ display_name: string }>(
+      `SELECT u.display_name FROM focus_room_members m
+         JOIN users u ON u.id = m.user_id
+        WHERE m.room_id = ? AND m.left_at IS NULL
+          AND (julianday('now') - julianday(m.last_seen)) * 86400 < ?`,
+      [r.id, AWAY_AFTER_SECONDS * 3]
+    );
+    out.push({ ...r, here: people.map((p) => p.display_name) });
+  }
+  return out;
+}
+
+/** Today's tasks of this user that are done in a room. */
+export async function focusRoomTasksToday(userId: number, date: string) {
+  return all<{ id: number; name: string; start_min: number | null; completed: number }>(
+    `SELECT t.id, t.name, t.start_min, t.completed FROM tasks t
+       JOIN categories c ON c.id = t.category_id
+      WHERE t.user_id = ? AND t.date = ? AND c.focus_room = 1
+      ORDER BY (t.start_min IS NULL), t.start_min`,
+    [userId, date]
+  );
+}
+
+/** Does this user have any category set up for rooms at all? */
+export async function hasFocusCategory(userId: number): Promise<boolean> {
+  const row = await get<{ n: number }>(
+    "SELECT COUNT(*) AS n FROM categories WHERE user_id=? AND focus_room=1 AND archived=0",
+    [userId]
+  );
+  return (row?.n ?? 0) > 0;
+}

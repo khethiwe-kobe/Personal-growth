@@ -1,13 +1,14 @@
 import { requireUser, getGroupForUser } from "@/lib/auth";
 import { get } from "@/lib/db";
 import { categoriesFor } from "@/lib/repo";
+import AvatarUpload from "@/components/AvatarUpload";
 import { PageTitle, Card, SectionHeading, Button } from "@/components/ui";
 import Avatar from "@/components/Avatar";
 import {
   ProfileForm, AppearancePicker, PasswordForm, CategoryManager,
 } from "@/components/SettingsClient";
 import {
-  uploadAvatarAction, removeAvatarAction, logoutAction,
+  removeAvatarAction, logoutAction,
   saveNotificationPrefsAction, resetDemoDataAction, reseedDemoDataAction,
 } from "@/app/actions";
 import { IconLogout, IconUpload } from "@/components/icons";
@@ -49,11 +50,7 @@ export default async function SettingsPage() {
           <Avatar name={user.display_name} accent={user.accent}
             userId={user.id} hasAvatar={user.has_avatar} size={64} />
           <div className="flex flex-wrap gap-2">
-            <form action={uploadAvatarAction} className="flex items-center gap-2">
-              <input type="file" name="avatar" accept="image/png,image/jpeg,image/webp"
-                required className="!w-auto text-xs" />
-              <Button variant="soft" className="!py-1.5"><IconUpload size={13} /> Upload</Button>
-            </form>
+            <AvatarUpload hasAvatar={!!user.has_avatar} />
             {user.has_avatar && (
               <form action={removeAvatarAction}>
                 <Button variant="ghost" className="!py-1.5">Remove photo</Button>

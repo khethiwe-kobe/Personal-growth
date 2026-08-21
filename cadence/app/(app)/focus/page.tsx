@@ -6,6 +6,8 @@ import { PageTitle, Card, SectionHeading, Stat } from "@/components/ui";
 import FocusTimer from "@/components/FocusTimer";
 import FocusTasks from "@/components/FocusTasks";
 import Stopwatch from "@/components/Stopwatch";
+import FocusRoomsPanel from "@/components/FocusRoomsPanel";
+import { openRoomsFor, focusRoomTasksToday, hasFocusCategory } from "@/lib/rooms";
 import type { FocusSessionRow } from "@/lib/types";
 
 export const metadata = { title: "Focus" };
@@ -47,6 +49,11 @@ export default async function FocusPage() {
       [user.id]
     ),
   ]);
+  const [openRooms, roomTasks, hasRoomCategory] = await Promise.all([
+    openRoomsFor(user.id),
+    focusRoomTasksToday(user.id, today),
+    hasFocusCategory(user.id),
+  ]);
   const [todayTasks, categories, todaySessions, todayBlocks] = await Promise.all([
     tasksForDay(user.id, today),
     categoriesFor(user.id),
@@ -75,6 +82,9 @@ export default async function FocusPage() {
         todaySessions={todaySessions}
         todayBlocks={todayBlocks}
       />
+
+      <SectionHeading>Focus room</SectionHeading>
+      <FocusRoomsPanel openRooms={openRooms} tasks={roomTasks} hasCategory={hasRoomCategory} />
 
       <SectionHeading>Account for the hour</SectionHeading>
       <div className="grid gap-3 md:grid-cols-2">

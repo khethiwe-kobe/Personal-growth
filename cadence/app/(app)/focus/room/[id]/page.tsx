@@ -6,6 +6,7 @@ import { tasksForDay } from "@/lib/repo";
 import FocusRoom from "@/components/FocusRoom";
 import { PageTitle } from "@/components/ui";
 import type { TaskRow } from "@/lib/types";
+import { iceServers } from "@/lib/ice";
 
 export const metadata = { title: "Focus room" };
 export const dynamic = "force-dynamic";
@@ -41,6 +42,7 @@ export default async function FocusRoomPage({
         title={room.title}
         meId={user.id}
         sessionTasks={sessionTasks}
+        ice={iceServers()}
       />
     </div>
   );

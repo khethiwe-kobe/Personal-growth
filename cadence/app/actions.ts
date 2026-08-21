@@ -140,12 +140,17 @@ export async function changePasswordAction(_prev: unknown, fd: FormData) {
   return { ok: true };
 }
 
-export async function uploadAvatarAction(fd: FormData) {
+export async function uploadAvatarAction(
+  fd: FormData
+): Promise<{ error: string } | void> {
   const user = await requireUser();
   const file = fd.get("avatar");
-  if (!(file instanceof File) || file.size === 0) return;
-  if (file.size > 2 * 1024 * 1024) return; // 2MB cap
-  if (!["image/png", "image/jpeg", "image/webp"].includes(file.type)) return;
+  if (!(file instanceof File) || file.size === 0) return { error: "No picture was chosen." };
+  // The browser resizes before sending, so anything still large is suspect.
+  if (file.size > 2 * 1024 * 1024)
+    return { error: "That picture is too large even after resizing. Try a different one." };
+  if (!["image/png", "image/jpeg", "image/webp"].includes(file.type))
+    return { error: "Pictures need to be JPEG, PNG or WebP." };
   const buf = new Uint8Array(await file.arrayBuffer());
   await run("UPDATE users SET avatar_blob=?, avatar_mime=? WHERE id=?", [buf, file.type, user.id]);
   revalidatePath("/", "layout");
@@ -487,6 +492,33 @@ export async function deleteBlockAction(fd: FormData) {
 }
 
 // ---------------- Focus rooms ----------------
+
+/**
+ * One-press setup: makes a category whose tasks are done in a room. Reuses a
+ * category already named for focus rather than making a second one.
+ */
+export async function enableFocusCategoryAction(): Promise<void> {
+  const user = await requireUser();
+  const existing = await get<{ id: number }>(
+    `SELECT id FROM categories
+      WHERE user_id=? AND archived=0 AND name LIKE '%focus%' COLLATE NOCASE
+      ORDER BY id LIMIT 1`,
+    [user.id]
+  );
+  if (existing) {
+    await run("UPDATE categories SET focus_room=1 WHERE id=?", [existing.id]);
+  } else {
+    const max = await get<{ m: number }>(
+      "SELECT COALESCE(MAX(position),0) AS m FROM categories WHERE user_id=?", [user.id]
+    );
+    await run(
+      `INSERT INTO categories (user_id, name, color, kind, position, focus_room)
+       VALUES (?, 'Focus session', '#a8c5b4', 'both', ?, 1)`,
+      [user.id, Number(max?.m ?? 0) + 1]
+    );
+  }
+  revalidatePath("/", "layout");
+}
 
 /**
  * Opens the room for a scheduled task, or joins the one already open.

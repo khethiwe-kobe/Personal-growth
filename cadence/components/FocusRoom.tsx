@@ -21,25 +21,25 @@ const HEARTBEAT_MS = 10_000;
 const POLL_MS = 2_500;
 const SIGNAL_MS = 1_500;
 
-// Public STUN only: the video goes straight between devices, so nothing but
-// the connection handshake ever leaves them.
-const ICE: RTCConfiguration = {
-  iceServers: [{ urls: ["stun:stun.l.google.com:19302", "stun:stun1.l.google.com:19302"] }],
-};
-
 const clock = (s: number) => {
   const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), x = s % 60;
   return `${h > 0 ? `${h}:` : ""}${String(m).padStart(h > 0 ? 2 : 1, "0")}:${String(x).padStart(2, "0")}`;
 };
 
 export default function FocusRoom({
-  roomId, title, meId, sessionTasks,
+  roomId, title, meId, sessionTasks, ice,
 }: {
   roomId: number;
   title: string;
   meId: number;
   sessionTasks: TaskRow[];
+  ice: RTCIceServer[];
 }) {
+  // Direct where possible, relayed only where the network refuses direct.
+  const ICE: RTCConfiguration = useMemo(
+    () => ({ iceServers: ice, iceCandidatePoolSize: 2 }),
+    [ice]
+  );
   const router = useRouter();
   const [members, setMembers] = useState<Member[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -57,6 +57,7 @@ export default function FocusRoom({
   const streamRef = useRef<MediaStream | null>(null);
   const peers = useRef<Map<number, RTCPeerConnection>>(new Map());
   const remoteStreams = useRef<Map<number, MediaStream>>(new Map());
+  const retries = useRef<Map<number, number>>(new Map());
   const [, forceRender] = useState(0);
   const lastMsgId = useRef(0);
   const started = useRef(Date.now());
@@ -107,6 +108,14 @@ export default function FocusRoom({
         remoteStreams.current.set(otherId, e.streams[0]);
         forceRender((n) => n + 1);
       };
+      pc.onnegotiationneeded = async () => {
+        if (!shouldOfferRef.current(otherId)) return;
+        try {
+          const offer = await pc.createOffer();
+          await pc.setLocalDescription(offer);
+          void send(otherId, { description: pc.localDescription });
+        } catch { /* the poll loop will try again */ }
+      };
       pc.onicecandidate = (e) => {
         if (e.candidate) void send(otherId, { candidate: e.candidate.toJSON() });
       };
@@ -114,18 +123,31 @@ export default function FocusRoom({
         // Without a relay some networks simply cannot connect the two devices.
         // Say so plainly rather than showing an empty tile forever.
         if (pc.connectionState === "failed") {
-          setPeerTrouble((prev) => (prev.includes(otherId) ? prev : [...prev, otherId]));
+          // One restart with the relay in play before admitting defeat: the
+          // first attempt may have tried only direct routes.
+          const tries = (retries.current.get(otherId) ?? 0) + 1;
+          retries.current.set(otherId, tries);
+          if (tries <= 2) {
+            try {
+              pc.restartIce();
+            } catch { /* fall through to the notice */ }
+          } else {
+            setPeerTrouble((prev) => (prev.includes(otherId) ? prev : [...prev, otherId]));
+          }
         } else if (pc.connectionState === "connected") {
+          retries.current.set(otherId, 0);
           setPeerTrouble((prev) => prev.filter((id) => id !== otherId));
         }
       };
       return pc;
     },
-    [send]
+    [send, ICE]
   );
 
   // Lower id always makes the offer, so two people never offer at once.
   const shouldOffer = useCallback((otherId: number) => meId < otherId, [meId]);
+  const shouldOfferRef = useRef(shouldOffer);
+  shouldOfferRef.current = shouldOffer;
 
   useEffect(() => {
     let stop = false;
