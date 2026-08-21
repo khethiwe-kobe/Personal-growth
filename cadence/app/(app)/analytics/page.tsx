@@ -1,4 +1,5 @@
 import { requireUser } from "@/lib/auth";
+import { all, get } from "@/lib/db";
 import { summariesForRange, categoriesFor, allGoalStats } from "@/lib/repo";
 import { todayInTz, addDays, startOfWeek, fmtMinutes, fmtDateShort } from "@/lib/time";
 import { PageTitle, Card, SectionHeading, Ring, Stat, ProgressBar, Trend } from "@/components/ui";
@@ -19,6 +20,47 @@ export default async function AnalyticsPage() {
     summariesForRange(user.id, addDays(weekStartEarly, -49), today, user.timezone),
   ]);
   const last7 = last14.slice(-7);
+
+  // Focus room accountability, this week — every number from real session
+  // rows: planned focus tasks, ones actually joined, completions,
+  // interruptions and time genuinely present.
+  const weekEnd = addDays(weekStartEarly, 6);
+  const [frPlanned, frJoined, frInts, frTime, frSessions] = await Promise.all([
+    get<{ n: number; done: number }>(
+      `SELECT COUNT(*) AS n, COALESCE(SUM(t.completed),0) AS done
+         FROM tasks t LEFT JOIN categories c ON c.id = t.category_id
+        WHERE t.user_id=? AND t.date>=? AND t.date<=?
+          AND (t.focus_room=1 OR c.focus_room=1)`,
+      [user.id, weekStartEarly, weekEnd]
+    ),
+    get<{ n: number }>(
+      `SELECT COUNT(DISTINCT r.task_id) AS n
+         FROM focus_rooms r JOIN focus_room_members m ON m.room_id=r.id
+        WHERE m.user_id=? AND r.date>=? AND r.date<=?
+          AND m.present_secs>0 AND r.task_id IS NOT NULL`,
+      [user.id, weekStartEarly, weekEnd]
+    ),
+    get<{ n: number; secs: number }>(
+      `SELECT COUNT(*) AS n, COALESCE(SUM(i.seconds),0) AS secs
+         FROM focus_room_interruptions i JOIN focus_rooms r ON r.id=i.room_id
+        WHERE i.user_id=? AND r.date>=? AND r.date<=?`,
+      [user.id, weekStartEarly, weekEnd]
+    ),
+    get<{ secs: number }>(
+      `SELECT COALESCE(SUM(m.present_secs),0) AS secs
+         FROM focus_room_members m JOIN focus_rooms r ON r.id=m.room_id
+        WHERE m.user_id=? AND r.date>=? AND r.date<=?`,
+      [user.id, weekStartEarly, weekEnd]
+    ),
+    all<{ focus_seconds: number }>(
+      `SELECT focus_seconds FROM focus_sessions
+        WHERE user_id=? AND date>=? AND date<=? AND status!='active'`,
+      [user.id, weekStartEarly, weekEnd]
+    ),
+  ]);
+  const frAvg = frSessions.length
+    ? Math.round(frSessions.reduce((a, b) => a + b.focus_seconds, 0) / frSessions.length / 60)
+    : 0;
   const todaySum = last14[last14.length - 1];
   const catMap = new Map(cats.map((c) => [c.id, c]));
   const goals = goalStats.filter((g) => g.goal.status === "active");
@@ -137,6 +179,36 @@ export default async function AnalyticsPage() {
       </div>
 
       {/* Charts */}
+      <SectionHeading>Focus sessions — this week</SectionHeading>
+      <Card>
+        {frPlanned && frPlanned.n > 0 ? (
+          <>
+            <div className="grid gap-3 sm:grid-cols-5">
+              <Stat label="Planned" value={String(frPlanned.n)} sub="focus session tasks" />
+              <Stat label="Joined" value={String(frJoined?.n ?? 0)}
+                sub={frPlanned.n ? `${Math.round(((frJoined?.n ?? 0) / frPlanned.n) * 100)}% of planned` : ""} />
+              <Stat label="Completed" value={String(frPlanned.done)} />
+              <Stat label="Interruptions" value={String(frInts?.n ?? 0)}
+                sub={frInts?.secs ? `${Math.round(frInts.secs / 60)}m away in total` : ""} />
+              <Stat label="In the room" value={fmtMinutes(Math.round((frTime?.secs ?? 0) / 60))}
+                sub={frAvg ? `avg session ${fmtMinutes(frAvg)}` : ""} />
+            </div>
+            <p className="mt-3 text-xs leading-relaxed text-ink-2">
+              You planned {frPlanned.n} focus session{frPlanned.n === 1 ? "" : "s"} this week,
+              joined {frJoined?.n ?? 0} and completed {frPlanned.done}.
+              {(frInts?.n ?? 0) > 0
+                ? ` ${frInts?.n} interruption${(frInts?.n ?? 0) === 1 ? "" : "s"} recorded.`
+                : " No interruptions recorded."}
+            </p>
+          </>
+        ) : (
+          <p className="text-sm text-ink-3">
+            No focus sessions planned this week. Tag a task as a focus session on Today and
+            it will be tracked here — planned, joined, completed, interrupted.
+          </p>
+        )}
+      </Card>
+
       <SectionHeading>Planned vs completed hours — last 7 days</SectionHeading>
       <Card>
         <PairedBars

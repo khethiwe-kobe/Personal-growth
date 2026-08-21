@@ -20,7 +20,9 @@ export type RoomMember = FocusRoomMemberRow & {
   username: string;
   accent: string;
   has_avatar: number;
-  stale: boolean;   // heartbeat too old — treated as gone
+  stale: boolean;      // heartbeat too old — treated as gone
+  away_secs: number;   // how long they have been away right now
+  interruptions: number;
 };
 
 export async function getRoom(roomId: number): Promise<FocusRoomRow | undefined> {
@@ -30,11 +32,17 @@ export async function getRoom(roomId: number): Promise<FocusRoomRow | undefined>
 /** Members with their identity, newest join first. */
 export async function roomMembers(roomId: number): Promise<RoomMember[]> {
   const rows = await all<FocusRoomMemberRow & {
-    display_name: string; username: string; accent: string; has_avatar: number; age: number;
+    display_name: string; username: string; accent: string; has_avatar: number;
+    age: number; away_secs: number; interruptions: number;
   }>(
     `SELECT m.*, u.display_name, u.username, u.accent,
             (u.avatar_blob IS NOT NULL) AS has_avatar,
-            CAST((julianday('now') - julianday(m.last_seen)) * 86400 AS INTEGER) AS age
+            CAST((julianday('now') - julianday(m.last_seen)) * 86400 AS INTEGER) AS age,
+            CASE WHEN m.away_since IS NOT NULL
+                 THEN CAST((julianday('now') - julianday(m.away_since)) * 86400 AS INTEGER)
+                 ELSE 0 END AS away_secs,
+            (SELECT COUNT(*) FROM focus_room_interruptions i
+              WHERE i.room_id = m.room_id AND i.user_id = m.user_id) AS interruptions
        FROM focus_room_members m
        JOIN users u ON u.id = m.user_id
       WHERE m.room_id = ?
@@ -143,4 +151,41 @@ export async function hasFocusCategory(userId: number): Promise<boolean> {
     [userId, userId]
   );
   return (row?.n ?? 0) > 0;
+}
+
+/**
+ * Presence and interruption counts for a set of this user's tasks — what the
+ * planner needs to say "not started / in progress / interrupted / completed
+ * through the room" against each focus task.
+ */
+export async function focusPresenceForTasks(
+  userId: number,
+  taskIds: number[]
+): Promise<Map<number, { secs: number; interruptions: number }>> {
+  const map = new Map<number, { secs: number; interruptions: number }>();
+  if (!taskIds.length) return map;
+  const marks = taskIds.map(() => "?").join(",");
+  const rows = await all<{ tid: number; secs: number; ints: number }>(
+    `SELECT r.task_id AS tid,
+            COALESCE(MAX(m.present_secs), 0) AS secs,
+            (SELECT COUNT(*) FROM focus_room_interruptions i
+              WHERE i.user_id = ? AND i.room_id IN
+                (SELECT id FROM focus_rooms WHERE task_id = r.task_id)) AS ints
+       FROM focus_rooms r
+       JOIN focus_room_members m ON m.room_id = r.id AND m.user_id = ?
+      WHERE r.task_id IN (${marks})
+      GROUP BY r.task_id`,
+    [userId, userId, ...taskIds]
+  );
+  for (const r of rows) map.set(r.tid, { secs: r.secs, interruptions: r.ints });
+  return map;
+}
+
+/** This user's interruption log for one room, oldest first. */
+export async function interruptionsFor(roomId: number, userId: number) {
+  return all<{ id: number; away_at: string; back_at: string; seconds: number; reason: string }>(
+    `SELECT id, away_at, back_at, seconds, reason FROM focus_room_interruptions
+      WHERE room_id = ? AND user_id = ? ORDER BY id`,
+    [roomId, userId]
+  );
 }

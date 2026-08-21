@@ -42,6 +42,8 @@ export type FocusRoomMemberRow = {
   tasks_done: number;
   tasks_total: number;
   share_list: number;
+  camera_on: number;
+  recorded: number;
 };
 
 export type RoomMessageRow = {

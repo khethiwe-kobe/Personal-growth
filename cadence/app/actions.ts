@@ -549,22 +549,8 @@ export async function joinFocusRoomAction(taskId: number): Promise<number | { er
     if (!room) return { error: String(info.lastInsertRowid) };
   }
 
-  const existing = await get<{ id: number }>(
-    "SELECT id FROM focus_room_members WHERE room_id=? AND user_id=?", [room.id, user.id]
-  );
-  if (existing) {
-    await run(
-      `UPDATE focus_room_members
-          SET left_at=NULL, present=1, away_since=NULL, last_seen=datetime('now')
-        WHERE id=?`,
-      [existing.id]
-    );
-  } else {
-    await run(
-      "INSERT INTO focus_room_members (room_id, user_id) VALUES (?,?)", [room.id, user.id]
-    );
-  }
-  await systemMessage(room.id, user.id, `${user.display_name} joined`);
+  // The button only opens (or finds) the room; the lobby's Enter button is
+  // what actually seats you, so nobody is "in the room" without meaning to be.
   return room.id;
 }
 
@@ -603,22 +589,39 @@ export async function enterFocusRoomAction(roomId: number): Promise<void> {
  * immediately rather than inferred later — leaving is the thing the room is
  * meant to make visible.
  */
-export async function roomHeartbeatAction(roomId: number, present: boolean) {
+export async function roomHeartbeatAction(
+  roomId: number, present: boolean, cameraOn = true
+) {
   const user = await requireUser();
   const { canSeeRoom, systemMessage } = await import("@/lib/rooms");
   if (!(await canSeeRoom(roomId, user.id))) return;
 
-  const row = await get<{ id: number; present: number; away_count: number }>(
-    "SELECT id, present, away_count FROM focus_room_members WHERE room_id=? AND user_id=?",
+  const row = await get<{ id: number; present: number; away_since: string | null }>(
+    "SELECT id, present, away_since FROM focus_room_members WHERE room_id=? AND user_id=?",
     [roomId, user.id]
   );
   if (!row) return;
 
   const wasPresent = row.present === 1;
   if (present && !wasPresent) {
+    // Coming back closes out the absence as one interruption row; the person
+    // is asked for the reason and it lands on this row.
+    if (row.away_since) {
+      await run(
+        `INSERT INTO focus_room_interruptions (room_id, user_id, away_at, back_at, seconds)
+         SELECT room_id, user_id, away_since, datetime('now'),
+                CAST((julianday('now') - julianday(away_since)) * 86400 AS INTEGER)
+           FROM focus_room_members
+          WHERE id=? AND away_since IS NOT NULL
+            AND (julianday('now') - julianday(away_since)) * 86400 >= 10`,
+        [row.id]
+      );
+    }
     await run(
-      `UPDATE focus_room_members SET present=1, away_since=NULL, last_seen=datetime('now')
-        WHERE id=?`, [row.id]
+      `UPDATE focus_room_members
+          SET present=1, away_since=NULL, last_seen=datetime('now'), camera_on=?
+        WHERE id=?`,
+      [cameraOn ? 1 : 0, row.id]
     );
     await systemMessage(roomId, user.id, `${user.display_name} came back`);
   } else if (!present && wasPresent) {
@@ -633,23 +636,126 @@ export async function roomHeartbeatAction(roomId: number, present: boolean) {
     // Only time spent actually here counts towards completing the task.
     await run(
       `UPDATE focus_room_members
-          SET last_seen=datetime('now'),
+          SET last_seen=datetime('now'), camera_on=?,
               present_secs = present_secs + CASE WHEN present=1 THEN 10 ELSE 0 END
-        WHERE id=?`, [row.id]
+        WHERE id=?`,
+      [cameraOn ? 1 : 0, row.id]
     );
   }
 }
 
+/** Attaches the person's stated reason to their most recent interruption. */
+export async function recordInterruptionReasonAction(
+  roomId: number, reason: string, note: string
+) {
+  const user = await requireUser();
+  const { canSeeRoom } = await import("@/lib/rooms");
+  if (!(await canSeeRoom(roomId, user.id))) return;
+  const valid = ["distracted", "urgent", "unplanned_break", "technical", "other"];
+  await run(
+    `UPDATE focus_room_interruptions SET reason=?, note=?
+      WHERE id = (SELECT id FROM focus_room_interruptions
+                   WHERE room_id=? AND user_id=? ORDER BY id DESC LIMIT 1)`,
+    [valid.includes(reason) ? reason : "other", String(note ?? "").slice(0, 300),
+     roomId, user.id]
+  );
+}
+
+/**
+ * Ends the session on purpose. This is the moment the sitting becomes a
+ * record: one focus_sessions row with the planned time, the time actually
+ * present, and how it ended — which is what every analytics view reads.
+ */
+export async function endFocusSessionAction(
+  roomId: number
+): Promise<{ focusedSecs: number; plannedMinutes: number; interruptions: number } | { error: string }> {
+  const user = await requireUser();
+  const { canSeeRoom, systemMessage, getRoom } = await import("@/lib/rooms");
+  if (!(await canSeeRoom(roomId, user.id))) return { error: "Not your room." };
+
+  const member = await get<{ id: number; present_secs: number; joined_at: string; recorded: number }>(
+    "SELECT id, present_secs, joined_at, recorded FROM focus_room_members WHERE room_id=? AND user_id=?",
+    [roomId, user.id]
+  );
+  const room = await getRoom(roomId);
+  if (!member || !room) return { error: "You're not in this room." };
+
+  const task = room.task_id
+    ? await get<{ start_min: number | null; end_min: number | null; planned_minutes: number }>(
+        "SELECT start_min, end_min, planned_minutes FROM tasks WHERE id=?", [room.task_id]
+      )
+    : undefined;
+  const planned =
+    task?.start_min !== null && task?.start_min !== undefined && task?.end_min !== null
+      ? (task.end_min as number) - (task.start_min as number)
+      : task?.planned_minutes ?? Math.max(1, Math.round(member.present_secs / 60));
+
+  const ints = await get<{ n: number }>(
+    "SELECT COUNT(*) AS n FROM focus_room_interruptions WHERE room_id=? AND user_id=?",
+    [roomId, user.id]
+  );
+
+  if (!member.recorded) {
+    await run(
+      `INSERT INTO focus_sessions (user_id, date, started_at, ended_at, planned_minutes,
+         focus_seconds, status, label)
+       VALUES (?,?,?,?,?,?, ?, ?)`,
+      [user.id, room.date, member.joined_at, new Date().toISOString(), planned,
+       member.present_secs, (ints?.n ?? 0) > 0 ? "interrupted" : "completed",
+       room.title.slice(0, 120)]
+    );
+  }
+  await run(
+    "UPDATE focus_room_members SET left_at=datetime('now'), present=0, recorded=1 WHERE id=?",
+    [member.id]
+  );
+  await systemMessage(roomId, user.id, `${user.display_name} finished their session`);
+
+  const open = await get<{ n: number }>(
+    "SELECT COUNT(*) AS n FROM focus_room_members WHERE room_id=? AND left_at IS NULL", [roomId]
+  );
+  if ((open?.n ?? 0) === 0)
+    await run("UPDATE focus_rooms SET closed_at=datetime('now') WHERE id=?", [roomId]);
+
+  revalidatePath("/today");
+  revalidatePath("/focus");
+  revalidatePath("/dashboard");
+  return {
+    focusedSecs: member.present_secs,
+    plannedMinutes: planned,
+    interruptions: ints?.n ?? 0,
+  };
+}
+
 export async function leaveFocusRoomAction(roomId: number) {
   const user = await requireUser();
-  const { canSeeRoom, systemMessage } = await import("@/lib/rooms");
+  const { canSeeRoom, systemMessage, getRoom } = await import("@/lib/rooms");
   if (!(await canSeeRoom(roomId, user.id))) return;
+  // Walking out is not the same as finishing: the sitting is recorded, marked
+  // interrupted, so it cannot quietly disappear from the history.
+  const member = await get<{ id: number; present_secs: number; joined_at: string; recorded: number }>(
+    "SELECT id, present_secs, joined_at, recorded FROM focus_room_members WHERE room_id=? AND user_id=?",
+    [roomId, user.id]
+  );
+  const room = await getRoom(roomId);
+  if (member && room && !member.recorded && member.present_secs >= 30) {
+    await run(
+      `INSERT INTO focus_sessions (user_id, date, started_at, ended_at, planned_minutes,
+         focus_seconds, status, interrupt_reason, label)
+       VALUES (?,?,?,?,?,?, 'interrupted', 'left_room', ?)`,
+      [user.id, room.date, member.joined_at, new Date().toISOString(),
+       Math.max(1, Math.round(member.present_secs / 60)), member.present_secs,
+       room.title.slice(0, 120)]
+    );
+    await run("UPDATE focus_room_members SET recorded=1 WHERE id=?", [member.id]);
+  }
   await run(
     `UPDATE focus_room_members SET left_at=datetime('now'), present=0
       WHERE room_id=? AND user_id=?`,
     [roomId, user.id]
   );
-  await systemMessage(roomId, user.id, `${user.display_name} ended their session`);
+  await systemMessage(roomId, user.id, `${user.display_name} left without finishing`);
+  revalidatePath("/focus");
 }
 
 export async function roomSayAction(roomId: number, body: string) {

@@ -8,13 +8,24 @@ import { IconCheck, IconEdit, IconX } from "./icons";
 import JoinRoomButton from "./JoinRoomButton";
 import { fmtClock, fmtMinutes, addDays } from "@/lib/time";
 
+export type FocusTaskState = "completed" | "active" | "interrupted" | "missed" | "not_started";
+
+const FOCUS_CHIP: Record<FocusTaskState, { dot: string; text: string; label: string }> = {
+  completed:   { dot: "bg-ok",     text: "text-ok",     label: "Completed through Focus Room" },
+  active:      { dot: "bg-accent", text: "text-accent-ink", label: "In progress" },
+  interrupted: { dot: "bg-warn",   text: "text-warn",   label: "Interrupted" },
+  missed:      { dot: "bg-danger", text: "text-danger", label: "Missed" },
+  not_started: { dot: "bg-ink-3",  text: "text-ink-3",  label: "Not started" },
+};
+
 export default function TaskItem({
-  task, category, categories, isPast,
+  task, category, categories, isPast, focusState,
 }: {
   task: TaskRow;
   category: CategoryRow | null;
   categories: CategoryRow[];
   isPast: boolean;
+  focusState?: FocusTaskState;
 }) {
   const [pending, start] = useTransition();
   const [editing, setEditing] = useState(false);
@@ -82,9 +93,15 @@ export default function TaskItem({
             {task.notes && <span title={task.notes}>· has note</span>}
           </div>
           {/* Done together: this one is only completable from the room. */}
-          {(task.focus_room === 1 || category?.focus_room === 1) && !checked && (
-            <div className="mt-1.5">
-              <JoinRoomButton taskId={task.id} />
+          {(task.focus_room === 1 || category?.focus_room === 1) && (
+            <div className="mt-1.5 flex flex-wrap items-center gap-2">
+              {focusState && (
+                <span className={`inline-flex items-center gap-1.5 text-[11px] font-medium ${FOCUS_CHIP[focusState].text}`}>
+                  <span className={`h-1.5 w-1.5 rounded-full ${FOCUS_CHIP[focusState].dot}`} aria-hidden />
+                  Focus session · {FOCUS_CHIP[focusState].label}
+                </span>
+              )}
+              {!checked && <JoinRoomButton taskId={task.id} />}
             </div>
           )}
         </div>

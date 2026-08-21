@@ -107,6 +107,8 @@ const ADDED_COLUMNS: { table: string; column: string; definition: string }[] = [
   // A task is a focus session or it isn't — independent of its category, so a
   // focus session can be for school, church, work or anything else.
   { table: "tasks", column: "focus_room", definition: "INTEGER NOT NULL DEFAULT 0" },
+  { table: "focus_room_members", column: "camera_on", definition: "INTEGER NOT NULL DEFAULT 1" },
+  { table: "focus_room_members", column: "recorded", definition: "INTEGER NOT NULL DEFAULT 0" },
 ];
 
 async function addMissingColumns() {
@@ -372,6 +374,8 @@ const SCHEMA = `
     tasks_done    INTEGER NOT NULL DEFAULT 0,
     tasks_total   INTEGER NOT NULL DEFAULT 0,
     share_list    INTEGER NOT NULL DEFAULT 0,  -- 0 = only the count is shared
+    camera_on     INTEGER NOT NULL DEFAULT 1,
+    recorded      INTEGER NOT NULL DEFAULT 0,  -- a focus_sessions row exists
     UNIQUE (room_id, user_id)
   );
 
@@ -384,6 +388,21 @@ const SCHEMA = `
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
   );
   CREATE INDEX IF NOT EXISTS idx_room_msgs ON focus_room_messages(room_id, id);
+
+  -- Every time someone slips away from an active room and comes back, one row
+  -- lands here: when, for how long, and (once they answer) why. This is the
+  -- accountability log the analytics read from.
+  CREATE TABLE IF NOT EXISTS focus_room_interruptions (
+    id       INTEGER PRIMARY KEY AUTOINCREMENT,
+    room_id  INTEGER NOT NULL REFERENCES focus_rooms(id) ON DELETE CASCADE,
+    user_id  INTEGER NOT NULL,
+    away_at  TEXT,
+    back_at  TEXT,
+    seconds  INTEGER NOT NULL DEFAULT 0,
+    reason   TEXT NOT NULL DEFAULT '',
+    note     TEXT NOT NULL DEFAULT ''
+  );
+  CREATE INDEX IF NOT EXISTS idx_room_ints ON focus_room_interruptions(room_id, user_id);
 
   -- Connection setup passes through here so the video itself can go straight
   -- between devices. Rows are consumed by the recipient and short-lived.

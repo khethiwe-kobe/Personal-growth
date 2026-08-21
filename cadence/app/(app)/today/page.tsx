@@ -10,6 +10,8 @@ import { IconChevronL, IconChevronR } from "@/components/icons";
 import TaskItem from "@/components/TaskItem";
 import Timeline from "@/components/Timeline";
 import ShareDay from "@/components/ShareDay";
+import { focusPresenceForTasks } from "@/lib/rooms";
+import type { FocusTaskState } from "@/components/TaskItem";
 import { AddTaskForm, AddBlockForm } from "@/components/TodayForms";
 import { CheckinRow } from "@/components/GoalCheckin";
 
@@ -36,6 +38,30 @@ export default async function TodayPage({
   ]);
   const catMap = new Map(categories.map((c) => [c.id, c]));
   const hasTimetable = timetable.length > 0;
+
+  // Status of each focus-session task against its room: the planner shows
+  // whether it was actually attended, not just whether it was ticked.
+  const focusIds = tasks
+    .filter((t) => t.focus_room === 1 || (t.category_id !== null && catMap.get(t.category_id)?.focus_room === 1))
+    .map((t) => t.id);
+  const presence = await focusPresenceForTasks(user.id, focusIds);
+  const nowMinHere = date === today ? nowMinutesInTz(user.timezone) : null;
+  const focusStates = new Map<number, FocusTaskState>();
+  for (const t of tasks) {
+    if (!focusIds.includes(t.id)) continue;
+    const p = presence.get(t.id);
+    const past = date < today || (nowMinHere !== null && t.end_min !== null && t.end_min < nowMinHere);
+    focusStates.set(
+      t.id,
+      t.completed
+        ? "completed"
+        : p && p.secs > 0
+          ? (p.interruptions > 0 ? "interrupted" : "active")
+          : past
+            ? "missed"
+            : "not_started"
+    );
+  }
   const nowMin = isToday ? nowMinutesInTz(user.timezone) : null;
 
   const order = { A: 0, B: 1, C: 2 } as const;
@@ -128,6 +154,7 @@ export default async function TodayPage({
                     key={t.id} task={t}
                     category={t.category_id ? catMap.get(t.category_id) ?? null : null}
                     categories={categories} isPast={isPast}
+                    focusState={focusStates.get(t.id)}
                   />
                 ))}
               </ul>

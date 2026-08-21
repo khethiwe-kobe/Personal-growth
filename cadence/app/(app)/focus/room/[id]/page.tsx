@@ -5,8 +5,8 @@ import { canSeeRoom, getRoom } from "@/lib/rooms";
 import { tasksForDay, categoriesFor } from "@/lib/repo";
 import FocusRoom from "@/components/FocusRoom";
 import { PageTitle } from "@/components/ui";
-import type { TaskRow } from "@/lib/types";
 import { iceServers } from "@/lib/ice";
+import type { TaskRow } from "@/lib/types";
 
 export const metadata = { title: "Focus room" };
 export const dynamic = "force-dynamic";
@@ -21,33 +21,52 @@ export default async function FocusRoomPage({
   const room = await getRoom(roomId);
   if (!room) notFound();
 
-  // The session list is this person's own tasks for the day in the same
-  // category as the room's task — their list, not anyone else's.
+  // The task this room exists for — the timer and completion bind to it.
   const anchor = room.task_id
     ? await get<TaskRow>("SELECT * FROM tasks WHERE id=?", [room.task_id])
     : undefined;
-  const [dayTasks, categories] = await Promise.all([
+
+  const [dayTasks, categories, membership] = await Promise.all([
     tasksForDay(user.id, room.date),
     categoriesFor(user.id),
+    get<{ id: number }>(
+      "SELECT id FROM focus_room_members WHERE room_id=? AND user_id=? AND left_at IS NULL",
+      [roomId, user.id]
+    ),
   ]);
-  const sessionTasks = anchor?.category_id
-    ? dayTasks.filter((t) => t.category_id === anchor.category_id)
-    : dayTasks.filter((t) => t.id === room.task_id);
+  const catMap = new Map(categories.map((c) => [c.id, c]));
+
+  // The session list: this person's own focus-session tasks for the day.
+  const sessionTasks = dayTasks.filter(
+    (t) =>
+      t.focus_room === 1 ||
+      (t.category_id !== null && catMap.get(t.category_id)?.focus_room === 1) ||
+      t.id === room.task_id
+  );
 
   return (
     <div className="fade-up">
       <PageTitle
-        title={room.title}
-        subtitle="Everyone here is working. Leaving the tab is flagged to the room."
+        title="Focus room"
+        subtitle="Everyone here is working. Leaving the tab is flagged to the room and recorded."
       />
       <FocusRoom
         roomId={room.id}
-        title={room.title}
         meId={user.id}
+        anchor={
+          anchor
+            ? {
+                id: anchor.id, name: anchor.name, start_min: anchor.start_min,
+                end_min: anchor.end_min, planned_minutes: anchor.planned_minutes,
+                completed: anchor.completed,
+              }
+            : null
+        }
         sessionTasks={sessionTasks}
         categories={categories}
         date={room.date}
         ice={iceServers()}
+        alreadyIn={!!membership}
       />
     </div>
   );
