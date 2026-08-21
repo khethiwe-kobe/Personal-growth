@@ -525,18 +525,48 @@ tr.tot td{font-weight:700;border-top:1px solid var(--rule-strong);}
 }
 </style>
 
+<style>
+/* additions for the shared-expenses tables */
+.exp td.f{
+  font-family:var(--mono);
+  color:var(--muted);
+  border-bottom:1px solid var(--rule);
+}
+.exp td.blank,.exp td.f{height:34px;border-bottom:1px solid var(--rule-strong);}
+.exp tr.tot td.f{border-bottom:1px solid var(--rule-strong);}
+.exp tbody tr:last-child td{border-bottom:1px solid var(--rule);}
+.exp tr.tot td{font-weight:700;border-top:1px solid var(--rule-strong);border-bottom:none;}
+.exp tr.each td{font-weight:700;border-bottom:none;color:var(--accent);}
+.exp tr.each td.r{color:var(--accent);}
+.tbl-head{
+  font-family:var(--sans);
+  font-weight:700;
+  font-size:13px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin:30px 0 10px;
+}
+.tbc{
+  font-family:var(--sans);
+  font-size:13px;
+  color:var(--muted);
+  font-style:italic;
+}
+</style>
+
 <div class="wrap">
 
 <header class="mast">
-  <p class="eyebrow">Planning brief · SoHo Junction</p>
+  <p class="eyebrow">Planning notes · SoHo Junction</p>
   <h1>Before We Move In</h1>
-  <p class="stand">Everything to settle before the keys change hands — what to decide on your own first, and what belongs on the table when the two of you sit down.</p>
+  <p class="stand">The things worth talking through before the keys change hands, with space under each one to write down what we decide.</p>
 
   <dl class="facts">
     <div class="fact"><dt>Unit</dt><dd>2 bed / 2 bath</dd></div>
     <div class="fact"><dt>Rent</dt><dd>R8,800</dd></div>
-    <div class="fact"><dt>Your half</dt><dd>R4,400</dd></div>
-    <div class="fact"><dt>Deposit</dt><dd>R8,800</dd></div>
+    <div class="fact"><dt>Each</dt><dd>R4,400</dd></div>
+    <div class="fact"><dt>Deposit</dt><dd>R9,000</dd></div>
     <div class="fact"><dt>Moving</dt><dd>Month end</dd></div>
   </dl>
   <p class="mast-note">Rent covers sanitation, refuse and security. Electricity and internet are on top.</p>
@@ -545,181 +575,109 @@ tr.tot td{font-weight:700;border-top:1px solid var(--rule-strong);}
 <!-- ============ AGENDA ============ -->
 <div class="agenda">
   <h2>Agenda</h2>
-  <p class="sub">Eight items, in the order worth working through them. Money first — it is concrete, and it warms the room up for the harder ones. Tick each off as it is genuinely settled, not merely mentioned.</p>
+  <p class="sub">Seven things to run through together. Most of them are quick — the point is simply to have said them out loud once, and to have somewhere to look them up later.</p>
 
   <ol class="index">
-    <li><span class="n">01</span><a href="#i01">Money and the lease</a><span class="box"></span><span class="d">Signatures, liability, the split, and how money actually moves each month</span></li>
-    <li><span class="n">02</span><a href="#i02">Rooms, parking and furniture</a><span class="box"></span><span class="d">Who sleeps where, who owns what, what happens to jointly bought things</span></li>
-    <li><span class="n">03</span><a href="#i03">Running the home</a><span class="box"></span><span class="d">Cleaning, food, laundry, quiet hours, electricity habits</span></li>
-    <li><span class="n">04</span><a href="#i04">People in the home</a><span class="box"></span><span class="d">Guests, the ministry boundary, and how it gets held</span></li>
-    <li><span class="n">05</span><a href="#i05">The view from outside</a><span class="box"></span><span class="d">What the church and your families are told, by whom, and when</span></li>
-    <li><span class="n">06</span><a href="#i06">Two roles, one kitchen</a><span class="box"></span><span class="d">Keeping pastor and flatmate separate under one roof</span></li>
-    <li><span class="n">07</span><a href="#i07">If something changes</a><span class="box"></span><span class="d">Conflict route, notice periods, exit terms, and the relationship itself</span></li>
-    <li><span class="n">08</span><a href="#i08">Move-in week</a><span class="box"></span><span class="d">Inspection, photographs, keys, meters, body corporate rules</span></li>
+    <li><span class="n">01</span><a href="#i01">Money</a><span class="box"></span><span class="d">What we are each putting in at move-in, and what runs monthly</span></li>
+    <li><span class="n">02</span><a href="#i02">Furniture</a><span class="box"></span><span class="d">What we each have, what we still need, what we buy together</span></li>
+    <li><span class="n">03</span><a href="#i03">Running the home</a><span class="box"></span><span class="d">Cleaning, food, laundry, and how we keep it easy</span></li>
+    <li><span class="n">04</span><a href="#i04">People in the home</a><span class="box"></span><span class="d">Guests, and the ministry boundary we have already agreed</span></li>
+    <li><span class="n">05</span><a href="#i05">The view from outside</a><span class="box"></span><span class="d">What the church and our families are told, by whom, and when</span></li>
+    <li><span class="n">06</span><a href="#i06">Home, church and everything else</a><span class="box"></span><span class="d">Keeping home a place where either of us can raise something small</span></li>
+    <li><span class="n">07</span><a href="#i07">If plans change</a><span class="box"></span><span class="d">Notice, and what we would want already agreed</span></li>
   </ol>
 
-  <p class="agenda-foot">Each item has space for notes underneath it. Anything left unresolved goes to the actions block on the last page.</p>
+  <p class="agenda-foot">Each item has space for notes underneath it. Anything we leave open goes to the actions block on the last page.</p>
 </div>
 
-<!-- ============ PART ONE ============ -->
+<!-- ============ THE ITEMS ============ -->
 <div class="part">
-  <p class="part-kicker">Part one · On your own</p>
-  <h2>Decide your position before you walk in</h2>
+  <p class="part-kicker">The seven items</p>
+  <h2>What we are working through</h2>
 </div>
-<p class="part-lede">You cannot negotiate a position you have not decided. Work through this alone first — not to build a case, but so that when a question comes up you answer from what you actually want rather than from what is easiest to agree to in the moment.</p>
+<p class="part-lede">The questions set in italic are the ones worth asking out loud. In the notes box under each item, write what we decided rather than what we discussed — it is much more useful to read back.</p>
 
 <section>
-  <h3>What you can and cannot absorb</h3>
-  <p>From month four your share settles at about <strong>R5,430 a month</strong> including transport, against R12,000 available. That is comfortable. The thin part is the first month, and the thing that keeps it safe is the deposit being split over three instalments.</p>
+  <h3 id="i01"><span class="num">01</span>Money</h3>
+  <p>The split is settled — everything shared, down the middle. Both names are on the lease. What is left is agreeing the numbers and filling in the ones still outstanding.</p>
 
+  <p class="tbl-head">Once-off, at move-in</p>
   <div class="tw">
-    <table>
-      <caption>Your share, once you are both in</caption>
-      <thead><tr><th>Line</th><th class="r">Per month</th></tr></thead>
+    <table class="exp">
+      <thead><tr><th>Item</th><th class="r">Total</th><th class="r">Each</th></tr></thead>
       <tbody>
-        <tr><td>Rent, half</td><td class="r">R4,400</td></tr>
-        <tr><td>Electricity, half</td><td class="r">R310</td></tr>
-        <tr><td>Water</td><td class="r">R0</td></tr>
-        <tr><td>Internet, half</td><td class="r">R400</td></tr>
-        <tr><td>Transport</td><td class="r">R320</td></tr>
-        <tr class="tot"><td>Total</td><td class="r">R5,430</td></tr>
+        <tr><td>Deposit</td><td class="r">R9,000</td><td class="r">R4,500</td></tr>
+        <tr><td>First month rent</td><td class="r">R8,800</td><td class="r">R4,400</td></tr>
+        <tr><td>Admin fee</td><td class="r">R950</td><td class="r">R475</td></tr>
+        <tr><td>Credit check</td><td class="r">R150</td><td class="r">R75</td></tr>
+        <tr><td class="blank"></td><td class="r blank"></td><td class="r blank"></td></tr>
+        <tr class="tot"><td>Total</td><td class="r">R18,900</td><td class="r">R9,450</td></tr>
       </tbody>
     </table>
   </div>
 
+  <p class="tbl-head">Every month</p>
+  <div class="tw">
+    <table class="exp">
+      <thead><tr><th>Item</th><th class="r">Total</th><th class="r">Each</th></tr></thead>
+      <tbody>
+        <tr><td>Rent</td><td class="r">R8,800</td><td class="r">R4,400</td></tr>
+        <tr><td>Electricity<span class="cell-note"></span></td><td class="r" colspan="2"><span class="tbc">to confirm — may be in the month-end bill</span></td></tr>
+        <tr><td>Gas refill</td><td class="r f">&nbsp;</td><td class="r f">&nbsp;</td></tr>
+        <tr><td>Transport &mdash; Sundays, shared</td><td class="r">R900</td><td class="r">R450</td></tr>
+        <tr><td class="blank"></td><td class="r blank"></td><td class="r blank"></td></tr>
+        <tr><td class="blank"></td><td class="r blank"></td><td class="r blank"></td></tr>
+        <tr><td class="blank"></td><td class="r blank"></td><td class="r blank"></td></tr>
+        <tr class="tot"><td>Total</td><td class="r f">&nbsp;</td><td class="r f">&nbsp;</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size:14px;color:var(--muted);">Blank rows are for anything we add — groceries, internet, a cleaner, anything else that ends up shared.</p>
+
+  <h4>Still to agree</h4>
   <ul class="check">
-    <li><input type="checkbox" id="p1"><label for="p1">Write down your true monthly ceiling for everything housing-related.<span class="hint">Not the number you hope for — the number above which you would have to borrow.</span></label></li>
-    <li><input type="checkbox" id="p2"><label for="p2">Decide your limit for unplanned joint spending.<span class="hint">A cleaner, a couch, a coffee machine. Below what figure would you agree without needing to think?</span></label></li>
-    <li><input type="checkbox" id="p3"><label for="p3">Confirm the date your deposit refund lands, and whether it arrives before the first rent payment.<span class="hint">It is the only cash in your plan. If it is late, the first month does not work.</span></label></li>
+    <li><input type="checkbox" id="a1"><label for="a1">Set the monthly household budget, and what it covers.<span class="hint">Groceries, cleaning supplies, toilet paper and the rest — one figure rather than counting individual items.</span></label></li>
+    <li><input type="checkbox" id="a2"><label for="a2">What date does money move each month, relative to both our salary dates?</label></li>
+    <li><input type="checkbox" id="a3"><label for="a3">Keep a simple record of who paid what at move-in.<span class="hint">Only matters once, at the end of the lease, when the deposit is refunded. Easier to write down now than to reconstruct later.</span></label></li>
+    <li><input type="checkbox" id="a4"><label for="a4">Confirm what the electricity arrangement actually is once the first bill arrives.</label></li>
   </ul>
 
-  <div class="note">
-    <span class="tag">Prepare for this one</span>
-    <p>If your pastor earns considerably more than you, they may propose things in good faith that you cannot afford — furniture, a weekly cleaner, splitting something large. <strong>Decide now that you will say "that is above what I budgeted" plainly, and without explaining your finances.</strong> It is a complete sentence. Rehearse it, because the moment it is needed is the moment it will be hardest to say.</p>
-  </div>
+  <p class="ask">If one of us is short one month, how do we want to handle it?</p>
 
   <div class="notes">
-    <span class="notes-label">My numbers <em>ceiling, joint-spend limit, refund date</em></span>
-    <div class="lines"><span></span><span></span><span></span><span></span></div>
-  </div>
-</section>
-
-<section>
-  <h3>The flat itself</h3>
-  <ul class="check">
-    <li><input type="checkbox" id="p4"><label for="p4">Which bedroom do you want, and why?<span class="hint">Light, noise, size, proximity to the front door. Know your first choice and your fallback.</span></label></li>
-    <li><input type="checkbox" id="p5"><label for="p5">What would you trade to get it?<span class="hint">A slightly larger share of rent, the smaller cupboard, the second parking bay.</span></label></li>
-    <li><input type="checkbox" id="p6"><label for="p6">List what you are bringing, and what you still need to buy.</label></li>
-    <li><input type="checkbox" id="p7"><label for="p7">Decide what you are <em>not</em> willing to share.<span class="hint">Some things should simply be yours. Naming them now avoids a small resentment later.</span></label></li>
-  </ul>
-  <div class="notes">
-    <span class="notes-label">My preferences</span>
-    <div class="lines"><span></span><span></span><span></span><span></span></div>
-  </div>
-</section>
-
-<section>
-  <h3>How you actually live</h3>
-  <p>Be honest here rather than aspirational. The version of yourself you describe in this meeting is the standard you will be held to in month five.</p>
-  <ul class="check">
-    <li><input type="checkbox" id="p8"><label for="p8">Your real cleanliness standard, not your best week.</label></li>
-    <li><input type="checkbox" id="p9"><label for="p9">What time you need the flat quiet, on weeknights and on Sundays.</label></li>
-    <li><input type="checkbox" id="p10"><label for="p10">How many evenings a week you need the place to yourself.<span class="hint">This is the question people skip and then quietly suffer over. Put a number on it.</span></label></li>
-    <li><input type="checkbox" id="p11"><label for="p11">Whether you want to share food and cooking, or keep them separate.</label></li>
-    <li><input type="checkbox" id="p12"><label for="p12">Your honest limit on people coming into the home during the week.</label></li>
-  </ul>
-  <div class="notes">
-    <span class="notes-label">My standards</span>
-    <div class="lines"><span></span><span></span><span></span><span></span></div>
-  </div>
-</section>
-
-<section>
-  <h3>Your line</h3>
-  <p>Before any of the rest, know the answer to this one. Not to threaten anyone with it — just so that you recognise the situation if it ever arrives.</p>
-  <p class="ask">What would have to happen for me to want to leave?</p>
-  <ul class="check">
-    <li><input type="checkbox" id="p13"><label for="p13">Name it, and write down what you would do if it happened.</label></li>
-    <li><input type="checkbox" id="p14"><label for="p14">Identify one person outside the church you could talk to honestly about living here.<span class="hint">You will need this. Item seven explains why.</span></label></li>
-  </ul>
-  <div class="notes">
-    <span class="notes-label">My line <em>and who I would call</em></span>
-    <div class="lines"><span></span><span></span><span></span></div>
-  </div>
-</section>
-
-<!-- ============ PART TWO ============ -->
-<div class="part">
-  <p class="part-kicker">Part two · Together</p>
-  <h2>The eight items in full</h2>
-</div>
-<p class="part-lede">The detail behind each agenda line. The questions set in italic are the ones worth asking out loud, more or less as written. Write what you agree in the notes box under each item — not what you discussed, but what you decided.</p>
-
-<section>
-  <h3 id="i01"><span class="num">01</span>Money and the lease</h3>
-
-  <h4>The lease itself</h4>
-  <ul class="check">
-    <li><input type="checkbox" id="a1"><label for="a1">Do both names go on the lease?<span class="hint">Push for yes. If only one of you signs, the other has no legal right to be there and the signatory carries the whole risk alone.</span></label></li>
-    <li><input type="checkbox" id="a2"><label for="a2">Read the liability clause together.<span class="hint">Almost every shared lease is joint and several: if one of you does not pay, the landlord can pursue the other for the full amount. Both of you should know this before signing, not after.</span></label></li>
-    <li><input type="checkbox" id="a3"><label for="a3">Lease length, annual escalation percentage, and notice period.</label></li>
-    <li><input type="checkbox" id="a4"><label for="a4">Does the lease allow a replacement tenant if one of you leaves early?</label></li>
-    <li><input type="checkbox" id="a5"><label for="a5">Get the R1,100 admin and credit check confirmed as once-off, and check whether it is per lease or per person.</label></li>
-  </ul>
-
-  <h4>The split</h4>
-  <ul class="check">
-    <li><input type="checkbox" id="a6"><label for="a6">Is rent split evenly, or weighted if one bedroom is meaningfully better?</label></li>
-    <li><input type="checkbox" id="a7"><label for="a7">Deposit: R4,400 each, over three instalments. Confirm the landlord has agreed to this in writing.</label></li>
-    <li><input type="checkbox" id="a8"><label for="a8">Write down who paid what, and keep it.<span class="hint">A year from now, the deposit refund is split according to this record. Without it, it gets split according to memory.</span></label></li>
-  </ul>
-
-  <h4>Mechanics</h4>
-  <ul class="check">
-    <li><input type="checkbox" id="a9"><label for="a9">Does each of you pay the landlord directly, or does one pay and the other transfer?<span class="hint">Direct is cleaner. If one pays, that person is carrying the other's credit risk every month.</span></label></li>
-    <li><input type="checkbox" id="a10"><label for="a10">What date does money move, relative to both your salary dates?</label></li>
-    <li><input type="checkbox" id="a11"><label for="a11">Who tops up prepaid electricity, and how is it reconciled?<span class="hint">One person buying and the other settling up is the most common friction point in a shared flat. Agree the method now.</span></label></li>
-    <li><input type="checkbox" id="a12"><label for="a12">Internet, in whose name and on whose debit order?</label></li>
-    <li><input type="checkbox" id="a13"><label for="a13">Consumables — dishwashing liquid, toilet paper, cleaning supplies. A small monthly kitty, or alternate months?</label></li>
-  </ul>
-
-  <p class="ask">If one of us is short one month, what do we do — and how do we say it without it becoming a big thing?</p>
-
-  <div class="notes">
-    <span class="notes-label">01 · What we agreed</span>
+    <span class="notes-label">01 &middot; What we agreed</span>
     <div class="lines"><span></span><span></span><span></span><span></span><span></span><span></span></div>
   </div>
 </section>
 
 <section>
-  <h3 id="i02"><span class="num">02</span>Rooms, parking and furniture</h3>
+  <h3 id="i02"><span class="num">02</span>Furniture</h3>
+  <p>Rooms are sorted and neither of us has a car, so this is just about what goes in the flat.</p>
   <ul class="check">
-    <li><input type="checkbox" id="b1"><label for="b1">Bedroom allocation. Settle it now, and say whether it is revisited later or fixed.</label></li>
-    <li><input type="checkbox" id="b2"><label for="b2">How many parking bays come with the unit, and who uses what.</label></li>
-    <li><input type="checkbox" id="b3"><label for="b3">Storage — cupboards, the balcony, anything communal.</label></li>
-    <li><input type="checkbox" id="b4"><label for="b4">Inventory: who owns each item in the shared spaces.<span class="hint">Write it down. It matters only once — on the day someone moves out — and then it matters a lot.</span></label></li>
-    <li><input type="checkbox" id="b5"><label for="b5">Anything bought jointly: agree in advance who keeps it and whether the other is bought out.</label></li>
-    <li><input type="checkbox" id="b6"><label for="b6">Contents insurance — separately, or one policy split?</label></li>
+    <li><input type="checkbox" id="b1"><label for="b1">What each of us is bringing.</label></li>
+    <li><input type="checkbox" id="b2"><label for="b2">What is still missing, and roughly what it will cost.</label></li>
+    <li><input type="checkbox" id="b3"><label for="b3">What we buy together, and what stays personal.</label></li>
+    <li><input type="checkbox" id="b4"><label for="b4">For anything bought together — who keeps it if one of us moves on, and whether the other is bought out.<span class="hint">Five minutes now, and nobody has to work it out under pressure later.</span></label></li>
+    <li><input type="checkbox" id="b5"><label for="b5">Contents insurance — separately, or one policy split between us?</label></li>
   </ul>
   <div class="notes">
-    <span class="notes-label">02 · What we agreed</span>
-    <div class="lines"><span></span><span></span><span></span><span></span><span></span></div>
+    <span class="notes-label">02 &middot; What we agreed</span>
+    <div class="lines"><span></span><span></span><span></span><span></span></div>
   </div>
 </section>
 
 <section>
   <h3 id="i03"><span class="num">03</span>Running the home</h3>
   <ul class="check">
-    <li><input type="checkbox" id="c1"><label for="c1">Cleaning: a rota between you, or a cleaner you split?<span class="hint">Once a week in Johannesburg runs roughly R1,600 a month, so about R800 each. That is real money against your budget — decide it deliberately.</span></label></li>
-    <li><input type="checkbox" id="c2"><label for="c2">Agree what "clean" means for the kitchen and the lounge, specifically.<span class="hint">Dishes done the same night, or by the next morning? Vague standards are how this goes wrong.</span></label></li>
+    <li><input type="checkbox" id="c1"><label for="c1">Cleaning: a rota between us, or someone we bring in and split?<span class="hint">Once a week in Johannesburg runs roughly R1,600 a month, about R800 each — worth deciding deliberately rather than drifting into it.</span></label></li>
+    <li><input type="checkbox" id="c2"><label for="c2">What "tidy" means for the kitchen and the lounge, specifically.<span class="hint">Dishes done the same night, or by the next morning? Easier agreed than assumed.</span></label></li>
     <li><input type="checkbox" id="c3"><label for="c3">Food: shared, separate, or shared staples with separate meals.</label></li>
     <li><input type="checkbox" id="c4"><label for="c4">Fridge and cupboard space.</label></li>
     <li><input type="checkbox" id="c5"><label for="c5">Laundry — who uses what, when.</label></li>
-    <li><input type="checkbox" id="c6"><label for="c6">Quiet hours on weeknights, and how Sunday mornings run.</label></li>
-    <li><input type="checkbox" id="c7"><label for="c7">Electricity habits.<span class="hint">Prepaid means every heater and every long shower is visible in a shared cost. Worth one sentence now rather than a passive-aggressive one later.</span></label></li>
+    <li><input type="checkbox" id="c6"><label for="c6">Anything either of us needs in order to rest properly at home.</label></li>
   </ul>
   <div class="notes">
-    <span class="notes-label">03 · What we agreed</span>
+    <span class="notes-label">03 &middot; What we agreed</span>
     <div class="lines"><span></span><span></span><span></span><span></span><span></span></div>
   </div>
 </section>
@@ -728,133 +686,106 @@ tr.tot td{font-weight:700;border-top:1px solid var(--rule-strong);}
   <h3 id="i04"><span class="num">04</span>People in the home</h3>
 
   <h4>The line already drawn</h4>
-  <p><strong>The flat is not a ministry venue. Church members do not come here.</strong> That is settled, and it is a good line — a pastor's home otherwise tends to become semi-public without anyone deciding that it should. This part of the conversation is not about negotiating it. It is about making sure it holds without either of you having to defend it at the door.</p>
+  <p><strong>The flat is not a ministry venue, and church members do not come here.</strong> That is already agreed and it is a good line. This part is just about making sure it holds easily, without either of us having to hold it at the door.</p>
   <ul class="check">
-    <li><input type="checkbox" id="d1"><label for="d1">Say it out loud, both of you, so it is a shared decision rather than an assumption you are carrying alone.</label></li>
-    <li><input type="checkbox" id="d2"><label for="d2">How does the church come to understand that this address is private — and who handles that?<span class="hint">Better it is known from the start than corrected after the first person arrives.</span></label></li>
-    <li><input type="checkbox" id="d3"><label for="d3">If someone turns up anyway, what happens?<span class="hint">Agree the response now so neither of you has to improvise while a person is standing outside.</span></label></li>
-    <li><input type="checkbox" id="d4"><label for="d4">Is there any exception at all, or is it an absolute?<span class="hint">"Never" and "only if we both agree first" are both fine answers. Ambiguity is not.</span></label></li>
-    <li><input type="checkbox" id="d5"><label for="d5">Pastoral calls will still happen inside the flat even when visitors do not.<span class="hint">Where are they taken, and what is expected of you about what you overhear? Agree the confidentiality expectation explicitly rather than leaving you to guess.</span></label></li>
-    <li><input type="checkbox" id="d6"><label for="d6">Late-night emergencies — what does your pastor actually do, and does any of it involve the flat or you?</label></li>
+    <li><input type="checkbox" id="d1"><label for="d1">How does the church come to understand that this address is private, and who handles that?<span class="hint">Better known from the start than corrected after the first person arrives.</span></label></li>
+    <li><input type="checkbox" id="d2"><label for="d2">If someone does turn up, what do we do?<span class="hint">Agreed now, so neither of us has to think on the spot.</span></label></li>
+    <li><input type="checkbox" id="d3"><label for="d3">Is it absolute, or are there exceptions we would both agree to first?</label></li>
+    <li><input type="checkbox" id="d4"><label for="d4">Pastoral calls will still happen in the flat even when visitors do not — where are they taken, and what would be helpful from me while they are happening?</label></li>
   </ul>
 
-  <h4>Ordinary guests</h4>
-  <p>Separate question, and the most common source of friction between any two people sharing a home. Worth being specific.</p>
+  <h4>Our own guests</h4>
   <ul class="check">
-    <li><input type="checkbox" id="d7"><label for="d7">How much notice before someone comes over?</label></li>
-    <li><input type="checkbox" id="d8"><label for="d8">Overnight guests — allowed, how often, how much warning?</label></li>
-    <li><input type="checkbox" id="d9"><label for="d9">Family staying over, and for how long.</label></li>
-    <li><input type="checkbox" id="d10"><label for="d10">Does either of you have a veto, and how is it used without offence?</label></li>
+    <li><input type="checkbox" id="d5"><label for="d5">How much notice before someone comes over?</label></li>
+    <li><input type="checkbox" id="d6"><label for="d6">Overnight guests — how often, and how much warning?</label></li>
+    <li><input type="checkbox" id="d7"><label for="d7">Family staying over, and for how long.</label></li>
+    <li><input type="checkbox" id="d8"><label for="d8">How either of us says "not this week" without it being awkward.</label></li>
   </ul>
 
-  <p class="ask">How many evenings a week can I count on this being just a home?</p>
+  <p class="ask">What does a normal week at home look like for each of us?</p>
 
   <div class="notes">
-    <span class="notes-label">04 · What we agreed</span>
+    <span class="notes-label">04 &middot; What we agreed</span>
     <div class="lines"><span></span><span></span><span></span><span></span><span></span></div>
   </div>
 </section>
 
 <section>
   <h3 id="i05"><span class="num">05</span>The view from outside</h3>
-  <p>Other people will form a story about this living arrangement whether or not you give them one. It is much better to have agreed your own version first.</p>
+  <p>People will form a picture of the arrangement either way. Much easier if it is the one we chose.</p>
   <ul class="check">
     <li><input type="checkbox" id="e1"><label for="e1">What does the church know, and what will it be told?</label></li>
     <li><input type="checkbox" id="e2"><label for="e2">Who says it, and when?</label></li>
-    <li><input type="checkbox" id="e3"><label for="e3">Does anyone in church leadership need to know before you move in?</label></li>
-    <li><input type="checkbox" id="e4"><label for="e4">Your families — same questions.</label></li>
-    <li><input type="checkbox" id="e5"><label for="e5">If someone asks you directly, what do you say?<span class="hint">Agree the wording. Two people improvising separately is how a simple arrangement becomes a rumour.</span></label></li>
+    <li><input type="checkbox" id="e3"><label for="e3">Does anyone in leadership need to know before we move in?</label></li>
+    <li><input type="checkbox" id="e4"><label for="e4">Our families — same questions.</label></li>
+    <li><input type="checkbox" id="e5"><label for="e5">If someone asks either of us directly, what do we say?<span class="hint">Worth agreeing the wording, so we are not each improvising a slightly different version.</span></label></li>
   </ul>
   <div class="notes">
-    <span class="notes-label">05 · What we agreed</span>
+    <span class="notes-label">05 &middot; What we agreed</span>
     <div class="lines"><span></span><span></span><span></span><span></span></div>
   </div>
 </section>
 
 <section>
-  <h3 id="i06"><span class="num">06</span>Two roles, one kitchen</h3>
-  <p>They are your pastor and they will now also be the person who did not take the bins out. Those two things live in the same flat now, and they need separating deliberately.</p>
+  <h3 id="i06"><span class="num">06</span>Home, church and everything else</h3>
+  <p>We already talk easily, which is most of this. The rest is just making sure the flat stays a place where the small things get said early — the dishes, the noise, the thing that has been mildly annoying for a fortnight — and that they land as household things rather than anything bigger.</p>
   <ul class="check">
-    <li><input type="checkbox" id="f1"><label for="f1">Agree out loud that household matters are decided between equals.<span class="hint">Spiritual authority does not extend to the dishes. Saying so once, early, makes it much easier to invoke later.</span></label></li>
-    <li><input type="checkbox" id="f2"><label for="f2">Keep pastoral conversations and household admin in separate conversations.</label></li>
-    <li><input type="checkbox" id="f3"><label for="f3">Agree that either of you can raise a household problem without it being read as a spiritual one.</label></li>
-    <li><input type="checkbox" id="f4"><label for="f4">Be clear about what they will and will not learn about your finances — and that it stays between you.</label></li>
+    <li><input type="checkbox" id="f1"><label for="f1">Agree that household matters get sorted between us as equals, whatever else is going on.</label></li>
+    <li><input type="checkbox" id="f2"><label for="f2">Keep home conversations and church conversations in separate moments where we can.</label></li>
+    <li><input type="checkbox" id="f3"><label for="f3">A short check-in once a month — fifteen minutes, nothing formal.<span class="hint">Small things raised early stay small.</span></label></li>
   </ul>
-  <p class="ask">If I am unhappy about something small, how do I tell you — and can I tell you as a flatmate rather than as a member of your church?</p>
+  <p class="ask">When something small bothers one of us, how do we want to hear about it?</p>
   <div class="notes">
-    <span class="notes-label">06 · What we agreed</span>
+    <span class="notes-label">06 &middot; What we agreed</span>
     <div class="lines"><span></span><span></span><span></span><span></span></div>
   </div>
 </section>
 
 <!-- ============ THE DEEP ONE ============ -->
 <div class="deep">
-  <h3 id="i07"><span class="num">07</span>If something changes</h3>
-  <p class="lead-in">The item both of you will want to skip. Do it anyway — and do it now, while everyone is glad about the flat, because it cannot be done well later.</p>
+  <h3 id="i07"><span class="num">07</span>If plans change</h3>
+  <p class="lead-in">Not because anything is expected to. It is simply much easier to agree this now, while everyone is looking forward to the move, than to work it out in the middle of whatever prompts it.</p>
 
-  <h4>The conflict route</h4>
-  <p>When something goes wrong between flatmates, most people talk to someone they trust. <strong>Your usual person is the other flatmate.</strong> That route is closed here, and closing it without noticing is the specific risk of this arrangement.</p>
+  <h4>Notice and exit</h4>
   <ul class="check">
-    <li><input type="checkbox" id="g1"><label for="g1">Name one neutral person, now, who both of you accept.<span class="hint">Ideally outside the church, or at least not under their authority. Someone you can both call if a disagreement will not resolve.</span></label></li>
-    <li><input type="checkbox" id="g2"><label for="g2">Agree a regular check-in — fifteen minutes, monthly.<span class="hint">Small things raised early stay small. Left alone, they compound.</span></label></li>
+    <li><input type="checkbox" id="g1"><label for="g1">How much notice do we give each other if one of us needs to move on? Sixty days is a fair default.</label></li>
+    <li><input type="checkbox" id="g2"><label for="g2">Who finds a replacement, and do we both have to be happy with them?</label></li>
+    <li><input type="checkbox" id="g3"><label for="g3">Who covers the shortfall while the room is empty?</label></li>
+    <li><input type="checkbox" id="g4"><label for="g4">Is the deposit settled at the point someone leaves, or when the lease ends?</label></li>
   </ul>
 
-  <h4>If one of you wants out</h4>
+  <h4>If we get stuck</h4>
+  <p>Most things will be sorted between the two of us in a five-minute conversation. For anything that will not resolve that way, it helps to have already agreed who we would ask — someone we both trust and both accept, chosen now rather than in the moment.</p>
   <ul class="check">
-    <li><input type="checkbox" id="g3"><label for="g3">How much notice do you give each other? Sixty days is a fair default.</label></li>
-    <li><input type="checkbox" id="g4"><label for="g4">Who finds the replacement, and who has to approve them?</label></li>
-    <li><input type="checkbox" id="g5"><label for="g5">Who covers the shortfall while the room is empty?</label></li>
-    <li><input type="checkbox" id="g6"><label for="g6">How is the deposit settled — at exit, or when the lease ends?</label></li>
+    <li><input type="checkbox" id="g5"><label for="g5">Name that person.</label></li>
   </ul>
 
-  <h4>If the relationship changes</h4>
-  <p>You have said there is more between you than a shared address. That is yours, and none of what follows is a judgement on it. But you asked not to be surprised, so three things are worth saying plainly.</p>
-  <p><strong>The lease will outlive any change between you.</strong> If things end in month three, you are still contractually bound to each other for the rest of the term. Decide now, while it costs nothing, who would move out and on what notice.</p>
-  <p><strong>A relationship between a pastor and a member of their congregation carries professional exposure in most churches</strong> — often more for them than for you. Whatever you have both decided about that, decide it together and decide it before you sign, not in the middle of a difficult conversation with someone else.</p>
-  <p><strong>The imbalance is real even when the affection is.</strong> They hold spiritual authority over you and, once you sign, a shared financial obligation with you. That does not make the relationship wrong. It does mean you should keep your own money, your own exit, and your own outside person — not because you expect to need them, but because having them is what lets you stay in this freely.</p>
-  <p class="ask">If this changed between us, what would we do about the flat — and can we agree that now, in writing, while it is easy?</p>
+  <h4>The lease is twelve months</h4>
+  <p>Whatever happens between us, the lease runs its term and we are both on it. Worth one short conversation about what we would want to have already agreed if things changed — who would stay, what notice, and how the costs are handled — so it is a decision we made together in a good moment.</p>
+  <p class="ask">If things changed between us, what would we want to have already agreed about the flat?</p>
 
   <div class="notes">
-    <span class="notes-label">07 · What we agreed</span>
-    <div class="lines"><span></span><span></span><span></span><span></span><span></span><span></span></div>
-  </div>
-</div>
-
-<section>
-  <h3 id="i08"><span class="num">08</span>Move-in week</h3>
-  <ul class="check">
-    <li><input type="checkbox" id="h1"><label for="h1">Ingoing inspection with the agent — walk it together.</label></li>
-    <li><input type="checkbox" id="h2"><label for="h2">Photograph everything, date-stamped, including every existing mark.<span class="hint">This is what your R8,800 deposit comes back on. Twenty minutes now.</span></label></li>
-    <li><input type="checkbox" id="h3"><label for="h3">Both of you sign the inspection report and each keep a copy.</label></li>
-    <li><input type="checkbox" id="h4"><label for="h4">Keys, access tags, biometrics registered for both of you.</label></li>
-    <li><input type="checkbox" id="h5"><label for="h5">Prepaid electricity meter number and top-up method.</label></li>
-    <li><input type="checkbox" id="h6"><label for="h6">Get the body corporate rules and read them.<span class="hint">Noise, guests, parking, the pool, use of the gym and activity centre. They bind you regardless of what you and the landlord agreed.</span></label></li>
-    <li><input type="checkbox" id="h7"><label for="h7">Internet ordered, with an installation date.</label></li>
-    <li><input type="checkbox" id="h8"><label for="h8">Emergency contacts exchanged — one person each, outside the flat.</label></li>
-    <li><input type="checkbox" id="h9"><label for="h9">Address updated: bank, employer, medical aid, deliveries.</label></li>
-  </ul>
-  <div class="notes">
-    <span class="notes-label">08 · Dates and who is doing what</span>
+    <span class="notes-label">07 &middot; What we agreed</span>
     <div class="lines"><span></span><span></span><span></span><span></span><span></span></div>
   </div>
-</section>
-
-<!-- ============ PART THREE ============ -->
-<div class="part">
-  <p class="part-kicker">Part three · On paper</p>
-  <h2>Write down the six that matter</h2>
 </div>
-<p class="part-lede">Not a contract, and not a sign of distrust. It exists because memory is unreliable and because the friendship is worth protecting from an argument about who paid for the couch. One page, both signatures, a copy each.</p>
+
+<!-- ============ ON PAPER ============ -->
+<div class="part">
+  <p class="part-kicker">On paper</p>
+  <h2>The six worth writing down</h2>
+</div>
+<p class="part-lede">Not a contract. It exists because memory is unreliable, and because a good friendship should never have to survive an argument about who paid for the couch. One page, both signatures, a copy each.</p>
 
 <div class="agreement">
-  <h4>Flatmate agreement</h4>
+  <h4>Our agreement</h4>
   <ol>
-    <li><strong>Money.</strong> Rent is split ___ / ___. Electricity, internet and consumables are split ___ / ___. Payment is made ___ by the ___ of each month.</li>
-    <li><strong>Deposit.</strong> Each paid R4,400. On exit it is refunded in the same proportion, less any damage caused by the person responsible for it.</li>
+    <li><strong>Money.</strong> Everything shared is split evenly. The monthly household budget is R___, covering ______________. Payment is made ___ by the ___ of each month.</li>
+    <li><strong>Deposit.</strong> R9,000, R4,500 each. On exit it is refunded in the same proportion, less any damage caused by whoever was responsible for it.</li>
     <li><strong>Notice.</strong> Either of us gives the other ___ days' notice before moving out. The person leaving finds a replacement, subject to the other's agreement.</li>
     <li><strong>Guests.</strong> ___ hours' notice. Overnight guests: ___. <strong>The flat is not used for ministry and church members do not visit</strong>, except ______________.</li>
-    <li><strong>Joint spending.</strong> Neither commits the other to anything over R___ without agreement.</li>
-    <li><strong>Disputes.</strong> Anything we cannot settle between us goes to ___________, whom we both accept. Household decisions are made as equals.</li>
+    <li><strong>Joint spending.</strong> Neither of us commits the other to anything over R___ without agreeing it first.</li>
+    <li><strong>If we get stuck.</strong> Anything we cannot settle between us, we take to ___________, whom we both trust. Household decisions are made as equals.</li>
   </ol>
   <div class="sign">
     <div><span></span><small>Signed &amp; date</small></div>
@@ -864,15 +795,15 @@ tr.tot td{font-weight:700;border-top:1px solid var(--rule-strong);}
 
 <section>
   <h3>Left open, and who is doing it</h3>
-  <p>Anything the meeting could not settle. Put a name and a date against each one, or it will not happen.</p>
+  <p>Anything we could not settle today. A name and a date against each one, or it quietly does not happen.</p>
   <div class="notes">
-    <span class="notes-label">Actions <em>what · who · by when</em></span>
+    <span class="notes-label">Actions <em>what &middot; who &middot; by when</em></span>
     <div class="lines"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
   </div>
 </section>
 
 <div class="closing">
-  <p>Most of this will never be needed. You will settle into a rhythm, and the page will sit in a drawer. That is the point of it — the arrangements that last are the ones where nobody has to guess what was agreed, and where both people kept the freedom to change their mind.</p>
+  <p>Most of this will never be needed. We will settle into a rhythm and the page will sit in a drawer. That is rather the point of it — the arrangements that last are the ones where nobody has to guess what was agreed.</p>
 </div>
 
 </div>
