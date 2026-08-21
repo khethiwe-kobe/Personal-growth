@@ -121,6 +121,10 @@ export function CategoryManager({ categories }: { categories: CategoryRow[] }) {
           <input name="color" type="color" defaultValue={c.color} aria-label={`${c.name} colour`} />
           <input name="name" defaultValue={c.name} className="flex-1" aria-label="Category name" />
           <Button variant="ghost" className="!py-1.5">Save</Button>
+          <label className="flex items-center gap-1 text-[11px] text-ink-2" title="Tasks in this category are done together in a focus room, and can only be completed by joining it">
+            <input type="checkbox" name="focus_room" defaultChecked={c.focus_room === 1} />
+            focus room
+          </label>
           <Button variant="danger" className="!py-1.5" formAction={deleteCategoryAction}>Remove</Button>
         </form>
       ))}

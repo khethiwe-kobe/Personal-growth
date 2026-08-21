@@ -102,6 +102,8 @@ export async function batch(statements: InStatement[]): Promise<void> {
  */
 const ADDED_COLUMNS: { table: string; column: string; definition: string }[] = [
   { table: "time_blocks", column: "note", definition: "TEXT NOT NULL DEFAULT ''" },
+  // Marks a category whose tasks are done together in a focus room.
+  { table: "categories", column: "focus_room", definition: "INTEGER NOT NULL DEFAULT 0" },
 ];
 
 async function addMissingColumns() {
@@ -192,7 +194,10 @@ const SCHEMA = `
     color    TEXT NOT NULL DEFAULT '#a8bda8',
     kind     TEXT NOT NULL DEFAULT 'both', -- 'task' | 'goal' | 'both'
     position INTEGER NOT NULL DEFAULT 0,
-    archived INTEGER NOT NULL DEFAULT 0
+    archived INTEGER NOT NULL DEFAULT 0,
+    -- Tasks in this category are done together in a focus room, and can only
+    -- be completed by actually turning up to one.
+    focus_room INTEGER NOT NULL DEFAULT 0
   );
 
   CREATE TABLE IF NOT EXISTS tasks (
@@ -334,6 +339,60 @@ const SCHEMA = `
     submitted_at TEXT,
     UNIQUE (user_id, month)
   );
+
+  -- ---------- Focus rooms ----------
+  -- A room is opened for one scheduled task and is what makes that task
+  -- completable: presence here is the evidence, not a tick.
+  CREATE TABLE IF NOT EXISTS focus_rooms (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    group_id   INTEGER NOT NULL REFERENCES groups(id) ON DELETE CASCADE,
+    task_id    INTEGER REFERENCES tasks(id) ON DELETE SET NULL,
+    opened_by  INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    title      TEXT NOT NULL DEFAULT 'Focus session',
+    date       TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    closed_at  TEXT
+  );
+  CREATE INDEX IF NOT EXISTS idx_rooms_group_date ON focus_rooms(group_id, date);
+
+  CREATE TABLE IF NOT EXISTS focus_room_members (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    room_id       INTEGER NOT NULL REFERENCES focus_rooms(id) ON DELETE CASCADE,
+    user_id       INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    joined_at     TEXT NOT NULL DEFAULT (datetime('now')),
+    left_at       TEXT,
+    last_seen     TEXT NOT NULL DEFAULT (datetime('now')),
+    present       INTEGER NOT NULL DEFAULT 1,  -- 0 while the tab is hidden
+    away_since    TEXT,
+    away_count    INTEGER NOT NULL DEFAULT 0,
+    present_secs  INTEGER NOT NULL DEFAULT 0,  -- accumulated time actually here
+    tasks_done    INTEGER NOT NULL DEFAULT 0,
+    tasks_total   INTEGER NOT NULL DEFAULT 0,
+    share_list    INTEGER NOT NULL DEFAULT 0,  -- 0 = only the count is shared
+    UNIQUE (room_id, user_id)
+  );
+
+  CREATE TABLE IF NOT EXISTS focus_room_messages (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    room_id    INTEGER NOT NULL REFERENCES focus_rooms(id) ON DELETE CASCADE,
+    user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    body       TEXT NOT NULL,
+    kind       TEXT NOT NULL DEFAULT 'chat',  -- 'chat' | 'system'
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+  CREATE INDEX IF NOT EXISTS idx_room_msgs ON focus_room_messages(room_id, id);
+
+  -- Connection setup passes through here so the video itself can go straight
+  -- between devices. Rows are consumed by the recipient and short-lived.
+  CREATE TABLE IF NOT EXISTS focus_room_signals (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    room_id    INTEGER NOT NULL REFERENCES focus_rooms(id) ON DELETE CASCADE,
+    from_user  INTEGER NOT NULL,
+    to_user    INTEGER NOT NULL,
+    payload    TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+  CREATE INDEX IF NOT EXISTS idx_room_signals ON focus_room_signals(room_id, to_user, id);
 
   CREATE TABLE IF NOT EXISTS user_settings (
     user_id            INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,

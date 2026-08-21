@@ -183,8 +183,9 @@ export async function createCategoryAction(fd: FormData) {
     "SELECT COALESCE(MAX(position),0) AS m FROM categories WHERE user_id=?", [user.id]
   );
   await run(
-    "INSERT INTO categories (user_id, name, color, kind, position) VALUES (?, ?, ?, ?, ?)",
-    [user.id, name, color, kind, Number(max?.m ?? 0) + 1]
+    `INSERT INTO categories (user_id, name, color, kind, position, focus_room)
+     VALUES (?, ?, ?, ?, ?, ?)`,
+    [user.id, name, color, kind, Number(max?.m ?? 0) + 1, /focus/i.test(name) ? 1 : 0]
   );
   revalidatePath("/", "layout");
 }
@@ -226,8 +227,8 @@ export async function updateCategoryAction(fd: FormData) {
   const name = str(fd, "name", 40);
   const color = safeColor(str(fd, "color", 9));
   if (!id || !name) return;
-  await run("UPDATE categories SET name=?, color=? WHERE id=? AND user_id=?", [
-    name, color, id, user.id,
+  await run("UPDATE categories SET name=?, color=?, focus_room=? WHERE id=? AND user_id=?", [
+    name, color, fd.get("focus_room") === "on" ? 1 : 0, id, user.id,
   ]);
   revalidatePath("/", "layout");
 }
@@ -295,8 +296,36 @@ export async function updateTaskAction(fd: FormData) {
   revalidatePath("/dashboard");
 }
 
-export async function toggleTaskAction(id: number, completed: boolean) {
+/**
+ * Completing a task in a focus-room category requires having actually been in
+ * the room for it. The whole point of the room is that turning up is the
+ * evidence, so the tick cannot be given on its own.
+ */
+export async function toggleTaskAction(
+  id: number, completed: boolean
+): Promise<{ error: string } | void> {
   const user = await requireUser();
+
+  if (completed) {
+    const needsRoom = await get<{ n: number }>(
+      `SELECT COUNT(*) AS n FROM tasks t
+         JOIN categories c ON c.id = t.category_id
+        WHERE t.id = ? AND t.user_id = ? AND c.focus_room = 1`,
+      [id, user.id]
+    );
+    if ((needsRoom?.n ?? 0) > 0) {
+      const { presenceForTask, MIN_PRESENT_SECONDS } = await import("@/lib/rooms");
+      const secs = await presenceForTask(id, user.id);
+      if (secs < MIN_PRESENT_SECONDS) {
+        return {
+          error:
+            "This one is done in the focus room — join the room for it and stay " +
+            `at least ${Math.round(MIN_PRESENT_SECONDS / 60)} minute(s) before ticking it.`,
+        };
+      }
+    }
+  }
+
   await run("UPDATE tasks SET completed=?, completed_at=? WHERE id=? AND user_id=?", [
     completed ? 1 : 0, completed ? new Date().toISOString() : null, id, user.id,
   ]);
@@ -455,6 +484,167 @@ export async function deleteBlockAction(fd: FormData) {
   if (!id) return;
   await run("DELETE FROM time_blocks WHERE id=? AND user_id=?", [id, user.id]);
   revalidatePath("/today");
+}
+
+// ---------------- Focus rooms ----------------
+
+/**
+ * Opens the room for a scheduled task, or joins the one already open.
+ *
+ * The room belongs to the whole group, so whoever gets there first opens it
+ * and the others join the same one.
+ */
+export async function joinFocusRoomAction(taskId: number): Promise<number | { error: string }> {
+  const user = await requireUser();
+  const group = await getGroupForUser(user.id);
+  if (!group) return { error: "You're not in an accountability group yet." };
+
+  const task = await get<{ id: number; name: string; date: string; user_id: number }>(
+    "SELECT id, name, date, user_id FROM tasks WHERE id=?", [taskId]
+  );
+  if (!task) return { error: "That task no longer exists." };
+
+  const { roomForTask, systemMessage } = await import("@/lib/rooms");
+  let room = await roomForTask(taskId);
+  if (!room) {
+    const info = await run(
+      "INSERT INTO focus_rooms (group_id, task_id, opened_by, title, date) VALUES (?,?,?,?,?)",
+      [group.group.id, taskId, user.id, task.name.slice(0, 120), task.date]
+    );
+    room = await roomForTask(taskId);
+    if (!room) return { error: String(info.lastInsertRowid) };
+  }
+
+  const existing = await get<{ id: number }>(
+    "SELECT id FROM focus_room_members WHERE room_id=? AND user_id=?", [room.id, user.id]
+  );
+  if (existing) {
+    await run(
+      `UPDATE focus_room_members
+          SET left_at=NULL, present=1, away_since=NULL, last_seen=datetime('now')
+        WHERE id=?`,
+      [existing.id]
+    );
+  } else {
+    await run(
+      "INSERT INTO focus_room_members (room_id, user_id) VALUES (?,?)", [room.id, user.id]
+    );
+  }
+  await systemMessage(room.id, user.id, `${user.display_name} joined`);
+  return room.id;
+}
+
+/**
+ * Takes a seat in a room you already have the link to — opening the page,
+ * refreshing it, or coming back later. Without this, only the person who
+ * pressed the button counted as being there.
+ */
+export async function enterFocusRoomAction(roomId: number): Promise<void> {
+  const user = await requireUser();
+  const { canSeeRoom, systemMessage } = await import("@/lib/rooms");
+  if (!(await canSeeRoom(roomId, user.id))) return;
+
+  const existing = await get<{ id: number; left_at: string | null }>(
+    "SELECT id, left_at FROM focus_room_members WHERE room_id=? AND user_id=?",
+    [roomId, user.id]
+  );
+  if (!existing) {
+    await run("INSERT INTO focus_room_members (room_id, user_id) VALUES (?,?)", [roomId, user.id]);
+    await systemMessage(roomId, user.id, `${user.display_name} joined`);
+    return;
+  }
+  if (existing.left_at !== null) {
+    await systemMessage(roomId, user.id, `${user.display_name} came back`);
+  }
+  await run(
+    `UPDATE focus_room_members
+        SET left_at=NULL, present=1, away_since=NULL, last_seen=datetime('now')
+      WHERE id=?`,
+    [existing.id]
+  );
+}
+
+/**
+ * Heartbeat. `present` is false while the tab is hidden, which is recorded
+ * immediately rather than inferred later — leaving is the thing the room is
+ * meant to make visible.
+ */
+export async function roomHeartbeatAction(roomId: number, present: boolean) {
+  const user = await requireUser();
+  const { canSeeRoom, systemMessage } = await import("@/lib/rooms");
+  if (!(await canSeeRoom(roomId, user.id))) return;
+
+  const row = await get<{ id: number; present: number; away_count: number }>(
+    "SELECT id, present, away_count FROM focus_room_members WHERE room_id=? AND user_id=?",
+    [roomId, user.id]
+  );
+  if (!row) return;
+
+  const wasPresent = row.present === 1;
+  if (present && !wasPresent) {
+    await run(
+      `UPDATE focus_room_members SET present=1, away_since=NULL, last_seen=datetime('now')
+        WHERE id=?`, [row.id]
+    );
+    await systemMessage(roomId, user.id, `${user.display_name} came back`);
+  } else if (!present && wasPresent) {
+    await run(
+      `UPDATE focus_room_members
+          SET present=0, away_since=datetime('now'), away_count=away_count+1,
+              last_seen=datetime('now')
+        WHERE id=?`, [row.id]
+    );
+    await systemMessage(roomId, user.id, `${user.display_name} left the session`);
+  } else {
+    // Only time spent actually here counts towards completing the task.
+    await run(
+      `UPDATE focus_room_members
+          SET last_seen=datetime('now'),
+              present_secs = present_secs + CASE WHEN present=1 THEN 10 ELSE 0 END
+        WHERE id=?`, [row.id]
+    );
+  }
+}
+
+export async function leaveFocusRoomAction(roomId: number) {
+  const user = await requireUser();
+  const { canSeeRoom, systemMessage } = await import("@/lib/rooms");
+  if (!(await canSeeRoom(roomId, user.id))) return;
+  await run(
+    `UPDATE focus_room_members SET left_at=datetime('now'), present=0
+      WHERE room_id=? AND user_id=?`,
+    [roomId, user.id]
+  );
+  await systemMessage(roomId, user.id, `${user.display_name} ended their session`);
+}
+
+export async function roomSayAction(roomId: number, body: string) {
+  const user = await requireUser();
+  const { canSeeRoom } = await import("@/lib/rooms");
+  if (!(await canSeeRoom(roomId, user.id))) return;
+  const text = String(body ?? "").trim().slice(0, 500);
+  if (!text) return;
+  await run(
+    "INSERT INTO focus_room_messages (room_id, user_id, body) VALUES (?,?,?)",
+    [roomId, user.id, text]
+  );
+}
+
+/**
+ * Shares how far through the session's list you are. The count is shared by
+ * default; the items themselves only if you opt in.
+ */
+export async function roomProgressAction(
+  roomId: number, done: number, total: number, shareList: boolean
+) {
+  const user = await requireUser();
+  const { canSeeRoom } = await import("@/lib/rooms");
+  if (!(await canSeeRoom(roomId, user.id))) return;
+  await run(
+    `UPDATE focus_room_members SET tasks_done=?, tasks_total=?, share_list=?
+      WHERE room_id=? AND user_id=?`,
+    [Math.max(0, done), Math.max(0, total), shareList ? 1 : 0, roomId, user.id]
+  );
 }
 
 // ---------------- Goals ----------------

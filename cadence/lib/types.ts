@@ -16,6 +16,42 @@ export type TaskRow = {
   original_date: string | null;
 };
 
+export type FocusRoomRow = {
+  id: number;
+  group_id: number;
+  task_id: number | null;
+  opened_by: number;
+  title: string;
+  date: string;
+  created_at: string;
+  closed_at: string | null;
+};
+
+export type FocusRoomMemberRow = {
+  id: number;
+  room_id: number;
+  user_id: number;
+  joined_at: string;
+  left_at: string | null;
+  last_seen: string;
+  present: number;
+  away_since: string | null;
+  away_count: number;
+  present_secs: number;
+  tasks_done: number;
+  tasks_total: number;
+  share_list: number;
+};
+
+export type RoomMessageRow = {
+  id: number;
+  room_id: number;
+  user_id: number;
+  body: string;
+  kind: string;
+  created_at: string;
+};
+
 export type CategoryRow = {
   id: number;
   user_id: number;
@@ -24,6 +60,7 @@ export type CategoryRow = {
   kind: "task" | "goal" | "both";
   position: number;
   archived: number;
+  focus_room: number;
 };
 
 export type TimeBlockRow = {

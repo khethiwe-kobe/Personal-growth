@@ -5,6 +5,7 @@ import { toggleTaskAction, deleteTaskAction, updateTaskAction, moveTaskAction } 
 import type { TaskRow, CategoryRow } from "@/lib/types";
 import { PriorityBadge, Button } from "./ui";
 import { IconCheck, IconEdit, IconX } from "./icons";
+import JoinRoomButton from "./JoinRoomButton";
 import { fmtClock, fmtMinutes, addDays } from "@/lib/time";
 
 export default function TaskItem({
@@ -18,11 +19,20 @@ export default function TaskItem({
   const [pending, start] = useTransition();
   const [editing, setEditing] = useState(false);
   const [checked, setChecked] = useState(!!task.completed);
+  const [blocked, setBlocked] = useState<string | null>(null);
 
   const toggle = () => {
     const next = !checked;
     setChecked(next);
-    start(() => toggleTaskAction(task.id, next));
+    setBlocked(null);
+    start(async () => {
+      const res = await toggleTaskAction(task.id, next);
+      // Focus-room tasks refuse the tick until you have actually been there.
+      if (res && "error" in res) {
+        setChecked(!next);
+        setBlocked(res.error);
+      }
+    });
   };
 
   const late = task.completed && task.completed_at && task.completed_at.slice(0, 10) > task.date;
@@ -30,6 +40,11 @@ export default function TaskItem({
 
   return (
     <li className={`group px-4 py-3 ${checked ? "opacity-60" : ""}`}>
+      {blocked && (
+        <p className="mb-2 rounded-lg bg-danger-soft px-3 py-2 text-[11px] leading-relaxed text-danger">
+          {blocked}
+        </p>
+      )}
       <div className="flex items-start gap-3">
         <button
           onClick={toggle}
@@ -66,6 +81,12 @@ export default function TaskItem({
             {moved && <span>moved from {task.original_date}</span>}
             {task.notes && <span title={task.notes}>· has note</span>}
           </div>
+          {/* Done together: this one is only completable from the room. */}
+          {category?.focus_room === 1 && !checked && (
+            <div className="mt-1.5">
+              <JoinRoomButton taskId={task.id} />
+            </div>
+          )}
         </div>
         <button
           onClick={() => setEditing((e) => !e)}

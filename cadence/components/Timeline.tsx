@@ -61,8 +61,17 @@ export default function Timeline({
     | { kind: "task"; start: number; end: number; task: TaskRow }
     | { kind: "block"; start: number; end: number; block: TimeBlockRow };
 
-  const plannedItems: Item[] = scheduled.map((t) => ({
-    kind: "task" as const, start: t.start_min!, end: t.end_min!, task: t,
+  // A task you ticked but never logged time against has nothing to sit
+  // opposite it, so it spans both columns rather than leaving the Actual side
+  // blank — the tick is the only record there is.
+  const coveredByLog = (from: number, to: number) =>
+    blocks.some((b) => b.start_min < to && from < b.end_min);
+  const plannedItems: (Item & { full?: boolean })[] = scheduled.map((t) => ({
+    kind: "task" as const,
+    start: t.start_min!,
+    end: t.end_min!,
+    task: t,
+    full: !!t.completed && !coveredByLog(t.start_min!, t.end_min!),
   }));
   // Actual is what you logged, and only that — a tick is a claim, a logged
   // block is a record. Completed tasks are marked on the planned side instead
@@ -160,6 +169,8 @@ export default function Timeline({
         {columns.flatMap((col, colIndex) =>
           col.placed.map((it) => {
             const laneW = 1 / col.lanes;
+            // Spanning items ignore the column split and take the full track.
+            const full = "full" in it && it.full === true;
             const rawHeight = y(it.end) - y(it.start) - 2;
             // A 20-minute block is ~14px at this scale, but padding plus one
             // 11px line needs ~26px — anything less clipped its own label.
@@ -174,12 +185,21 @@ export default function Timeline({
             const tight = height < 36;
             // Half the track each, offset by which column this is.
             const colFrac = (colIndex + it.lane * laneW) / 2;
-            const common = {
-              top: y(it.start) + 1,
-              height,
-              left: `calc(3.25rem + (100% - 3.25rem) * ${colFrac} + 2px)`,
-              width: `calc((100% - 3.25rem) * ${laneW / 2} - 6px)`,
-            } as React.CSSProperties;
+            const common = (
+              full
+                ? {
+                    top: y(it.start) + 1,
+                    height,
+                    left: "calc(3.25rem + 2px)",
+                    width: "calc(100% - 3.25rem - 6px)",
+                  }
+                : {
+                    top: y(it.start) + 1,
+                    height,
+                    left: `calc(3.25rem + (100% - 3.25rem) * ${colFrac} + 2px)`,
+                    width: `calc((100% - 3.25rem) * ${laneW / 2} - 6px)`,
+                  }
+            ) as React.CSSProperties;
 
             if (it.kind === "task") {
               const cat = it.task.category_id ? catMap.get(it.task.category_id) : undefined;
