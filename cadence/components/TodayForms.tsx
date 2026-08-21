@@ -62,11 +62,11 @@ export function AddTaskForm({
   return (
     <form
       action={async (fd) => { await createTaskAction(fd); }}
-      className="fade-up grid grid-cols-2 gap-2 rounded-2xl border border-line bg-surface p-4 sm:grid-cols-3"
+      className="fade-up grid grid-cols-2 gap-2 rounded-2xl border border-line bg-surface p-4 sm:grid-cols-4"
       style={{ boxShadow: "var(--shadow)" }}
     >
       <input type="hidden" name="date" value={date} />
-      <label className="col-span-2 block sm:col-span-3">
+      <label className="col-span-2 block sm:col-span-4">
         <span className="mb-1 block text-[11px] text-ink-3">Task</span>
         <input name="name" placeholder="What needs to happen?" autoFocus required />
       </label>
@@ -91,6 +91,17 @@ export function AddTaskForm({
           <option value="">None</option>
           {cats.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
         </select>
+      </div>
+
+      <div className="col-span-2 block sm:col-span-1">
+        <span className="mb-1 block text-[11px] text-ink-3">Tag</span>
+        <label
+          className="flex cursor-pointer items-center gap-2 rounded-xl border border-line px-3 py-2 text-sm has-[:checked]:border-accent has-[:checked]:bg-accent-soft has-[:checked]:text-accent-ink"
+          title="Done together in the focus room. Works with any category — school, church, work — and can only be ticked once you've joined the room for it."
+        >
+          <input type="checkbox" name="focus_room" />
+          Focus session
+        </label>
       </div>
 
       <label className="block">
@@ -141,16 +152,7 @@ export function AddTaskForm({
         </div>
       )}
 
-      <label className="col-span-2 flex items-start gap-2 rounded-xl bg-surface-2 p-2 sm:col-span-3">
-        <input type="checkbox" name="focus_room" className="mt-0.5" />
-        <span className="text-[11px] leading-relaxed text-ink-2">
-          <strong className="text-ink">Focus session</strong> — done together in the focus room.
-          Works with any category, so a session can be for school, church or work. It can only
-          be ticked once you&apos;ve actually joined the room for it.
-        </span>
-      </label>
-
-      <label className="col-span-2 block sm:col-span-3">
+      <label className="col-span-2 block sm:col-span-4">
         <span className="mb-1 block text-[11px] text-ink-3">Private note (only you see this)</span>
         <textarea name="notes" rows={2} />
       </label>

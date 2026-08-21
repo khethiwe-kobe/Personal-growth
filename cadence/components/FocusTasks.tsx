@@ -145,7 +145,7 @@ export default function FocusTasks({
               </button>
               <button
                 type="button" onClick={() => openEdit(t)} aria-label={`Edit ${t.name}`}
-                className="mr-1 rounded p-1 text-ink-3 opacity-0 hover:text-ink-2 focus:opacity-100 group-hover:opacity-100"
+                className="touch-reveal mr-1 rounded p-1 text-ink-3 opacity-0 hover:text-ink-2 focus:opacity-100 group-hover:opacity-100"
               >
                 <IconEdit size={13} />
               </button>

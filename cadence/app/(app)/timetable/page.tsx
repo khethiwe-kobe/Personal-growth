@@ -68,7 +68,7 @@ export default async function TimetablePage() {
                           {e.location && <span className="truncate text-xs text-ink-3">{e.location}</span>}
                           <form action={deleteTimetableEntryAction}>
                             <input type="hidden" name="id" value={e.id} />
-                            <button className="rounded p-1 text-ink-3 opacity-0 hover:text-danger group-hover:opacity-100 max-md:opacity-100" aria-label="Delete entry">×</button>
+                            <button className="touch-reveal rounded p-1 text-ink-3 opacity-0 hover:text-danger group-hover:opacity-100 max-md:opacity-100" aria-label="Delete entry">×</button>
                           </form>
                         </li>
                       ))}

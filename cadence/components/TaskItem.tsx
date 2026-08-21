@@ -90,7 +90,7 @@ export default function TaskItem({
         </div>
         <button
           onClick={() => setEditing((e) => !e)}
-          className="rounded-lg p-1.5 text-ink-3 opacity-0 transition-opacity hover:bg-surface-2 hover:text-ink group-hover:opacity-100 focus-visible:opacity-100 max-md:opacity-100"
+          className="touch-reveal rounded-lg p-1.5 text-ink-3 opacity-0 transition-opacity hover:bg-surface-2 hover:text-ink group-hover:opacity-100 focus-visible:opacity-100 max-md:opacity-100"
           aria-label="Edit task"
         >
           {editing ? <IconX size={15} /> : <IconEdit size={15} />}

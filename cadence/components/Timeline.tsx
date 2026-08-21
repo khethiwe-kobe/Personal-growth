@@ -266,7 +266,7 @@ export default function Timeline({
                 <button
                   type="submit"
                   aria-label="Remove block"
-                  className="absolute right-1 top-1 hidden rounded p-0.5 text-ink-3 hover:text-danger group-hover:block"
+                  className="touch-reveal absolute right-1 top-1 hidden rounded p-0.5 text-ink-3 hover:text-danger group-hover:block"
                 >
                   ×
                 </button>

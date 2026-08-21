@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import {
   roomHeartbeatAction, leaveFocusRoomAction, roomSayAction, roomProgressAction,
@@ -49,6 +50,7 @@ export default function FocusRoom({
   const [draft, setDraft] = useState("");
   const [elapsed, setElapsed] = useState(0);
   const [immersive, setImmersive] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const [camError, setCamError] = useState<string | null>(null);
   const [peerTrouble, setPeerTrouble] = useState<number[]>([]);
   const [shareList, setShareList] = useState(false);
@@ -236,6 +238,8 @@ export default function FocusRoom({
     };
   }, [roomId]);
 
+  useEffect(() => { setMounted(true); }, []);
+
   useEffect(() => {
     const t = setInterval(() => setElapsed(Math.floor((Date.now() - started.current) / 1000)), 1000);
     return () => clearInterval(t);
@@ -264,42 +268,21 @@ export default function FocusRoom({
     router.push("/focus");
   };
 
-  const Tile = ({ m }: { m: Member }) => {
-    const isMe = m.userId === meId;
-    const stream = remoteStreams.current.get(m.userId);
-    const trouble = peerTrouble.includes(m.userId);
-    return (
-      <div className={`relative overflow-hidden rounded-2xl border bg-surface-2 ${
-        m.away ? "border-danger" : "border-line"
-      }`}>
-        <video
-          autoPlay playsInline muted={isMe}
-          ref={(el) => {
-            if (!el) return;
-            if (isMe) { if (streamRef.current) el.srcObject = streamRef.current; }
-            else if (stream && el.srcObject !== stream) el.srcObject = stream;
-          }}
-          className="aspect-video w-full bg-black/80 object-cover"
-        />
-        <div className="absolute inset-x-0 bottom-0 flex items-center gap-2 bg-black/45 px-2 py-1 text-[11px] text-white">
-          <span className="truncate font-medium">{m.name}{isMe ? " (you)" : ""}</span>
-          {m.total > 0 && <span className="shrink-0 opacity-90">{m.done}/{m.total}</span>}
-          {m.away && <span className="ml-auto shrink-0 font-medium text-danger">left the session</span>}
-        </div>
-        {!isMe && trouble && !m.away && (
-          <p className="absolute inset-x-2 top-2 rounded-lg bg-black/60 px-2 py-1 text-[10px] text-white">
-            Couldn&apos;t reach {m.name}&apos;s camera on this network — everything else still works.
-          </p>
-        )}
-      </div>
-    );
-  };
+  const tileFor = (m: Member) => (
+    <Tile
+      key={m.userId}
+      m={m}
+      isMe={m.userId === meId}
+      stream={m.userId === meId ? streamRef.current : remoteStreams.current.get(m.userId) ?? null}
+      trouble={peerTrouble.includes(m.userId)}
+    />
+  );
 
   const body = (
     <>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {me && <Tile m={me} />}
-        {others.map((m) => <Tile key={m.userId} m={m} />)}
+        {me && tileFor(me)}
+        {others.map((m) => tileFor(m))}
       </div>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
@@ -340,8 +323,8 @@ export default function FocusRoom({
     </>
   );
 
-  if (immersive) {
-    return (
+  if (immersive && mounted) {
+    return createPortal(
       <div className="fixed inset-0 z-[100] flex flex-col overflow-y-auto bg-bg px-5 py-5">
         <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -357,18 +340,23 @@ export default function FocusRoom({
           </div>
         </div>
         {body}
-      </div>
+      </div>,
+      document.body
     );
   }
 
   return (
     <div>
       <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <p className="text-xs text-ink-3">
-            Camera on, microphone never requested. Present {clock(elapsed)}.
-          </p>
-          {camError && <p className="text-[11px] text-danger">{camError}</p>}
+        <div className="flex items-center gap-3">
+          <span className="font-display text-3xl font-medium tabular-nums" aria-label="Time in this session">
+            {clock(elapsed)}
+          </span>
+          <div>
+            <p className="text-xs font-medium">{title}</p>
+            <p className="text-[11px] text-ink-3">Camera on, microphone never requested.</p>
+            {camError && <p className="text-[11px] text-danger">{camError}</p>}
+          </div>
         </div>
         <div className="flex gap-2">
           <Button variant="ghost" type="button" onClick={() => setImmersive(true)}>Full screen</Button>
@@ -378,6 +366,50 @@ export default function FocusRoom({
         </div>
       </div>
       {body}
+    </div>
+  );
+}
+
+/**
+ * Defined at module scope on purpose. Declaring it inside the room made a new
+ * component type on every render, so React threw away each <video> element and
+ * built a fresh one — which is what made the picture stutter.
+ */
+function Tile({
+  m, isMe, stream, trouble,
+}: { m: Member; isMe: boolean; stream: MediaStream | null; trouble: boolean }) {
+  const ref = useRef<HTMLVideoElement | null>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    // Only when it actually changed: reassigning restarts playback.
+    if (stream && el.srcObject !== stream) el.srcObject = stream;
+    if (!stream && el.srcObject) el.srcObject = null;
+  }, [stream]);
+
+  return (
+    <div className={`relative overflow-hidden rounded-2xl border bg-surface-2 ${
+      m.away ? "border-danger" : "border-line"
+    }`}>
+      <video
+        ref={ref} autoPlay playsInline muted={isMe}
+        className="aspect-video w-full bg-black/80 object-cover"
+      />
+      {!stream && (
+        <div className="absolute inset-0 flex items-center justify-center text-xs text-white/70">
+          {isMe ? "Starting your camera…" : `Waiting for ${m.name}…`}
+        </div>
+      )}
+      <div className="absolute inset-x-0 bottom-0 flex items-center gap-2 bg-black/45 px-2 py-1 text-[11px] text-white">
+        <span className="truncate font-medium">{m.name}{isMe ? " (you)" : ""}</span>
+        {m.total > 0 && <span className="shrink-0 opacity-90">{m.done}/{m.total}</span>}
+        {m.away && <span className="ml-auto shrink-0 font-medium text-danger">left the session</span>}
+      </div>
+      {!isMe && trouble && !m.away && (
+        <p className="absolute inset-x-2 top-2 rounded-lg bg-black/60 px-2 py-1 text-[10px] text-white">
+          Couldn&apos;t reach {m.name}&apos;s camera on this network — everything else still works.
+        </p>
+      )}
     </div>
   );
 }

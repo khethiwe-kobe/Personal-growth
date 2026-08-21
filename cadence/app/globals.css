@@ -139,3 +139,23 @@ input[type="color"] { padding: 0.15rem; height: 2.35rem; width: 3rem; cursor: po
   background: var(--av-bg-d, var(--surface-2)) !important;
   color: var(--av-fg-d, var(--ink-2)) !important;
 }
+
+/*
+ * Controls that appear on hover.
+ *
+ * A touchscreen has no hover, so anything revealed that way is simply
+ * unreachable there — and keying off screen width misses tablets, which are
+ * wide but still touch-only. This keys off the pointer itself: where hovering
+ * isn't possible, the control is always visible and given a finger-sized
+ * target.
+ */
+@media (hover: none) {
+  .touch-reveal {
+    opacity: 1 !important;
+    display: inline-flex !important;
+    min-width: 2.25rem;
+    min-height: 2.25rem;
+    align-items: center;
+    justify-content: center;
+  }
+}

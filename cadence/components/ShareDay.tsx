@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Range = "day" | "week" | "month";
 const LABEL: Record<Range, string> = { day: "This day", week: "This week", month: "This month" };
@@ -21,6 +21,7 @@ export default function ShareDay({ date }: { date: string }) {
   const [note, setNote] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [canShare, setCanShare] = useState(false);
+  const ready = useRef<{ key: string; blob: Blob } | null>(null);
 
   useEffect(() => {
     // Feature-detected rather than assumed: file sharing is mobile-mostly.
@@ -35,19 +36,66 @@ export default function ShareDay({ date }: { date: string }) {
   // Don't leak the previous object URL when a new picture replaces it.
   useEffect(() => () => { if (shot) URL.revokeObjectURL(shot.url); }, [shot]);
 
+  // Prepare today's picture up front so a press can share it straight away.
+  useEffect(() => {
+    let cancelled = false;
+    const key = `day:${date}:${withNames}`;
+    fetch(`/api/share/day?date=${encodeURIComponent(date)}${withNames ? "" : "&labels=off"}`)
+      .then((r) => (r.ok ? r.blob() : null))
+      .then((blob) => { if (blob && !cancelled) ready.current = { key, blob }; })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [date, withNames]);
+
+  const fileNameFor = (range: Range) => `cadence-${range}-${date}.png`;
+
+  const handOver = async (range: Range, blob: Blob) => {
+    const file = new File([blob], fileNameFor(range), { type: "image/png" });
+    if (navigator.canShare?.({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file], title: "My day" });
+        setNote("Sent. Choose Save Image to keep it in your photos.");
+        return true;
+      } catch {
+        // Cancelled, or the browser refused — fall back to saving.
+      }
+    }
+    return false;
+  };
+
   const build = async (range: Range) => {
     setBusy(range); setError(null); setNote(null);
     try {
-      const names = withNames ? "" : "&labels=off";
-      const endpoint =
-        range === "day"
-          ? `/api/share/day?date=${encodeURIComponent(date)}${names}`
-          : `/api/share/period?range=${range}${names}`;
-      const res = await fetch(endpoint);
-      if (!res.ok) throw new Error(String(res.status));
-      const blob = await res.blob();
+      const key = `day:${date}:${withNames}`;
+      // Today's picture is usually already prepared, which keeps the press
+      // inside the gesture iOS requires for sharing.
+      const cached = range === "day" && ready.current?.key === key ? ready.current.blob : null;
+      let blob = cached;
+      if (!blob) {
+        const names = withNames ? "" : "&labels=off";
+        const endpoint =
+          range === "day"
+            ? `/api/share/day?date=${encodeURIComponent(date)}${names}`
+            : `/api/share/period?range=${range}${names}`;
+        const res = await fetch(endpoint);
+        if (!res.ok) throw new Error(String(res.status));
+        blob = await res.blob();
+      }
+
+      const shared = await handOver(range, blob);
       if (shot) URL.revokeObjectURL(shot.url);
-      setShot({ url: URL.createObjectURL(blob), blob, range });
+      const url = URL.createObjectURL(blob);
+      setShot({ url, blob, range });
+      if (!shared) {
+        // No share sheet here (most desktops): save the file instead.
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = fileNameFor(range);
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setNote("Saved to your downloads. It's also below if you'd rather copy it.");
+      }
     } catch {
       setError("Couldn't build the picture. Reload the page and try again.");
     } finally {
@@ -55,18 +103,11 @@ export default function ShareDay({ date }: { date: string }) {
     }
   };
 
-  const fileName = () => `cadence-${shot?.range ?? "day"}-${date}.png`;
+  const fileName = () => fileNameFor(shot?.range ?? "day");
 
   const share = async () => {
     if (!shot) return;
-    try {
-      await navigator.share({
-        files: [new File([shot.blob], fileName(), { type: "image/png" })],
-        title: "My day",
-      });
-    } catch {
-      // A cancelled share sheet throws too — nothing worth reporting.
-    }
+    await handOver(shot.range, shot.blob);
   };
 
   const copy = async () => {
@@ -92,7 +133,9 @@ export default function ShareDay({ date }: { date: string }) {
   return (
     <div className="mt-2">
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-[11px] text-ink-3">Picture of:</span>
+        <span className="text-[11px] text-ink-3">
+          {canShare ? "Save or send a picture of:" : "Picture of:"}
+        </span>
         {(["day", "week", "month"] as Range[]).map((r) => (
           <button
             key={r}
