@@ -141,6 +141,15 @@ export function AddTaskForm({
         </div>
       )}
 
+      <label className="col-span-2 flex items-start gap-2 rounded-xl bg-surface-2 p-2 sm:col-span-3">
+        <input type="checkbox" name="focus_room" className="mt-0.5" />
+        <span className="text-[11px] leading-relaxed text-ink-2">
+          <strong className="text-ink">Focus session</strong> — done together in the focus room.
+          Works with any category, so a session can be for school, church or work. It can only
+          be ticked once you&apos;ve actually joined the room for it.
+        </span>
+      </label>
+
       <label className="col-span-2 block sm:col-span-3">
         <span className="mb-1 block text-[11px] text-ink-3">Private note (only you see this)</span>
         <textarea name="notes" rows={2} />

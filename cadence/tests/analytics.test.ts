@@ -12,7 +12,7 @@ function task(over: Partial<TaskRow> = {}): TaskRow {
     id: nextId++, user_id: 1, date: "2026-08-10", name: "t",
     category_id: null, priority: "B", planned_minutes: 60,
     start_min: null, end_min: null, completed: 0, completed_at: null,
-    notes: "", original_date: null, ...over,
+    notes: "", original_date: null, focus_room: 0, ...over,
   };
 }
 function block(start: number, end: number, kind = "break"): TimeBlockRow {

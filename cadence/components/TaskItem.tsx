@@ -82,7 +82,7 @@ export default function TaskItem({
             {task.notes && <span title={task.notes}>· has note</span>}
           </div>
           {/* Done together: this one is only completable from the room. */}
-          {category?.focus_room === 1 && !checked && (
+          {(task.focus_room === 1 || category?.focus_room === 1) && !checked && (
             <div className="mt-1.5">
               <JoinRoomButton taskId={task.id} />
             </div>
@@ -123,6 +123,10 @@ export default function TaskItem({
             <label className="block">
               <span className="mb-1 block text-[11px] text-ink-3">Minutes</span>
               <input name="planned_minutes" type="number" min={5} max={1440} defaultValue={task.planned_minutes} />
+            </label>
+            <label className="col-span-2 flex items-center gap-2 text-[11px] text-ink-2 sm:col-span-4">
+              <input type="checkbox" name="focus_room" defaultChecked={task.focus_room === 1} />
+              Focus session — done in the room, and only tickable from there
             </label>
             <div className="flex gap-2">
               <label className="block flex-1">

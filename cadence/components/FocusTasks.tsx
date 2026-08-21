@@ -1,23 +1,26 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { toggleTaskAction, createTaskAction } from "@/app/actions";
+import { useEffect, useState, useTransition } from "react";
+import { toggleTaskAction, createTaskAction, updateTaskAction, deleteTaskAction } from "@/app/actions";
 import type { TaskRow, CategoryRow } from "@/lib/types";
 import { PriorityBadge } from "./ui";
-import { IconCheck } from "./icons";
+import { IconCheck, IconEdit } from "./icons";
+import { fmtClock as clock } from "@/lib/time";
 import { useRouter } from "next/navigation";
 
 /**
- * Today's list, tickable without leaving the timer. Compact on purpose: this
- * is for keeping your eye on what the session is *for*, not for planning.
+ * Today's list wherever it appears — the Focus page, inside the timer, in the
+ * room. Tick, rename, retime, add and remove without going back to Today: a
+ * list you can only read is a list you stop trusting.
  */
 export default function FocusTasks({
-  tasks, categories, date, compact = false,
+  tasks, categories, date, compact = false, onProgress,
 }: {
   tasks: TaskRow[];
   categories: CategoryRow[];
   date: string;
   compact?: boolean;
+  onProgress?: (done: number, total: number) => void;
 }) {
   const router = useRouter();
   const [pending, start] = useTransition();
@@ -25,7 +28,34 @@ export default function FocusTasks({
     () => Object.fromEntries(tasks.map((t) => [t.id, !!t.completed]))
   );
   const [adding, setAdding] = useState("");
+  const [editing, setEditing] = useState<number | null>(null);
+  const [draft, setDraft] = useState("");
   const catMap = new Map(categories.map((c) => [c.id, c]));
+
+  const openEdit = (t: TaskRow) => { setEditing(t.id); setDraft(t.name); };
+
+  const saveEdit = (t: TaskRow) => {
+    const name = draft.trim();
+    setEditing(null);
+    if (!name || name === t.name) return;
+    const fd = new FormData();
+    fd.set("id", String(t.id));
+    fd.set("name", name);
+    fd.set("priority", t.priority);
+    fd.set("planned_minutes", String(t.planned_minutes));
+    if (t.category_id) fd.set("category_id", String(t.category_id));
+    if (t.start_min !== null) fd.set("start_time", clock(t.start_min));
+    if (t.end_min !== null) fd.set("end_time", clock(t.end_min));
+    fd.set("notes", t.notes ?? "");
+    if (t.focus_room === 1) fd.set("focus_room", "on");
+    start(async () => { await updateTaskAction(fd); router.refresh(); });
+  };
+
+  const remove = (t: TaskRow) => {
+    const fd = new FormData();
+    fd.set("id", String(t.id));
+    start(async () => { await deleteTaskAction(fd); router.refresh(); });
+  };
 
   const toggle = (t: TaskRow) => {
     const next = !done[t.id];
@@ -51,6 +81,8 @@ export default function FocusTasks({
   };
 
   const remaining = tasks.filter((t) => !done[t.id]).length;
+  const doneNow = tasks.length - remaining;
+  useEffect(() => { onProgress?.(doneNow, tasks.length); }, [doneNow, tasks.length, onProgress]);
 
   return (
     <div className={compact ? "" : "space-y-3"}>
@@ -68,13 +100,32 @@ export default function FocusTasks({
         {tasks.map((t) => {
           const cat = t.category_id ? catMap.get(t.category_id) : null;
           const checked = done[t.id];
+          if (editing === t.id) {
+            return (
+              <li key={t.id} className="flex items-center gap-1 px-2 py-1">
+                <input
+                  autoFocus value={draft} maxLength={120}
+                  onChange={(e) => setDraft(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") { e.preventDefault(); saveEdit(t); }
+                    if (e.key === "Escape") setEditing(null);
+                  }}
+                  className="min-w-0 flex-1 text-sm"
+                />
+                <button type="button" onClick={() => saveEdit(t)}
+                  className="rounded px-1.5 py-1 text-[11px] text-accent-ink">Save</button>
+                <button type="button" onClick={() => remove(t)}
+                  className="rounded px-1.5 py-1 text-[11px] text-danger">Delete</button>
+              </li>
+            );
+          }
           return (
-            <li key={t.id}>
+            <li key={t.id} className="group flex items-center gap-1 rounded-lg hover:bg-surface-2">
               <button
                 type="button"
                 onClick={() => toggle(t)}
                 disabled={pending}
-                className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-sm hover:bg-surface-2"
+                className="flex min-w-0 flex-1 items-center gap-2 px-2 py-1.5 text-left text-sm"
               >
                 <span
                   className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border ${
@@ -91,6 +142,12 @@ export default function FocusTasks({
                   {t.name}
                 </span>
                 <PriorityBadge p={t.priority} />
+              </button>
+              <button
+                type="button" onClick={() => openEdit(t)} aria-label={`Edit ${t.name}`}
+                className="mr-1 rounded p-1 text-ink-3 opacity-0 hover:text-ink-2 focus:opacity-100 group-hover:opacity-100"
+              >
+                <IconEdit size={13} />
               </button>
             </li>
           );

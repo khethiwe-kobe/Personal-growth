@@ -64,8 +64,15 @@ export default function AvatarUpload({ hasAvatar }: { hasAvatar: boolean }) {
       const fd = new FormData();
       fd.set("avatar", new File([small], "avatar.jpg", { type: "image/jpeg" }));
       const res = await uploadAvatarAction(fd);
-      if (res && "error" in res) setError(res.error);
-      else router.refresh();
+      if (res && "error" in res) { setError(res.error); return; }
+      // A person's picture lives at a fixed URL, so an <img> already on screen
+      // has no reason to fetch it again. Nudge the ones on this page.
+      document.querySelectorAll<HTMLImageElement>('img[src*="/api/avatar/"]').forEach((img) => {
+        const url = new URL(img.src, location.origin);
+        url.searchParams.set("v", String(Date.now()));
+        img.src = url.toString();
+      });
+      router.refresh();
     } catch (err) {
       setError(
         (err as Error).message === "unreadable"

@@ -4,11 +4,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   roomHeartbeatAction, leaveFocusRoomAction, roomSayAction, roomProgressAction,
-  toggleTaskAction, enterFocusRoomAction,
+  enterFocusRoomAction,
 } from "@/app/actions";
 import { Button } from "./ui";
-import { IconCheck, IconX } from "./icons";
-import type { TaskRow } from "@/lib/types";
+import { IconX } from "./icons";
+import type { TaskRow, CategoryRow } from "@/lib/types";
+import FocusTasks from "./FocusTasks";
 
 type Member = {
   userId: number; name: string; accent: string; hasAvatar: boolean;
@@ -27,12 +28,14 @@ const clock = (s: number) => {
 };
 
 export default function FocusRoom({
-  roomId, title, meId, sessionTasks, ice,
+  roomId, title, meId, sessionTasks, categories, date, ice,
 }: {
   roomId: number;
   title: string;
   meId: number;
   sessionTasks: TaskRow[];
+  categories: CategoryRow[];
+  date: string;
   ice: RTCIceServer[];
 }) {
   // Direct where possible, relayed only where the network refuses direct.
@@ -49,9 +52,8 @@ export default function FocusRoom({
   const [camError, setCamError] = useState<string | null>(null);
   const [peerTrouble, setPeerTrouble] = useState<number[]>([]);
   const [shareList, setShareList] = useState(false);
-  const [done, setDone] = useState<Record<number, boolean>>(
-    () => Object.fromEntries(sessionTasks.map((t) => [t.id, !!t.completed]))
-  );
+  const doneRef = useRef({ d: sessionTasks.filter((t) => t.completed).length, total: sessionTasks.length });
+  const [progress, setProgress] = useState(doneRef.current);
 
   const localVideo = useRef<HTMLVideoElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -239,18 +241,14 @@ export default function FocusRoom({
     return () => clearInterval(t);
   }, []);
 
-  const doneCount = useMemo(() => Object.values(done).filter(Boolean).length, [done]);
+  // The room only shares the numbers; the list itself manages the tasks.
   useEffect(() => {
-    void roomProgressAction(roomId, doneCount, sessionTasks.length, shareList);
-  }, [roomId, doneCount, sessionTasks.length, shareList]);
-
-  const toggleTask = (t: TaskRow) => {
-    const next = !done[t.id];
-    setDone((d) => ({ ...d, [t.id]: next }));
-    void toggleTaskAction(t.id, next).then((res) => {
-      if (res && "error" in res) setDone((d) => ({ ...d, [t.id]: !next }));
-    });
-  };
+    const t = setInterval(() => setProgress({ ...doneRef.current }), 1500);
+    return () => clearInterval(t);
+  }, []);
+  useEffect(() => {
+    void roomProgressAction(roomId, progress.d, progress.total, shareList);
+  }, [roomId, progress.d, progress.total, shareList]);
 
   const say = () => {
     const text = draft.trim();
@@ -306,30 +304,13 @@ export default function FocusRoom({
 
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
         <div className="rounded-2xl border border-line bg-surface p-4">
-          <div className="mb-2 flex items-baseline justify-between">
-            <h3 className="text-sm font-medium">This session</h3>
-            <span className="text-[11px] text-ink-3">{doneCount}/{sessionTasks.length}</span>
-          </div>
-          <ul className="space-y-1">
-            {sessionTasks.map((t) => (
-              <li key={t.id}>
-                <button type="button" onClick={() => toggleTask(t)}
-                  className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-sm hover:bg-surface-2">
-                  <span className={`flex h-4 w-4 shrink-0 items-center justify-center rounded border ${
-                    done[t.id] ? "border-transparent bg-accent text-white" : "border-line"
-                  }`}>
-                    {done[t.id] && <IconCheck size={11} />}
-                  </span>
-                  <span className={`min-w-0 flex-1 truncate ${done[t.id] ? "text-ink-3 line-through" : ""}`}>
-                    {t.name}
-                  </span>
-                </button>
-              </li>
-            ))}
-            {sessionTasks.length === 0 && (
-              <li className="px-2 py-1 text-xs text-ink-3">Nothing else planned for this session.</li>
-            )}
-          </ul>
+          <FocusTasks
+            tasks={sessionTasks}
+            categories={categories}
+            date={date}
+            compact
+            onProgress={(d, total) => { doneRef.current = { d, total }; }}
+          />
           <label className="mt-3 flex items-center gap-2 text-[11px] text-ink-2">
             <input type="checkbox" checked={shareList}
               onChange={(e) => setShareList(e.target.checked)} />

@@ -14,6 +14,7 @@ export type TaskRow = {
   completed_at: string | null;
   notes: string;
   original_date: string | null;
+  focus_room: number;   // done together in a focus room
 };
 
 export type FocusRoomRow = {

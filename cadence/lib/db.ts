@@ -104,6 +104,9 @@ const ADDED_COLUMNS: { table: string; column: string; definition: string }[] = [
   { table: "time_blocks", column: "note", definition: "TEXT NOT NULL DEFAULT ''" },
   // Marks a category whose tasks are done together in a focus room.
   { table: "categories", column: "focus_room", definition: "INTEGER NOT NULL DEFAULT 0" },
+  // A task is a focus session or it isn't — independent of its category, so a
+  // focus session can be for school, church, work or anything else.
+  { table: "tasks", column: "focus_room", definition: "INTEGER NOT NULL DEFAULT 0" },
 ];
 
 async function addMissingColumns() {

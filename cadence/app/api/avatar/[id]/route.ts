@@ -1,9 +1,19 @@
+import crypto from "crypto";
 import { get } from "@/lib/db";
 import { getSessionUser, getGroupForUser } from "@/lib/auth";
 
-/** Avatars are visible to the owner and their group members only. */
+export const dynamic = "force-dynamic";
+
+/**
+ * Avatars are visible to the owner and their group members only.
+ *
+ * The URL for a person's picture never changes, so a plain max-age meant a new
+ * photo kept showing the old one until the cache expired. The response now
+ * carries a tag derived from the bytes and asks the browser to revalidate:
+ * unchanged pictures cost a 304, a new one is picked up immediately.
+ */
 export async function GET(
-  _req: Request,
+  req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const user = await getSessionUser();
@@ -20,10 +30,17 @@ export async function GET(
     "SELECT avatar_blob, avatar_mime FROM users WHERE id=?", [targetId]
   );
   if (!row?.avatar_blob) return new Response("Not found", { status: 404 });
-  return new Response(new Uint8Array(row.avatar_blob), {
-    headers: {
-      "Content-Type": row.avatar_mime ?? "image/jpeg",
-      "Cache-Control": "private, max-age=300",
-    },
-  });
+
+  const bytes = new Uint8Array(row.avatar_blob);
+  const etag =
+    '"' + crypto.createHash("sha1").update(bytes).digest("base64url").slice(0, 20) + '"';
+  const headers = {
+    "Content-Type": row.avatar_mime ?? "image/jpeg",
+    "Cache-Control": "private, no-cache",
+    ETag: etag,
+  };
+  if (req.headers.get("if-none-match") === etag) {
+    return new Response(null, { status: 304, headers });
+  }
+  return new Response(bytes, { headers });
 }

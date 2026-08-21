@@ -126,18 +126,21 @@ export async function openRoomsFor(userId: number): Promise<
 export async function focusRoomTasksToday(userId: number, date: string) {
   return all<{ id: number; name: string; start_min: number | null; completed: number }>(
     `SELECT t.id, t.name, t.start_min, t.completed FROM tasks t
-       JOIN categories c ON c.id = t.category_id
-      WHERE t.user_id = ? AND t.date = ? AND c.focus_room = 1
+       LEFT JOIN categories c ON c.id = t.category_id
+      WHERE t.user_id = ? AND t.date = ?
+        AND (t.focus_room = 1 OR c.focus_room = 1)
       ORDER BY (t.start_min IS NULL), t.start_min`,
     [userId, date]
   );
 }
 
-/** Does this user have any category set up for rooms at all? */
+/** Has this user ever marked anything as a focus session? */
 export async function hasFocusCategory(userId: number): Promise<boolean> {
   const row = await get<{ n: number }>(
-    "SELECT COUNT(*) AS n FROM categories WHERE user_id=? AND focus_room=1 AND archived=0",
-    [userId]
+    `SELECT
+       (SELECT COUNT(*) FROM tasks WHERE user_id=? AND focus_room=1) +
+       (SELECT COUNT(*) FROM categories WHERE user_id=? AND focus_room=1 AND archived=0) AS n`,
+    [userId, userId]
   );
   return (row?.n ?? 0) > 0;
 }

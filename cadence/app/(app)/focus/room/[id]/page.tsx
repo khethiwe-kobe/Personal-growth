@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { requireUser } from "@/lib/auth";
 import { get } from "@/lib/db";
 import { canSeeRoom, getRoom } from "@/lib/rooms";
-import { tasksForDay } from "@/lib/repo";
+import { tasksForDay, categoriesFor } from "@/lib/repo";
 import FocusRoom from "@/components/FocusRoom";
 import { PageTitle } from "@/components/ui";
 import type { TaskRow } from "@/lib/types";
@@ -26,7 +26,10 @@ export default async function FocusRoomPage({
   const anchor = room.task_id
     ? await get<TaskRow>("SELECT * FROM tasks WHERE id=?", [room.task_id])
     : undefined;
-  const dayTasks = await tasksForDay(user.id, room.date);
+  const [dayTasks, categories] = await Promise.all([
+    tasksForDay(user.id, room.date),
+    categoriesFor(user.id),
+  ]);
   const sessionTasks = anchor?.category_id
     ? dayTasks.filter((t) => t.category_id === anchor.category_id)
     : dayTasks.filter((t) => t.id === room.task_id);
@@ -42,6 +45,8 @@ export default async function FocusRoomPage({
         title={room.title}
         meId={user.id}
         sessionTasks={sessionTasks}
+        categories={categories}
+        date={room.date}
         ice={iceServers()}
       />
     </div>

@@ -266,10 +266,11 @@ export async function createTaskAction(fd: FormData) {
   const notes = str(fd, "notes", 2000);
   await run(
     `INSERT INTO tasks (user_id, date, name, category_id, priority, planned_minutes,
-      start_min, end_min, notes) VALUES (?,?,?,?,?,?,?,?,?)`,
+      start_min, end_min, notes, focus_room) VALUES (?,?,?,?,?,?,?,?,?,?)`,
     [
       user.id, date, name, await ownCategory(user.id, categoryId), priority, planned,
       start, end !== null && start !== null && end > start ? end : null, notes,
+      fd.get("focus_room") === "on" ? 1 : 0,
     ]
   );
   revalidatePath("/today");
@@ -290,11 +291,11 @@ export async function updateTaskAction(fd: FormData) {
   if (!name) return;
   await run(
     `UPDATE tasks SET name=?, category_id=?, priority=?, planned_minutes=?,
-       start_min=?, end_min=?, notes=? WHERE id=? AND user_id=?`,
+       start_min=?, end_min=?, notes=?, focus_room=? WHERE id=? AND user_id=?`,
     [
       name, await ownCategory(user.id, categoryId), priority, planned,
       start, end !== null && start !== null && end > start ? end : null,
-      notes, id, user.id,
+      notes, fd.get("focus_room") === "on" ? 1 : 0, id, user.id,
     ]
   );
   revalidatePath("/today");
@@ -314,8 +315,9 @@ export async function toggleTaskAction(
   if (completed) {
     const needsRoom = await get<{ n: number }>(
       `SELECT COUNT(*) AS n FROM tasks t
-         JOIN categories c ON c.id = t.category_id
-        WHERE t.id = ? AND t.user_id = ? AND c.focus_room = 1`,
+        LEFT JOIN categories c ON c.id = t.category_id
+        WHERE t.id = ? AND t.user_id = ?
+          AND (t.focus_room = 1 OR c.focus_room = 1)`,
       [id, user.id]
     );
     if ((needsRoom?.n ?? 0) > 0) {
