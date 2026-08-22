@@ -5,23 +5,33 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import Avatar from "./Avatar";
 import {
-  IconHome, IconSun, IconTarget, IconCalendar, IconGrid, IconTimer, IconChart, IconUsers, IconBook, IconUser, IconChevronL,
+  IconHome, IconSun, IconTarget, IconCalendar, IconGrid, IconTimer, IconVideo, IconChart, IconUsers, IconBook, IconUser, IconChevronL,
 } from "./icons";
 
-const NAV = [
+type NavItem = {
+  href: string;
+  label: string;
+  icon: (p: { size?: number; className?: string }) => React.ReactElement;
+  /** Shorter label for the mobile bar, where the full one won't fit. */
+  short?: string;
+};
+
+const NAV: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", icon: IconHome },
   { href: "/today", label: "Today", icon: IconSun },
   { href: "/goals", label: "Goals", icon: IconTarget },
   { href: "/calendar", label: "Calendar", icon: IconCalendar },
   { href: "/timetable", label: "Timetable", icon: IconGrid },
-  { href: "/focus", label: "Focus", icon: IconTimer },
+  { href: "/focus", label: "Focus", icon: IconTimer, short: "Timer" },
+  // Straight into the room the group is in, without going via a task first.
+  { href: "/focus/room", label: "Focus Room", icon: IconVideo, short: "Room" },
   { href: "/analytics", label: "Analytics", icon: IconChart },
-  { href: "/accountability", label: "Accountability", icon: IconUsers },
+  { href: "/accountability", label: "Accountability", icon: IconUsers, short: "Group" },
   { href: "/review", label: "Monthly Review", icon: IconBook },
   { href: "/settings", label: "Profile & Settings", icon: IconUser },
 ];
 
-const MOBILE = ["/dashboard", "/today", "/goals", "/focus", "/accountability"];
+const MOBILE = ["/dashboard", "/today", "/goals", "/focus", "/focus/room", "/accountability"];
 
 export default function Shell({
   user, children,
@@ -30,8 +40,12 @@ export default function Shell({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const isActive = (href: string) =>
-    pathname === href || pathname.startsWith(href + "/");
+  // The most specific matching entry wins, so being in a room lights up Focus
+  // Room rather than lighting up both it and Focus.
+  const current = NAV
+    .filter((n) => pathname === n.href || pathname.startsWith(n.href + "/"))
+    .sort((a, b) => b.href.length - a.href.length)[0]?.href;
+  const isActive = (href: string) => href === current;
 
   // Collapsed to icons only. Remembered per browser so the choice sticks
   // between visits; read after mount so the server and client markup match.
@@ -127,7 +141,7 @@ export default function Shell({
       <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface/95 backdrop-blur md:hidden"
         style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
         <div className="mx-auto flex max-w-md items-stretch justify-around">
-          {NAV.filter((n) => MOBILE.includes(n.href)).map(({ href, label, icon: Icon }) => (
+          {NAV.filter((n) => MOBILE.includes(n.href)).map(({ href, label, short, icon: Icon }) => (
             <Link
               key={href}
               href={href}
@@ -136,7 +150,7 @@ export default function Shell({
               }`}
             >
               <Icon size={20} />
-              {label.split(" ")[0]}
+              {short ?? label.split(" ")[0]}
             </Link>
           ))}
         </div>

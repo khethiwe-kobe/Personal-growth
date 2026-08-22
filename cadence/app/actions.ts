@@ -326,8 +326,9 @@ export async function toggleTaskAction(
       if (secs < MIN_PRESENT_SECONDS) {
         return {
           error:
-            "This one is done in the focus room — join the room for it and stay " +
-            `at least ${Math.round(MIN_PRESENT_SECONDS / 60)} minute(s) before ticking it.`,
+            "This one is done in the focus room — go into the room with this task " +
+            `selected and stay at least ${Math.round(MIN_PRESENT_SECONDS / 60)} minute(s) ` +
+            "before ticking it.",
         };
       }
     }
@@ -523,29 +524,41 @@ export async function enableFocusCategoryAction(): Promise<void> {
 }
 
 /**
- * Opens the room for a scheduled task, or joins the one already open.
+ * Opens the group's focus room, or returns the one already open.
  *
- * The room belongs to the whole group, so whoever gets there first opens it
- * and the others join the same one.
+ * There is one room per group at a time, deliberately: when rooms were made
+ * per task, three people tapping Join on three different tasks each opened a
+ * separate room and sat there alone. The room is never named after whoever
+ * opened it either — their task is their own business, and the group shares
+ * the room, not the work.
+ *
+ * `taskId` is optional: it is the caller's own task for this sitting, stored
+ * against their membership when they take a seat.
  */
-export async function joinFocusRoomAction(taskId: number): Promise<number | { error: string }> {
+export async function joinFocusRoomAction(
+  taskId?: number | null
+): Promise<number | { error: string }> {
   const user = await requireUser();
   const group = await getGroupForUser(user.id);
   if (!group) return { error: "You're not in an accountability group yet." };
 
-  const task = await get<{ id: number; name: string; date: string; user_id: number }>(
-    "SELECT id, name, date, user_id FROM tasks WHERE id=?", [taskId]
-  );
-  if (!task) return { error: "That task no longer exists." };
+  let date = todayInTz(safeTz(user.timezone));
+  if (taskId) {
+    const task = await get<{ id: number; date: string; user_id: number }>(
+      "SELECT id, date, user_id FROM tasks WHERE id=? AND user_id=?", [taskId, user.id]
+    );
+    if (!task) return { error: "That task no longer exists." };
+    date = task.date;
+  }
 
-  const { roomForTask, systemMessage } = await import("@/lib/rooms");
-  let room = await roomForTask(taskId);
+  const { openRoomForGroup, ROOM_TITLE } = await import("@/lib/rooms");
+  let room = await openRoomForGroup(group.group.id);
   if (!room) {
     const info = await run(
-      "INSERT INTO focus_rooms (group_id, task_id, opened_by, title, date) VALUES (?,?,?,?,?)",
-      [group.group.id, taskId, user.id, task.name.slice(0, 120), task.date]
+      "INSERT INTO focus_rooms (group_id, task_id, opened_by, title, date) VALUES (?,NULL,?,?,?)",
+      [group.group.id, user.id, ROOM_TITLE, date]
     );
-    room = await roomForTask(taskId);
+    room = await openRoomForGroup(group.group.id);
     if (!room) return { error: String(info.lastInsertRowid) };
   }
 
@@ -558,18 +571,35 @@ export async function joinFocusRoomAction(taskId: number): Promise<number | { er
  * Takes a seat in a room you already have the link to — opening the page,
  * refreshing it, or coming back later. Without this, only the person who
  * pressed the button counted as being there.
+ *
+ * `taskId` is the task this person is working on in the room. It is theirs
+ * alone: it decides their own timer and what completing from inside ticks,
+ * and it is never shown to the rest of the room.
  */
-export async function enterFocusRoomAction(roomId: number): Promise<void> {
+export async function enterFocusRoomAction(
+  roomId: number, taskId?: number | null
+): Promise<void> {
   const user = await requireUser();
   const { canSeeRoom, systemMessage } = await import("@/lib/rooms");
   if (!(await canSeeRoom(roomId, user.id))) return;
+
+  let mine: number | null = null;
+  if (taskId) {
+    const owned = await get<{ id: number }>(
+      "SELECT id FROM tasks WHERE id=? AND user_id=?", [taskId, user.id]
+    );
+    mine = owned?.id ?? null;
+  }
 
   const existing = await get<{ id: number; left_at: string | null }>(
     "SELECT id, left_at FROM focus_room_members WHERE room_id=? AND user_id=?",
     [roomId, user.id]
   );
   if (!existing) {
-    await run("INSERT INTO focus_room_members (room_id, user_id) VALUES (?,?)", [roomId, user.id]);
+    await run(
+      "INSERT INTO focus_room_members (room_id, user_id, task_id) VALUES (?,?,?)",
+      [roomId, user.id, mine]
+    );
     await systemMessage(roomId, user.id, `${user.display_name} joined`);
     return;
   }
@@ -578,9 +608,10 @@ export async function enterFocusRoomAction(roomId: number): Promise<void> {
   }
   await run(
     `UPDATE focus_room_members
-        SET left_at=NULL, present=1, away_since=NULL, last_seen=datetime('now')
+        SET left_at=NULL, present=1, away_since=NULL, last_seen=datetime('now'),
+            task_id=COALESCE(?, task_id)
       WHERE id=?`,
-    [existing.id]
+    [mine, existing.id]
   );
 }
 
@@ -673,22 +704,31 @@ export async function endFocusSessionAction(
   const { canSeeRoom, systemMessage, getRoom } = await import("@/lib/rooms");
   if (!(await canSeeRoom(roomId, user.id))) return { error: "Not your room." };
 
-  const member = await get<{ id: number; present_secs: number; joined_at: string; recorded: number }>(
-    "SELECT id, present_secs, joined_at, recorded FROM focus_room_members WHERE room_id=? AND user_id=?",
+  const member = await get<{
+    id: number; present_secs: number; joined_at: string; recorded: number; task_id: number | null;
+  }>(
+    `SELECT id, present_secs, joined_at, recorded, task_id
+       FROM focus_room_members WHERE room_id=? AND user_id=?`,
     [roomId, user.id]
   );
   const room = await getRoom(roomId);
   if (!member || !room) return { error: "You're not in this room." };
 
-  const task = room.task_id
-    ? await get<{ start_min: number | null; end_min: number | null; planned_minutes: number }>(
-        "SELECT start_min, end_min, planned_minutes FROM tasks WHERE id=?", [room.task_id]
+  // The record is about this person's own task — the room is only where they
+  // sat. Falling back to the room's task keeps sittings from before rooms
+  // became group-level readable.
+  const anchorId = member.task_id ?? room.task_id;
+  const task = anchorId
+    ? await get<{ name: string; start_min: number | null; end_min: number | null; planned_minutes: number }>(
+        "SELECT name, start_min, end_min, planned_minutes FROM tasks WHERE id=? AND user_id=?",
+        [anchorId, user.id]
       )
     : undefined;
   const planned =
     task?.start_min !== null && task?.start_min !== undefined && task?.end_min !== null
       ? (task.end_min as number) - (task.start_min as number)
       : task?.planned_minutes ?? Math.max(1, Math.round(member.present_secs / 60));
+  const label = (task?.name ?? "Focus room session").slice(0, 120);
 
   const ints = await get<{ n: number }>(
     "SELECT COUNT(*) AS n FROM focus_room_interruptions WHERE room_id=? AND user_id=?",
@@ -702,7 +742,7 @@ export async function endFocusSessionAction(
        VALUES (?,?,?,?,?,?, ?, ?)`,
       [user.id, room.date, member.joined_at, new Date().toISOString(), planned,
        member.present_secs, (ints?.n ?? 0) > 0 ? "interrupted" : "completed",
-       room.title.slice(0, 120)]
+       label]
     );
   }
   await run(
@@ -733,19 +773,27 @@ export async function leaveFocusRoomAction(roomId: number) {
   if (!(await canSeeRoom(roomId, user.id))) return;
   // Walking out is not the same as finishing: the sitting is recorded, marked
   // interrupted, so it cannot quietly disappear from the history.
-  const member = await get<{ id: number; present_secs: number; joined_at: string; recorded: number }>(
-    "SELECT id, present_secs, joined_at, recorded FROM focus_room_members WHERE room_id=? AND user_id=?",
+  const member = await get<{
+    id: number; present_secs: number; joined_at: string; recorded: number; task_id: number | null;
+  }>(
+    `SELECT id, present_secs, joined_at, recorded, task_id
+       FROM focus_room_members WHERE room_id=? AND user_id=?`,
     [roomId, user.id]
   );
   const room = await getRoom(roomId);
   if (member && room && !member.recorded && member.present_secs >= 30) {
+    const anchorId = member.task_id ?? room.task_id;
+    const task = anchorId
+      ? await get<{ name: string }>("SELECT name FROM tasks WHERE id=? AND user_id=?",
+          [anchorId, user.id])
+      : undefined;
     await run(
       `INSERT INTO focus_sessions (user_id, date, started_at, ended_at, planned_minutes,
          focus_seconds, status, interrupt_reason, label)
        VALUES (?,?,?,?,?,?, 'interrupted', 'left_room', ?)`,
       [user.id, room.date, member.joined_at, new Date().toISOString(),
        Math.max(1, Math.round(member.present_secs / 60)), member.present_secs,
-       room.title.slice(0, 120)]
+       (task?.name ?? "Focus room session").slice(0, 120)]
     );
     await run("UPDATE focus_room_members SET recorded=1 WHERE id=?", [member.id]);
   }

@@ -40,7 +40,8 @@ export default function FocusRoomsPanel({
         </Button>
         <p className="mt-2 text-[11px] text-ink-3">
           Creates a “Focus session” category. Put a task in it on Today and a
-          <strong> Join focus room</strong> button appears on it.
+          <strong> Join focus room</strong> button appears on it. You can also walk
+          straight in from the <strong>Focus Room</strong> tab at any time.
         </p>
       </Card>
     );
@@ -49,20 +50,20 @@ export default function FocusRoomsPanel({
   return (
     <div className="grid gap-3 md:grid-cols-2">
       <Card>
-        <h3 className="mb-2 font-display text-lg font-medium">Open rooms</h3>
+        <h3 className="mb-2 font-display text-lg font-medium">The room</h3>
         {openRooms.length === 0 ? (
           <p className="text-sm text-ink-3">
-            Nobody has a room open. Start one from a focus task below.
+            Nobody has the room open. Open it from the{" "}
+            <strong>Focus Room</strong> tab, or from a focus task below.
           </p>
         ) : (
           <ul className="space-y-2">
             {openRooms.map((r) => (
               <li key={r.id} className="flex items-center gap-2 text-sm">
                 <span className="min-w-0 flex-1 truncate">
-                  {r.title}
-                  <span className="ml-1 text-ink-3">
-                    {r.here.length ? `· ${r.here.join(", ")} here` : "· empty"}
-                  </span>
+                  {r.here.length
+                    ? `${r.here.join(", ")} ${r.here.length === 1 ? "is" : "are"} in the room`
+                    : "Room open · nobody in it"}
                 </span>
                 <button
                   type="button"

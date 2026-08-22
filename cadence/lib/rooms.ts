@@ -2,13 +2,21 @@ import { all, get, run } from "./db";
 import type { FocusRoomRow, FocusRoomMemberRow, RoomMessageRow } from "./types";
 
 /**
- * Focus rooms: the group turns up together for one scheduled task.
+ * Focus rooms: the group turns up and works at the same time.
  *
- * Presence here is what makes such a task completable — a tick on its own is
+ * A room belongs to the group, not to anybody's task — one room is open at a
+ * time so everyone who turns up lands in the same place. Each member brings
+ * their own task into the room (focus_room_members.task_id) and nobody else
+ * sees what it is, which is also why the room's own title never names it.
+ *
+ * Presence here is what makes a focus task completable — a tick on its own is
  * a claim, turning up is a record. Everything in this file is scoped to the
  * caller's own accountability group; nobody can see or join another group's
  * room.
  */
+
+/** Rooms are never named after anyone's task — the group shares the room, not the work. */
+export const ROOM_TITLE = "Focus room";
 
 /** Treated as away once a heartbeat is this old. */
 export const AWAY_AFTER_SECONDS = 35;
@@ -75,24 +83,50 @@ export async function canSeeRoom(roomId: number, userId: number): Promise<boolea
   return (row?.n ?? 0) > 0;
 }
 
-/** The open room for a task, if someone has already started one. */
-export async function roomForTask(taskId: number): Promise<FocusRoomRow | undefined> {
+/**
+ * The room the group is currently in, if any.
+ *
+ * One open room per group: whoever arrives first opens it and everyone else
+ * joins that same one. Rooms older than 12 hours are treated as abandoned
+ * rather than kept open forever.
+ */
+export async function openRoomForGroup(groupId: number): Promise<FocusRoomRow | undefined> {
   return get<FocusRoomRow>(
-    "SELECT * FROM focus_rooms WHERE task_id=? AND closed_at IS NULL ORDER BY id DESC LIMIT 1",
-    [taskId]
+    `SELECT * FROM focus_rooms
+      WHERE group_id = ? AND closed_at IS NULL
+        AND created_at > datetime('now', '-12 hours')
+      ORDER BY id DESC LIMIT 1`,
+    [groupId]
   );
 }
 
+/** The task this member brought into the room, if they picked one. */
+export async function memberTask(roomId: number, userId: number) {
+  const row = await get<{ task_id: number | null }>(
+    "SELECT task_id FROM focus_room_members WHERE room_id=? AND user_id=?",
+    [roomId, userId]
+  );
+  return row?.task_id ?? null;
+}
+
 /**
- * How long this user has actually been present in the task's room. Used to
- * decide whether the task may be marked complete.
+ * How long this user has actually been present in a room working on this
+ * task. Used to decide whether the task may be marked complete.
+ *
+ * The second half of the union reads rooms opened before rooms became
+ * group-level, where the task lived on the room rather than on the member.
  */
 export async function presenceForTask(taskId: number, userId: number): Promise<number> {
   const row = await get<{ secs: number }>(
-    `SELECT COALESCE(MAX(m.present_secs), 0) AS secs
-       FROM focus_rooms r JOIN focus_room_members m ON m.room_id = r.id
-      WHERE r.task_id = ? AND m.user_id = ?`,
-    [taskId, userId]
+    `SELECT COALESCE(MAX(secs), 0) AS secs FROM (
+       SELECT m.present_secs AS secs FROM focus_room_members m
+        WHERE m.task_id = ? AND m.user_id = ?
+       UNION ALL
+       SELECT m.present_secs FROM focus_rooms r
+         JOIN focus_room_members m ON m.room_id = r.id
+        WHERE r.task_id = ? AND m.user_id = ? AND m.task_id IS NULL
+     )`,
+    [taskId, userId, taskId, userId]
   );
   return row?.secs ?? 0;
 }
@@ -165,17 +199,19 @@ export async function focusPresenceForTasks(
   const map = new Map<number, { secs: number; interruptions: number }>();
   if (!taskIds.length) return map;
   const marks = taskIds.map(() => "?").join(",");
+  // The task is the member's own; COALESCE falls back to the room's task for
+  // sittings recorded before rooms stopped belonging to a single task.
   const rows = await all<{ tid: number; secs: number; ints: number }>(
-    `SELECT r.task_id AS tid,
-            COALESCE(MAX(m.present_secs), 0) AS secs,
-            (SELECT COUNT(*) FROM focus_room_interruptions i
-              WHERE i.user_id = ? AND i.room_id IN
-                (SELECT id FROM focus_rooms WHERE task_id = r.task_id)) AS ints
-       FROM focus_rooms r
-       JOIN focus_room_members m ON m.room_id = r.id AND m.user_id = ?
-      WHERE r.task_id IN (${marks})
-      GROUP BY r.task_id`,
-    [userId, userId, ...taskIds]
+    `SELECT tid, MAX(secs) AS secs, SUM(ints) AS ints FROM (
+       SELECT COALESCE(m.task_id, r.task_id) AS tid,
+              m.present_secs AS secs,
+              (SELECT COUNT(*) FROM focus_room_interruptions i
+                WHERE i.room_id = m.room_id AND i.user_id = m.user_id) AS ints
+         FROM focus_room_members m
+         JOIN focus_rooms r ON r.id = m.room_id
+        WHERE m.user_id = ?
+     ) WHERE tid IN (${marks}) GROUP BY tid`,
+    [userId, ...taskIds]
   );
   for (const r of rows) map.set(r.tid, { secs: r.secs, interruptions: r.ints });
   return map;

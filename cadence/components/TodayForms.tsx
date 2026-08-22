@@ -97,7 +97,7 @@ export function AddTaskForm({
         <span className="mb-1 block text-[11px] text-ink-3">Tag</span>
         <label
           className="flex cursor-pointer items-center gap-2 rounded-xl border border-line px-3 py-2 text-sm has-[:checked]:border-accent has-[:checked]:bg-accent-soft has-[:checked]:text-accent-ink"
-          title="Done together in the focus room. Works with any category — school, church, work — and can only be ticked once you've joined the room for it."
+          title="Done together in the focus room. Works with any category — school, church, work — and can only be ticked once you've actually sat in the room with it selected."
         >
           <input type="checkbox" name="focus_room" />
           Focus session

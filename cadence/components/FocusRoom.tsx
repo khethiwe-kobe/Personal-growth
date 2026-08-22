@@ -100,7 +100,12 @@ export default function FocusRoom({
   const [summary, setSummary] = useState<{
     focusedSecs: number; plannedMinutes: number; interruptions: number;
   } | null>(null);
-  const [anchorDone, setAnchorDone] = useState(!!anchor?.completed);
+  // The room is the group's; the task is yours. You pick it on the way in and
+  // nobody else in the room ever sees which one it is.
+  const [anchorId, setAnchorId] = useState<number | null>(
+    anchor?.id ?? sessionTasks.find((t) => !t.completed)?.id ?? null
+  );
+  const [tickedHere, setTickedHere] = useState<number[]>([]);
   const [anchorError, setAnchorError] = useState<string | null>(null);
   const [, tick] = useState(0);
 
@@ -125,15 +130,28 @@ export default function FocusRoom({
     [ice]
   );
 
+  // Whichever of this person's tasks the sitting is for. `anchor` is what the
+  // server had on their membership; the picker can move it before they enter.
+  const active = useMemo<Anchor>(() => {
+    const t = sessionTasks.find((x) => x.id === anchorId);
+    if (t)
+      return {
+        id: t.id, name: t.name, start_min: t.start_min, end_min: t.end_min,
+        planned_minutes: t.planned_minutes, completed: t.completed,
+      };
+    return anchorId !== null && anchorId === anchor?.id ? anchor : null;
+  }, [anchorId, sessionTasks, anchor]);
+  const anchorDone = !!active && (active.completed === 1 || tickedHere.includes(active.id));
+
   const me = members.find((m) => m.userId === meId);
   const others = members.filter((m) => m.userId !== meId && !m.gone);
   const present = [me, ...others].filter(Boolean) as Member[];
 
   // ---- planned / focused / remaining, from the server's numbers ----
   const plannedSecs =
-    anchor && anchor.start_min !== null && anchor.end_min !== null
-      ? (anchor.end_min - anchor.start_min) * 60
-      : (anchor?.planned_minutes ?? 0) * 60;
+    active && active.start_min !== null && active.end_min !== null
+      ? (active.end_min - active.start_min) * 60
+      : (active?.planned_minutes ?? 0) * 60;
   const focusedSecs =
     focusedRef.current.base +
     (phase === "in" && focusedRef.current.here
@@ -376,7 +394,7 @@ export default function FocusRoom({
   const enter = async () => {
     setEntering(true);
     try {
-      await enterFocusRoomAction(roomId);
+      await enterFocusRoomAction(roomId, anchorId);
       setPhase("in");
     } finally {
       setEntering(false);
@@ -384,11 +402,12 @@ export default function FocusRoom({
   };
 
   const completeAnchor = () => {
-    if (!anchor) return;
+    if (!active) return;
+    const id = active.id;
     setAnchorError(null);
-    void toggleTaskAction(anchor.id, true).then((res) => {
+    void toggleTaskAction(id, true).then((res) => {
       if (res && "error" in res) setAnchorError(res.error);
-      else { setAnchorDone(true); router.refresh(); }
+      else { setTickedHere((prev) => [...prev, id]); router.refresh(); }
     });
   };
 
@@ -440,13 +459,36 @@ export default function FocusRoom({
   if (phase === "lobby") {
     const here = members.filter((m) => m.here);
     const opensAt =
-      anchor?.start_min !== null && anchor?.start_min !== undefined
-        ? clockOfMin(anchor.start_min) : null;
+      active?.start_min !== null && active?.start_min !== undefined
+        ? clockOfMin(active.start_min) : null;
     return (
       <div className="mx-auto max-w-lg">
         <div className="rounded-2xl border border-line bg-surface p-6" style={{ boxShadow: "var(--shadow)" }}>
           <p className="text-xs font-medium uppercase tracking-[0.16em] text-ink-3">Ready to focus?</p>
-          <h2 className="mt-1 font-display text-2xl font-medium">{anchor?.name ?? "Focus session"}</h2>
+          <h2 className="mt-1 font-display text-2xl font-medium">{active?.name ?? "Focus session"}</h2>
+
+          {/* Your own task for this sitting. The room is shared; this isn't —
+              it drives your timer and what you can tick from inside, and the
+              others only ever see that you're here, not what you're doing. */}
+          <label className="mt-4 block">
+            <span className="text-[11px] text-ink-3">What are you working on?</span>
+            <select
+              value={anchorId ?? ""}
+              onChange={(e) => setAnchorId(e.target.value ? Number(e.target.value) : null)}
+              className="mt-1 w-full rounded-xl border border-line bg-surface-2 px-3 py-2 text-sm"
+            >
+              <option value="">Just focusing — nothing specific</option>
+              {sessionTasks.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.name}{t.completed ? " (done)" : ""}
+                </option>
+              ))}
+            </select>
+            <span className="mt-1 block text-[10px] text-ink-3">
+              Private to you — the room shows that you&apos;re here, never what you&apos;re working on.
+            </span>
+          </label>
+
           <dl className="mt-4 grid grid-cols-2 gap-3 text-sm">
             {plannedSecs > 0 && (
               <div>
@@ -458,7 +500,7 @@ export default function FocusRoom({
               <div>
                 <dt className="text-[11px] text-ink-3">Scheduled</dt>
                 <dd className="font-medium">
-                  {opensAt}{anchor?.end_min !== null && anchor?.end_min !== undefined ? `–${clockOfMin(anchor.end_min)}` : ""}
+                  {opensAt}{active?.end_min !== null && active?.end_min !== undefined ? `–${clockOfMin(active.end_min)}` : ""}
                 </dd>
               </div>
             )}
@@ -522,14 +564,18 @@ export default function FocusRoom({
       <div className="mx-auto max-w-lg">
         <div className="rounded-2xl border border-line bg-surface p-6 text-center" style={{ boxShadow: "var(--shadow)" }}>
           <p className="text-xs font-medium uppercase tracking-[0.16em] text-ink-3">Session complete</p>
-          <h2 className="mt-1 font-display text-2xl font-medium">{anchor?.name ?? "Focus session"}</h2>
+          <h2 className="mt-1 font-display text-2xl font-medium">{active?.name ?? "Focus session"}</h2>
           <div className="mx-auto mt-5 grid max-w-xs grid-cols-3 gap-3 text-sm">
             <div><p className="text-[11px] text-ink-3">Planned</p><p className="font-medium">{hm(summary.plannedMinutes * 60)}</p></div>
             <div><p className="text-[11px] text-ink-3">Focused</p><p className="font-medium">{hm(summary.focusedSecs)}</p></div>
             <div><p className="text-[11px] text-ink-3">Interruptions</p><p className="font-medium">{summary.interruptions}</p></div>
           </div>
           <p className="mt-3 text-sm text-ink-2">
-            {anchorDone ? "Task completed." : "Task not completed — it stays open in your planner."}
+            {!active
+              ? "No task attached to this sitting."
+              : anchorDone
+                ? "Task completed."
+                : "Task not completed — it stays open in your planner."}
           </p>
           <Button className="mt-5" type="button" onClick={() => router.push("/focus")}>
             Back to Focus
@@ -546,7 +592,7 @@ export default function FocusRoom({
         <p className="text-xs font-medium uppercase tracking-[0.16em] text-ink-3">
           Currently focusing on
         </p>
-        <h2 className="truncate font-display text-xl font-medium">{anchor?.name ?? "Focus session"}</h2>
+        <h2 className="truncate font-display text-xl font-medium">{active?.name ?? "Focus session"}</h2>
         <div className="mt-1 flex flex-wrap items-baseline gap-x-4 gap-y-0.5 text-xs text-ink-3">
           {plannedSecs > 0 && <span>Planned <strong className="text-ink">{hm(plannedSecs)}</strong></span>}
           <span>Focused <strong className="text-ink">{hm(focusedSecs)}</strong></span>
@@ -617,14 +663,14 @@ export default function FocusRoom({
             compact
             onProgress={(d, total) => { doneRef.current = { d, total }; }}
           />
-          {anchor && !anchorDone && (
+          {active && !anchorDone && (
             <Button type="button" variant="soft" className="mt-3 w-full !py-2 !text-xs" onClick={completeAnchor}>
-              <IconCheck size={13} /> Mark “{anchor.name.slice(0, 40)}” complete
+              <IconCheck size={13} /> Mark “{active.name.slice(0, 40)}” complete
             </Button>
           )}
-          {anchor && anchorDone && (
+          {active && anchorDone && (
             <p className="mt-3 flex items-center gap-1.5 text-xs text-ok">
-              <IconCheck size={13} /> {anchor.name.slice(0, 50)} — completed
+              <IconCheck size={13} /> {active.name.slice(0, 50)} — completed
             </p>
           )}
           {anchorError && (

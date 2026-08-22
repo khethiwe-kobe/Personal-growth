@@ -44,6 +44,9 @@ export const IconBook = (p: P) => (
 export const IconUser = (p: P) => (
   <I {...p}><circle cx="12" cy="8" r="4" /><path d="M4.5 21c1-4 4-6 7.5-6s6.5 2 7.5 6" /></I>
 );
+export const IconVideo = (p: P) => (
+  <I {...p}><rect x="2.5" y="6" width="13" height="12" rx="2.5" /><path d="m15.5 12 6-3.5v7l-6-3.5Z" /></I>
+);
 export const IconPlus = (p: P) => <I {...p}><path d="M12 5v14M5 12h14" /></I>;
 export const IconCheck = (p: P) => <I {...p}><path d="M4.5 12.5 10 18 19.5 6.5" /></I>;
 export const IconX = (p: P) => <I {...p}><path d="M6 6l12 12M18 6 6 18" /></I>;

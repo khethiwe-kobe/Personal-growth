@@ -44,6 +44,8 @@ export type FocusRoomMemberRow = {
   share_list: number;
   camera_on: number;
   recorded: number;
+  /** This member's own task for the sitting — private to them. */
+  task_id: number | null;
 };
 
 export type RoomMessageRow = {

@@ -21,16 +21,11 @@ export default async function FocusRoomPage({
   const room = await getRoom(roomId);
   if (!room) notFound();
 
-  // The task this room exists for — the timer and completion bind to it.
-  const anchor = room.task_id
-    ? await get<TaskRow>("SELECT * FROM tasks WHERE id=?", [room.task_id])
-    : undefined;
-
   const [dayTasks, categories, membership] = await Promise.all([
     tasksForDay(user.id, room.date),
     categoriesFor(user.id),
-    get<{ id: number }>(
-      "SELECT id FROM focus_room_members WHERE room_id=? AND user_id=? AND left_at IS NULL",
+    get<{ id: number; task_id: number | null }>(
+      "SELECT id, task_id FROM focus_room_members WHERE room_id=? AND user_id=? AND left_at IS NULL",
       [roomId, user.id]
     ),
   ]);
@@ -40,15 +35,25 @@ export default async function FocusRoomPage({
   const sessionTasks = dayTasks.filter(
     (t) =>
       t.focus_room === 1 ||
-      (t.category_id !== null && catMap.get(t.category_id)?.focus_room === 1) ||
-      t.id === room.task_id
+      (t.category_id !== null && catMap.get(t.category_id)?.focus_room === 1)
   );
+
+  // The task *this* person is working on in the room — theirs alone. The room
+  // itself is not bound to a task, so nobody's task name leaks to the group.
+  // `room.task_id` is only consulted for rooms opened before that was true,
+  // and then only when the task belongs to the person reading the page.
+  const anchorId = membership?.task_id ?? room.task_id;
+  const anchor = anchorId
+    ? await get<TaskRow>("SELECT * FROM tasks WHERE id=? AND user_id=?", [anchorId, user.id])
+    : undefined;
+  // So the picker can show the current choice even if it isn't a focus task.
+  if (anchor && !sessionTasks.some((t) => t.id === anchor.id)) sessionTasks.unshift(anchor);
 
   return (
     <div className="fade-up">
       <PageTitle
         title="Focus room"
-        subtitle="Everyone here is working. Leaving the tab is flagged to the room and recorded."
+        subtitle="Everyone here is working on their own thing, together. Leaving the tab is flagged to the room and recorded."
       />
       <FocusRoom
         roomId={room.id}

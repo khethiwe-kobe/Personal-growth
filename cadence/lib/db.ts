@@ -109,6 +109,9 @@ const ADDED_COLUMNS: { table: string; column: string; definition: string }[] = [
   { table: "tasks", column: "focus_room", definition: "INTEGER NOT NULL DEFAULT 0" },
   { table: "focus_room_members", column: "camera_on", definition: "INTEGER NOT NULL DEFAULT 1" },
   { table: "focus_room_members", column: "recorded", definition: "INTEGER NOT NULL DEFAULT 0" },
+  // The room belongs to the group, not to one person's task. Each member
+  // brings their own task into it, and only they can see which one it is.
+  { table: "focus_room_members", column: "task_id", definition: "INTEGER" },
 ];
 
 async function addMissingColumns() {
