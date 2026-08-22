@@ -24,7 +24,8 @@ export default function OpenRoomButton({
     start(async () => {
       setError(null);
       const res = await joinFocusRoomAction(taskId ? Number(taskId) : null);
-      if (typeof res === "number") router.push(`/focus/room/${res}`);
+      if (typeof res === "number")
+        router.push(`/focus/room/${res}${taskId ? `?task=${taskId}` : ""}`);
       else setError(res.error);
     });
 

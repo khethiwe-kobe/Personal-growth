@@ -12,8 +12,11 @@ export const metadata = { title: "Focus room" };
 export const dynamic = "force-dynamic";
 
 export default async function FocusRoomPage({
-  params,
-}: { params: Promise<{ id: string }> }) {
+  params, searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ task?: string }>;
+}) {
   const user = await requireUser();
   const roomId = Number((await params).id);
   if (!Number.isFinite(roomId) || !(await canSeeRoom(roomId, user.id))) notFound();
@@ -42,7 +45,11 @@ export default async function FocusRoomPage({
   // itself is not bound to a task, so nobody's task name leaks to the group.
   // `room.task_id` is only consulted for rooms opened before that was true,
   // and then only when the task belongs to the person reading the page.
-  const anchorId = membership?.task_id ?? room.task_id;
+  // ?task= is what you tapped Join on, used until you're actually seated;
+  // after that your membership is the record of what you chose.
+  const asked = Number((await searchParams).task);
+  const anchorId =
+    membership?.task_id ?? (Number.isFinite(asked) && asked > 0 ? asked : room.task_id);
   const anchor = anchorId
     ? await get<TaskRow>("SELECT * FROM tasks WHERE id=? AND user_id=?", [anchorId, user.id])
     : undefined;

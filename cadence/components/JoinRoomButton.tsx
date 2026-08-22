@@ -18,7 +18,9 @@ export default function JoinRoomButton({
   const go = () =>
     start(async () => {
       const res = await joinFocusRoomAction(taskId);
-      if (typeof res === "number") router.push(`/focus/room/${res}`);
+      // The task rides along so the lobby opens with the one you tapped
+      // already chosen — the room itself isn't bound to it.
+      if (typeof res === "number") router.push(`/focus/room/${res}?task=${taskId}`);
       else setError(res.error);
     });
 
