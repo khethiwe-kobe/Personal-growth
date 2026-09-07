@@ -366,6 +366,37 @@ export async function moveTaskAction(fd: FormData) {
   revalidatePath("/today");
 }
 
+/**
+ * Moves a whole day's tasks onto another date, exactly as they are.
+ *
+ * This is the "I planned this on the wrong day" fix, which is a different
+ * thing from deferring a task: nothing is rescheduled, so the times, order,
+ * priorities, categories, notes and ticks all carry over untouched, and the
+ * tasks are not marked as moved — they were never really on that day.
+ */
+export async function moveDayTasksAction(
+  fromDate: string, toDate: string
+): Promise<{ moved: number } | { error: string }> {
+  const user = await requireUser();
+  const ok = (d: string) => /^\d{4}-\d{2}-\d{2}$/.test(d);
+  if (!ok(fromDate) || !ok(toDate)) return { error: "That date isn't valid." };
+  if (fromDate === toDate) return { error: "That's the same day." };
+
+  const before = await get<{ n: number }>(
+    "SELECT COUNT(*) AS n FROM tasks WHERE user_id=? AND date=?", [user.id, fromDate]
+  );
+  if ((before?.n ?? 0) === 0) return { error: "There are no tasks on that day to move." };
+
+  await run("UPDATE tasks SET date=? WHERE user_id=? AND date=?",
+    [toDate, user.id, fromDate]);
+
+  revalidatePath("/today");
+  revalidatePath("/dashboard");
+  revalidatePath("/calendar");
+  revalidatePath("/analytics");
+  return { moved: before!.n };
+}
+
 async function ownCategory(userId: number, categoryId: number | null): Promise<number | null> {
   if (!categoryId) return null;
   const ok = await get("SELECT 1 AS x FROM categories WHERE id=? AND user_id=?", [

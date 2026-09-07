@@ -13,6 +13,7 @@ import ShareDay from "@/components/ShareDay";
 import { focusPresenceForTasks } from "@/lib/rooms";
 import type { FocusTaskState } from "@/components/TaskItem";
 import { AddTaskForm, AddBlockForm } from "@/components/TodayForms";
+import MoveDayTasks from "@/components/MoveDayTasks";
 import { CheckinRow } from "@/components/GoalCheckin";
 
 export const metadata = { title: "Today" };
@@ -165,6 +166,7 @@ export default async function TodayPage({
               <ProgressBar pct={summary.completionPct} height={5} />
             </div>
           )}
+          <MoveDayTasks date={date} count={tasks.length} defaultTo={addDays(date, -1)} />
         </div>
 
         <div className="lg:col-span-7">
