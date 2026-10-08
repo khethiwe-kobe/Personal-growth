@@ -14,9 +14,9 @@
   --taupe:#BEB5A9;   --stone:#A78D78;
   --terracotta:#A46447; --umber:#4C362D; --espresso:#291C0E; --cocoa:#6E473B;
   --sage:#88937B;    --burgundy:#4D0E13;
-  /* CRC brand — used only on the two CRC sheets */
-  --crc-navy:#0A1130; --crc-blue:#5CB2ED; --crc-ink:#3E97DE; --crc-sky:#A8D2F4;
-  --crc-off:#F9F9F9;
+  /* the two CRC sheets keep the site's layout but the board's colours */
+  --crc-navy:#291C0E; --crc-blue:#CEB59E; --crc-ink:#A46447; --crc-sky:#E1D4C2;
+  --crc-off:#E8E1D5;
 }
 body{font-family:'Montserrat',sans-serif;-webkit-font-smoothing:antialiased;
      text-rendering:geometricPrecision;}
@@ -40,7 +40,7 @@ body{font-family:'Montserrat',sans-serif;-webkit-font-smoothing:antialiased;
 .tile::after{mix-blend-mode:screen;
   background-image:radial-gradient(circle at 22% 18%,rgba(232,225,213,.05) 0 40%,transparent 41%),
                    radial-gradient(circle at 80% 78%,rgba(164,100,71,.10) 0 45%,transparent 46%);}
-.card.crc-dna::after,.card.crc-dream::after{display:none;}
+.card.crc-dna::after{display:none;}
 
 /* ---------- type ---------- */
 .eyebrow{font-size:2.5mm;font-weight:600;letter-spacing:.42em;text-transform:uppercase;
@@ -122,6 +122,15 @@ ul.acts li b{font-weight:700;color:var(--cocoa);letter-spacing:.04em;}
 .card.split .half.dark ul.acts li b{color:var(--sand);}
 .card.split .half.dark .foot{color:rgba(232,225,213,.45);
                              border-top-color:rgba(232,225,213,.25);}
+.card.split .half.dark .script{color:var(--linen);}
+.card.split .half.dark .scripture{background:rgba(232,225,213,.10);}
+.card.split .half.dark .scripture .ref{color:var(--sand);}
+.card.split .half.dark .scripture .verse{color:rgba(232,225,213,.90);}
+.card.split .half.dark .scripture .verse em{color:var(--linen);}
+.card.split .half.dark ul.vision li{color:rgba(232,225,213,.90);}
+.card.split .half.dark ul.vision li::before{border-color:var(--sand);}
+.card.split .half.dark ul.vision li strong{color:var(--linen);}
+.card.split .half.dark .h-mod{color:var(--sand);}
 .card.split .cut{height:.4mm;background:var(--almond);}
 
 /* ==========================================================================
@@ -129,40 +138,40 @@ ul.acts li b{font-weight:700;color:var(--cocoa);letter-spacing:.04em;}
    ========================================================================== */
 
 /* C4 — the DNA banner */
-.card.crc-dna{background:var(--crc-sky);}
+.card.crc-dna{background:var(--linen);}
 .dna-hero{position:relative;overflow:hidden;height:88mm;padding:13mm 12mm;
   display:flex;flex-direction:column;justify-content:center;
-  background:linear-gradient(118deg,#2B2CD4 0%,#2C56C8 22%,#2E7CC4 44%,
-                             #1B4C8F 66%,#101F52 84%,#080E30 100%);}
-.dna-hero .kicker{font-size:3.4mm;letter-spacing:.02em;color:#fff;font-weight:400;
+  background:linear-gradient(118deg,#6E473B 0%,#8A5540 22%,#A46447 44%,
+                             #5E4132 66%,#3A2A1C 84%,#291C0E 100%);}
+.dna-hero .kicker{font-size:3.4mm;letter-spacing:.02em;color:var(--linen);font-weight:400;
                   white-space:nowrap;}
 .dna-hero .kicker b{font-weight:800;}
 .dna-hero .ghost{font-size:16.5mm;font-weight:800;letter-spacing:.01em;line-height:1;
-                 color:rgba(255,255,255,.26);margin-top:8mm;white-space:nowrap;}
-.dna-hero .ghost span{color:rgba(255,255,255,.44);}
-.dna-hero .sig{font-family:'Mairo',cursive;font-size:19mm;line-height:1;color:#fff;
+                 color:rgba(232,225,213,.30);margin-top:8mm;white-space:nowrap;}
+.dna-hero .ghost span{color:rgba(232,225,213,.52);}
+.dna-hero .sig{font-family:'Mairo',cursive;font-size:19mm;line-height:1;color:var(--linen);
                margin-top:-6mm;white-space:nowrap;}
 .dna-body{padding:11mm 12mm 9mm;display:flex;flex-direction:column;height:209mm;}
-.vmm-card{background:var(--crc-navy);color:#fff;padding:7mm 8mm;margin-bottom:5.5mm;
+.vmm-card{background:var(--espresso);color:var(--linen);padding:7mm 8mm;margin-bottom:5.5mm;
   flex:1;display:flex;flex-direction:column;justify-content:center;}
 .vmm-card .k{font-size:4.4mm;font-weight:800;letter-spacing:.01em;margin-bottom:3.2mm;}
-.vmm-card .v{font-size:3.7mm;line-height:1.55;font-weight:400;color:rgba(255,255,255,.94);}
+.vmm-card .v{font-size:3.7mm;line-height:1.55;font-weight:400;color:rgba(232,225,213,.92);}
 .vmm-card .v + .v{margin-top:3mm;}
-.card.crc-dna .foot{color:#26456E;border-top-color:rgba(10,17,48,.28);}
+.card.crc-dna .foot{color:var(--cocoa);border-top-color:rgba(76,54,45,.30);}
 
 /* C5 — the dream, exactly as the site sets it */
-.card.crc-dream{background:#fff;color:#12193A;}
-.dream-bar{background:var(--crc-navy);color:#fff;padding:6.5mm 12mm;
+.card.crc-dream{background:var(--linen);color:var(--umber);}
+.dream-bar{background:var(--espresso);color:var(--linen);padding:6.5mm 12mm;
            font-size:5.6mm;font-weight:800;letter-spacing:.01em;}
 .dream-body{padding:7.5mm 12mm 8mm;display:flex;flex-direction:column;height:263mm;}
-p.dream{font-size:4.15mm;line-height:1.55;margin-bottom:4.4mm;color:#12193A;font-weight:400;}
-p.dream b{color:var(--crc-ink);font-weight:700;}
-.dream-close{border:.5mm solid var(--crc-ink);padding:4.5mm 5mm;text-align:center;
+p.dream{font-size:4.15mm;line-height:1.55;margin-bottom:4.4mm;color:var(--umber);font-weight:400;}
+p.dream b{color:var(--terracotta);font-weight:700;}
+.dream-close{border:.5mm solid var(--terracotta);padding:4.5mm 5mm;text-align:center;
              margin-top:1mm;}
-.dream-close .t{font-size:4mm;font-weight:700;line-height:1.5;color:var(--crc-navy);}
+.dream-close .t{font-size:4mm;font-weight:700;line-height:1.5;color:var(--espresso);}
 .dream-close .b{font-size:2.4mm;letter-spacing:.3em;text-transform:uppercase;
-                color:var(--crc-ink);margin-top:2.4mm;font-weight:700;}
-.card.crc-dream .foot{color:#7E8AA8;border-top-color:#D8DEEC;}
+                color:var(--terracotta);margin-top:2.4mm;font-weight:700;}
+.card.crc-dream .foot{color:var(--stone);border-top-color:var(--almond);}
 
 /* ---------- headline tiles ---------- */
 .tile .word{font-weight:900;letter-spacing:.1em;line-height:.92;color:var(--linen);}

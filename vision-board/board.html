@@ -14,9 +14,9 @@
   --taupe:#BEB5A9;   --stone:#A78D78;
   --terracotta:#A46447; --umber:#4C362D; --espresso:#291C0E; --cocoa:#6E473B;
   --sage:#88937B;    --burgundy:#4D0E13;
-  /* CRC brand — used only on the two CRC sheets */
-  --crc-navy:#0A1130; --crc-blue:#5CB2ED; --crc-ink:#3E97DE; --crc-sky:#A8D2F4;
-  --crc-off:#F9F9F9;
+  /* the two CRC sheets keep the site's layout but the board's colours */
+  --crc-navy:#291C0E; --crc-blue:#CEB59E; --crc-ink:#A46447; --crc-sky:#E1D4C2;
+  --crc-off:#E8E1D5;
 }
 body{font-family:'Montserrat',sans-serif;-webkit-font-smoothing:antialiased;
      text-rendering:geometricPrecision;}
@@ -40,7 +40,7 @@ body{font-family:'Montserrat',sans-serif;-webkit-font-smoothing:antialiased;
 .tile::after{mix-blend-mode:screen;
   background-image:radial-gradient(circle at 22% 18%,rgba(232,225,213,.05) 0 40%,transparent 41%),
                    radial-gradient(circle at 80% 78%,rgba(164,100,71,.10) 0 45%,transparent 46%);}
-.card.crc-dna::after,.card.crc-dream::after{display:none;}
+.card.crc-dna::after{display:none;}
 
 /* ---------- type ---------- */
 .eyebrow{font-size:2.5mm;font-weight:600;letter-spacing:.42em;text-transform:uppercase;
@@ -122,6 +122,15 @@ ul.acts li b{font-weight:700;color:var(--cocoa);letter-spacing:.04em;}
 .card.split .half.dark ul.acts li b{color:var(--sand);}
 .card.split .half.dark .foot{color:rgba(232,225,213,.45);
                              border-top-color:rgba(232,225,213,.25);}
+.card.split .half.dark .script{color:var(--linen);}
+.card.split .half.dark .scripture{background:rgba(232,225,213,.10);}
+.card.split .half.dark .scripture .ref{color:var(--sand);}
+.card.split .half.dark .scripture .verse{color:rgba(232,225,213,.90);}
+.card.split .half.dark .scripture .verse em{color:var(--linen);}
+.card.split .half.dark ul.vision li{color:rgba(232,225,213,.90);}
+.card.split .half.dark ul.vision li::before{border-color:var(--sand);}
+.card.split .half.dark ul.vision li strong{color:var(--linen);}
+.card.split .half.dark .h-mod{color:var(--sand);}
 .card.split .cut{height:.4mm;background:var(--almond);}
 
 /* ==========================================================================
@@ -129,40 +138,40 @@ ul.acts li b{font-weight:700;color:var(--cocoa);letter-spacing:.04em;}
    ========================================================================== */
 
 /* C4 — the DNA banner */
-.card.crc-dna{background:var(--crc-sky);}
+.card.crc-dna{background:var(--linen);}
 .dna-hero{position:relative;overflow:hidden;height:88mm;padding:13mm 12mm;
   display:flex;flex-direction:column;justify-content:center;
-  background:linear-gradient(118deg,#2B2CD4 0%,#2C56C8 22%,#2E7CC4 44%,
-                             #1B4C8F 66%,#101F52 84%,#080E30 100%);}
-.dna-hero .kicker{font-size:3.4mm;letter-spacing:.02em;color:#fff;font-weight:400;
+  background:linear-gradient(118deg,#6E473B 0%,#8A5540 22%,#A46447 44%,
+                             #5E4132 66%,#3A2A1C 84%,#291C0E 100%);}
+.dna-hero .kicker{font-size:3.4mm;letter-spacing:.02em;color:var(--linen);font-weight:400;
                   white-space:nowrap;}
 .dna-hero .kicker b{font-weight:800;}
 .dna-hero .ghost{font-size:16.5mm;font-weight:800;letter-spacing:.01em;line-height:1;
-                 color:rgba(255,255,255,.26);margin-top:8mm;white-space:nowrap;}
-.dna-hero .ghost span{color:rgba(255,255,255,.44);}
-.dna-hero .sig{font-family:'Mairo',cursive;font-size:19mm;line-height:1;color:#fff;
+                 color:rgba(232,225,213,.30);margin-top:8mm;white-space:nowrap;}
+.dna-hero .ghost span{color:rgba(232,225,213,.52);}
+.dna-hero .sig{font-family:'Mairo',cursive;font-size:19mm;line-height:1;color:var(--linen);
                margin-top:-6mm;white-space:nowrap;}
 .dna-body{padding:11mm 12mm 9mm;display:flex;flex-direction:column;height:209mm;}
-.vmm-card{background:var(--crc-navy);color:#fff;padding:7mm 8mm;margin-bottom:5.5mm;
+.vmm-card{background:var(--espresso);color:var(--linen);padding:7mm 8mm;margin-bottom:5.5mm;
   flex:1;display:flex;flex-direction:column;justify-content:center;}
 .vmm-card .k{font-size:4.4mm;font-weight:800;letter-spacing:.01em;margin-bottom:3.2mm;}
-.vmm-card .v{font-size:3.7mm;line-height:1.55;font-weight:400;color:rgba(255,255,255,.94);}
+.vmm-card .v{font-size:3.7mm;line-height:1.55;font-weight:400;color:rgba(232,225,213,.92);}
 .vmm-card .v + .v{margin-top:3mm;}
-.card.crc-dna .foot{color:#26456E;border-top-color:rgba(10,17,48,.28);}
+.card.crc-dna .foot{color:var(--cocoa);border-top-color:rgba(76,54,45,.30);}
 
 /* C5 — the dream, exactly as the site sets it */
-.card.crc-dream{background:#fff;color:#12193A;}
-.dream-bar{background:var(--crc-navy);color:#fff;padding:6.5mm 12mm;
+.card.crc-dream{background:var(--linen);color:var(--umber);}
+.dream-bar{background:var(--espresso);color:var(--linen);padding:6.5mm 12mm;
            font-size:5.6mm;font-weight:800;letter-spacing:.01em;}
 .dream-body{padding:7.5mm 12mm 8mm;display:flex;flex-direction:column;height:263mm;}
-p.dream{font-size:4.15mm;line-height:1.55;margin-bottom:4.4mm;color:#12193A;font-weight:400;}
-p.dream b{color:var(--crc-ink);font-weight:700;}
-.dream-close{border:.5mm solid var(--crc-ink);padding:4.5mm 5mm;text-align:center;
+p.dream{font-size:4.15mm;line-height:1.55;margin-bottom:4.4mm;color:var(--umber);font-weight:400;}
+p.dream b{color:var(--terracotta);font-weight:700;}
+.dream-close{border:.5mm solid var(--terracotta);padding:4.5mm 5mm;text-align:center;
              margin-top:1mm;}
-.dream-close .t{font-size:4mm;font-weight:700;line-height:1.5;color:var(--crc-navy);}
+.dream-close .t{font-size:4mm;font-weight:700;line-height:1.5;color:var(--espresso);}
 .dream-close .b{font-size:2.4mm;letter-spacing:.3em;text-transform:uppercase;
-                color:var(--crc-ink);margin-top:2.4mm;font-weight:700;}
-.card.crc-dream .foot{color:#7E8AA8;border-top-color:#D8DEEC;}
+                color:var(--terracotta);margin-top:2.4mm;font-weight:700;}
+.card.crc-dream .foot{color:var(--stone);border-top-color:var(--almond);}
 
 /* ---------- headline tiles ---------- */
 .tile .word{font-weight:900;letter-spacing:.1em;line-height:.92;color:var(--linen);}
@@ -372,61 +381,108 @@ html,body{background:#3B3128;display:flex;align-items:flex-start;justify-content
   </ul>
 
   <div class="foot"><span>Celestiaventi · the build</span><span>Sheet C2</span></div>
-</div></section><section class="card portrait " data-sheet="C3"><div class="stack">
-  <div class="eyebrow">The House · S2</div>
-  <div class="script" style="font-size:30mm;color:var(--espresso);margin:4mm 0 0">S2</div>
-  <div class="script" style="font-size:14mm;color:var(--terracotta);margin:1mm 0 6mm;
-       line-height:1.12">Structure of<br>breakthrough</div>
+</div></section><section class="card portrait flush split" data-sheet="C3">
+  <div class="half">
+    <div class="eyebrow">Celestiaventi · Brand</div>
+    <div class="script" style="font-size:16mm;margin:3mm 0 2.5mm">Serentia</div>
+    <div class="h-mod" style="font-size:2.8mm;color:var(--cocoa);margin-bottom:4mm">
+      Revenue · Reputation · Conversion</div>
 
-  <div class="scripture">
-    <span class="ref">John 2:17 · Psalm 92:13 · NLT</span>
-    <div class="verse">“<em>Passion for God’s house will consume me.</em>”</div>
-    <div class="verse">“For they are transplanted to the LORD’s own house. They flourish in
-      the courts of our God.”</div>
+    <div class="scripture" style="padding:4.5mm 5mm">
+      <span class="ref">Proverbs 22:29 · NLT</span>
+      <div class="verse" style="font-size:3.1mm">“Do you see any <em>truly competent
+        workers</em>? They will serve kings rather than ordinary people.”</div>
+    </div>
+
+    <div style="display:flex;gap:2.2mm;margin:4.5mm 0 4mm">
+      <div style="flex:1.1;border:.4mm solid var(--almond);padding:4mm 2.5mm;text-align:center">
+        <div style="font-size:7mm;font-weight:800;color:var(--terracotta);line-height:1">R100K</div>
+        <div style="font-size:2.4mm;font-weight:700;letter-spacing:.16em;color:var(--umber);
+          margin-top:1.8mm">REVENUE BY 31 OCT</div>
+        <div style="font-size:2.3mm;color:var(--stone);margin-top:1.2mm">Driven by UGC</div></div>
+      <div style="flex:.85;border:.4mm solid var(--almond);padding:4mm 2.5mm;text-align:center">
+        <div style="font-size:7mm;font-weight:800;color:var(--terracotta);line-height:1">5.0</div>
+        <div style="font-size:2.4mm;font-weight:700;letter-spacing:.16em;color:var(--umber);
+          margin-top:1.8mm">ON TRUSTPILOT</div>
+        <div style="font-size:2.3mm;color:var(--stone);margin-top:1.2mm">Every customer asked</div></div>
+      <div style="flex:1.05;border:.4mm solid var(--almond);padding:4mm 2.5mm;text-align:center">
+        <div style="font-size:7mm;font-weight:800;color:var(--terracotta);line-height:1">LP</div>
+        <div style="font-size:2.4mm;font-weight:700;letter-spacing:.16em;color:var(--umber);
+          margin-top:1.8mm">PAGES THAT CONVERT</div>
+        <div style="font-size:2.3mm;color:var(--stone);margin-top:1.2mm">One test always live</div></div>
+    </div>
+
+    <div class="grow"></div>
+
+    <ul class="acts" style="margin-bottom:3mm">
+      <li><b>Every morning the gap goes on the board:</b> (R100K − actual) ÷ days left
+          = today’s run rate. You cannot hit a number you are not looking at.</li>
+      <li><b>UGC is a production line, not a campaign.</b> A fixed batch ships every week —
+          kill the losers fast, pour spend into the winners.</li>
+      <li><b>Three days after delivery, the review request goes out</b> — automated, every
+          customer, no exceptions. Five stars are asked for, not waited for.</li>
+      <li><b>One landing-page test live at all times.</b> One variable at a time, decided
+          on data and not on taste.</li>
+    </ul>
+
+    <div class="foot"><span>Serentia · 31 October</span><span>Sheet C3 · upper</span></div>
   </div>
 
-  <div class="block-label" style="margin:7mm 0 4mm">The Structure</div>
-  <ul class="vision">
-    <li><strong>100% membership in Reith.</strong></li>
-    <li>A bus for <strong>education</strong> &amp; a bus for <strong>Arteria</strong>.</li>
-    <li><strong>Leaders on fire</strong> — walking intimately in their walk with God.</li>
-    <li>Membership of <strong>100+</strong>.</li>
-    <li><strong>Honour and zeal</strong> for the house.</li>
-  </ul>
+  <div class="cut"></div>
 
-  <div class="block-label" style="margin:6mm 0 4mm">Breakthrough In</div>
-  <div style="display:flex;gap:2.5mm;margin-bottom:6mm">
-    <div style="flex:1;background:var(--sand);padding:5mm 2mm;text-align:center">
-      <div style="font-size:2.8mm;font-weight:700;letter-spacing:.18em;color:var(--espresso)">FINANCES</div></div>
-    <div style="flex:1.35;background:var(--sand);padding:5mm 2mm;text-align:center">
-      <div style="font-size:2.8mm;font-weight:700;letter-spacing:.18em;color:var(--espresso)">ACADEMICS<br>&amp; CAREER</div></div>
-    <div style="flex:1.15;background:var(--sand);padding:5mm 2mm;text-align:center">
-      <div style="font-size:2.8mm;font-weight:700;letter-spacing:.18em;color:var(--espresso)">RELATION-<br>SHIPS</div></div>
+  <div class="half dark">
+    <div class="eyebrow">The House · S2</div>
+    <div style="display:flex;align-items:baseline;gap:5mm;margin:1mm 0 3.5mm">
+      <div class="script" style="font-size:19mm">S2</div>
+      <div class="script" style="font-size:10mm;color:var(--almond);line-height:1.1">Structure of breakthrough</div>
+    </div>
+
+    <div class="scripture" style="padding:4mm 5mm">
+      <span class="ref">John 2:17 · Psalm 92:13 · NLT</span>
+      <div class="verse" style="font-size:3mm">“<em>Passion for God’s house will consume
+        me.</em>” · “For they are transplanted to the LORD’s own house. They flourish in the
+        courts of our God.”</div>
+    </div>
+
+    <div style="display:flex;gap:6mm;margin-top:4.5mm">
+      <div style="flex:1.35">
+        <div class="block-label" style="margin-bottom:3.5mm">The Structure</div>
+        <ul class="vision" style="margin-bottom:0">
+          <li style="font-size:3.1mm;margin-bottom:2.2mm"><strong>100% membership in Reith.</strong></li>
+          <li style="font-size:3.1mm;margin-bottom:2.2mm">A bus for <strong>education</strong>
+            &amp; a bus for <strong>Arteria</strong>.</li>
+          <li style="font-size:3.1mm;margin-bottom:2.2mm"><strong>Leaders on fire</strong> —
+            walking intimately in their walk with God.</li>
+          <li style="font-size:3.1mm;margin-bottom:2.2mm">Membership of <strong>100+</strong>.</li>
+          <li style="font-size:3.1mm;margin-bottom:0"><strong>Honour and zeal</strong> for the house.</li>
+        </ul>
+      </div>
+      <div style="flex:1">
+        <div class="block-label" style="margin-bottom:3.5mm">Breakthrough In</div>
+        <div style="display:flex;flex-direction:column;gap:2mm">
+          <div style="background:rgba(232,225,213,.12);padding:3mm 2mm;text-align:center;
+            font-size:2.6mm;font-weight:700;letter-spacing:.18em;color:var(--sand)">FINANCES</div>
+          <div style="background:rgba(232,225,213,.12);padding:3mm 2mm;text-align:center;
+            font-size:2.6mm;font-weight:700;letter-spacing:.18em;color:var(--sand)">ACADEMICS &amp; CAREER</div>
+          <div style="background:rgba(232,225,213,.12);padding:3mm 2mm;text-align:center;
+            font-size:2.6mm;font-weight:700;letter-spacing:.18em;color:var(--sand)">RELATIONSHIPS</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grow"></div>
+
+    <div style="text-align:center;padding-bottom:3mm">
+      <div style="font-size:3.1mm;font-weight:800;letter-spacing:.1em;color:var(--sand);
+        text-transform:uppercase;line-height:1.45">I will build my church, and all the
+        powers of hell will not conquer it</div>
+      <div style="font-size:2.2mm;letter-spacing:.3em;text-transform:uppercase;
+        color:var(--stone);margin-top:2.2mm">Matthew 16:18 NLT</div>
+    </div>
+
+    <div class="foot"><span>S2 · Structure of Breakthrough</span><span>Sheet C3 · lower</span></div>
   </div>
-
-  <div class="grow"></div>
-
-  <div class="pull">
-    <div class="q">I will build my church</div>
-    <div class="r">Matthew 16:18 NLT · and all the powers of hell will not conquer it</div>
-  </div>
-
-  <div class="grow"></div>
-
-  <div class="verse-mini">
-    <b>Standing on</b><br>
-    <span style="display:block;margin-top:1.5mm">
-    <strong>Acts 2:47</strong> — “Each day the Lord added to their fellowship those who were
-    being saved.”<br>
-    <strong>Rom. 12:11</strong> — “Never be lazy, but work hard and serve the Lord
-    enthusiastically.”<br>
-    <strong>Matt. 16:18</strong> — “Upon this rock I will build my church, and all the powers
-    of hell will not conquer it.”</span>
-  </div>
-
-  <div style="height:6mm"></div>
-  <div class="foot"><span>S2 · Structure of Breakthrough</span><span>Sheet C3</span></div>
-</div></section><section class="card portrait flush crc-dna" data-sheet="C4">
+</section><section class="card portrait flush crc-dna" data-sheet="C4">
   <div class="dna-hero">
     <div class="kicker"><b>THE DREAM OF CRC</b> · THE VISION · THE MISSION · THE MANDATE</div>
     <div class="ghost">THE DNA OF <span>CRC</span></div>
@@ -447,7 +503,7 @@ html,body{background:#3B3128;display:flex;align-items:flex-start;justify-content
       <div class="v">Our mandate is to win the lost at any cost!</div>
       <div class="v">Everything we do is about souls as we plunder hell and populate heaven!</div>
     </div>
-    <div class="grow"></div>
+    <div style="height:5mm"></div>
     <div class="foot"><span>crcchurch.com</span><span>Sheet C4</span></div>
   </div>
 </section><section class="card portrait flush crc-dream" data-sheet="C5">
@@ -552,54 +608,56 @@ html,body{background:#3B3128;display:flex;align-items:flex-start;justify-content
 
   <div class="foot"><span>Birthed and maintained in prayer</span><span>Sheet C6</span></div>
 </div></section><section class="card portrait " data-sheet="C7"><div class="stack">
-  <div class="eyebrow">Stewardship · Aug–Dec 2026</div>
+  <div class="eyebrow">Stewardship · Oct–Dec 2026</div>
   <div class="script" style="font-size:24mm;margin:4mm 0 5mm">Finances</div>
 
-  <div class="scripture">
+  <div class="scripture" style="padding:5mm 6mm">
     <span class="ref">Luke 16:10 · Proverbs 21:5 · NLT</span>
-    <div class="verse">“If you are faithful in little things, <em>you will be faithful in
-      large ones.</em>”</div>
-    <div class="verse">“Good planning and hard work lead to prosperity.”</div>
+    <div class="verse" style="font-size:3.15mm">“If you are faithful in little things,
+      <em>you will be faithful in large ones.</em>”</div>
+    <div class="verse" style="font-size:3.15mm">“Good planning and hard work lead to
+      prosperity.”</div>
   </div>
 
-  <div class="declare" style="margin:4.5mm 0;padding:4mm 6mm;background:var(--terracotta)">
-    <div class="big" style="font-size:3.4mm">Five months to close the year</div>
-    <div class="small" style="color:rgba(238,228,218,.78)">August · September · October ·
-      November · December</div>
+  <div class="declare" style="margin:4mm 0;padding:3.6mm 6mm;background:var(--terracotta)">
+    <div class="big" style="font-size:3.4mm">Three months to close the year</div>
+    <div class="small" style="color:rgba(238,228,218,.78)">October · November · December</div>
   </div>
 
   <div class="block-label" style="margin-bottom:4mm">The Numbers</div>
-  <div class="target"><span class="num">R20k</span><span class="lbl">Savings</span>
-    <span class="sub"><b style="color:var(--terracotta)">R4 000</b> / month × 5</span></div>
-  <div class="target"><span class="num">R30k</span><span class="lbl">Investments</span>
-    <span class="sub"><b style="color:var(--terracotta)">R6 000</b> / month × 5</span></div>
+  <div class="target"><span class="num">R32k</span><span class="lbl">Bonus</span>
+    <span class="sub">October · the year’s biggest inflow</span></div>
+  <div class="target"><span class="num">R20k</span><span class="lbl">Savings &amp; investment</span>
+    <span class="sub">In by <b style="color:var(--terracotta)">31 December</b></span></div>
+  <div class="target"><span class="num">R15k</span><span class="lbl">R&amp;D &amp; entertainment</span>
+    <span class="sub">Sown into the build and the living</span></div>
   <div class="target" style="border-bottom:none"><span class="num" style="font-size:5mm">LONG</span>
     <span class="lbl">Property investment</span><span class="sub">Deposit fund open</span></div>
 
   <div style="background:var(--espresso);color:var(--linen);padding:3.6mm 6mm;
        display:flex;align-items:baseline;gap:4mm;margin:2mm 0 4mm">
-    <span style="font-size:6.5mm;font-weight:800;color:var(--sand);line-height:1">R10 000</span>
+    <span style="font-size:6.5mm;font-weight:800;color:var(--sand);line-height:1">R35 000</span>
     <span style="font-size:2.7mm;font-weight:600;letter-spacing:.2em;text-transform:uppercase">
-      Every month, non-negotiable</span>
+      Allocated before it lands</span>
     <span style="font-size:2.4mm;color:var(--taupe);margin-left:auto;text-align:right">
-      + R3 000 / month for the<br>December trip · Sheet C9</span>
+      R32 000 from the bonus ·<br>R3 000 from monthly income</span>
   </div>
 
-  <div class="block-label" style="margin-bottom:4mm">The order every rand follows</div>
-  <div style="display:flex;flex-direction:column;gap:2mm">
-    <div style="display:flex;align-items:center;gap:3mm;background:var(--sand);padding:3mm 4mm">
+  <div class="block-label" style="margin-bottom:3.4mm">The order every rand follows</div>
+  <div style="display:flex;flex-direction:column;gap:1.7mm">
+    <div style="display:flex;align-items:center;gap:3mm;background:var(--sand);padding:2.7mm 4mm">
       <span style="font-size:2.4mm;font-weight:800;color:var(--terracotta);letter-spacing:.2em">01</span>
       <span style="font-size:3.1mm;font-weight:700;letter-spacing:.14em;color:var(--espresso)">GIVE</span>
       <span style="font-size:2.6mm;color:var(--stone);margin-left:auto">The tithe is not mine to budget</span></div>
-    <div style="display:flex;align-items:center;gap:3mm;background:var(--sand);padding:3mm 4mm">
+    <div style="display:flex;align-items:center;gap:3mm;background:var(--sand);padding:2.7mm 4mm">
       <span style="font-size:2.4mm;font-weight:800;color:var(--terracotta);letter-spacing:.2em">02</span>
       <span style="font-size:3.1mm;font-weight:700;letter-spacing:.14em;color:var(--espresso)">SAVE</span>
-      <span style="font-size:2.6mm;color:var(--stone);margin-left:auto">Automated on payday</span></div>
-    <div style="display:flex;align-items:center;gap:3mm;background:var(--sand);padding:3mm 4mm">
+      <span style="font-size:2.6mm;color:var(--stone);margin-left:auto">The day the bonus lands</span></div>
+    <div style="display:flex;align-items:center;gap:3mm;background:var(--sand);padding:2.7mm 4mm">
       <span style="font-size:2.4mm;font-weight:800;color:var(--terracotta);letter-spacing:.2em">03</span>
       <span style="font-size:3.1mm;font-weight:700;letter-spacing:.14em;color:var(--espresso)">INVEST</span>
       <span style="font-size:2.6mm;color:var(--stone);margin-left:auto">Before it can be spent</span></div>
-    <div style="display:flex;align-items:center;gap:3mm;background:var(--espresso);padding:3mm 4mm">
+    <div style="display:flex;align-items:center;gap:3mm;background:var(--espresso);padding:2.7mm 4mm">
       <span style="font-size:2.4mm;font-weight:800;color:var(--almond);letter-spacing:.2em">04</span>
       <span style="font-size:3.1mm;font-weight:700;letter-spacing:.14em;color:var(--linen)">LIVE</span>
       <span style="font-size:2.6mm;color:var(--taupe);margin-left:auto">On what is left, gladly</span></div>
@@ -617,12 +675,11 @@ html,body{background:#3B3128;display:flex;align-items:flex-start;justify-content
   </div>
 
   <div class="block-label" style="margin-bottom:3.5mm">Actionables</div>
-  <ul class="acts">
-    <li><b>On payday, before anything else:</b> tithe, then R4 000 to savings, then R6 000
-        to investments. Automated — not a monthly decision.</li>
+  <ul class="acts" style="margin-bottom:0">
+    <li><b>The day the bonus lands:</b> tithe, R20 000 into savings and investments,
+        R15 000 ring-fenced for R&amp;D and entertainment — split before it is spendable.</li>
     <li><b>Every Sunday evening,</b> five minutes with the bank app.</li>
     <li><b>If an unplanned expense appears,</b> then it waits 48 hours.</li>
-    <li><b>Property:</b> open the deposit account in August.</li>
   </ul>
 
   <div class="foot"><span>Faithful in little</span><span>Sheet C7</span></div>

@@ -45,10 +45,10 @@ leaves a white border, trim it; if it can print borderless, use that. Matte
 │   2026   │ INVASION │THE SECOND │  Love   │  ← 4 × A4 landscape, edge to edge
 │    B1    │    B2    │  WAVE  B3 │   B4    │     (297 × 210 each = 1188 mm)
 ├──────┬───┴────┬─────┴────┬──────┴──┬──────┤
-│  C1  │   C2   │    C3    │   C4    │  C5  │  ← 10 × A4 portrait, 5 across × 2 down
-│Celes-│  The   │    S2    │ DNA of  │Dream │
-│tia-  │ Build  │Structure │  CRC    │of CRC│
-│venti │        │          │         │      │
+│  C1  │   C2   │ Serentia │   C4    │  C5  │  ← 10 × A4 portrait, 5 across × 2 down
+│Celes-│  The   │──────────│ DNA of  │Dream │
+│tia-  │ Build  │    S2    │  CRC    │of CRC│
+│venti │        │Structure │         │      │
 ├──────┼────────┼──────────┼─────────┼──────┤
 │  C6  │   C7   │    C8    │   C9    │ C10  │
 │Spiri-│Finances│  Health  │ Social  │Rela- │
@@ -63,10 +63,14 @@ leaves a white border, trim it; if it can print borderless, use that. Matte
 Each sheet is a **whole, self-contained card** — no headline word and no sentence is
 ever split across a seam. Small misalignments when you paste simply do not show.
 
-**Sheet C10 carries two panels** on the one A4 page: *Relationships* on top (linen) and
-*The Rhythm* below (dark), divided by a hairline. Cut along it or leave it — either
-way it pastes as one piece, and the dark lower half anchors the bottom-right corner
-against the dark banner at the top.
+**Two sheets carry two panels each**, divided by a hairline — cut along it or leave it,
+either way the sheet pastes as one piece:
+
+- **C3** — *Serentia* on top (linen), *S2 · Structure of Breakthrough* below (dark).
+- **C10** — *Relationships* on top (linen), *The Rhythm* below (dark).
+
+The two dark lower halves sit one in each row and anchor the board against the dark
+banner along the top.
 
 ### Pasting it up
 
@@ -98,11 +102,11 @@ makes it read as a gallery wall rather than a poster.
 Sand `#E1D4C2`, Toasted Almond `#CEB59E`, Stone `#A78D78`, Terracotta `#A46447`,
 Deep Umber `#4C362D`, Espresso `#291C0E`, Muted Sage `#88937B`.
 
-**Sheets C4 and C5 deliberately break that palette** and use CRC's own — navy
-`#0A1130`, blue `#5CB2ED` / `#3E97DE`, sky `#A8D2F4` — reproducing the DNA banner
-gradient, the three navy vision/mission/mandate cards on light blue, and the dream
-itself as white page with navy header bar and blue emphasis, exactly as the site
-sets it.
+**Sheets C4 and C5 keep the CRC site's layout but the board's colours** — the DNA
+banner gradient, the ghosted wordmark with the signature over it, the three solid
+vision/mission/mandate cards, and the dream as a page with a dark header bar and
+emphasis on the same phrases. All of it rendered in espresso, cocoa, terracotta and
+linen so those two sheets sit in the same family as the rest.
 
 ---
 
@@ -131,8 +135,9 @@ achievement keeps pointing at:
 - **If–then beats intention.** Gollwitzer & Sheeran's meta-analysis across 94 studies
   found implementation intentions — naming *when and where* — produce one of the
   larger effects in the literature. Hence "If it is Monday 06:00, then…".
-- **Specific and hard beats "do your best."** Locke & Latham. Hence R4 000/month,
-  8 chapters a day, 4× a week, 100+ members, $100M — numbers, not adjectives.
+- **Specific and hard beats "do your best."** Locke & Latham. Hence R100K by 31 October,
+  R20 000 by 31 December, 8 chapters a day, 4× a week, 100+ members, $100M — numbers,
+  not adjectives.
 - **Daily visual exposure.** Hence: A0, on a wall, where you pass it.
 
 The cadence lives on the lower half of C10: **daily 60 seconds · weekly Sunday 18:00
@@ -145,17 +150,30 @@ if that happens.
 
 ## The numbers, and where they came from
 
-**Finances (C7)** — five months to close the year: August, September, October,
-November, December.
+**Serentia (C3, upper)** — three targets:
 
-| Goal | Total | Per month |
-|---|---|---|
-| Savings | R20 000 | **R4 000** |
-| Investments | R30 000 | **R6 000** |
-| | | **R10 000/month** |
+| Target | By |
+|---|---|
+| **R100K revenue**, driven by UGC | 31 October |
+| **5.0 on Trustpilot** | Every delivered customer asked |
+| **Landing pages that convert** | One test live at all times |
 
-Plus **R3 000/month** for the December trip (see C9), so the real monthly commitment
-is R13 000 in September, October and November.
+The run-rate is deliberately not fixed on the card: the actionable is to put
+*(R100K − actual) ÷ days left* on the board each morning, so the number stays true
+whatever has already come in.
+
+**Finances (C7)** — three months to close the year: October, November, December.
+
+| Line | Amount |
+|---|---|
+| October bonus | **R32 000** |
+| Savings & investment, in by 31 December | **R20 000** |
+| R&D & entertainment | **R15 000** |
+| Property investment | Long term — deposit fund open |
+
+The two allocations come to **R35 000** against a **R32 000** bonus, so the card shows
+the last R3 000 coming from monthly income. Change the split in `build.py` → `C7` if
+you'd rather it balanced exactly.
 
 **Social (C9)**
 
