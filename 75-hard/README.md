@@ -38,7 +38,9 @@ Both people sit on the **same day row**, separated by a vertical rule —
 a glance down the sheet shows who is behind, and on what, without comparing two
 separate charts.
 
-The names are set in `build.py` → `PEOPLE`; change them there and rebuild.
+The names and water targets are set in `build.py` → `PEOPLE`; change them there
+and rebuild. The water column header is per person, so each of you ticks against
+your own number.
 
 Six tick boxes per person per day:
 
@@ -47,11 +49,15 @@ Six tick boxes per person per day:
 | `DIET` | Diet held, no cheat meals |
 | `W1` | First 45-minute workout |
 | `W2` | Second 45-minute workout — 3+ hours later, one of the two outdoors |
-| `3.8L` | One gallon of plain water |
+| `2.5L` / `3L` | Plain water — Khethiwe 2.5 L, Kabelo 3 L |
 | `10pg` | Ten pages read |
 | `PIC` | Progress picture taken |
 
 Rule 2 is two workouts, so it gets two boxes — five rules, six boxes.
+
+**The water target is deliberately not the standard gallon.** 75 Hard as written
+calls for 3.8 L for everyone; this sheet carries 2.5 L and 3 L, set to height and
+need. Everything else follows the challenge as published.
 
 Every fifth day carries a heavier rule so you can count down the sheet at a
 glance. **Days 25, 50 and 75** are marked in terracotta.

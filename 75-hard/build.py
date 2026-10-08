@@ -23,7 +23,11 @@ import pathlib
 HERE = pathlib.Path(__file__).parent
 FONTS = HERE / "fonts"
 
-PEOPLE = ["Khethiwe", "Kabelo"]
+PEOPLE = [
+    # water target is set to each person's height and need, not the flat gallon
+    {"name": "Khethiwe", "water": "2.5L"},
+    {"name": "Kabelo", "water": "3L"},
+]
 
 DAYS = 75
 BLOCK = 25                      # days per column block
@@ -31,10 +35,14 @@ TASKS = [                       # (column head, what it means)
     ("DIET", "diet held"),
     ("W1", "45 min"),
     ("W2", "45 min"),
-    ("3.8L", "water"),
+    ("{water}", "water"),       # filled in per person
     ("10pg", "read"),
     ("PIC", "progress"),
 ]
+
+
+def cols_for(person):
+    return "".join(f"<span>{h.format(water=person['water'])}</span>" for h, _ in TASKS)
 
 
 # --------------------------------------------------------------------------
@@ -169,8 +177,10 @@ RULES = [
      "Chosen before Day 1. No cheat meals. Tailor it to your goal, then stick to it."),
     ("02", "Two 45-min workouts",
      "At least 3 hours apart. One of the two outdoors, whatever the weather."),
-    ("03", "1 gallon of water",
-     "3.8 litres. Plain water — nothing else counts towards it."),
+    ("03", "Drink your water",
+     f"{PEOPLE[0]['name']} {PEOPLE[0]['water'].replace('L', ' L')} · "
+     f"{PEOPLE[1]['name']} {PEOPLE[1]['water'].replace('L', ' L')}, set to height and "
+     "need. Plain water — nothing else counts towards it."),
     ("04", "Read 10 pages",
      "Non-fiction or self-development. Audiobooks do not count."),
     ("05", "Progress picture",
@@ -192,8 +202,8 @@ def header():
   </div>
   <div class="rules">{rules}</div>
   <div class="fields">
-    <div class="field"><span class="who">{PEOPLE[0]}</span><span class="lab">Diet</span><span class="ln"></span></div>
-    <div class="field"><span class="who">{PEOPLE[1]}</span><span class="lab">Diet</span><span class="ln"></span></div>
+    <div class="field"><span class="who">{PEOPLE[0]["name"]}</span><span class="lab">Diet</span><span class="ln"></span></div>
+    <div class="field"><span class="who">{PEOPLE[1]["name"]}</span><span class="lab">Diet</span><span class="ln"></span></div>
     <div class="field"><span class="who"></span><span class="lab">Day 1</span><span class="ln"></span></div>
     <div class="field"><span class="who"></span><span class="lab">Day 75</span><span class="ln"></span></div>
   </div>
@@ -201,11 +211,12 @@ def header():
 
 
 def block(first):
-    cols = "".join(f"<span>{head}</span>" for head, _ in TASKS)
     head = (f'<div class="bhead"><div class="day">Day</div>'
-            f'<div class="grp"><div class="who">{PEOPLE[0]}</div><div class="cols">{cols}</div></div>'
+            f'<div class="grp"><div class="who">{PEOPLE[0]["name"]}</div>'
+            f'<div class="cols">{cols_for(PEOPLE[0])}</div></div>'
             f'<div class="gap"></div>'
-            f'<div class="grp"><div class="who">{PEOPLE[1]}</div><div class="cols">{cols}</div></div></div>')
+            f'<div class="grp"><div class="who">{PEOPLE[1]["name"]}</div>'
+            f'<div class="cols">{cols_for(PEOPLE[1])}</div></div></div>')
 
     boxes = "".join('<div class="box"></div>' for _ in TASKS)
     rows = []
@@ -235,7 +246,7 @@ def footer():
     <div class="row2"><span class="t">{a}</span>{tally}</div>
     <div class="row2"><span class="t">{b}</span>{tally}</div>
   </div>
-</div>""".format(tally=tally, a=PEOPLE[0], b=PEOPLE[1])
+</div>""".format(tally=tally, a=PEOPLE[0]["name"], b=PEOPLE[1]["name"])
 
 
 PAGE = """<!doctype html><html lang="en"><head><meta charset="utf-8">
