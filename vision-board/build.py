@@ -32,6 +32,8 @@ Run:  python3 build.py
 
 import base64
 import pathlib
+import re
+import sys
 
 HERE = pathlib.Path(__file__).parent
 FONTS = HERE / "fonts"
@@ -1043,8 +1045,8 @@ C10 = bare(cls="split", sheet="C10", inner="""
             Read the headline out loud. Name one thing today that serves it.</li>
           <li style="font-size:2.55mm;margin-bottom:2mm"><b>Weekly · Sunday 18:00.</b>
             Ten minutes at the board — then send it to one person who will ask about it.</li>
-          <li style="font-size:2.55mm;margin-bottom:2mm"><b>Monthly.</b> The numbers:
-            R16 000 moved, gym sessions, chapters read, membership.</li>
+          <li style="font-size:2.55mm;margin-bottom:2mm"><b>Monthly.</b> The numbers: savings and
+            investment balance, gym sessions, chapters read, membership.</li>
           <li style="font-size:2.55mm;margin-bottom:0"><b>Quarterly.</b> Re-read Sheet C5.
             Adjust the plan, never the purpose.</li>
         </ul>
@@ -1118,6 +1120,11 @@ html,body{background:#fff;margin:0;padding:0;}
 """
 
 
+def sheet_id(card_html):
+    m = re.search(r'data-sheet="([^"]+)"', card_html)
+    return m.group(1) if m else ""
+
+
 def write(name, title, extra_css, body_html, body_class=""):
     html = HEAD.format(title=title, fonts=font_css(), base=BASE_CSS,
                        extra=extra_css, body=body_class)
@@ -1126,7 +1133,24 @@ def write(name, title, extra_css, body_html, body_class=""):
     print(f"  {name}  ({len(html)/1024:.0f} kB)")
 
 
-def main():
+def main(only=None):
+    """only: a list of sheet ids (e.g. ["C3","C7"]) to emit as a reprint.
+
+    A reprint sheet is byte-for-byte the sheet the full run produces — same
+    build, just fewer pages — so a reprinted card still lines up with the ones
+    already pasted on the canvas.
+    """
+    if only:
+        missing = [s for s in only if s not in [sheet_id(c) for c in CARDS]]
+        if missing:
+            sys.exit(f"unknown sheet(s): {', '.join(missing)}")
+        picked = [c for c in CARDS if sheet_id(c) in only]
+        print(f"building reprint of {', '.join(only)}…")
+        write("print-reprint.html", "Reprint — " + ", ".join(only),
+              PRINT_CSS_PORTRAIT, "".join(picked))
+        print("done.")
+        return
+
     tiles = "".join(tile_html(t, i + 1) for i, t in enumerate(TILES))
     cards = "".join(CARDS)
 
@@ -1146,4 +1170,10 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # python3 build.py                  -> the whole board
+    # python3 build.py --only C3,C7     -> print-reprint.html with just those
+    args = sys.argv[1:]
+    if args and args[0] == "--only":
+        main(only=[x.strip() for x in args[1].split(",") if x.strip()])
+    else:
+        main()

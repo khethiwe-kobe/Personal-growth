@@ -36,6 +36,20 @@ headline tiles, the CRC DNA sheet, and the lower half of C10 — so if your prin
 leaves a white border, trim it; if it can print borderless, use that. Matte
 120–160 gsm holds the deep espresso and the CRC navy without buckling.
 
+### Reprinting a few sheets
+
+Once the board is on the wall you don't want to reprint fourteen pages to fix one.
+Build a reprint of just the sheets that changed:
+
+```bash
+python3 build.py --only C3,C7          # writes print-reprint.html
+node render.mjs                        # or render that file to PDF
+```
+
+A reprinted sheet comes out of the same build as the full run, so it still lines
+up with the cards already pasted on the canvas. `print/03-reprint-*.pdf` is the
+most recent one.
+
 ---
 
 ## The layout
