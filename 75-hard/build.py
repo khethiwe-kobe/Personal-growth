@@ -23,6 +23,8 @@ import pathlib
 HERE = pathlib.Path(__file__).parent
 FONTS = HERE / "fonts"
 
+PEOPLE = ["Khethiwe", "Kabelo"]
+
 DAYS = 75
 BLOCK = 25                      # days per column block
 TASKS = [                       # (column head, what it means)
@@ -99,13 +101,14 @@ body{font-family:'Montserrat',sans-serif;-webkit-font-smoothing:antialiased;
          margin:1.6mm 0 1.8mm;text-transform:uppercase;}
 .rule .b{font-size:2.35mm;line-height:1.5;color:rgba(232,225,213,.78);}
 
-.fields{flex:0 0 68mm;border-left:.4mm solid rgba(232,225,213,.26);padding-left:5mm;
+.fields{flex:0 0 74mm;border-left:.4mm solid rgba(232,225,213,.26);padding-left:5mm;
         display:flex;flex-direction:column;justify-content:center;gap:3.1mm;}
 .field{display:flex;align-items:baseline;gap:2.5mm;}
 .field .lab{font-size:2.1mm;font-weight:800;letter-spacing:.22em;text-transform:uppercase;
-            color:var(--almond);flex:0 0 17mm;}
+            color:var(--almond);flex:0 0 11mm;}
 .field .ln{flex:1;border-bottom:.3mm solid rgba(232,225,213,.42);height:4.2mm;}
-.field .tag{font-size:3mm;font-weight:900;color:var(--terracotta);flex:0 0 4mm;}
+.field .who{font-size:2.6mm;font-weight:900;letter-spacing:.08em;color:var(--terracotta);
+            text-transform:uppercase;flex:0 0 18mm;}
 
 /* ------------------------------------------------------------ grid ---- */
 .blocks{flex:1;display:flex;gap:7mm;margin-top:5mm;}
@@ -116,8 +119,9 @@ body{font-family:'Montserrat',sans-serif;-webkit-font-smoothing:antialiased;
 .bhead .day{flex:0 0 11mm;font-size:2.1mm;font-weight:800;letter-spacing:.2em;
             color:var(--cocoa);text-transform:uppercase;}
 .bhead .grp{display:flex;flex-direction:column;align-items:center;}
-.bhead .grp .who{font-size:3.4mm;font-weight:900;color:var(--espresso);
-                 line-height:1;margin-bottom:1.8mm;letter-spacing:.1em;}
+.bhead .grp .who{font-size:3.2mm;font-weight:900;color:var(--espresso);
+                 line-height:1;margin-bottom:1.8mm;letter-spacing:.14em;
+                 text-transform:uppercase;}
 .bhead .grp .cols{display:flex;gap:1mm;}
 .bhead .grp .cols span{width:8.4mm;text-align:center;font-size:1.95mm;font-weight:800;
                        letter-spacing:.04em;color:var(--cocoa);}
@@ -150,7 +154,8 @@ body{font-family:'Montserrat',sans-serif;-webkit-font-smoothing:antialiased;
 .foot .tally .lab{font-size:2.1mm;font-weight:800;letter-spacing:.22em;
                   text-transform:uppercase;color:var(--almond);}
 .foot .tally .row2{display:flex;align-items:center;gap:1.4mm;}
-.foot .tally .t{font-size:2.6mm;font-weight:900;color:var(--terracotta);margin-right:.6mm;}
+.foot .tally .t{font-size:2.2mm;font-weight:900;letter-spacing:.14em;text-transform:uppercase;
+                color:var(--terracotta);margin-right:1.4mm;width:17mm;text-align:right;}
 .foot .tally .tb{width:5.4mm;height:5.4mm;border:.3mm solid rgba(232,225,213,.5);}
 """
 
@@ -187,12 +192,10 @@ def header():
   </div>
   <div class="rules">{rules}</div>
   <div class="fields">
-    <div class="field"><span class="tag">A</span><span class="lab">Name</span><span class="ln"></span></div>
-    <div class="field"><span class="tag">A</span><span class="lab">Diet</span><span class="ln"></span></div>
-    <div class="field"><span class="tag">B</span><span class="lab">Name</span><span class="ln"></span></div>
-    <div class="field"><span class="tag">B</span><span class="lab">Diet</span><span class="ln"></span></div>
-    <div class="field"><span class="tag"></span><span class="lab">Day 1</span><span class="ln"></span></div>
-    <div class="field"><span class="tag"></span><span class="lab">Day 75</span><span class="ln"></span></div>
+    <div class="field"><span class="who">{PEOPLE[0]}</span><span class="lab">Diet</span><span class="ln"></span></div>
+    <div class="field"><span class="who">{PEOPLE[1]}</span><span class="lab">Diet</span><span class="ln"></span></div>
+    <div class="field"><span class="who"></span><span class="lab">Day 1</span><span class="ln"></span></div>
+    <div class="field"><span class="who"></span><span class="lab">Day 75</span><span class="ln"></span></div>
   </div>
 </div>"""
 
@@ -200,9 +203,9 @@ def header():
 def block(first):
     cols = "".join(f"<span>{head}</span>" for head, _ in TASKS)
     head = (f'<div class="bhead"><div class="day">Day</div>'
-            f'<div class="grp"><div class="who">A</div><div class="cols">{cols}</div></div>'
+            f'<div class="grp"><div class="who">{PEOPLE[0]}</div><div class="cols">{cols}</div></div>'
             f'<div class="gap"></div>'
-            f'<div class="grp"><div class="who">B</div><div class="cols">{cols}</div></div></div>')
+            f'<div class="grp"><div class="who">{PEOPLE[1]}</div><div class="cols">{cols}</div></div></div>')
 
     boxes = "".join('<div class="box"></div>' for _ in TASKS)
     rows = []
@@ -221,7 +224,7 @@ def block(first):
 
 def footer():
     tally = "".join('<div class="tb"></div>' for _ in range(6))
-    return f"""
+    return """
 <div class="foot">
   <div class="big">Miss anything &rarr; <em>back to Day 1</em></div>
   <div class="sub">Not a rest day, not a half day, not "I will double up tomorrow."
@@ -229,10 +232,10 @@ def footer():
     did not earn makes the whole sheet worthless.</div>
   <div class="tally">
     <span class="lab">Restarts</span>
-    <div class="row2"><span class="t">A</span>{tally}</div>
-    <div class="row2"><span class="t">B</span>{tally}</div>
+    <div class="row2"><span class="t">{a}</span>{tally}</div>
+    <div class="row2"><span class="t">{b}</span>{tally}</div>
   </div>
-</div>"""
+</div>""".format(tally=tally, a=PEOPLE[0], b=PEOPLE[1])
 
 
 PAGE = """<!doctype html><html lang="en"><head><meta charset="utf-8">

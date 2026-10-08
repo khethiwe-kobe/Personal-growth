@@ -33,9 +33,12 @@ about 6 × 3.7 mm — tight. A3 is worth the trip to a print shop.
 
 Three blocks of 25 days, left to right: **1–25**, **26–50**, **51–75**.
 
-Both people sit on the **same day row**, separated by a vertical rule — A on the
-left, B on the right. That's the point of the thing: a glance down the sheet
-shows who is behind, and on what, without comparing two separate charts.
+Both people sit on the **same day row**, separated by a vertical rule —
+**Khethiwe** on the left, **Kabelo** on the right. That's the point of the thing:
+a glance down the sheet shows who is behind, and on what, without comparing two
+separate charts.
+
+The names are set in `build.py` → `PEOPLE`; change them there and rebuild.
 
 Six tick boxes per person per day:
 
@@ -53,8 +56,8 @@ Rule 2 is two workouts, so it gets two boxes — five rules, six boxes.
 Every fifth day carries a heavier rule so you can count down the sheet at a
 glance. **Days 25, 50 and 75** are marked in terracotta.
 
-The header has blanks for both names, both **chosen diets** (rule 1 says pick it
-before Day 1 — writing it on the sheet is what stops it being renegotiated in
+The header carries both names, a blank for each **chosen diet** (rule 1 says pick
+it before Day 1 — writing it on the sheet is what stops it being renegotiated in
 week three), and the Day 1 / Day 75 dates.
 
 The footer carries the restart tally. Six boxes each. Hopefully wasted ink.
