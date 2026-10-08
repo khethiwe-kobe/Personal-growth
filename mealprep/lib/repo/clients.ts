@@ -6,7 +6,8 @@ import { parseJson } from "../types";
 import { computeTargets, profileInputFromRows, type NutritionTargets } from "../nutrition";
 import { audit } from "../audit";
 import { emit } from "../automation";
-import { hashPassword } from "../auth";
+import { hashPassword } from "../password";
+import { writeTargets } from "../targets";
 
 export type ClientFull = {
   client: ClientRow;
@@ -57,23 +58,8 @@ export function getClientFull(id: number): ClientFull | null {
 export function recomputeTargets(clientId: number): NutritionTargets {
   const full = getClientFull(clientId);
   if (!full) throw new Error("Client not found");
-  const t = full.computed;
-  getDb()
-    .prepare(
-      `INSERT INTO client_nutrition_targets (client_id, bmr, tdee, calories_min, calories_target, calories_max, protein_g, carbs_min_g, carbs_max_g,
-         fat_min_g, fat_max_g, fibre_g, water_ml, method, flags_json, requires_professional_review, computed_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
-       ON CONFLICT(client_id) DO UPDATE SET bmr=excluded.bmr, tdee=excluded.tdee, calories_min=excluded.calories_min,
-         calories_target=excluded.calories_target, calories_max=excluded.calories_max, protein_g=excluded.protein_g,
-         carbs_min_g=excluded.carbs_min_g, carbs_max_g=excluded.carbs_max_g, fat_min_g=excluded.fat_min_g, fat_max_g=excluded.fat_max_g,
-         fibre_g=excluded.fibre_g, water_ml=excluded.water_ml, method=excluded.method, flags_json=excluded.flags_json,
-         requires_professional_review=excluded.requires_professional_review, computed_at=excluded.computed_at`
-    )
-    .run(
-      clientId, t.bmr, t.tdee, t.calories_min, t.calories_target, t.calories_max, t.protein_g, t.carbs_min_g, t.carbs_max_g,
-      t.fat_min_g, t.fat_max_g, t.fibre_g, t.water_ml, t.method, JSON.stringify(t.flags), t.requires_professional_review ? 1 : 0
-    );
-  return t;
+  writeTargets(getDb(), clientId, full.computed);
+  return full.computed;
 }
 
 export type OnboardingData = {

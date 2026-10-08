@@ -1,3 +1,5 @@
+/** Relational schema (SQLite dialect, Postgres-portable). Embedded so serverless bundles include it. */
+export const SCHEMA = `
 -- MealPrep OS relational schema (SQLite dialect, Postgres-portable).
 -- Facts live once: nutrition & cost on ingredients, targets derived from health
 -- profiles, orders derived from plans, production derived from orders.
@@ -642,3 +644,4 @@ CREATE INDEX IF NOT EXISTS idx_deliveries_date ON deliveries(delivery_date);
 CREATE INDEX IF NOT EXISTS idx_feedback_meal ON feedback(meal_id);
 CREATE INDEX IF NOT EXISTS idx_audit_entity ON audit_log(entity_type, entity_id);
 CREATE INDEX IF NOT EXISTS idx_comms_client ON communications(client_id);
+`;

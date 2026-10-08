@@ -35,6 +35,15 @@ npm run dev       # http://localhost:3200
 `npm run build && npm start` for production (set `MEALPREP_SESSION_SECRET`,
 `MEALPREP_PUBLIC_URL` for QR links, optional `MEALPREP_WEBHOOK_URL`).
 
+### Deploy to Vercel (demo mode)
+
+Import the repository in Vercel with **Root Directory = `mealprep`** (or run
+`vercel --cwd mealprep`). `vercel.json` sets `MEALPREP_AUTO_SEED=1`: on a
+serverless host the SQLite file lives in `/tmp` and is re-created with demo
+data on each cold start, so the live link is a resettable demo. For a
+persistent production deployment use a VPS (`npm run build && npm start`) or
+move to Postgres as described in `docs/DATABASE.md`.
+
 New clients self-onboard at `/onboard` (10 steps, consent, portal password);
 staff can run the same flow for a client.
 

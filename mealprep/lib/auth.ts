@@ -3,6 +3,7 @@ import crypto from "crypto";
 import { cookies } from "next/headers";
 import { cache } from "react";
 import type { Role, UserRow } from "./types";
+import { hashPassword, verifyPassword } from "./password";
 
 /**
  * Authentication: scrypt password hashing + opaque session tokens (hash-only
@@ -19,19 +20,7 @@ export type SessionUser = {
   client_id: number | null;
 };
 
-export function hashPassword(password: string): string {
-  const salt = crypto.randomBytes(16).toString("hex");
-  const hash = crypto.scryptSync(password, salt, 64).toString("hex");
-  return `scrypt$${salt}$${hash}`;
-}
-
-export function verifyPassword(password: string, stored: string): boolean {
-  const [scheme, salt, hash] = stored.split("$");
-  if (scheme !== "scrypt" || !salt || !hash) return false;
-  const candidate = crypto.scryptSync(password, salt, 64);
-  const expected = Buffer.from(hash, "hex");
-  return candidate.length === expected.length && crypto.timingSafeEqual(candidate, expected);
-}
+export { hashPassword, verifyPassword };
 
 function tokenHash(token: string): string {
   return crypto.createHash("sha256").update(token).digest("hex");

@@ -1,5 +1,8 @@
 import type Database from "better-sqlite3";
-import { hashPassword } from "./auth";
+import { hashPassword } from "./password";
+import { computeTargets, profileInputFromRows } from "./nutrition";
+import { writeTargets } from "./targets";
+import type { ClientRow, HealthProfileRow, AllergyRow, PreferencesRow } from "./types";
 import { STARTUP_COST_DEFAULTS, COMPLIANCE_DEFAULTS } from "./business";
 
 /**
@@ -489,8 +492,21 @@ export function seed(db: Database.Database, opts: { verbose?: boolean } = {}) {
 
   // ---- audit log sample
   db.prepare("INSERT INTO audit_log (user_id, action, entity_type, entity_id, details, created_at) VALUES (?, 'seed', 'database', NULL, 'Demo data generated', ?)").run(users.admin, iso(today) + "T07:00:00");
+  seedTargets(db);
   log("done");
   return { users, clientIds, mealIds };
+}
+
+/** Compute and cache nutrition targets for every client (pure: no repo imports). */
+export function seedTargets(db: Database.Database) {
+  const clients = db.prepare("SELECT * FROM clients WHERE anonymised_at IS NULL").all() as ClientRow[];
+  for (const c of clients) {
+    const hp = (db.prepare("SELECT * FROM client_health_profiles WHERE client_id = ?").get(c.id) as HealthProfileRow | undefined) ?? null;
+    const prefs = (db.prepare("SELECT * FROM client_preferences WHERE client_id = ?").get(c.id) as PreferencesRow | undefined) ?? null;
+    const allergies = db.prepare("SELECT * FROM client_allergies WHERE client_id = ?").all(c.id) as AllergyRow[];
+    const goal = (db.prepare("SELECT goal_type FROM client_goals WHERE client_id = ? ORDER BY is_primary DESC LIMIT 1").get(c.id) as { goal_type: string } | undefined)?.goal_type ?? "balanced";
+    writeTargets(db, c.id, computeTargets(profileInputFromRows(c, hp, goal, allergies, prefs?.meals_per_day ?? 3, !!(prefs?.include_snacks ?? 1))));
+  }
 }
 
 export function wipeDemo(db: Database.Database) {

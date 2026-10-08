@@ -1,6 +1,6 @@
 # Database design
 
-Authoritative DDL: `lib/schema.sql` (SQLite dialect, portable to Postgres). Every
+Authoritative DDL: `lib/schema.ts` (exported as a string so serverless bundles include it) (SQLite dialect, portable to Postgres). Every
 table the brief suggested exists, plus the ones needed to keep facts single-sourced.
 
 ## Entity map

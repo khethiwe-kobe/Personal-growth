@@ -1,14 +1,23 @@
 import Database from "better-sqlite3";
 import path from "path";
 import fs from "fs";
+import { SCHEMA } from "./schema";
+import { seed } from "./seed-core";
 
 /**
  * SQLite connection (singleton per process). The schema in lib/schema.sql is
  * idempotent (CREATE IF NOT EXISTS) and written in portable SQL so the same
  * data model can move to Postgres when the business outgrows a single file.
  */
+/**
+ * On serverless hosts (Vercel) the project directory is read-only, so the
+ * database lives in /tmp and is re-created with demo data on a cold start.
+ * Set MEALPREP_DB_PATH for a persistent disk, or move to Postgres for production.
+ */
+const SERVERLESS = !!process.env.VERCEL || !!process.env.AWS_LAMBDA_FUNCTION_NAME;
 const DB_PATH =
-  process.env.MEALPREP_DB_PATH || path.join(process.cwd(), "data", "mealprep.db");
+  process.env.MEALPREP_DB_PATH || (SERVERLESS ? "/tmp/mealprep.db" : path.join(process.cwd(), "data", "mealprep.db"));
+const AUTO_SEED = process.env.MEALPREP_AUTO_SEED === "1" || (SERVERLESS && process.env.MEALPREP_AUTO_SEED !== "0");
 
 let db: Database.Database | null = null;
 
@@ -19,6 +28,10 @@ export function getDb(): Database.Database {
   db.pragma("journal_mode = WAL");
   db.pragma("foreign_keys = ON");
   migrate(db);
+  if (AUTO_SEED) {
+    const n = (db.prepare("SELECT COUNT(*) AS n FROM users").get() as { n: number }).n;
+    if (n === 0) seed(db);
+  }
   return db;
 }
 
@@ -31,8 +44,7 @@ export function openMemoryDb(): Database.Database {
 }
 
 export function migrate(d: Database.Database) {
-  const sql = fs.readFileSync(path.join(process.cwd(), "lib", "schema.sql"), "utf8");
-  d.exec(sql);
+  d.exec(SCHEMA);
   seedDefaults(d);
 }
 

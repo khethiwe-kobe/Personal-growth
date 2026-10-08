@@ -109,7 +109,7 @@ behind `lib/repo`, so the swap does not touch UI code.
 
 ## 4. Database schema
 
-See `lib/schema.sql` (authoritative) and `docs/DATABASE.md` for the ER summary.
+See `lib/schema.ts` (authoritative) and `docs/DATABASE.md` for the ER summary.
 Core principle: no duplicated facts. Nutrition and cost live on ingredients;
 meals derive them. Client targets are computed from the health profile and
 cached with a `computed_at` so a profile change invalidates them.
