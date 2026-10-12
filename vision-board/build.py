@@ -663,7 +663,7 @@ C6 = card(sheet="C6", inner="""
 
   <div class="block-label" style="margin:6mm 0 4mm">The Vision</div>
   <ul class="vision">
-    <li><strong>Daily 3am intercession.</strong> Everything is birthed and maintained
+    <li><strong>Daily 4am intercession.</strong> Everything is birthed and maintained
         in prayer.</li>
     <li><strong>Finish the whole Bible</strong> before 31 December.</li>
     <li><strong>Memorise scripture daily.</strong></li>
@@ -699,7 +699,7 @@ C6 = card(sheet="C6", inner="""
 
   <div class="block-label" style="margin-bottom:3.5mm">Actionables</div>
   <ul class="acts">
-    <li><b>Alarm at 02:50, phone across the room.</b> 03:00 is not a mood, it is an
+    <li><b>Alarm at 03:50, phone across the room.</b> 04:00 is not a mood, it is an
         appointment — the list of names is written the night before.</li>
     <li><b>Eight chapters before the day starts,</b> four chapters written before it ends.</li>
     <li><b>One verse on the mirror each morning;</b> say it out loud before you leave.</li>
@@ -833,7 +833,7 @@ C8 = card(sheet="C8", inner="""
   <div class="block-label" style="margin-bottom:3.5mm">The Non-Negotiables</div>
   <ul class="vision" style="margin-bottom:1mm">
     <li>Water and protein before the first task of the day.</li>
-    <li>Asleep by the hour that makes 03:00 and 4× a week possible.</li>
+    <li>Asleep by the hour that makes 04:00 and 4× a week possible.</li>
     <li>Sunday afternoon is prep — the week is won straight after AM service.</li>
   </ul>
 

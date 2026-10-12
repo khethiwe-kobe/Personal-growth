@@ -1,6 +1,6 @@
 # Prayer cards
 
-Cut-out cards, **8 to an A4 sheet**. Two pages: 12 written, 4 blank.
+Cut-out cards, **8 to an A4 sheet**. One page: 2 written, 6 ruled blanks.
 
 ![Page one](preview/cards-p1.png)
 
@@ -13,7 +13,7 @@ Cut-out cards, **8 to an A4 sheet**. Two pages: 12 written, 4 blank.
 | `print/prayer-cards-A4.pdf` | Both pages, print-ready — A4 portrait |
 | `cards.html` | The same pages on screen |
 | `print.html` | The print stylesheet version |
-| `preview/cards-p1.png`, `-p2.png` | The two pages |
+| `preview/cards-p1.png` | The page |
 | `build.py` | The cards themselves live here — edit and rebuild |
 | `render.mjs` | Re-renders the previews and the PDF, and checks no card overflows its cut line |
 
@@ -48,23 +48,21 @@ why it is written as a thing already had rather than a thing still wanted, and
 why there is somewhere to write the date and time you prayed it. Every card is
 dated **by 30 October**.
 
-### The twelve written cards
+### The two written cards
 
-**Page one** — the $5,000 bonus · Innaderm $10K days · disputes under 1% ·
-the systems · finances · the Word · 3am · the house (S2)
+**Finances** — R80 000 in, twenty percent tithed (R16 000) before anything else
+is touched. Malachi 3:10.
 
-**Page two** — health · joy &amp; presence · my circle · Serentia, then four
-blanks with ruled lines to fill in by hand.
+**Serentia · $100K days** — the trigger the $5,000 bonus was tied to, from the
+12 October call with Calvin. Proverbs 14:23.
 
-The first four come out of the 12 October call with Calvin and feed each other:
-the systems are the value, the value triggers the bonus. The rest come off the
-vision board.
+Then six ruled blanks to fill in by hand as things come up.
 
 ---
 
 ## Editing
 
-All twelve cards are a list of dicts at the top of `build.py`. Add, remove or
+The cards are a list of dicts at the top of `build.py`. Add, remove or
 reword, then:
 
 ```bash

@@ -63,8 +63,12 @@ node render.mjs                        # or render that file to PDF
 ```
 
 A reprinted sheet comes out of the same build as the full run, so it still lines
-up with the cards already pasted on the canvas. `print/03-reprint-*.pdf` is the
-most recent one.
+up with the cards already pasted on the canvas. The reprints so far:
+
+| File | Sheets | Why |
+|---|---|---|
+| `print/03-reprint-C3-C4-C5-C7-C10-*.pdf` | C3, C4, C5, C7, C10 | Serentia, the warm CRC sheets, the new finances, and a stale figure on C10 |
+| `print/05-reprint-C6-C8-4am-*.pdf` | C6, C8 | Intercession moved from 3am to 4am |
 
 ---
 

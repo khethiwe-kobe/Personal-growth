@@ -52,128 +52,28 @@ def font_css():
 
 CARDS = [
     dict(
-        title="The $5,000 Bonus",
-        request="That the value-based bonus is put in writing — thresholds and "
-                "percentage named — and that I earn it.",
-        verse="“But as for you, be strong and courageous, for your work will be rewarded.”",
-        ref="2 Chronicles 15:7 NLT",
-        received="Father, I thank you that the $5,000 is already mine — written down, "
-                 "earned and paid.",
-        praise="Thank you Jesus that I am paid for the value I create.",
-    ),
-    dict(
-        title="Innaderm · $10K Days",
-        request="That Innaderm scales from $3K days to $10K days, and that I am the one "
-                "who helps carry it there.",
-        verse="“Work brings profit, but mere talk leads to poverty!”",
-        ref="Proverbs 14:23 NLT",
-        received="Father, I thank you that Innaderm is already at $10K days.",
-        praise="Thank you Jesus for profit that is real and not theory.",
-    ),
-    dict(
-        title="Disputes Under 1%",
-        request="That Innaderm’s dispute rate falls from 0.9% and no hold is ever placed "
-                "on the account.",
-        verse="“The LORD keeps you from all harm and watches over your life.”",
-        ref="Psalm 121:7 NLT",
-        received="Father, I thank you that the account is already safe and the rate is "
-                 "already falling.",
-        praise="Thank you Jesus that what I build protects this house.",
-    ),
-    dict(
-        title="The Systems",
-        request="That the dashboards, the ClickUp → AdNova automation and the pre-order "
-                "flow all go live and work.",
-        verse="“Commit your actions to the LORD, and your plans will succeed.”",
-        ref="Proverbs 16:3 NLT",
-        received="Father, I thank you that the systems are already built and already "
-                 "saving hours and money.",
-        praise="Thank you Jesus for wisdom to build what outlives my hands.",
-    ),
-    dict(
         title="Finances",
-        request="R32 000 bonus in October. R20 000 into savings and investments. "
-                "R15 000 to R&amp;D and living.",
-        verse="“And this same God who takes care of me will supply all your needs from "
-              "his glorious riches.”",
-        ref="Philippians 4:19 NLT",
-        received="Father, I thank you that every rand is already in place.",
+        request="R80 000 in. Twenty percent tithed — R16 000 given before anything else "
+                "is touched.",
+        verse="“Bring all the tithes into the storehouse… Try it! Put me to the test!”",
+        ref="Malachi 3:10 NLT",
+        received="Father, I thank you that the R80 000 is already in, and that the first "
+                 "R16 000 is already yours.",
         praise="Thank you Jesus that I give first and still lack nothing.",
     ),
     dict(
-        title="The Word",
-        request="The whole Bible finished before 31 December. Half of it written by hand. "
-                "A verse hidden every day.",
-        verse="“I have hidden your word in my heart, that I might not sin against you.”",
-        ref="Psalm 119:11 NLT",
-        received="Father, I thank you that your word is already in me and already "
-                 "coming out of me.",
-        praise="Thank you Jesus that your word never returns empty.",
-    ),
-    dict(
-        title="3am · The Secret Place",
-        request="That I meet you at 3am every day, and that everything I carry is birthed "
-                "and maintained there.",
-        verse="“Before daybreak the next morning, Jesus got up and went out to an isolated "
-              "place to pray.”",
-        ref="Mark 1:35 NLT",
-        received="Father, I thank you that I already wake, and that you are already there "
-                 "waiting.",
-        praise="Thank you Jesus that nothing I carry, I carry alone.",
-    ),
-    dict(
-        title="The House · S2",
-        request="100+ members. Leaders on fire. The two buses. Our part in the CRC Cape "
-                "Town building.",
-        verse="“And each day the Lord added to their fellowship those who were being saved.”",
-        ref="Acts 2:47 NLT",
-        received="Father, I thank you that the house is already full and the buses are "
-                 "already paid for.",
-        praise="Thank you Jesus that we are counted among the biggest givers.",
-    ),
-
-    # ---- page two -------------------------------------------------------
-    dict(
-        title="Health",
-        request="75 Hard finished without a restart. Gym 4× a week. The dance class booked. "
-                "Meals prepped.",
-        verse="“I discipline my body like an athlete, training it to do what it should.”",
-        ref="1 Corinthians 9:27 NLT",
-        received="Father, I thank you that the discipline is already mine.",
-        praise="Thank you Jesus for a body that carries your Spirit well.",
-    ),
-    dict(
-        title="Joy &amp; Presence",
-        request="The marathon run. My birthday celebrated on 29 October. Remember December "
-                "paid for and fully present.",
-        verse="“This is the day the LORD has made. We will rejoice and be glad in it.”",
-        ref="Psalm 118:24 NLT",
-        received="Father, I thank you that the joy is already paid for and already in "
-                 "the diary.",
-        praise="Thank you Jesus that rest is obedience and not indulgence.",
-    ),
-    dict(
-        title="My Circle",
-        request="Five people named and chosen on purpose — who sharpen me, and whom I am "
-                "faithfully carrying.",
-        verse="“As iron sharpens iron, so a friend sharpens a friend.”",
-        ref="Proverbs 27:17 NLT",
-        received="Father, I thank you that the right people are already around me.",
-        praise="Thank you Jesus that I am someone’s answered prayer too.",
-    ),
-    dict(
-        title="Serentia",
-        request="That Serentia stays the place I learn fast and break safely — and that "
-                "everything I learn there transfers.",
-        verse="“Do not despise these small beginnings, for the LORD rejoices to see the "
-              "work begin.”",
-        ref="Zechariah 4:10 NLT",
-        received="Father, I thank you that nothing I built there was wasted.",
-        praise="Thank you Jesus that you waste nothing — not one hour of it.",
+        title="Serentia · $100K Days",
+        request="Serentia scaled to $100,000 days — the trigger the $5,000 bonus was "
+                "tied to.",
+        verse="“Work brings profit, but mere talk leads to poverty!”",
+        ref="Proverbs 14:23 NLT",
+        received="Father, I thank you that Serentia is already at $100K days and that "
+                 "the $5,000 is already mine.",
+        praise="Thank you Jesus that what was theory is now profit.",
     ),
 ]
 
-BLANKS = 4          # ruled cards to fill in by hand
+BLANKS = 6          # ruled cards to fill in by hand — one full page of eight
 
 
 CSS = """
