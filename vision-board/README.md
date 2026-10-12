@@ -45,9 +45,12 @@ not placed on the canvas live in `EXTRAS` in `build.py`, and print the same way:
 python3 build.py --only C11
 ```
 
-- **C11 — The $5,000 Bonus.** Written from the 12 October call with Calvin.
-  To hang it, retire one of the ten; the grid takes exactly five across and two
-  down and nothing else fits.
+- **C11 — The $5,000 Bonus.** A standing declaration written from the 12 October
+  call with Calvin: the terms, the measure, and the declaration itself. It carries
+  no actionables — it is a statement to live on the wall, not a task list. The
+  *Received on* line at the foot is the point: the sheet stays up until that line
+  is filled in. To hang it, retire one of the ten; the grid takes exactly five
+  across and two down and nothing else fits.
 
 ### Reprinting a few sheets
 
