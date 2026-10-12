@@ -36,6 +36,19 @@ headline tiles, the CRC DNA sheet, and the lower half of C10 — so if your prin
 leaves a white border, trim it; if it can print borderless, use that. Matte
 120–160 gsm holds the deep espresso and the CRC navy without buckling.
 
+### Extra sheets
+
+The A0 holds ten cards below the headline strip and it is full. Sheets built but
+not placed on the canvas live in `EXTRAS` in `build.py`, and print the same way:
+
+```bash
+python3 build.py --only C11
+```
+
+- **C11 — The $5,000 Bonus.** Written from the 12 October call with Calvin.
+  To hang it, retire one of the ten; the grid takes exactly five across and two
+  down and nothing else fits.
+
 ### Reprinting a few sheets
 
 Once the board is on the wall you don't want to reprint fourteen pages to fix one.

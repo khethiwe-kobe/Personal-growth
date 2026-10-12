@@ -1068,6 +1068,83 @@ C10 = bare(cls="split", sheet="C10", inner="""
 """)
 
 
+# --------------------------------------------------------------------------
+# Extra sheets — built and printed, but not placed on the A0 preview, because
+# the canvas already holds its ten. Swap one out to make room.
+# --------------------------------------------------------------------------
+
+C11 = card(sheet="C11", inner="""
+  <div class="eyebrow">Career &amp; Work · 03 · Innaderm</div>
+  <div style="display:flex;align-items:baseline;gap:4mm;margin:4mm 0 1mm">
+    <div class="h-mod" style="font-size:15mm;line-height:1;letter-spacing:.02em">$5,000</div>
+    <div class="script" style="font-size:12mm;color:var(--terracotta)">the bonus</div>
+  </div>
+  <div class="h-mod" style="font-size:2.7mm;color:var(--cocoa);margin-bottom:4.5mm">
+    Get paid for the value you create</div>
+
+  <div class="scripture" style="padding:5mm 6mm">
+    <span class="ref">John 15:8 · 2 Chronicles 15:7 · NLT</span>
+    <div class="verse" style="font-size:3.15mm">“When you <em>produce much fruit</em>, you
+      are my true disciples.”</div>
+    <div class="verse" style="font-size:3.15mm">“But as for you, be strong and courageous,
+      for <em>your work will be rewarded</em>.”</div>
+  </div>
+
+  <div class="block-label" style="margin:5mm 0 3.5mm">What was offered</div>
+  <ul class="vision" style="margin-bottom:4mm">
+    <li style="font-size:3.2mm;margin-bottom:2.2mm">The original trigger: scale Serentia to
+      <strong>$100K days</strong>. At roughly 15% margin that is $15K of profit —
+      <strong>$5K mine</strong>, $10K back into the business.</li>
+    <li style="font-size:3.2mm;margin-bottom:2.2mm">The trigger has widened:
+      <strong>“If you’re able to produce fruit — whether it saves time in Innaderm, or
+      money — I’ll definitely give you that same bonus.”</strong></li>
+    <li style="font-size:3.2mm;margin-bottom:0">To be <strong>written down</strong>: hours
+      saved or money saved, with a percentage once the thresholds are reached. Easier to hit
+      on Innaderm precisely because it is already scaling.</li>
+  </ul>
+
+  <div class="declare" style="margin:1mm 0 5mm;padding:4.2mm 6mm">
+    <div class="big" style="font-size:3.6mm">You get paid for<br>the value you create</div>
+    <div class="small">Not for the hours you are seen working</div>
+  </div>
+
+  <div class="block-label" style="margin-bottom:4mm">Where the value is</div>
+  <div class="target"><span class="num">$10k</span><span class="lbl">Innaderm, per day</span>
+    <span class="sub">$3k today · went 1.5k → 3k in a week</span></div>
+  <div class="target"><span class="num">&lt;1%</span><span class="lbl">Dispute rate</span>
+    <span class="sub">0.9% now · a hold lands at 1%</span></div>
+  <div class="target" style="border-bottom:none"><span class="num" style="font-size:5mm">HOURS</span>
+    <span class="lbl">&amp; rands saved</span><span class="sub">Logged, evidenced, claimed</span></div>
+
+  <div class="grow"></div>
+
+  <div class="pull" style="padding:1mm 4mm">
+    <div class="q" style="font-size:11mm">Work brings profit,<br>mere talk leads to poverty</div>
+    <div class="r">Proverbs 14:23 NLT · it is not theory, it is profit</div>
+  </div>
+
+  <div class="grow"></div>
+
+  <div class="block-label" style="margin-bottom:3.5mm">Actionables</div>
+  <ul class="acts">
+    <li><b>Get it in writing this week.</b> He offered — “I can probably find a way to make
+        it more written down.” Ask for the thresholds and the percentage, named. An unwritten
+        bonus is a hope, not a target.</li>
+    <li><b>Effort moves to Innaderm.</b> It is profitable and scaling; Serentia stays the
+        sandbox where things can break and the learning still transfers.</li>
+    <li><b>Keep a value log.</b> Every week: hours saved, rands saved, with the evidence.
+        That log is the bonus case — nobody else is going to build it for you.</li>
+    <li><b>Hold the dispute rate under 1%.</b> Stopping a hold is the largest single piece
+        of value available, and it is invisible until it is too late.</li>
+  </ul>
+
+  <div class="foot"><span>Innaderm · paid for value</span><span>Sheet C11</span></div>
+""")
+
+
+EXTRAS = [C11]
+
+
 CARDS = [C1, C2, C3, C4, C5, C6, C7, C8, C9, C10]
 
 
@@ -1141,10 +1218,11 @@ def main(only=None):
     already pasted on the canvas.
     """
     if only:
-        missing = [s for s in only if s not in [sheet_id(c) for c in CARDS]]
+        pool = CARDS + EXTRAS
+        missing = [s for s in only if s not in [sheet_id(c) for c in pool]]
         if missing:
             sys.exit(f"unknown sheet(s): {', '.join(missing)}")
-        picked = [c for c in CARDS if sheet_id(c) in only]
+        picked = [c for c in pool if sheet_id(c) in only]
         print(f"building reprint of {', '.join(only)}…")
         write("print-reprint.html", "Reprint — " + ", ".join(only),
               PRINT_CSS_PORTRAIT, "".join(picked))
