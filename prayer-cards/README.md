@@ -1,6 +1,6 @@
 # Prayer cards
 
-Cut-out cards, **8 to an A4 sheet**. One page: 2 written, 6 ruled blanks.
+Cut-out cards, **8 to an A4 sheet**. One page, all eight written.
 
 ![Page one](preview/cards-p1.png)
 
@@ -48,15 +48,26 @@ why it is written as a thing already had rather than a thing still wanted, and
 why there is somewhere to write the date and time you prayed it. Every card is
 dated **by 30 October**.
 
-### The two written cards
+### The eight cards
 
-**Finances** — R80 000 in, twenty percent tithed (R16 000) before anything else
-is touched. Malachi 3:10.
+| Card | What it carries |
+|---|---|
+| **Finances** | R80 000 in, twenty percent tithed — R16 000 given first. Malachi 3:10 |
+| **Innaderm · $10K days** | $3 000 days to $10 000 days. Deuteronomy 1:11 |
+| **Disputes under 1%** | Down from 0.9%, never a hold on the account. Psalm 121:7 |
+| **Customer support** | The right tool, tickets categorised, response times down. Philippians 2:4 |
+| **Stock & fulfilment** | The dashboard, 30-day needs, lead times 22 days → 10. Proverbs 27:23 |
+| **The pre-order button** | Live and tested, so a stockout costs nothing. Proverbs 27:12 |
+| **The systems** | ClickUp → AdNova, the SOPs, delegated access. Habakkuk 2:2 |
+| **Serentia · $100K days** | The trigger the $5 000 bonus was tied to. Proverbs 14:23 |
 
-**Serentia · $100K days** — the trigger the $5,000 bonus was tied to, from the
-12 October call with Calvin. Proverbs 14:23.
+Six of the eight come straight out of the **12 October call with Calvin** — the
+numbers, the thresholds and the pieces of work are his, not invented here. They
+also chain: the systems and the dashboards are the value, the value drops the
+dispute rate and earns the bonus.
 
-Then six ruled blanks to fill in by hand as things come up.
+`BLANKS` is 0 because eight written cards fill the page exactly. Set it to 8 for
+a second page of ruled blanks.
 
 ---
 

@@ -50,6 +50,8 @@ def font_css():
 # The cards. Keep every line short — these are 95 mm wide.
 # --------------------------------------------------------------------------
 
+# The Innaderm cards come from the 12 October call with Calvin — the numbers,
+# the thresholds and the pieces of work are his, not invented here.
 CARDS = [
     dict(
         title="Finances",
@@ -60,6 +62,68 @@ CARDS = [
         received="Father, I thank you that the R80 000 is already in, and that the first "
                  "R16 000 is already yours.",
         praise="Thank you Jesus that I give first and still lack nothing.",
+    ),
+    dict(
+        title="Innaderm · $10K Days",
+        request="Innaderm from $3,000 days to $10,000 days — profitable and scaling, "
+                "not theory.",
+        verse="“And may the LORD, the God of your ancestors, multiply you a thousand "
+              "times more and bless you as he promised!”",
+        ref="Deuteronomy 1:11 NLT",
+        received="Father, I thank you that Innaderm is already at $10,000 days.",
+        praise="Thank you Jesus for profit that is already real.",
+    ),
+    dict(
+        title="Disputes Under 1%",
+        request="The dispute rate down from 0.9% — never touching 1%, never a hold placed "
+                "on the account.",
+        verse="“The LORD keeps you from all harm and watches over your life.”",
+        ref="Psalm 121:7 NLT",
+        received="Father, I thank you that the account is already safe and the rate is "
+                 "already falling.",
+        praise="Thank you Jesus that what I build protects this house.",
+    ),
+    dict(
+        title="Customer Support",
+        request="The right tool chosen for Innaderm. Tickets studied and categorised, "
+                "response times down, the common ones automated.",
+        verse="“Don’t look out only for your own interests, but take an interest in "
+              "others, too.”",
+        ref="Philippians 2:4 NLT",
+        received="Father, I thank you that our customers are already answered quickly "
+                 "and answered well.",
+        praise="Thank you Jesus that good service is good witness.",
+    ),
+    dict(
+        title="Stock &amp; Fulfilment",
+        request="The dashboard built — orders by status, delivery times, stock on hand, "
+                "30-day needs, lead times from 22 days down to 10.",
+        verse="“Know the state of your flocks, and put your heart into caring for "
+              "your herds.”",
+        ref="Proverbs 27:23 NLT",
+        received="Father, I thank you that we already know our numbers and never run dry.",
+        praise="Thank you Jesus for order where there was guesswork.",
+    ),
+    dict(
+        title="The Pre-Order Button",
+        request="Pre-order live and tested — so a stockout never again costs a sale, a "
+                "customer or a dispute.",
+        verse="“The wise plan ahead and see the danger coming; the simple keep going "
+              "and suffer for it.”",
+        ref="Proverbs 27:12 NLT",
+        received="Father, I thank you that the next stockout is already covered.",
+        praise="Thank you Jesus that we sell with integrity even when the shelf is empty.",
+    ),
+    dict(
+        title="The Systems",
+        request="ClickUp → AdNova running clean on Ready to Launch. The SOPs written. "
+                "Delegated access, so no one person is the bottleneck.",
+        verse="“Write my answer plainly on tablets, so that a runner can carry the "
+              "correct message to others.”",
+        ref="Habakkuk 2:2 NLT",
+        received="Father, I thank you that the systems already run without me standing "
+                 "over them.",
+        praise="Thank you Jesus for what I build once and use a hundred times.",
     ),
     dict(
         title="Serentia · $100K Days",
@@ -73,7 +137,7 @@ CARDS = [
     ),
 ]
 
-BLANKS = 6          # ruled cards to fill in by hand — one full page of eight
+BLANKS = 0          # eight written cards fill the page exactly
 
 
 CSS = """
