@@ -10,8 +10,8 @@ Cut-out cards, **8 to an A4 sheet**. One page: 2 written, 6 ruled blanks.
 
 | File | What it is |
 |---|---|
-| `print/prayer-cards-A4.pdf` | Both pages, print-ready — A4 portrait |
-| `cards.html` | The same pages on screen |
+| `print/prayer-cards-A4.pdf` | The page, print-ready — A4 portrait |
+| `cards.html` | The same page on screen |
 | `print.html` | The print stylesheet version |
 | `preview/cards-p1.png` | The page |
 | `build.py` | The cards themselves live here — edit and rebuild |
