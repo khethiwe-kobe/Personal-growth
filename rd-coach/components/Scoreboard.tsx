@@ -79,7 +79,16 @@ export function Scoreboard() {
             <tbody>
               {rows.map((r) => (
                 <tr key={r.id} className={r.id === me?.id ? "bg-accent-soft/50" : ""}>
-                  <td className="text-ink-3">{r.rank}</td>
+                  <td className="text-ink-3 whitespace-nowrap">
+                    {r.rank <= 3 && r.points > 0 && (
+                      <span
+                        aria-hidden
+                        className="inline-block w-2 h-2 rounded-full mr-1.5 align-middle"
+                        style={{ background: ["#b8913a", "#9aa0a6", "#a8724a"][r.rank - 1] }}
+                      />
+                    )}
+                    {r.rank}
+                  </td>
                   <td>
                     <Link href={`/team/${r.id}`} className="font-medium hover:underline">
                       {r.name}

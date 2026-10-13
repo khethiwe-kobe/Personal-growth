@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Markdown } from "@/lib/markdown";
-import { sendToCoach } from "@/lib/coach/client";
+import { finishReply, needsFinishing, sendToCoach, type SendHandlers } from "@/lib/coach/client";
 import { useCoachState } from "@/lib/store";
 import { dayOf, longDate, weekdayName } from "@/lib/time";
 import { CONTEXT_PREFIX, PHASES, type ChatContent } from "@/lib/types";
@@ -64,6 +64,23 @@ export function Chat() {
     endRef.current?.scrollIntoView({ block: "end" });
   }, [items.length, draft]);
 
+  const handlersFor = (restore: string): SendHandlers => ({
+    onText: (d) => {
+      setStatus(null);
+      setDraft((t) => t + d);
+    },
+    onReset: () => setDraft(""),
+    onStatus: (t) => setStatus(t),
+    onNotice: (m) => setNotice(m),
+    onDone: (kept) => {
+      setBusy(false);
+      setDraft("");
+      setStatus(null);
+      // Nothing was recorded: give the message back so it can be resent.
+      if (!kept && restore) setInput((cur) => cur || restore);
+    },
+  });
+
   const send = async (text: string) => {
     const trimmed = text.trim();
     if (!trimmed || busy) return;
@@ -72,23 +89,18 @@ export function Chat() {
     setStatus(null);
     setDraft("");
     setBusy(true);
-    await sendToCoach(trimmed, {
-      onText: (d) => {
-        setStatus(null);
-        setDraft((t) => t + d);
-      },
-      onReset: () => setDraft(""),
-      onStatus: (t) => setStatus(t),
-      onNotice: (m) => setNotice(m),
-      onDone: (kept) => {
-        setBusy(false);
-        setDraft("");
-        setStatus(null);
-        // Nothing was recorded: give the message back so it can be resent.
-        if (!kept) setInput((cur) => cur || trimmed);
-      },
-    });
+    await sendToCoach(trimmed, handlersFor(trimmed));
   };
+
+  const finish = async () => {
+    if (busy) return;
+    setNotice(null);
+    setDraft("");
+    setBusy(true);
+    await finishReply(handlersFor(""));
+  };
+
+  const unfinished = !busy && needsFinishing(state.history);
 
   const onKey = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -158,17 +170,26 @@ export function Chat() {
               {draft ? (
                 <Markdown text={draft} />
               ) : (
-                <div className="flex items-center gap-1.5 py-2">
+                <div className="flex items-center gap-1.5 py-2" role="status" aria-live="polite">
                   <span className="thinking-dot" />
                   <span className="thinking-dot" />
                   <span className="thinking-dot" />
-                  {status && <span className="text-xs text-ink-3 ml-2">{status}</span>}
+                  <span className="text-sm text-ink-2 ml-2">{status ?? "Coach is thinking…"}</span>
                 </div>
               )}
             </div>
           )}
 
-          {notice && !busy && (
+          {unfinished && (
+            <div className="card p-4 flex flex-wrap items-center justify-between gap-3 fade-in">
+              <span className="text-sm text-ink-2">The coach saved your update but did not finish replying.</span>
+              <button className="btn btn-primary !py-1.5" onClick={finish}>
+                Finish reply
+              </button>
+            </div>
+          )}
+
+          {notice && !busy && !unfinished && (
             <div className="text-sm text-ink-2 bg-surface-2 rounded-lg px-3 py-2 fade-in">{notice}</div>
           )}
 
@@ -225,7 +246,7 @@ export function Chat() {
               ref={textareaRef}
               className="input resize-none min-h-[46px] max-h-40"
               rows={1}
-              placeholder={items.length === 0 ? "Or type a message to your coach" : "Message your coach"}
+              placeholder={busy ? "Coach is replying…" : items.length === 0 ? "Or type a message to your coach" : "Message your coach"}
               value={input}
               onChange={(e) => {
                 setInput(e.target.value);

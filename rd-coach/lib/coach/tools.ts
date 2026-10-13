@@ -86,7 +86,7 @@ export const COACH_TOOLS: FunctionDeclaration[] = [
   {
     name: "update_profile",
     description:
-      "Save or update facts about the athlete gathered during assessment (age, height_cm, weight_kg, training_days_per_week, session_minutes, equipment, gym_access, experience, current_routine, strength_levels, bodyweight_levels, cardio, injuries, sleep, nutrition, weaknesses, weeks_until_rd, rd_date, rd_challenges, notes). Use the snake_case keys listed where they fit; add new snake_case keys for anything else. Only include fields you learned or that changed.",
+      "Save or update facts about the athlete gathered during assessment (age, height_cm, weight_kg, training_days_per_week, session_minutes, equipment, gym_access, experience, current_routine, strength_levels, bodyweight_levels, cardio, injuries, sleep, nutrition, weaknesses, rd_challenges, notes). Use the snake_case keys listed where they fit; add new snake_case keys for anything else. Only include fields you learned or that changed.",
     parametersJsonSchema: {
       type: "object",
       properties: {

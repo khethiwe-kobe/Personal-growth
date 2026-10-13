@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>RD Coach Team Demo</title>
+<style>
+  :root {
+    --bg: #f3ede3; --surface: #faf6ee; --surface-2: #ece4d6; --ink: #2b2118; --ink-2: #6e5d4c; --ink-3: #9a8a77;
+    --line: #e0d5c3; --line-2: #cfc1aa; --accent: #6b4f3a; --accent-hover: #563e2d; --accent-soft: #e6d9c7; --accent-ink: #4d3827;
+    --danger: #a4463a; --ok: #5f7050; --shadow: 0 1px 2px rgb(43 33 24 / 0.05), 0 6px 18px rgb(43 33 24 / 0.06);
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1c1713; --surface: #251f1a; --surface-2: #2f2721; --ink: #efe6d8; --ink-2: #b9a994; --ink-3: #85766a;
+      --line: #3a3029; --line-2: #4a3e34; --accent: #b9977a; --accent-hover: #cfae90; --accent-soft: #3a2f26; --accent-ink: #d9c2a8;
+      --danger: #d0837a; --ok: #9cae87; --shadow: 0 1px 2px rgb(0 0 0 / 0.35), 0 6px 20px rgb(0 0 0 / 0.3);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #1c1713; --surface: #251f1a; --surface-2: #2f2721; --ink: #efe6d8; --ink-2: #b9a994; --ink-3: #85766a;
+    --line: #3a3029; --line-2: #4a3e34; --accent: #b9977a; --accent-hover: #cfae90; --accent-soft: #3a2f26; --accent-ink: #d9c2a8;
+    --danger: #d0837a; --ok: #9cae87; --shadow: 0 1px 2px rgb(0 0 0 / 0.35), 0 6px 20px rgb(0 0 0 / 0.3);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: var(--bg); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; font-size: 15px; }
+  h1, h2, h3, .serif { font-family: var(--serif); font-weight: 400; letter-spacing: -0.01em; margin: 0; }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+  .app { min-height: 100dvh; display: grid; grid-template-columns: 220px 1fr; }
+  aside { background: var(--surface); border-right: 1px solid var(--line); padding: 28px 20px; position: sticky; top: 0; height: 100dvh; display: flex; flex-direction: column; gap: 28px; }
+  .brand { font-family: var(--serif); font-size: 24px; line-height: 1; }
+  .sub { font-size: 12px; color: var(--ink-3); margin-top: 6px; }
+  .countdown { font-size: 14px; color: var(--accent-ink); font-weight: 600; margin-top: 16px; }
+  nav.side { display: flex; flex-direction: column; gap: 2px; }
+  nav.side a { padding: 8px 12px; border-radius: 9px; font-size: 14px; color: var(--ink-2); }
+  nav.side a.active { background: var(--accent-soft); color: var(--accent-ink); font-weight: 500; }
+  .who { margin-top: auto; font-size: 12px; color: var(--ink-3); border-top: 1px solid var(--line); padding-top: 14px; }
+  header.mobile, nav.bottom { display: none; }
+  main { padding: 32px 24px 80px; }
+  .wrap { max-width: 900px; margin: 0 auto; }
+  .demo-note { background: var(--accent-soft); color: var(--accent-ink); font-size: 13px; padding: 9px 14px; border-radius: 10px; margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; justify-content: space-between; }
+  .demo-note button { text-decoration: underline; font-size: 13px; color: var(--accent-ink); }
+  .head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 24px; }
+  .head h1 { font-size: 30px; }
+  .head p { color: var(--ink-2); margin: 6px 0 0; max-width: 60ch; line-height: 1.5; }
+  .seg { display: inline-flex; border: 1px solid var(--line-2); border-radius: 10px; overflow: hidden; font-size: 14px; }
+  .seg button { padding: 8px 16px; color: var(--ink-2); }
+  .seg button.on { background: var(--accent); color: var(--surface); }
+  .seg.small { font-size: 12px; } .seg.small button { padding: 6px 12px; }
+  .col { max-width: 640px; display: flex; flex-direction: column; gap: 16px; }
+  .col.wide { max-width: none; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); }
+  .composer { padding: 16px; color: var(--ink-2); text-align: left; width: 100%; }
+  .composer b { color: var(--ink); font-weight: 600; }
+  .post-top { padding: 16px 20px 0; display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+  .post-top .name { font-weight: 600; } .post-top .name:hover { text-decoration: underline; }
+  .kind { font-size: 12px; color: var(--ink-3); margin-left: 8px; }
+  .time { font-size: 12px; color: var(--ink-3); white-space: nowrap; }
+  .post-body { padding: 8px 20px 12px; line-height: 1.55; }
+  .post-body p { margin: 0; }
+  .post-body ul { margin: 8px 0 0; padding: 0; list-style: none; font-size: 14px; color: var(--ink-2); display: flex; flex-direction: column; gap: 2px; }
+  .muted { color: var(--ink-3); }
+  .photo { width: 100%; aspect-ratio: 4 / 5; max-height: 560px; display: block; }
+  .reacts { padding: 12px 20px; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .chip { border: 1px solid var(--line-2); border-radius: 999px; padding: 4px 12px; font-size: 12px; color: var(--ink-2); }
+  .chip .n { margin-left: 6px; color: var(--ink-3); }
+  .chip.on { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+  .chip.on .n { color: var(--surface); }
+  .comments { padding: 0 20px 16px; display: flex; flex-direction: column; gap: 8px; }
+  .comment { font-size: 14px; line-height: 1.5; }
+  .comment b { font-weight: 600; }
+  .comment .c { color: var(--ink-2); }
+  .comment .t { font-size: 12px; color: var(--ink-3); margin-left: 8px; }
+  .more { font-size: 12px; color: var(--ink-3); align-self: flex-start; }
+  form.add { display: flex; gap: 8px; margin-top: 4px; }
+  .input { width: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 7px 12px; color: var(--ink); font: inherit; font-size: 14px; outline: none; }
+  .input:focus { border-color: var(--accent); }
+  .btn { border-radius: 10px; padding: 7px 14px; font-size: 14px; font-weight: 500; border: 1px solid var(--line-2); color: var(--ink-2); white-space: nowrap; }
+  .btn.primary { background: var(--accent); color: var(--surface); border-color: var(--accent); }
+  .highlights { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .hl { padding: 16px; }
+  .label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); }
+  .hl .v { font-family: var(--serif); font-size: 20px; margin-top: 6px; }
+  .hl .d { font-size: 12px; color: var(--ink-3); margin-top: 2px; }
+  .board-head { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px 8px; }
+  .scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: middle; white-space: nowrap; }
+  th { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3); font-weight: 500; }
+  tr:last-child td { border-bottom: 0; }
+  td.r, th.r { text-align: right; }
+  tr.me td { background: color-mix(in srgb, var(--accent-soft) 60%, transparent); }
+  td .you { font-size: 12px; color: var(--ink-3); margin-left: 6px; }
+  td a { font-weight: 600; } td a:hover { text-decoration: underline; }
+  .rank { color: var(--ink-3); width: 36px; }
+  .pts { font-weight: 600; }
+  .up { color: var(--ok); }
+  .medal { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+  details.how { padding: 18px 20px; font-size: 14px; color: var(--ink-2); }
+  details.how summary { cursor: pointer; color: var(--ink); font-weight: 500; }
+  details.how ul { margin: 12px 0 0; padding-left: 20px; line-height: 1.6; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
+  .stat { padding: 16px; } .stat .v { font-family: var(--serif); font-size: 26px; margin-top: 4px; }
+  .section { margin-bottom: 24px; overflow: hidden; }
+  .section .label { padding: 16px 20px 4px; display: block; }
+  .back { font-size: 14px; color: var(--ink-3); }
+  .hide-sm { }
+  @media (max-width: 760px) {
+    .app { grid-template-columns: 1fr; }
+    aside { display: none; }
+    header.mobile { display: flex; justify-content: space-between; align-items: baseline; padding: 12px 16px; background: var(--surface); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 5; }
+    header.mobile .l { display: flex; align-items: baseline; gap: 8px; }
+    header.mobile .brand { font-size: 18px; }
+    header.mobile .cd { font-size: 12px; color: var(--accent-ink); }
+    header.mobile .set { font-size: 12px; color: var(--ink-3); }
+    nav.bottom { display: flex; position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 1px solid var(--line); z-index: 5; }
+    nav.bottom a { flex: 1; text-align: center; padding: 12px 0; font-size: 12px; color: var(--ink-3); }
+    nav.bottom a.active { color: var(--accent-ink); font-weight: 600; }
+    main { padding: 20px 16px 90px; }
+    .head h1 { font-size: 24px; }
+    .highlights { grid-template-columns: 1fr; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .hide-sm { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside>
+    <div>
+      <div class="brand">RD Coach</div>
+      <div class="sub">Strength and conditioning</div>
+      <div class="countdown" id="cd1"></div>
+    </div>
+    <nav class="side">
+      <a href="#">Coach</a><a href="#" class="active">Team</a><a href="#">Programme</a><a href="#">Log</a><a href="#">Progress</a><a href="#">Settings</a>
+    </nav>
+    <div class="who">Signed in as Sethu</div>
+  </aside>
+  <div>
+    <header class="mobile">
+      <div class="l"><span class="brand">RD Coach</span><span class="cd" id="cd2"></span></div>
+      <span class="set">Settings</span>
+    </header>
+    <main><div class="wrap" id="view"></div></main>
+    <nav class="bottom"><a href="#">Coach</a><a href="#" class="active">Team</a><a href="#">Programme</a><a href="#">Log</a><a href="#">Progress</a></nav>
+  </div>
+</div>
+
+<script>
+/* ---------- Sample data: 22 JHB members, generated with a fixed seed ---------- */
+let seed = 20261130;
+const rnd = () => ((seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648);
+const pick = (a) => a[Math.floor(rnd() * a.length)];
+const int = (lo, hi) => lo + Math.floor(rnd() * (hi - lo + 1));
+
+// Countdown uses today's date in Johannesburg; the sample data is fixed.
+const TODAY = new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Johannesburg" }).format(new Date());
+const RD = "2026-11-30";
+const DAYS_TO_RD = Math.round((Date.parse(RD) - Date.parse(TODAY)) / 86400000);
+document.getElementById("cd1").textContent = `${DAYS_TO_RD} days to RD`;
+document.getElementById("cd2").textContent = `${DAYS_TO_RD} days to RD`;
+
+const NAMES = ["Sethu", "Thabo", "Naledi", "Sipho", "Zanele", "Kagiso", "Palesa", "Mpho", "Ayanda", "Lerato", "Bongani",
+  "Nomvula", "Tshepo", "Refilwe", "Lwazi", "Karabo", "Nandi", "Themba", "Dineo", "Siyabonga", "Busisiwe", "Vusi"];
+const ME = "Sethu";
+const TESTS = [
+  { key: "pull_ups", label: "Max strict pull-ups", unit: "reps", base: [0, 9], step: [0, 3] },
+  { key: "push_ups", label: "Max push-ups", unit: "reps", base: [12, 40], step: [2, 9] },
+  { key: "run", label: "2.4 km run", unit: "min", base: [10.5, 15.5], step: [-1.2, -0.1], lower: true },
+  { key: "hang", label: "Dead hang", unit: "s", base: [20, 70], step: [5, 20] },
+  { key: "plank", label: "Plank hold", unit: "s", base: [45, 150], step: [10, 40] },
+];
+const SESSIONS = ["Lower strength + carries", "Upper strength + grip", "Intervals", "Power + circuit", "Long effort: loaded walk", "Tempo run", "Full body + core"];
+const EX = {
+  "Lower strength + carries": [["Back squat", 4, "5", "kg", 40, 100], ["Romanian deadlift", 3, "8", "kg", 30, 90], ["Farmer carry", 3, "40 m", "kg", 16, 32]],
+  "Upper strength + grip": [["Pull-ups", 4, "6,5,5,4", "", 0, 0], ["Overhead press", 4, "6", "kg", 20, 50], ["Dead hang", 3, "40 s", "", 0, 0]],
+  "Intervals": [["400 m repeats", 6, "400 m", "", 0, 0], ["Easy jog cooldown", 1, "10 min", "", 0, 0]],
+  "Power + circuit": [["Box jumps", 4, "5", "", 0, 0], ["Kettlebell swings", 4, "15", "kg", 12, 28], ["Burpees", 3, "12", "", 0, 0]],
+  "Long effort: loaded walk": [["Weighted backpack walk", 1, "6 km", "kg", 8, 18]],
+  "Tempo run": [["Tempo run", 1, "5 km", "", 0, 0], ["Strides", 4, "100 m", "", 0, 0]],
+  "Full body + core": [["Trap bar deadlift", 4, "5", "kg", 50, 140], ["Push-ups", 3, "15", "", 0, 0], ["Hanging knee raises", 3, "12", "", 0, 0]],
+};
+const CAPTIONS = ["Legs are done. Squats moved well today.", "Early start before work. Grip is improving.", "Interval day. Lungs on fire but finished all six.",
+  "Long walk with the pack. Feet holding up.", "First time hitting 8 pull-ups.", "Short on time, did the circuit version.", "Rest day mobility and a walk.",
+  "Tempo run felt smooth. Keeping the pace honest.", "Week target done. Taking tomorrow easy.", "Carries were brutal. 32 kg each hand."];
+const COMMENTS = ["Massive. Keep it up!", "That pace is serious.", "Inspired me to get my run in.", "Respect. 5am sessions are hard.", "Form looks solid.",
+  "We're all chasing you now.", "Let's go JHB!", "Proud of this.", "How did the knee feel?", "Same time tomorrow?", "Strong week from you.", "Need your playlist."];
+
+const fmt = (n) => (Number.isInteger(n) ? String(n) : n.toFixed(1));
+const members = NAMES.map((name, i) => {
+  const drive = name === ME ? 0.72 : rnd();
+  const planned = int(3, 6);
+  const weeks = [Math.min(planned + 1, Math.round(planned * (0.4 + drive * 0.8))), Math.min(planned + 1, Math.round(planned * (0.35 + drive * 0.75))), Math.min(planned, Math.round(planned * (0.3 + drive * 0.8)))];
+  const thisWeek = Math.min(planned, Math.round(drive * 3.6 + rnd() * 0.8)); // Mon–Thu so far
+  const tests = TESTS.filter(() => rnd() < 0.75).map((t) => {
+    const b = t.base[0] + rnd() * (t.base[1] - t.base[0]);
+    const base = t.unit === "min" ? Math.round(b * 10) / 10 : Math.round(b);
+    const readings = [base];
+    const n = drive > 0.25 ? int(1, 3) : int(0, 1);
+    for (let k = 0; k < n; k++) {
+      const s = t.step[0] + rnd() * (t.step[1] - t.step[0]) * (0.6 + drive * 0.6);
+      const v = readings[readings.length - 1] + s;
+      readings.push(t.unit === "min" ? Math.round(v * 10) / 10 : Math.max(0, Math.round(v)));
+    }
+    return { ...t, readings };
+  });
+  const bestsWeek = drive > 0.35 ? int(0, 2) : int(0, 1);
+  const photosWeek = Math.min(4, Math.round(drive * 4 + rnd() - 0.4));
+  const photosAll = photosWeek + Math.round(drive * 12);
+  const sessionsAll = weeks.reduce((a, b) => a + b, 0) + thisWeek;
+  const bestsAll = tests.reduce((a, t) => a + Math.max(0, t.readings.length - 1), 0);
+  let streak = 0;
+  for (const w of weeks) { if (w >= planned) streak++; else break; }
+  if (thisWeek >= planned) streak++;
+  const imps = tests.filter((t) => t.readings.length > 1).map((t) => {
+    const a = t.readings[0], z = t.readings[t.readings.length - 1];
+    if (!a) return null;
+    const raw = ((z - a) / Math.abs(a)) * 100;
+    return t.lower ? -raw : raw;
+  }).filter((x) => x !== null);
+  const improvement = imps.length ? imps.reduce((a, b) => a + b, 0) / imps.length : null;
+  return {
+    id: "m" + i, name, planned, thisWeek, streak, tests, improvement,
+    week: { sessions: thisWeek, photos: photosWeek, bests: Math.min(bestsWeek, bestsAll), points: thisWeek * 10 + photosWeek * 3 + Math.min(bestsWeek, bestsAll) * 5 },
+    all: { sessions: sessionsAll, photos: photosAll, bests: bestsAll, points: sessionsAll * 10 + photosAll * 3 + bestsAll * 5 + tests.length * 2 },
+    programme: `${int(6, 7)}-week RD preparation`,
+  };
+});
+const byId = Object.fromEntries(members.map((m) => [m.id, m]));
+const me = members.find((m) => m.name === ME);
+
+/* Feed: 30 recent posts across the group. */
+const ago = ["just now", "12 min ago", "40 min ago", "1 h ago", "2 h ago", "3 h ago", "5 h ago", "7 h ago", "yesterday", "yesterday", "2 days ago", "2 days ago", "3 days ago"];
+const posts = [];
+for (let i = 0; i < 30; i++) {
+  const author = pick(members.filter((m) => m.week.points > 0 || rnd() < 0.2));
+  const r = rnd();
+  let p;
+  if (r < 0.4) p = { kind: "photo", caption: pick(CAPTIONS), hue: int(18, 34), light: int(38, 62) };
+  else if (r < 0.72) {
+    const s = pick(SESSIONS);
+    p = { kind: "session", session: s, completed: rnd() > 0.12, ex: EX[s].map(([n, sets, reps, u, lo, hi]) => `${n} ${sets > 1 ? sets + " x " : ""}${reps}${u ? " at " + int(lo, hi) + " " + u : ""}`) };
+  } else if (r < 0.86 && author.tests.some((t) => t.readings.length > 1)) {
+    const t = pick(author.tests.filter((t) => t.readings.length > 1));
+    p = { kind: "best", label: t.label, value: t.readings[t.readings.length - 1], prev: t.readings[t.readings.length - 2], unit: t.unit };
+  } else if (r < 0.95) p = { kind: "week_goal", sessions: author.planned, planned: author.planned, streak: Math.max(1, author.streak) };
+  else p = { kind: "programme", title: author.programme };
+  const nComments = rnd() < 0.55 ? int(1, 6) : 0;
+  const reactions = { strong: int(0, 14), respect: int(0, 9), keep_going: int(0, 6), inspiring: int(0, 8) };
+  posts.push({
+    id: "p" + i, author: author.id, time: ago[Math.min(ago.length - 1, Math.floor(i / 2.4))], ...p, reactions,
+    mine: rnd() < 0.3 ? ["strong"] : [],
+    comments: [...COMMENTS].sort(() => rnd() - 0.5).slice(0, nComments).map((text) => ({ who: pick(members).id, text, time: pick(["just now", "5 min ago", "30 min ago", "1 h ago", "yesterday"]) })),
+  });
+}
+
+/* ---------- Rendering ---------- */
+const REACTIONS = [["strong", "Strong"], ["respect", "Respect"], ["keep_going", "Keep going"], ["inspiring", "Inspiring"]];
+const KIND = { photo: "Progress photo", session: "Session", best: "Personal best", week_goal: "Week target", programme: "Programme" };
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const nameOf = (id) => (id === me.id ? "You" : byId[id].name);
+
+function photoSvg(p) {
+  // Placeholder for a real progress photo.
+  const a = `hsl(${p.hue} 28% ${p.light}%)`, b = `hsl(${p.hue + 6} 24% ${p.light - 18}%)`;
+  return `<svg class="photo" viewBox="0 0 400 500" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Progress photo placeholder">
+    <defs><linearGradient id="g${p.id}" x1="0" y1="0" x2="0.3" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs>
+    <rect width="400" height="500" fill="url(#g${p.id})"/>
+    <g fill="hsl(${p.hue} 20% ${p.light - 28}%)" opacity="0.55">
+      <circle cx="200" cy="150" r="44"/><path d="M120 470 C120 330 150 230 200 230 C250 230 280 330 280 470 Z"/>
+    </g>
+    <text x="16" y="484" font-family="system-ui" font-size="13" fill="hsl(${p.hue} 30% 92%)" opacity="0.85">Sample photo</text></svg>`;
+}
+
+function postBody(p) {
+  switch (p.kind) {
+    case "photo": return `<p>${esc(p.caption)}</p>`;
+    case "session": return `<p>${p.completed ? "Completed" : "Logged part of"} <strong>${esc(p.session)}</strong></p><ul>${p.ex.map((e) => `<li>${esc(e)}</li>`).join("")}</ul>`;
+    case "best": return `<p>New personal best: <strong>${esc(p.label)}</strong> ${fmt(p.value)} ${p.unit} <span class="muted">(was ${fmt(p.prev)})</span></p>`;
+    case "week_goal": return `<p>Hit this week's target: <strong>${p.sessions} of ${p.planned}</strong> sessions.${p.streak > 1 ? ` <span class="muted">${p.streak} weeks in a row.</span>` : ""}</p>`;
+    case "programme": return `<p>Started a programme: <strong>${esc(p.title)}</strong></p>`;
+  }
+}
+
+function postCard(p) {
+  const shown = p.open ? p.comments : p.comments.slice(-3);
+  return `<article class="card" data-post="${p.id}">
+    <div class="post-top"><div><a class="name" href="#" data-member="${p.author}">${esc(nameOf(p.author))}</a><span class="kind">${KIND[p.kind]}</span></div><span class="time">${p.time}</span></div>
+    <div class="post-body">${postBody(p)}</div>
+    ${p.kind === "photo" ? photoSvg(p) : ""}
+    <div class="reacts">${REACTIONS.map(([k, l]) => {
+      const n = p.reactions[k] + (p.mine.includes(k) ? 1 : 0);
+      return `<button class="chip ${p.mine.includes(k) ? "on" : ""}" data-react="${k}">${l}${n ? `<span class="n">${n}</span>` : ""}</button>`;
+    }).join("")}</div>
+    <div class="comments">
+      ${p.comments.length > 3 && !p.open ? `<button class="more" data-open>Show all ${p.comments.length} comments</button>` : ""}
+      ${shown.map((c) => `<div class="comment"><b>${esc(nameOf(c.who))}</b> <span class="c">${esc(c.text)}</span><span class="t">${c.time}</span></div>`).join("")}
+      <form class="add"><input class="input" placeholder="Add a comment" maxlength="300"><button class="btn">Post</button></form>
+    </div></article>`;
+}
+
+let tab = "feed", period = "week", memberId = null;
+
+function render() {
+  const v = document.getElementById("view");
+  const note = `<div class="demo-note"><span>Demo with sample data: ${members.length} JHB members. Reactions and comments work on this page but are not saved.</span><button id="theme">Switch light or dark</button></div>`;
+  if (memberId) { v.innerHTML = note + memberView(byId[memberId]); return bind(); }
+  v.innerHTML = note + `
+    <div class="head"><div><h1>JHB team</h1><p>Everyone's sessions, personal bests and progress photos. ${DAYS_TO_RD} days to RD: Monday 30 November 2026.</p></div>
+      <div class="seg"><button data-tab="feed" class="${tab === "feed" ? "on" : ""}">Feed</button><button data-tab="board" class="${tab === "board" ? "on" : ""}">Scoreboard</button></div></div>
+    <div class="col ${tab === "board" ? "wide" : ""}">${tab === "feed" ? feedView() : boardView()}</div>`;
+  bind();
+}
+
+function feedView() {
+  return `<button class="card composer"><b>Post today's progress photo.</b> Take one now or upload from your gallery.</button>` + posts.map(postCard).join("");
+}
+
+function ranked(per) {
+  const rows = [...members].sort((a, b) => b[per].points - a[per].points || b[per].sessions - a[per].sessions || a.name.localeCompare(b.name));
+  let rank = 0;
+  return rows.map((m, i) => {
+    const prev = rows[i - 1];
+    if (!prev || prev[per].points !== m[per].points || prev[per].sessions !== m[per].sessions) rank = i + 1;
+    return { m, rank };
+  });
+}
+
+function boardView() {
+  const rows = ranked(period);
+  const leadW = ranked("week")[0].m;
+  const streak = [...members].sort((a, b) => b.streak - a.streak)[0];
+  const imp = [...members].filter((m) => m.improvement !== null).sort((a, b) => b.improvement - a.improvement)[0];
+  const dot = (r) => (r === 1 ? "#b8913a" : r === 2 ? "#9aa0a6" : r === 3 ? "#a8724a" : "");
+  return `<div class="highlights">
+      <div class="card hl"><div class="label">Leading this week</div><div class="v">${leadW.name}</div><div class="d">${leadW.week.points} points</div></div>
+      <div class="card hl"><div class="label">Longest week streak</div><div class="v">${streak.name}</div><div class="d">${streak.streak} weeks on target</div></div>
+      <div class="card hl"><div class="label">Most improved</div><div class="v">${imp.name}</div><div class="d">+${imp.improvement.toFixed(0)}% across their tests</div></div>
+    </div>
+    <div class="card"><div class="board-head"><div class="label">Scoreboard</div>
+      <div class="seg small"><button data-period="week" class="${period === "week" ? "on" : ""}">This week</button><button data-period="all" class="${period === "all" ? "on" : ""}">All time</button></div></div>
+      <div class="scroll"><table><thead><tr><th class="rank">#</th><th>Name</th><th class="r">Points</th><th class="r">Sessions</th><th class="r hide-sm">This week</th><th class="r">Streak</th><th class="r hide-sm">Photos</th><th class="r hide-sm">Bests</th><th class="r hide-sm">Improved</th></tr></thead><tbody>
+      ${rows.map(({ m, rank }) => {
+        const s = m[period];
+        return `<tr class="${m === me ? "me" : ""}"><td class="rank">${dot(rank) ? `<span class="medal" style="background:${dot(rank)}"></span>` : ""}${rank}</td>
+          <td><a href="#" data-member="${m.id}">${m.name}</a>${m === me ? '<span class="you">you</span>' : ""}</td>
+          <td class="r pts">${s.points}</td><td class="r">${s.sessions}</td><td class="r hide-sm">${m.thisWeek}/${m.planned}</td>
+          <td class="r">${m.streak ? m.streak + " wk" : "–"}</td><td class="r hide-sm">${s.photos}</td><td class="r hide-sm">${s.bests}</td>
+          <td class="r hide-sm ${m.improvement > 0 ? "up" : "muted"}">${m.improvement === null ? "–" : (m.improvement > 0 ? "+" : "") + m.improvement.toFixed(0) + "%"}</td></tr>`;
+      }).join("")}
+      </tbody></table></div></div>
+    <details class="card how"><summary>How points work</summary><ul>
+      <li>Completed session: 10 points. Partly completed: 5. Up to 2 sessions count per day.</li>
+      <li>Progress photo: 3 points per day you post one.</li>
+      <li>New personal best on a tracked test: 5 points. First baseline for a test: 2.</li>
+      <li>Streak: weeks in a row in which you did all the sessions your programme plans. Rest days never break it.</li>
+      <li>Improved: the average change from your first to your latest result across all your tests.</li>
+      <li>Weeks run Monday to Sunday, Johannesburg time.</li></ul></details>`;
+}
+
+function memberView(m) {
+  const mine = posts.filter((p) => p.author === m.id);
+  return `<div class="head"><div><h1>${m.name}${m === me ? " (you)" : ""}</h1><p>Training on: ${m.programme}</p></div><a href="#" class="back" data-back>Back to the team</a></div>
+    <div class="stats">
+      <div class="card stat"><div class="label">Points this week</div><div class="v">${m.week.points}</div></div>
+      <div class="card stat"><div class="label">Points all time</div><div class="v">${m.all.points}</div></div>
+      <div class="card stat"><div class="label">This week</div><div class="v">${m.thisWeek}/${m.planned}</div></div>
+      <div class="card stat"><div class="label">Week streak</div><div class="v">${m.streak ? m.streak + " wk" : "–"}</div></div>
+    </div>
+    ${m.tests.length ? `<div class="card section"><div class="scroll"><table><thead><tr><th>Test</th><th class="r">Baseline</th><th class="r">Latest</th><th class="r">Change</th></tr></thead><tbody>
+      ${m.tests.map((t) => {
+        const a = t.readings[0], z = t.readings[t.readings.length - 1], d = z - a;
+        const better = t.lower ? d < 0 : d > 0;
+        return `<tr><td><b>${t.label}</b><div class="muted" style="font-size:12px">${t.readings.length} reading${t.readings.length > 1 ? "s" : ""}</div></td>
+          <td class="r muted">${fmt(a)} ${t.unit}</td><td class="r"><b>${fmt(z)} ${t.unit}</b></td>
+          <td class="r ${t.readings.length < 2 ? "muted" : better ? "up" : ""}">${t.readings.length < 2 ? "–" : (d > 0 ? "+" : "") + fmt(Math.round(d * 10) / 10)}</td></tr>`;
+      }).join("")}</tbody></table></div></div>` : ""}
+    <div class="label" style="margin-bottom:12px">Posts</div>
+    <div class="col">${mine.length ? mine.map(postCard).join("") : '<div class="card" style="padding:20px;color:var(--ink-2)">Nothing shared yet.</div>'}</div>`;
+}
+
+function bind() {
+  document.querySelectorAll("[data-tab]").forEach((b) => (b.onclick = () => { tab = b.dataset.tab; render(); }));
+  document.querySelectorAll("[data-period]").forEach((b) => (b.onclick = () => { period = b.dataset.period; render(); }));
+  document.querySelectorAll("[data-member]").forEach((a) => (a.onclick = (e) => { e.preventDefault(); memberId = a.dataset.member; render(); scrollTo(0, 0); }));
+  document.querySelectorAll("[data-back]").forEach((a) => (a.onclick = (e) => { e.preventDefault(); memberId = null; render(); }));
+  document.querySelectorAll("article[data-post]").forEach((el) => {
+    const p = posts.find((x) => x.id === el.dataset.post);
+    el.querySelectorAll("[data-react]").forEach((b) => (b.onclick = () => {
+      const k = b.dataset.react;
+      p.mine = p.mine.includes(k) ? p.mine.filter((x) => x !== k) : [...p.mine, k];
+      el.outerHTML = postCard(p); bind();
+    }));
+    const more = el.querySelector("[data-open]");
+    if (more) more.onclick = () => { p.open = true; el.outerHTML = postCard(p); bind(); };
+    el.querySelector("form.add").onsubmit = (e) => {
+      e.preventDefault();
+      const val = e.target.querySelector("input").value.trim();
+      if (!val) return;
+      p.comments.push({ who: me.id, text: val, time: "just now" }); p.open = true;
+      el.outerHTML = postCard(p); bind();
+    };
+  });
+  const t = document.getElementById("theme");
+  if (t) t.onclick = () => {
+    const root = document.documentElement;
+    const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    root.dataset.theme = dark ? "light" : "dark";
+  };
+}
+
+render();
+</script>
+</body>
+</html>

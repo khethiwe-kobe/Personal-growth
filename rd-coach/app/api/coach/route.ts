@@ -20,6 +20,12 @@ export const maxDuration = 300;
 const MAX_TOOL_ROUNDS = 8;
 const COMPACT_AT_CHARS = 300_000;
 
+/** True when the transcript ends with tool results the coach never replied to. */
+function endsWithToolResults(history: ChatContent[]): boolean {
+  const last = history[history.length - 1];
+  return !!last && last.role === "user" && last.parts.some((p) => p.functionResponse) && !last.parts.some((p) => p.text);
+}
+
 /** A round that went wrong in a way worth retrying (a malformed or empty reply). */
 class RetryRound extends Error {}
 
@@ -43,10 +49,18 @@ function appendPart(parts: ChatPart[], part: ChatPart) {
   parts.push({ ...part });
 }
 
+/** One line per model call in the server logs (Vercel: Logs tab), for diagnosing stalls. */
+function logRound(info: Record<string, unknown>) {
+  console.log(JSON.stringify({ evt: "coach_round", ...info }));
+}
+
 /** One model call, streamed. Throws RetryRound for replies worth asking for again. */
-async function runRound(ai: GoogleGenAI, contents: ChatContent[], send: (e: CoachEvent) => void): Promise<ChatPart[]> {
-  const chunks = await withFallback((model) =>
-    ai.models.generateContentStream({
+async function runRound(ai: GoogleGenAI, contents: ChatContent[], send: (e: CoachEvent) => void, tag: Record<string, unknown>): Promise<ChatPart[]> {
+  const started = Date.now();
+  let usedModel = "";
+  const chunks = await withFallback((model) => {
+    usedModel = model;
+    return ai.models.generateContentStream({
       model,
       contents,
       config: {
@@ -54,8 +68,8 @@ async function runRound(ai: GoogleGenAI, contents: ChatContent[], send: (e: Coac
         tools: [{ functionDeclarations: COACH_TOOLS }],
         automaticFunctionCalling: { disable: true },
       },
-    }),
-  );
+    });
+  });
   const parts: ChatPart[] = [];
   let finish: string | undefined;
   for await (const chunk of chunks) {
@@ -71,6 +85,15 @@ async function runRound(ai: GoogleGenAI, contents: ChatContent[], send: (e: Coac
     }
   }
   const calls = parts.filter((p) => p.functionCall);
+  logRound({
+    ...tag,
+    model: usedModel,
+    ms: Date.now() - started,
+    finish: finish ?? null,
+    textChars: parts.reduce((n, p) => n + (p.thought ? 0 : (p.text ?? "").length), 0),
+    calls: calls.map((c) => c.functionCall?.name),
+    signatures: parts.filter((p) => p.thoughtSignature).length,
+  });
   if (finish === FinishReason.MALFORMED_FUNCTION_CALL) throw new RetryRound("The coach's reply came out garbled. Please send that again.");
   if (finish === FinishReason.MAX_TOKENS && calls.length) throw new RetryRound("The coach's reply was cut off. Please send that again.");
   if (finish && finish !== FinishReason.STOP && finish !== FinishReason.MAX_TOKENS) {
@@ -97,9 +120,10 @@ async function summarise(ai: GoogleGenAI, history: ChatContent[]): Promise<strin
 
 export async function POST(req: Request) {
   return withMember(req, async (member) => {
-    const body = await readJson<{ text?: unknown }>(req);
+    const body = await readJson<{ text?: unknown; resume?: unknown }>(req);
+    const resume = body?.resume === true;
     const text = typeof body?.text === "string" ? body.text.trim() : "";
-    if (!text) return bad("Type a message first.");
+    if (!text && !resume) return bad("Type a message first.");
     if (text.length > 8000) return bad("That message is too long.");
     const apiKey = geminiKey();
     if (!apiKey) return bad("The server is missing GEMINI_API_KEY.", 500);
@@ -141,12 +165,28 @@ export async function POST(req: Request) {
             }
           }
 
-          const turn = buildUserTurn(state, text, { name: member.name, today, longDate: longDate() });
-          let contents = sanitizeHistory([...state.history, turn]);
+          const dangling = endsWithToolResults(state.history);
+          let turn: ChatContent | null = null;
+          if (resume) {
+            // Finish the reply that was cut off after the coach saved something.
+            if (!dangling) {
+              send({ type: "done", stop: "nothing_to_resume" });
+              return;
+            }
+            committed = true;
+          } else {
+            if (dangling) {
+              // A new message arrived instead: close the unfinished round off; the saves stay.
+              state = { ...state, history: trimIncompleteTail(state.history), stateVersion: state.stateVersion + 1 };
+            }
+            turn = buildUserTurn(state, text, { name: member.name, today, longDate: longDate() });
+          }
+          let contents = sanitizeHistory(turn ? [...state.history, turn] : state.history);
+          const tag = { member: member.id, resume };
 
           for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
             const parts = await withPatience(
-              () => runRound(ai, contents, send),
+              () => runRound(ai, contents, send, { ...tag, round }),
               () => {
                 send({ type: "reset" });
                 send({ type: "status", text: "The coach is busy right now. Hang on, trying again…" });
@@ -155,7 +195,7 @@ export async function POST(req: Request) {
               // A malformed or empty reply usually comes out right on a second ask.
               if (err instanceof RetryRound) {
                 send({ type: "reset" });
-                return withPatience(() => runRound(ai, contents, send), () => send({ type: "reset" }), [1, 2]);
+                return withPatience(() => runRound(ai, contents, send, { ...tag, round, retry: true }), () => send({ type: "reset" }), [1, 2]);
               }
               throw err;
             });
@@ -186,12 +226,12 @@ export async function POST(req: Request) {
               state = applyTool(state, name, parsed.data, newId);
               posts.push(...postsForSave(before, state, name, today));
               events.push({ type: "tool", name, input: parsed.data });
-              responses.push({ functionResponse: { ...base, response: { result: "Saved." } } });
+              responses.push({ functionResponse: { ...base, response: { result: "Saved. Now continue your message to the athlete." } } });
             }
 
             // The member's message is stored together with the first reply, so a
             // failed first attempt leaves nothing half-written.
-            const newTurns: ChatContent[] = committed ? [] : [turn];
+            const newTurns: ChatContent[] = committed || !turn ? [] : [turn];
             newTurns.push({ role: "model", parts });
             if (responses.length) newTurns.push({ role: "user", parts: responses });
             state = {
@@ -218,16 +258,12 @@ export async function POST(req: Request) {
           await saveState(member.id, state);
           send({ type: "done", stop: "tool_limit" });
         } catch (err) {
+          console.error(JSON.stringify({ evt: "coach_error", member: member.id, resume, committed, error: err instanceof Error ? err.message : String(err) }));
           const message = friendlyError(err);
           if (committed) {
-            // Saves already made are kept; only the unfinished tail is dropped.
-            try {
-              state = { ...state, history: trimIncompleteTail(state.history), stateVersion: state.stateVersion + 1 };
-              await saveState(member.id, state);
-            } catch {
-              // Leave the last good save in place.
-            }
-            send({ type: "busy", message: "Your update was saved, but the coach could not finish replying. Send “continue” in a moment." });
+            // Everything up to the last completed step is already saved. The
+            // unfinished reply is left in place so the app can ask the coach to finish it.
+            send({ type: "busy", message: "Your update was saved, but the coach could not finish replying. Tap Finish reply in a moment." });
           } else {
             send({ type: "busy", message });
           }
