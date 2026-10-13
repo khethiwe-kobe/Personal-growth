@@ -1,93 +1,110 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { normalizeHistory } from "./coach/history";
-import { EMPTY_STATE, type CoachState } from "./types";
+import { hydrateState } from "./state";
+import { EMPTY_STATE, type CoachState, type Member } from "./types";
 
-const KEY = "rd-coach:v1";
+/**
+ * The signed-in member's data lives on the server. This store mirrors it so
+ * pages render instantly, and keeps a per-member copy on the device so the
+ * app opens with the last known data even before the network answers.
+ */
+export type Status = "loading" | "signed_out" | "ready" | "no_database";
+
+type Snapshot = { status: Status; me: Member | null; state: CoachState };
+
+const LEGACY_KEY = "rd-coach:v1";
+const cacheKey = (id: string) => `rd-coach:cache:${id}`;
+
+let snap: Snapshot = { status: "loading", me: null, state: EMPTY_STATE };
 const listeners = new Set<() => void>();
-let cache: CoachState | null = null;
+const emit = () => listeners.forEach((l) => l());
 
-function read(): CoachState {
-  if (cache) return cache;
-  if (typeof window === "undefined") return EMPTY_STATE;
+function persist() {
+  if (!snap.me) return;
   try {
-    const raw = window.localStorage.getItem(KEY);
-    if (raw) {
-      cache = hydrate(JSON.parse(raw));
-      return cache;
-    }
+    localStorage.setItem(cacheKey(snap.me.id), JSON.stringify(snap.state));
   } catch {
-    // Corrupt or blocked storage: start fresh in memory.
+    // Storage full or blocked: the server copy is what matters.
   }
-  cache = { ...EMPTY_STATE, createdAt: new Date().toISOString() };
-  return cache;
 }
 
-/** Fill defaults and upgrade transcripts saved by earlier versions. */
-export function hydrate(raw: unknown): CoachState {
-  const parsed = (raw && typeof raw === "object" ? raw : {}) as Partial<CoachState> & { settings?: { passcode?: unknown } };
-  const passcode = typeof parsed.settings?.passcode === "string" ? parsed.settings.passcode : "";
-  return { ...EMPTY_STATE, ...parsed, history: normalizeHistory(parsed.history), settings: { passcode } };
-}
-
-function write(next: CoachState) {
-  cache = next;
-  try {
-    window.localStorage.setItem(KEY, JSON.stringify(next));
-  } catch {
-    // Quota or private mode: keep the in-memory copy.
-  }
-  listeners.forEach((l) => l());
+export function getSnapshot(): Snapshot {
+  return snap;
 }
 
 export function getState(): CoachState {
-  return read();
+  return snap.state;
 }
 
 export function setState(update: (s: CoachState) => CoachState) {
-  write(update(read()));
+  snap = { ...snap, state: update(snap.state) };
+  persist();
+  emit();
 }
 
+/** Replace local data with what the server returned. */
 export function replaceState(next: unknown) {
-  write(hydrate(next));
+  snap = { ...snap, state: hydrateState(next) };
+  persist();
+  emit();
 }
 
-export function resetState() {
-  // The passcode is about access to this deployment, not training data; keep it.
-  const passcode = read().settings.passcode;
-  write({ ...EMPTY_STATE, settings: { passcode }, createdAt: new Date().toISOString() });
+export function setSession(status: Status, me: Member | null) {
+  let state = snap.state;
+  if (me && me.id !== snap.me?.id) {
+    state = EMPTY_STATE;
+    try {
+      const cached = localStorage.getItem(cacheKey(me.id));
+      if (cached) state = hydrateState(JSON.parse(cached));
+    } catch {
+      // Ignore a corrupt cache.
+    }
+  }
+  if (!me) state = EMPTY_STATE;
+  snap = { status, me, state };
+  emit();
+}
+
+/** Data kept on this device by the first version, before accounts existed. */
+export function legacyData(): unknown | null {
+  try {
+    const raw = localStorage.getItem(LEGACY_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function clearLegacyData() {
+  try {
+    localStorage.removeItem(LEGACY_KEY);
+  } catch {
+    // Nothing to do.
+  }
 }
 
 function subscribe(cb: () => void) {
   listeners.add(cb);
-  const onStorage = (e: StorageEvent) => {
-    if (e.key === KEY) {
-      cache = null;
-      cb();
-    }
-  };
-  window.addEventListener("storage", onStorage);
   return () => {
     listeners.delete(cb);
-    window.removeEventListener("storage", onStorage);
   };
 }
 
+const serverSnap: Snapshot = { status: "loading", me: null, state: EMPTY_STATE };
+
+export function useSession(): Snapshot {
+  return useSyncExternalStore(subscribe, getSnapshot, () => serverSnap);
+}
+
 export function useCoachState(): CoachState {
-  return useSyncExternalStore(subscribe, read, () => EMPTY_STATE);
+  return useSession().state;
+}
+
+export function useMe(): Member | null {
+  return useSession().me;
 }
 
 export function uid(): string {
   return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
-}
-
-export function today(): string {
-  const d = new Date();
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-}
-
-export function longDate(d = new Date()): string {
-  return d.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
 }

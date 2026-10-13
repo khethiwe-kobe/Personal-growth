@@ -76,11 +76,6 @@ export type WorkoutLog = {
   coach_notes?: string;
 };
 
-export type Settings = {
-  /** Passcode for a shared deployment; empty when none is stored on this device. */
-  passcode: string;
-};
-
 /** One part of a turn, in the shape the Gemini API uses (kept verbatim, including thought signatures). */
 export type ChatPart = {
   text?: string;
@@ -106,9 +101,11 @@ export type CoachState = {
   /** Bumped when the user edits tracked data by hand, so the coach is told. */
   stateVersion: number;
   lastSnapshotVersion: number;
-  settings: Settings;
   createdAt: string;
 };
+
+/** The part of a member's state the whole group can see. */
+export type PublicProgress = Pick<CoachState, "programme" | "logs" | "metrics">;
 
 export const EMPTY_STATE: CoachState = {
   version: 1,
@@ -120,7 +117,6 @@ export const EMPTY_STATE: CoachState = {
   history: [],
   stateVersion: 0,
   lastSnapshotVersion: 0,
-  settings: { passcode: "" },
   createdAt: new Date(0).toISOString(),
 };
 
@@ -133,5 +129,38 @@ export type CoachEvent =
   | { type: "tool"; name: string; input: unknown }
   | { type: "model"; parts: ChatPart[] }
   | { type: "tool_responses"; parts: ChatPart[] }
+  | { type: "status"; text: string }
+  | { type: "reset" }
+  | { type: "busy"; message: string }
   | { type: "done"; stop: string }
   | { type: "error"; message: string };
+
+export type Member = { id: string; username: string; name: string; isAdmin: boolean };
+
+export const REACTIONS = [
+  { id: "strong", label: "Strong" },
+  { id: "respect", label: "Respect" },
+  { id: "keep_going", label: "Keep going" },
+  { id: "inspiring", label: "Inspiring" },
+] as const;
+export type ReactionKind = (typeof REACTIONS)[number]["id"];
+
+export type PostKind = "session" | "baseline" | "best" | "programme" | "week_goal" | "photo";
+
+export type PostDraft = { kind: PostKind; day: string; data: Record<string, unknown> };
+
+export type FeedComment = { id: string; memberId: string; name: string; body: string; createdAt: string };
+
+export type FeedPost = {
+  id: string;
+  memberId: string;
+  name: string;
+  kind: PostKind;
+  day: string;
+  data: Record<string, unknown>;
+  photoId: string | null;
+  createdAt: string;
+  reactions: Record<string, number>;
+  mine: string[];
+  comments: FeedComment[];
+};

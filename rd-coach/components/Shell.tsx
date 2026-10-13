@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useCoachState } from "@/lib/store";
+import { useSession } from "@/lib/store";
 import { PHASES } from "@/lib/types";
 
 const NAV = [
   { href: "/", label: "Coach" },
+  { href: "/team", label: "Team" },
   { href: "/programme", label: "Programme" },
   { href: "/log", label: "Log" },
   { href: "/progress", label: "Progress" },
@@ -15,7 +16,8 @@ const NAV = [
 
 export function Shell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const state = useCoachState();
+  const { state, me } = useSession();
+  const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(href + "/"));
   const phase = PHASES.find((p) => p.id === state.phase) ?? PHASES[0];
 
   return (
@@ -27,7 +29,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
         </div>
         <nav className="flex flex-col gap-0.5">
           {NAV.map((n) => {
-            const active = pathname === n.href;
+            const active = isActive(n.href);
             return (
               <Link
                 key={n.href}
@@ -62,18 +64,21 @@ export function Shell({ children }: { children: React.ReactNode }) {
             })}
           </ol>
           <p className="text-xs text-ink-3 mt-2">{phase.blurb}</p>
+          {me && <p className="text-xs text-ink-3 mt-4 pt-4 border-t border-line">Signed in as {me.name}</p>}
         </div>
       </aside>
 
       <div className="flex flex-col min-h-dvh">
         <header className="md:hidden flex items-center justify-between border-b border-line bg-surface px-4 py-3">
           <div className="serif text-lg">RD Coach</div>
-          <div className="text-xs text-ink-3">{phase.label}</div>
+          <Link href="/settings" className={`text-xs ${pathname === "/settings" ? "text-accent-ink font-medium" : "text-ink-3"}`}>
+            Settings
+          </Link>
         </header>
         <main className="flex-1 flex flex-col pb-16 md:pb-0">{children}</main>
         <nav className="md:hidden fixed bottom-0 inset-x-0 border-t border-line bg-surface flex">
-          {NAV.map((n) => {
-            const active = pathname === n.href;
+          {NAV.filter((n) => n.href !== "/settings").map((n) => {
+            const active = isActive(n.href);
             return (
               <Link
                 key={n.href}

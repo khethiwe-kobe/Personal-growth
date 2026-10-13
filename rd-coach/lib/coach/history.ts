@@ -82,3 +82,19 @@ export function transcriptText(history: ChatContent[]): string {
   }
   return lines.join("\n\n");
 }
+
+/**
+ * Drop a tool round whose follow-up reply never arrived, so the transcript
+ * can be continued. The saves themselves were already applied to the data.
+ */
+export function trimIncompleteTail(history: ChatContent[]): ChatContent[] {
+  let h = [...history];
+  const last = h[h.length - 1];
+  if (last?.role === "user" && hasResponse(last) && !last.parts.some((p) => p.text)) h = h.slice(0, -1);
+  const tail = h[h.length - 1];
+  if (tail?.role === "model" && hasCall(tail)) {
+    const kept = tail.parts.filter((p) => !p.functionCall);
+    h = kept.length ? [...h.slice(0, -1), { ...tail, parts: kept }] : h.slice(0, -1);
+  }
+  return sanitizeHistory(h);
+}
