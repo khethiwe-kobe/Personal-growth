@@ -43,7 +43,13 @@ export default function TeamPage() {
         </div>
       }
     >
-      <div className="max-w-2xl">{tab === "feed" ? <Feed /> : <Scoreboard />}</div>
+      {tab === "feed" ? (
+        <div className="max-w-2xl">
+          <Feed />
+        </div>
+      ) : (
+        <Scoreboard />
+      )}
     </Page>
   );
 }
