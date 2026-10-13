@@ -8,6 +8,8 @@ const root = path.join(__dirname);
 const nextConfig: NextConfig = {
   turbopack: { root },
   outputFileTracingRoot: root,
+  // In-process Postgres for local development and tests only; never bundled.
+  serverExternalPackages: ["@electric-sql/pglite"],
 };
 
 export default nextConfig;

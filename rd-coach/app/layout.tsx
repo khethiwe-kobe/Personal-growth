@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { PasscodeGate } from "@/components/PasscodeGate";
+import { AuthGate } from "@/components/AuthGate";
 import { Shell } from "@/components/Shell";
 
 export const metadata: Metadata = {
@@ -18,9 +18,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body>
-        <PasscodeGate>
+        <AuthGate>
           <Shell>{children}</Shell>
-        </PasscodeGate>
+        </AuthGate>
       </body>
     </html>
   );

@@ -3,8 +3,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Markdown } from "@/lib/markdown";
 import { sendToCoach } from "@/lib/coach/client";
-import { useCoachState, longDate } from "@/lib/store";
+import { useCoachState } from "@/lib/store";
+import { dayOf, longDate, weekdayName } from "@/lib/time";
 import { CONTEXT_PREFIX, PHASES, type ChatContent } from "@/lib/types";
+import { PhotoComposer } from "./PhotoComposer";
 import { ReportForm } from "./ReportForm";
 
 type Item =
@@ -46,9 +48,10 @@ export function Chat() {
   const [input, setInput] = useState("");
   const [draft, setDraft] = useState("");
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+  const [status, setStatus] = useState<string | null>(null);
   const [showReport, setShowReport] = useState(false);
-  const abortRef = useRef<AbortController | null>(null);
+  const [showPhoto, setShowPhoto] = useState(false);
   const endRef = useRef<HTMLDivElement | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -65,29 +68,27 @@ export function Chat() {
     const trimmed = text.trim();
     if (!trimmed || busy) return;
     setInput("");
-    setError(null);
+    setNotice(null);
+    setStatus(null);
     setDraft("");
     setBusy(true);
-    const controller = new AbortController();
-    abortRef.current = controller;
-    await sendToCoach(
-      trimmed,
-      {
-        onText: (d) => setDraft((t) => t + d),
-        onError: (m) => setError(m),
-        onDone: (kept) => {
-          setBusy(false);
-          setDraft("");
-          abortRef.current = null;
-          // Nothing was recorded: give the message back so it can be resent.
-          if (!kept) setInput((cur) => cur || trimmed);
-        },
+    await sendToCoach(trimmed, {
+      onText: (d) => {
+        setStatus(null);
+        setDraft((t) => t + d);
       },
-      controller.signal,
-    );
+      onReset: () => setDraft(""),
+      onStatus: (t) => setStatus(t),
+      onNotice: (m) => setNotice(m),
+      onDone: (kept) => {
+        setBusy(false);
+        setDraft("");
+        setStatus(null);
+        // Nothing was recorded: give the message back so it can be resent.
+        if (!kept) setInput((cur) => cur || trimmed);
+      },
+    });
   };
-
-  const stop = () => abortRef.current?.abort();
 
   const onKey = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -96,9 +97,8 @@ export function Chat() {
     }
   };
 
-  const todaysSession = state.programme?.schedule.find(
-    (d) => d.day.toLowerCase() === new Date().toLocaleDateString("en-GB", { weekday: "long" }).toLowerCase(),
-  );
+  const today = weekdayName(dayOf()).toLowerCase();
+  const todaysSession = state.programme?.schedule.find((d) => d.day.toLowerCase() === today);
 
   return (
     <div className="flex-1 flex flex-col">
@@ -127,7 +127,7 @@ export function Chat() {
                 periodised programme for the weeks you have, then prescribe each session and adjust it from what you report.
               </p>
               <p className="text-ink-3 text-sm mt-3">
-                Your data stays on this device. Download a backup from Settings whenever you like.
+                Your coaching conversation is private. Sessions, new bests and photos are shared with the JHB group.
               </p>
               <div className="mt-6 flex flex-wrap gap-2">
                 <button className="btn btn-primary" onClick={() => send("I'm ready to begin. Please start the assessment.")}>
@@ -162,15 +162,24 @@ export function Chat() {
                   <span className="thinking-dot" />
                   <span className="thinking-dot" />
                   <span className="thinking-dot" />
+                  {status && <span className="text-xs text-ink-3 ml-2">{status}</span>}
                 </div>
               )}
             </div>
           )}
 
-          {error && (
-            <div className="text-sm text-danger bg-danger-soft rounded-lg px-3 py-2">
-              {error}
-            </div>
+          {notice && !busy && (
+            <div className="text-sm text-ink-2 bg-surface-2 rounded-lg px-3 py-2 fade-in">{notice}</div>
+          )}
+
+          {showPhoto && (
+            <PhotoComposer
+              onClose={() => setShowPhoto(false)}
+              onPosted={() => {
+                setShowPhoto(false);
+                setNotice("Progress photo posted to the team feed.");
+              }}
+            />
           )}
 
           {showReport && (
@@ -206,6 +215,9 @@ export function Chat() {
                   Report a session
                 </button>
               )}
+              <button className="btn btn-ghost !py-1 !px-2.5 !text-xs" onClick={() => setShowPhoto((v) => !v)}>
+                Progress photo
+              </button>
             </div>
           )}
           <div className="flex items-end gap-2">
@@ -223,15 +235,9 @@ export function Chat() {
               onKeyDown={onKey}
               disabled={busy}
             />
-            {busy ? (
-              <button className="btn btn-ghost" onClick={stop}>
-                Stop
-              </button>
-            ) : (
-              <button className="btn btn-primary" onClick={() => send(input)} disabled={!input.trim()}>
-                Send
-              </button>
-            )}
+            <button className="btn btn-primary" onClick={() => send(input)} disabled={busy || !input.trim()}>
+              Send
+            </button>
           </div>
         </div>
       </div>

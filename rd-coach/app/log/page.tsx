@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Empty, Page } from "@/components/Page";
-import { setState, useCoachState } from "@/lib/store";
+import { api } from "@/lib/api";
+import { replaceState, useCoachState } from "@/lib/store";
 
 export default function LogPage() {
   const { logs } = useCoachState();
@@ -11,7 +12,7 @@ export default function LogPage() {
 
   const remove = (id: string) => {
     if (!window.confirm("Delete this session from the log? The coach will be told on your next message.")) return;
-    setState((s) => ({ ...s, logs: s.logs.filter((l) => l.id !== id), stateVersion: s.stateVersion + 1 }));
+    void api<{ state: unknown }>("/api/state", { method: "POST", body: JSON.stringify({ action: "delete_log", id }) }).then((r) => replaceState(r.state));
   };
 
   if (logs.length === 0) {

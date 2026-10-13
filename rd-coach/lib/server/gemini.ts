@@ -53,3 +53,31 @@ export function friendlyError(err: unknown): string {
   }
   return err instanceof Error ? err.message : "Something went wrong talking to the coach.";
 }
+
+/** Errors that a later attempt is likely to get past. */
+export function isTransient(err: unknown): boolean {
+  return shouldFallBack(err) || (err instanceof Error && /fetch failed|ECONNRESET|socket hang up|network/i.test(err.message));
+}
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+/**
+ * Keep trying through busy periods instead of failing straight away: every
+ * attempt already retries and falls back across models, and between attempts
+ * we wait a little longer each time.
+ */
+export async function withPatience<T>(
+  attempt: () => Promise<T>,
+  onWait: (attemptNo: number) => void,
+  waitsSeconds: number[] = [5, 10, 20],
+): Promise<T> {
+  for (let i = 0; ; i++) {
+    try {
+      return await attempt();
+    } catch (err) {
+      if (!isTransient(err) || i >= waitsSeconds.length) throw err;
+      onWait(i + 1);
+      await sleep(waitsSeconds[i] * 1000);
+    }
+  }
+}
