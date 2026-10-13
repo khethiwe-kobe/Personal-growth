@@ -1,7 +1,7 @@
-import { ApiError, GoogleGenAI } from "@google/genai";
 import { transcriptText } from "@/lib/coach/history";
 import { COACH_SYSTEM_PROMPT, COMPACT_PROMPT } from "@/lib/coach/system";
-import { GEMINI_MODEL, geminiKey, passcodeDenied, passcodeValid } from "@/lib/server/auth";
+import { geminiKey, passcodeDenied, passcodeValid } from "@/lib/server/auth";
+import { client, friendlyError, withFallback } from "@/lib/server/gemini";
 import type { ChatContent } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -23,13 +23,15 @@ export async function POST(req: Request) {
   const text = transcriptText(history);
   if (!text) return Response.json({ summary: "" });
 
-  const ai = new GoogleGenAI({ apiKey });
+  const ai = client(apiKey);
   try {
-    const res = await ai.models.generateContent({
-      model: GEMINI_MODEL,
-      contents: [{ role: "user", parts: [{ text: `${COMPACT_PROMPT}\n\n<transcript>\n${text}\n</transcript>` }] }],
-      config: { systemInstruction: COACH_SYSTEM_PROMPT },
-    });
+    const res = await withFallback((model) =>
+      ai.models.generateContent({
+        model,
+        contents: [{ role: "user", parts: [{ text: `${COMPACT_PROMPT}\n\n<transcript>\n${text}\n</transcript>` }] }],
+        config: { systemInstruction: COACH_SYSTEM_PROMPT },
+      }),
+    );
     const summary = (res.candidates?.[0]?.content?.parts ?? [])
       .filter((p) => typeof p.text === "string" && !p.thought)
       .map((p) => p.text)
@@ -38,7 +40,6 @@ export async function POST(req: Request) {
     if (!summary) return Response.json({ error: "Could not summarise this conversation." }, { status: 422 });
     return Response.json({ summary });
   } catch (err) {
-    const message = err instanceof ApiError ? `AI service error ${err.status}: ${err.message}` : "Failed to condense.";
-    return Response.json({ error: message }, { status: 502 });
+    return Response.json({ error: friendlyError(err) }, { status: 502 });
   }
 }

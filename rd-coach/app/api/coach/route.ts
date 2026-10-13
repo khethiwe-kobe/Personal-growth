@@ -1,8 +1,9 @@
-import { ApiError, FinishReason, GoogleGenAI } from "@google/genai";
+import { FinishReason } from "@google/genai";
 import { sanitizeHistory } from "@/lib/coach/history";
 import { COACH_SYSTEM_PROMPT } from "@/lib/coach/system";
 import { COACH_TOOLS, TOOL_SCHEMAS, isToolName } from "@/lib/coach/tools";
-import { GEMINI_MODEL, geminiKey, passcodeDenied, passcodeValid } from "@/lib/server/auth";
+import { geminiKey, passcodeDenied, passcodeValid } from "@/lib/server/auth";
+import { client, friendlyError, withFallback } from "@/lib/server/gemini";
 import type { ChatContent, ChatPart, CoachEvent } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -63,7 +64,7 @@ export async function POST(req: Request) {
     return Response.json({ error: "The transcript must end with your message." }, { status: 400 });
   }
 
-  const ai = new GoogleGenAI({ apiKey });
+  const ai = client(apiKey);
   const encoder = new TextEncoder();
 
   const stream = new ReadableStream<Uint8Array>({
@@ -72,15 +73,18 @@ export async function POST(req: Request) {
       const contents: ChatContent[] = [...history];
       try {
         for (let round = 0; round <= MAX_TOOL_ROUNDS; round++) {
-          const chunks = await ai.models.generateContentStream({
-            model: GEMINI_MODEL,
-            contents,
-            config: {
-              systemInstruction: COACH_SYSTEM_PROMPT,
-              tools: [{ functionDeclarations: COACH_TOOLS }],
-              automaticFunctionCalling: { disable: true },
-            },
-          });
+          // Falls back to the next model if this one is overloaded before streaming starts.
+          const chunks = await withFallback((model) =>
+            ai.models.generateContentStream({
+              model,
+              contents,
+              config: {
+                systemInstruction: COACH_SYSTEM_PROMPT,
+                tools: [{ functionDeclarations: COACH_TOOLS }],
+                automaticFunctionCalling: { disable: true },
+              },
+            }),
+          );
 
           const parts: ChatPart[] = [];
           let finish: string | undefined;
@@ -145,12 +149,7 @@ export async function POST(req: Request) {
         send({ type: "error", message: "The coach made too many saves in one reply; stopping." });
         send({ type: "done", stop: "tool_limit" });
       } catch (err) {
-        let message = "Something went wrong talking to the coach.";
-        if (err instanceof ApiError) {
-          if (err.status === 429) message = "The coach is at its usage limit right now. Wait a minute and try again.";
-          else if (err.status === 400 || err.status === 403) message = `The AI service rejected the request (${err.status}): ${err.message}`;
-          else message = `AI service error ${err.status}: ${err.message}`;
-        } else if (err instanceof Error) message = err.message;
+        const message = friendlyError(err);
         send({ type: "error", message });
         send({ type: "done", stop: "error" });
       } finally {

@@ -28,6 +28,11 @@ then set these environment variables in the Vercel project:
 | `GEMINI_API_KEY` | Key from Google AI Studio. Everyone who uses the app shares its quota. |
 | `COACH_PASSCODE` | Passcode people enter once per device. Without it, anyone with the link can use your key. |
 | `GEMINI_MODEL` | Optional. Defaults to `gemini-3.8-flash`. |
+| `GEMINI_FALLBACK_MODELS` | Optional. Comma-separated models to try when the main one is overloaded or out of quota. Defaults to `gemini-3.6-flash,gemini-3.5-flash-lite`. |
+
+When Google's servers are busy, the coach retries briefly, then moves down the
+fallback list, and only shows people a plain "try again in a minute" message if
+every model is unavailable.
 
 Send people the link and the passcode. Each person's profile, programme, log
 and progress stay on their own device; nobody can see anyone else's data.
@@ -86,6 +91,6 @@ No icon or markdown libraries: the coach's replies are rendered by a small
 Markdown renderer in `lib/markdown.tsx`.
 
 ```bash
-npm test          # unit tests: tools, state updates, transcripts, passcode
+npm test          # unit tests: tools, state updates, transcripts, passcode, fallback
 npm run typecheck
 ```
