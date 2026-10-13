@@ -1,3 +1,4 @@
+import { rdContext } from "../rd";
 import { PROFILE_LABELS, CONTEXT_PREFIX, type ChatContent, type CoachState } from "../types";
 
 function snapshot(state: CoachState): string {
@@ -35,7 +36,7 @@ function snapshot(state: CoachState): string {
 
 /** The athlete's message, preceded by the context block the coach reads but the UI hides. */
 export function buildUserTurn(state: CoachState, text: string, opts: { name: string; today: string; longDate: string }): ChatContent {
-  const ctx = [`Today is ${opts.longDate} (${opts.today}). The athlete's name is ${opts.name}.`];
+  const ctx = [`Today is ${opts.longDate} (${opts.today}). The athlete's name is ${opts.name}. ${rdContext(opts.today)}`];
   if (state.pendingSummary) {
     ctx.push("Summary of the coaching conversation so far (your own notes):\n" + state.pendingSummary);
   }

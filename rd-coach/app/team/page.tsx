@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Feed } from "@/components/Feed";
 import { Page } from "@/components/Page";
 import { Scoreboard } from "@/components/Scoreboard";
+import { rdCountdown, rdLongDate } from "@/lib/rd";
 
 type Tab = "feed" | "scoreboard";
 
@@ -31,7 +32,7 @@ export default function TeamPage() {
   return (
     <Page
       title="JHB team"
-      intro="Everyone's sessions, personal bests and progress photos. Cheer each other on."
+      intro={`Everyone's sessions, personal bests and progress photos. ${rdCountdown()}: ${rdLongDate()}.`}
       aside={
         <div className="flex rounded-lg border border-line-2 overflow-hidden text-sm">
           {(["feed", "scoreboard"] as const).map((t) => (

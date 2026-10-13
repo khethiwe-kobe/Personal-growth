@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { rdCountdown } from "@/lib/rd";
 import { useSession } from "@/lib/store";
 import { PHASES } from "@/lib/types";
 
@@ -26,6 +27,9 @@ export function Shell({ children }: { children: React.ReactNode }) {
         <div>
           <div className="serif text-2xl leading-none">RD Coach</div>
           <div className="text-xs text-ink-3 mt-1.5">Strength and conditioning</div>
+          <div className="text-sm text-accent-ink font-medium mt-4" suppressHydrationWarning>
+            {rdCountdown()}
+          </div>
         </div>
         <nav className="flex flex-col gap-0.5">
           {NAV.map((n) => {
@@ -70,7 +74,12 @@ export function Shell({ children }: { children: React.ReactNode }) {
 
       <div className="flex flex-col min-h-dvh">
         <header className="md:hidden flex items-center justify-between border-b border-line bg-surface px-4 py-3">
-          <div className="serif text-lg">RD Coach</div>
+          <div className="flex items-baseline gap-2">
+            <span className="serif text-lg">RD Coach</span>
+            <span className="text-xs text-accent-ink" suppressHydrationWarning>
+              {rdCountdown()}
+            </span>
+          </div>
           <Link href="/settings" className={`text-xs ${pathname === "/settings" ? "text-accent-ink font-medium" : "text-ink-3"}`}>
             Settings
           </Link>
