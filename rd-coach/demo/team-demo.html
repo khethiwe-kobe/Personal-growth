@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>RD Coach Team Demo</title>
+<title>RD Coach Demo</title>
 <style>
   :root {
     --bg: #f3ede3; --surface: #faf6ee; --surface-2: #ece4d6; --ink: #2b2118; --ink-2: #6e5d4c; --ink-3: #9a8a77;
@@ -31,6 +31,7 @@
   a { color: inherit; text-decoration: none; }
   button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
   .app { min-height: 100dvh; display: grid; grid-template-columns: 220px 1fr; }
+  .app > div { min-width: 0; }
   aside { background: var(--surface); border-right: 1px solid var(--line); padding: 28px 20px; position: sticky; top: 0; height: 100dvh; display: flex; flex-direction: column; gap: 28px; }
   .brand { font-family: var(--serif); font-size: 24px; line-height: 1; }
   .sub { font-size: 12px; color: var(--ink-3); margin-top: 6px; }
@@ -108,6 +109,40 @@
   .section { margin-bottom: 24px; overflow: hidden; }
   .section .label { padding: 16px 20px 4px; display: block; }
   .back { font-size: 14px; color: var(--ink-3); }
+  header.mobile .set.active { color: var(--accent-ink); font-weight: 600; }
+  .chat { max-width: 720px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; padding-bottom: 150px; }
+  .bubble { align-self: flex-end; max-width: 85%; background: var(--accent-soft); border-radius: 18px 18px 6px 18px; padding: 12px 16px; white-space: pre-wrap; line-height: 1.55; }
+  .chat > * { min-width: 0; max-width: 100%; }
+  .coach { line-height: 1.6; }
+  .coach p { margin: 0 0 10px; } .coach h3 { font-size: 17px; margin: 14px 0 6px; }
+  .coach ol, .coach ul { margin: 0 0 10px; padding-left: 20px; } .coach li + li { margin-top: 3px; }
+  .coach table th { font-size: 11px; }
+  .saved { font-size: 12px; color: var(--ink-3); border-left: 2px solid var(--line-2); padding-left: 12px; }
+  .day-sep { text-align: center; font-size: 12px; color: var(--ink-3); }
+  .composerbar { position: fixed; bottom: 0; left: 220px; right: 0; background: color-mix(in srgb, var(--bg) 94%, transparent); backdrop-filter: blur(6px); border-top: 1px solid var(--line); padding: 12px 16px; }
+  .composerbar .in { max-width: 720px; margin: 0 auto; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; font-size: 12px; color: var(--ink-3); }
+  .chips .btn { padding: 4px 10px; font-size: 12px; }
+  .row { display: flex; gap: 8px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  .block { padding: 18px 20px; } .block .top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  .block h3 { font-size: 18px; } .block p { margin: 8px 0 0; font-size: 14px; color: var(--ink-2); line-height: 1.55; }
+  tr.today td { background: color-mix(in srgb, var(--accent-soft) 60%, transparent); }
+  .log-item { overflow: hidden; } .log-item > button { width: 100%; text-align: left; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .log-item .detail { border-top: 1px solid var(--line); padding: 12px 20px 18px; }
+  .kv { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px; font-size: 14px; }
+  .kv dd { margin: 3px 0 0; color: var(--ink-2); line-height: 1.5; } .kv dt { margin: 0; }
+  .panel { padding: 20px; margin-bottom: 16px; } .panel h3 { font-size: 18px; } .panel p { color: var(--ink-2); font-size: 14px; line-height: 1.55; margin: 6px 0 0; }
+  .btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .btn.danger { color: var(--danger); }
+  .members li { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .members { list-style: none; padding: 0; margin: 12px 0 0; max-height: 320px; overflow: auto; }
+  .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: 90px; background: var(--ink); color: var(--bg); padding: 9px 16px; border-radius: 10px; font-size: 13px; z-index: 20; }
+  @media (max-width: 760px) {
+    .composerbar { left: 0; bottom: 49px; }
+    .grid2, .kv { grid-template-columns: 1fr; }
+    .chat { padding-bottom: 190px; }
+  }
   .hide-sm { }
   @media (max-width: 760px) {
     .app { grid-template-columns: 1fr; }
@@ -137,17 +172,17 @@
       <div class="countdown" id="cd1"></div>
     </div>
     <nav class="side">
-      <a href="#">Coach</a><a href="#" class="active">Team</a><a href="#">Programme</a><a href="#">Log</a><a href="#">Progress</a><a href="#">Settings</a>
+      <a href="#" data-page="coach">Coach</a><a href="#" data-page="team">Team</a><a href="#" data-page="programme">Programme</a><a href="#" data-page="log">Log</a><a href="#" data-page="progress">Progress</a><a href="#" data-page="settings">Settings</a>
     </nav>
     <div class="who">Signed in as Sethu</div>
   </aside>
   <div>
     <header class="mobile">
       <div class="l"><span class="brand">RD Coach</span><span class="cd" id="cd2"></span></div>
-      <span class="set">Settings</span>
+      <a href="#" class="set" data-page="settings">Settings</a>
     </header>
     <main><div class="wrap" id="view"></div></main>
-    <nav class="bottom"><a href="#">Coach</a><a href="#" class="active">Team</a><a href="#">Programme</a><a href="#">Log</a><a href="#">Progress</a></nav>
+    <nav class="bottom"><a href="#" data-page="coach">Coach</a><a href="#" data-page="team">Team</a><a href="#" data-page="programme">Programme</a><a href="#" data-page="log">Log</a><a href="#" data-page="progress">Progress</a></nav>
   </div>
 </div>
 
@@ -194,7 +229,8 @@ const COMMENTS = ["Massive. Keep it up!", "That pace is serious.", "Inspired me 
 const fmt = (n) => (Number.isInteger(n) ? String(n) : n.toFixed(1));
 const members = NAMES.map((name, i) => {
   const drive = name === ME ? 0.72 : rnd();
-  const planned = int(3, 6);
+  const plannedRandom = int(3, 6);
+  const planned = name === ME ? 5 : plannedRandom;
   const weeks = [Math.min(planned + 1, Math.round(planned * (0.4 + drive * 0.8))), Math.min(planned + 1, Math.round(planned * (0.35 + drive * 0.75))), Math.min(planned, Math.round(planned * (0.3 + drive * 0.8)))];
   const thisWeek = Math.min(planned, Math.round(drive * 3.6 + rnd() * 0.8)); // Mon–Thu so far
   const tests = TESTS.filter(() => rnd() < 0.75).map((t) => {
@@ -304,11 +340,17 @@ function postCard(p) {
     </div></article>`;
 }
 
-let tab = "feed", period = "week", memberId = null;
+let tab = "feed", period = "week", memberId = null, page = "team";
 
 function render() {
   const v = document.getElementById("view");
-  const note = `<div class="demo-note"><span>Demo with sample data: ${members.length} JHB members. Reactions and comments work on this page but are not saved.</span><button id="theme">Switch light or dark</button></div>`;
+  document.querySelectorAll("[data-page]").forEach((a) => a.classList.toggle("active", a.dataset.page === page));
+  const note = `<div class="demo-note"><span>Demo with sample data: ${members.length} JHB members, viewed as Sethu. Nothing you do here is saved.</span><button id="theme">Switch light or dark</button></div>`;
+  if (page !== "team") {
+    const views = { coach: coachView, programme: programmeView, log: logView, progress: progressView, settings: settingsView };
+    v.innerHTML = (page === "coach" ? "" : note) + views[page]();
+    return bind();
+  }
   if (memberId) { v.innerHTML = note + memberView(byId[memberId]); return bind(); }
   v.innerHTML = note + `
     <div class="head"><div><h1>JHB team</h1><p>Everyone's sessions, personal bests and progress photos. ${DAYS_TO_RD} days to RD: Monday 30 November 2026.</p></div>
@@ -318,7 +360,7 @@ function render() {
 }
 
 function feedView() {
-  return `<button class="card composer"><b>Post today's progress photo.</b> Take one now or upload from your gallery.</button>` + posts.map(postCard).join("");
+  return `<button class="card composer" data-demo><b>Post today's progress photo.</b> Take one now or upload from your gallery.</button>` + posts.map(postCard).join("");
 }
 
 function ranked(per) {
@@ -384,7 +426,18 @@ function memberView(m) {
     <div class="col">${mine.length ? mine.map(postCard).join("") : '<div class="card" style="padding:20px;color:var(--ink-2)">Nothing shared yet.</div>'}</div>`;
 }
 
+function toast(text) {
+  const t = document.createElement("div");
+  t.className = "toast";
+  t.textContent = text;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2200);
+}
+
 function bind() {
+  document.querySelectorAll("[data-page]").forEach((a) => (a.onclick = (e) => { e.preventDefault(); page = a.dataset.page; memberId = null; render(); scrollTo(0, 0); }));
+  document.querySelectorAll("[data-demo]").forEach((b) => (b.onclick = (e) => { e.preventDefault(); toast("Demo only: this works in the real app."); }));
+  document.querySelectorAll("[data-toggle]").forEach((b) => (b.onclick = () => { const d = document.getElementById(b.dataset.toggle); d.hidden = !d.hidden; b.querySelector(".muted").textContent = d.hidden ? "Show" : "Hide"; }));
   document.querySelectorAll("[data-tab]").forEach((b) => (b.onclick = () => { tab = b.dataset.tab; render(); }));
   document.querySelectorAll("[data-period]").forEach((b) => (b.onclick = () => { period = b.dataset.period; render(); }));
   document.querySelectorAll("[data-member]").forEach((a) => (a.onclick = (e) => { e.preventDefault(); memberId = a.dataset.member; render(); scrollTo(0, 0); }));
@@ -412,6 +465,128 @@ function bind() {
     const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
     root.dataset.theme = dark ? "light" : "dark";
   };
+}
+
+/* ---------- Sethu's own pages ---------- */
+const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+const SCHEDULE = [
+  ["Monday", "Lower strength + carries", "Squat, hinge, farmer carry", 60],
+  ["Tuesday", "Intervals", "400 m repeats, aerobic power", 40],
+  ["Wednesday", "Upper strength + grip", "Pull-ups, press, dead hangs", 60],
+  ["Thursday", "Rest", "Mobility and an easy walk", 20],
+  ["Friday", "Power + circuit", "Jumps, swings, work capacity", 50],
+  ["Saturday", "Long effort: loaded walk", "Backpack walk, building distance", 75],
+  ["Sunday", "Rest", "Full rest", 0],
+];
+const addDays = (d, n) => { const [y, m, dd] = d.split("-").map(Number); return new Date(Date.UTC(y, m - 1, dd + n)).toISOString().slice(0, 10); };
+const dow = (d) => { const [y, m, dd] = d.split("-").map(Number); return (new Date(Date.UTC(y, m - 1, dd)).getUTCDay() + 6) % 7; };
+const MONDAY = addDays(TODAY, -dow(TODAY));
+const TRAIN_DAYS = [0, 1, 2, 4, 5];
+const NOTES = ["Add 2.5 kg next week if all reps stay clean.", "Keep the last set two reps short of failure.", "Good pacing; hold this load and own the form.", "Grip faded on the last hang; chalk up next time.", "Shorten rest to 75 s next session."];
+const myLogs = [];
+[3, 2, 1, 0].forEach((w) => {
+  const monday = addDays(MONDAY, -7 * w);
+  const count = w === 0 ? me.thisWeek : [5, 4, 5][3 - w] ?? 4;
+  TRAIN_DAYS.slice(0, count).forEach((d, i) => {
+    const date = addDays(monday, d);
+    if (date > TODAY) return;
+    const sched = SCHEDULE[d];
+    myLogs.push({
+      id: date, date, session: sched[1], completed: !(w === 2 && i === 3),
+      ex: EX[sched[1]].map(([n, sets, reps, u, lo, hi]) => [n, sets, reps, u ? `${int(lo, hi)} ${u}` : "bodyweight"]),
+      hard: pick(["Last set of pull-ups", "Final 400 m repeat", "Carries in the last round", "Holding pace on the hills", ""]),
+      note: pick(NOTES),
+    });
+  });
+});
+myLogs.sort((a, b) => b.date.localeCompare(a.date));
+const todaySched = SCHEDULE[dow(TODAY)];
+const longDay = (d) => { const [y, m, dd] = d.split("-").map(Number); return new Date(Date.UTC(y, m - 1, dd)).toLocaleDateString("en-GB", { timeZone: "UTC", weekday: "long", day: "numeric", month: "long" }); };
+
+function coachView() {
+  const isRest = todaySched[3] === 0 || todaySched[1] === "Rest";
+  const ex = EX["Upper strength + grip"];
+  return `<div class="chat">
+    <div class="day-sep">Monday 12 October</div>
+    <div class="coach"><p>I'm your strength and conditioning coach for RD. RD is on Monday 30 November, so we have about seven weeks: enough to build real capability if we are smart with recovery.</p>
+      <p>First group of questions:</p><ol><li>What is your age, height and weight?</li><li>How many days per week can you train, and how long per session?</li><li>What gym access and equipment do you have?</li><li>What does your current routine look like?</li></ol></div>
+    <div class="bubble">1. 22, 160cm, 58kg
+2. 6, 30min minimum 1 hour max
+3. Full gym including machines
+4. Gym 3 times a week, mostly machines</div>
+    <div class="saved">Profile updated</div>
+    <div class="coach"><p>Good base: six days and a full gym gives us room. Mostly machines means your stabilisers and grip are likely behind your strength, so we will test those.</p>
+      <p>Next group:</p><ol><li>How many push-ups and strict pull-ups can you do in one set?</li><li>Any injuries, pain or movement restrictions?</li><li>How are your sleep and protein intake?</li><li>What do you expect to face physically at RD?</li></ol></div>
+    <div class="day-sep">Today</div>
+    <div class="bubble">What is my workout today?</div>
+    <div class="coach">${isRest ? `<p><strong>Rest day.</strong> Take an easy 20 to 30 minute walk and 10 minutes of hip and shoulder mobility. Recovery is where the adaptation happens.</p>` : `
+      <h3>${todaySched[1]} (${todaySched[3]} min)</h3>
+      <p><strong>Warm-up (8 min):</strong> 3 min easy row, band pull-aparts x 15, scapular pull-ups x 8, push-up to downward dog x 6.</p>
+      <div class="scroll"><table><thead><tr><th>Exercise</th><th>Sets x reps</th><th>Load</th><th>Rest</th></tr></thead><tbody>
+        ${(EX[todaySched[1]] || ex).map(([n, sets, reps, u, lo, hi]) => `<tr><td><strong>${n}</strong></td><td>${sets} x ${reps}</td><td>${u ? Math.round((lo + hi) / 2) + " " + u : "bodyweight"}</td><td>${sets > 3 ? "2 min" : "90 s"}</td></tr>`).join("")}
+      </tbody></table></div>
+      <p style="margin-top:10px">Superset the last two exercises to save time. Stop each set with one or two reps in reserve.</p>
+      <p><strong>Cooldown (5 min):</strong> dead hang 2 x 20 s, chest and lat stretch.</p>`}
+      <p>When you finish, tap Report a session and post a progress photo on the Team page.</p></div>
+  </div>
+  <div class="composerbar"><div class="in">
+    <div class="chips">Training <button class="btn" data-demo>Today's session</button><button class="btn" data-demo>Report a session</button><button class="btn" data-demo>Progress photo</button></div>
+    <div class="row"><input class="input" placeholder="Message your coach (demo: not sent)"><button class="btn primary" data-demo>Send</button></div>
+  </div></div>`;
+}
+
+function programmeView() {
+  return `<div class="head"><div><h1>7-week RD preparation</h1><p>Five training days around full rest on Thursday and Sunday. Strength twice a week, intervals and a long loaded effort for engine and work capacity, power on Fridays, and a taper in the final week so you arrive fresh.</p></div>
+    <div class="muted" style="font-size:12px;text-align:right">7 weeks<br>From 2026-10-12</div></div>
+    <div class="card section"><span class="label">Weekly schedule</span><div class="scroll"><table><thead><tr><th>Day</th><th>Session</th><th class="hide-sm">Focus</th><th class="r">Time</th></tr></thead><tbody>
+      ${SCHEDULE.map(([d, ses, f, min]) => `<tr class="${DAYS[dow(TODAY)] === d ? "today" : ""}"><td><b>${d}</b></td><td>${ses}</td><td class="hide-sm muted">${f}</td><td class="r muted">${min} min</td></tr>`).join("")}
+    </tbody></table></div></div>
+    <div class="grid2">
+      <div class="card block"><div class="top"><h3>Base and baselines</h3><span class="muted" style="font-size:12px">Weeks 1-2</span></div><p>Technique, test day, aerobic base. Moderate loads with clean reps.</p></div>
+      <div class="card block"><div class="top"><h3>Build</h3><span class="muted" style="font-size:12px">Weeks 3-5</span></div><p>Heavier strength, harder intervals, longer loaded walks. Retest pull-ups and the 2.4 km run in week 5.</p></div>
+      <div class="card block"><div class="top"><h3>Peak</h3><span class="muted" style="font-size:12px">Week 6</span></div><p>Event-like sessions: carries, long effort, short sharp power. Volume starts to drop.</p></div>
+      <div class="card block"><div class="top"><h3>Taper</h3><span class="muted" style="font-size:12px">Week 7</span></div><p>Half the volume, intensity kept. Sleep and food first. Arrive at RD fresh.</p></div>
+    </div>
+    <div class="card panel"><span class="label">Principles</span><ul style="margin:10px 0 0;padding-left:20px;color:var(--ink-2);font-size:14px;line-height:1.7">
+      <li>Two hard days are never back to back.</li><li>Stop most sets one or two reps short of failure.</li><li>Grip and core every week: hangs, carries, planks.</li><li>Pain that is sharp or changes how you move means stop and get it checked.</li></ul></div>`;
+}
+
+function logView() {
+  const done = myLogs.filter((l) => l.completed).length;
+  return `<div class="head"><div><h1>Training log</h1><p>${myLogs.length} sessions recorded, ${done} completed in full.</p></div></div>
+    <div class="col" style="max-width:none">${myLogs.map((l) => `<div class="card log-item">
+      <button data-toggle="d${l.id}"><span><b>${l.session}</b><div class="muted" style="font-size:12px;margin-top:2px">${longDay(l.date)}${l.completed ? "" : ' <span style="color:var(--danger)">Incomplete</span>'}</div></span><span class="muted" style="font-size:12px">Show</span></button>
+      <div class="detail" id="d${l.id}" hidden><div class="scroll"><table><thead><tr><th>Exercise</th><th>Sets</th><th>Reps</th><th>Load</th></tr></thead><tbody>
+        ${l.ex.map(([n, sets, reps, load]) => `<tr><td><b>${n}</b></td><td class="muted">${sets}</td><td class="muted">${reps}</td><td class="muted">${load}</td></tr>`).join("")}</tbody></table></div>
+        <dl class="kv" style="margin-top:12px">${l.hard ? `<div><dt class="label">Felt hard</dt><dd>${l.hard}</dd></div>` : ""}<div><dt class="label">Coach's note</dt><dd>${l.note}</dd></div></dl></div>
+    </div>`).join("")}</div>`;
+}
+
+function progressView() {
+  const tests = memberView(me).match(/<div class="card section">[\s\S]*?<\/table><\/div><\/div>/);
+  return `<div class="head"><div><h1>Progress</h1><p>Baselines, reassessments and notable results your coach has recorded.</p></div></div>
+    ${tests ? tests[0] : ""}
+    <div class="grid2" style="grid-template-columns:2fr 1fr">
+      <div class="card panel" style="margin:0"><span class="label">Profile</span><dl class="kv" style="margin-top:12px">
+        <div><dt class="label">Age</dt><dd>22</dd></div><div><dt class="label">Height and weight</dt><dd>160 cm, 58 kg</dd></div>
+        <div><dt class="label">Training days per week</dt><dd>6</dd></div><div><dt class="label">Minutes per session</dt><dd>30 to 60</dd></div>
+        <div><dt class="label">Equipment</dt><dd>Full gym including machines</dd></div><div><dt class="label">Current routine</dt><dd>Gym 3 times a week, mostly machines</dd></div></dl>
+        <p style="font-size:12px;margin-top:14px">Only you and your coach see this profile.</p></div>
+      <div class="card panel" style="margin:0"><span class="label">Consistency</span>
+        <div class="serif" style="font-size:30px;margin-top:10px">${myLogs.length}</div><div class="muted" style="font-size:14px">sessions logged</div>
+        <div class="serif" style="font-size:30px;margin-top:12px">${me.streak} wk</div><div class="muted" style="font-size:14px">week streak</div>
+        <div class="serif" style="font-size:30px;margin-top:12px">${me.all.photos}</div><div class="muted" style="font-size:14px">progress photos</div></div>
+    </div>`;
+}
+
+function settingsView() {
+  return `<div class="head"><div><h1>Settings</h1></div></div>
+    <div class="card panel"><h3>Account</h3><p>Signed in as <b>Sethu</b> (sethu), group admin. Your coaching conversation is private. Your sessions, tests, personal bests and photos are visible to the JHB group.</p><div class="btns"><button class="btn" data-demo>Sign out</button></div></div>
+    <div class="card panel"><h3>Group members</h3><p>People join with the group code set in Vercel. Change the code there if it reaches the wrong people; existing members stay signed in.</p>
+      <ul class="members">${[...members].sort((a, b) => a.name.localeCompare(b.name)).map((m) => `<li><span><b>${m.name}</b> <span class="muted">${m.name.toLowerCase()}</span>${m === me ? ' <span class="muted" style="font-size:12px">admin</span>' : ""}</span>${m === me ? "" : '<button class="muted" style="font-size:12px" data-demo>Remove</button>'}</li>`).join("")}</ul></div>
+    <div class="card panel"><h3>Conversation</h3><p>${myLogs.length * 4 + 12} turns stored. Long conversations are condensed automatically; you can also do it now.</p><div class="btns"><button class="btn" data-demo>Condense now</button><button class="btn" data-demo>Clear conversation</button></div></div>
+    <div class="card panel"><h3>Backup and restore</h3><p>Your data is saved to your account, so it follows you to any device you sign in on. A backup file is an extra copy.</p><div class="btns"><button class="btn" data-demo>Download backup</button><button class="btn" data-demo>Restore from file</button></div></div>
+    <div class="card panel"><h3>Start over</h3><p>Delete your conversation, programme, log and tests, and begin a new assessment. Team posts stay.</p><div class="btns"><button class="btn danger" data-demo>Delete my coaching data</button></div></div>`;
 }
 
 render();
