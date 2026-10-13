@@ -1,62 +1,44 @@
-import Anthropic from "@anthropic-ai/sdk";
+import { ApiError, GoogleGenAI } from "@google/genai";
+import { transcriptText } from "@/lib/coach/history";
 import { COACH_SYSTEM_PROMPT, COMPACT_PROMPT } from "@/lib/coach/system";
+import { GEMINI_MODEL, geminiKey, passcodeDenied, passcodeValid } from "@/lib/server/auth";
+import type { ChatContent } from "@/lib/types";
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
 
-const MODEL = process.env.COACH_MODEL || "claude-opus-5-5";
-
-/** Simple client-side compaction: the whole transcript becomes one summary. */
+/** Condense the transcript into the coach's own notes. */
 export async function POST(req: Request) {
-  const apiKey = process.env.ANTHROPIC_API_KEY || req.headers.get("x-coach-key") || undefined;
-  if (!apiKey) return Response.json({ error: "No API key." }, { status: 401 });
-
-  let history: Anthropic.MessageParam[];
+  let body: { history?: unknown; passcode?: unknown };
   try {
-    const body = (await req.json()) as { history?: Anthropic.MessageParam[] };
-    history = Array.isArray(body.history) ? body.history : [];
+    body = (await req.json()) as typeof body;
   } catch {
     return Response.json({ error: "Invalid request body." }, { status: 400 });
   }
-  if (history.length === 0) return Response.json({ summary: "" });
+  if (!passcodeValid(body.passcode)) return passcodeDenied();
+  const apiKey = geminiKey();
+  if (!apiKey) return Response.json({ error: "The server is missing GEMINI_API_KEY." }, { status: 500 });
 
-  // Thinking blocks are bound to the conversation they came from; the summary
-  // request is a different conversation, so only text and tool blocks are sent.
-  const stripped: Anthropic.MessageParam[] = history.map((m) => {
-    if (typeof m.content === "string") return m;
-    return {
-      role: m.role,
-      content: m.content.filter((b) => b.type !== "thinking" && b.type !== "redacted_thinking"),
-    } as Anthropic.MessageParam;
-  });
-  if (stripped[stripped.length - 1].role !== "user") {
-    stripped.push({ role: "user", content: COMPACT_PROMPT });
-  } else {
-    stripped.push({ role: "assistant", content: "Understood." }, { role: "user", content: COMPACT_PROMPT });
-  }
+  const history = Array.isArray(body.history) ? (body.history as ChatContent[]) : [];
+  const text = transcriptText(history);
+  if (!text) return Response.json({ summary: "" });
 
-  const client = new Anthropic({ apiKey });
+  const ai = new GoogleGenAI({ apiKey });
   try {
-    const s = client.beta.messages.stream({
-      model: MODEL,
-      max_tokens: 16000,
-      betas: ["server-side-fallback-2026-07-01"],
-      fallbacks: "default",
-      output_config: { effort: "medium" },
-      system: COACH_SYSTEM_PROMPT,
-      messages: stripped as Anthropic.Beta.BetaMessageParam[],
+    const res = await ai.models.generateContent({
+      model: GEMINI_MODEL,
+      contents: [{ role: "user", parts: [{ text: `${COMPACT_PROMPT}\n\n<transcript>\n${text}\n</transcript>` }] }],
+      config: { systemInstruction: COACH_SYSTEM_PROMPT },
     });
-    const message = await s.finalMessage();
-    if (message.stop_reason === "refusal") {
-      return Response.json({ error: "Could not summarise this conversation." }, { status: 422 });
-    }
-    const summary = message.content
-      .filter((b): b is Anthropic.Beta.BetaTextBlock => b.type === "text")
-      .map((b) => b.text)
-      .join("\n");
+    const summary = (res.candidates?.[0]?.content?.parts ?? [])
+      .filter((p) => typeof p.text === "string" && !p.thought)
+      .map((p) => p.text)
+      .join("")
+      .trim();
+    if (!summary) return Response.json({ error: "Could not summarise this conversation." }, { status: 422 });
     return Response.json({ summary });
   } catch (err) {
-    const message = err instanceof Anthropic.APIError ? `API error ${err.status}: ${err.message}` : "Failed.";
+    const message = err instanceof ApiError ? `AI service error ${err.status}: ${err.message}` : "Failed to condense.";
     return Response.json({ error: message }, { status: 502 });
   }
 }

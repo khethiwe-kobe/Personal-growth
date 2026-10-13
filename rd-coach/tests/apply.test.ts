@@ -8,9 +8,9 @@ const id = () => `id${++n}`;
 const base: CoachState = { ...EMPTY_STATE };
 
 test("update_profile merges fields", () => {
-  const s1 = applyTool(base, "update_profile", { fields: { age: 28, weight_kg: 82 } }, id);
-  const s2 = applyTool(s1, "update_profile", { fields: { weight_kg: 80, injuries: "none" } }, id);
-  assert.deepEqual(s2.profile, { age: 28, weight_kg: 80, injuries: "none" });
+  const s1 = applyTool(base, "update_profile", { fields: [{ key: "age", value: "28" }, { key: "weight_kg", value: "82" }] }, id);
+  const s2 = applyTool(s1, "update_profile", { fields: [{ key: "weight_kg", value: "80" }, { key: "injuries", value: "none" }] }, id);
+  assert.deepEqual(s2.profile, { age: "28", weight_kg: "80", injuries: "none" });
 });
 
 test("record_metric keeps one value per key per day, sorted by date", () => {

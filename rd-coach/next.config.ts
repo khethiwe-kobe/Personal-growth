@@ -1,9 +1,13 @@
+import path from "node:path";
 import type { NextConfig } from "next";
 
+// rd-coach lives inside a repo with its own lockfile at the top level; pin the
+// root to this folder so builds and file tracing only consider this app.
+const root = path.join(__dirname);
+
 const nextConfig: NextConfig = {
-  // The coach route streams long responses; keep the SDK external so
-  // Node's native fetch/stream handling is used unchanged.
-  serverExternalPackages: ["@anthropic-ai/sdk"],
+  turbopack: { root },
+  outputFileTracingRoot: root,
 };
 
 export default nextConfig;

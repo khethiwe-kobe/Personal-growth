@@ -1,5 +1,3 @@
-import type Anthropic from "@anthropic-ai/sdk";
-
 export type Phase = "assessment" | "analysis" | "programme" | "training";
 
 export const PHASES: { id: Phase; label: string; blurb: string }[] = [
@@ -79,8 +77,20 @@ export type WorkoutLog = {
 };
 
 export type Settings = {
-  apiKey: string;
+  /** Passcode for a shared deployment; empty when none is stored on this device. */
+  passcode: string;
 };
+
+/** One part of a turn, in the shape the Gemini API uses (kept verbatim, including thought signatures). */
+export type ChatPart = {
+  text?: string;
+  thought?: boolean;
+  thoughtSignature?: string;
+  functionCall?: { id?: string; name?: string; args?: Record<string, unknown> };
+  functionResponse?: { id?: string; name?: string; response?: Record<string, unknown> };
+};
+
+export type ChatContent = { role: "user" | "model"; parts: ChatPart[] };
 
 export type CoachState = {
   version: 1;
@@ -89,8 +99,10 @@ export type CoachState = {
   programme: Programme | null;
   logs: WorkoutLog[];
   metrics: Metric[];
-  /** Full API-shaped transcript; thinking and tool blocks are kept verbatim. */
-  history: Anthropic.MessageParam[];
+  /** Full transcript; model turns are stored exactly as the API returned them. */
+  history: ChatContent[];
+  /** Coach-written summary waiting to be passed along with the next message. */
+  pendingSummary?: string;
   /** Bumped when the user edits tracked data by hand, so the coach is told. */
   stateVersion: number;
   lastSnapshotVersion: number;
@@ -108,7 +120,7 @@ export const EMPTY_STATE: CoachState = {
   history: [],
   stateVersion: 0,
   lastSnapshotVersion: 0,
-  settings: { apiKey: "" },
+  settings: { passcode: "" },
   createdAt: new Date(0).toISOString(),
 };
 
@@ -119,7 +131,7 @@ export const CONTEXT_PREFIX = "<context>";
 export type CoachEvent =
   | { type: "text"; text: string }
   | { type: "tool"; name: string; input: unknown }
-  | { type: "assistant"; content: Anthropic.MessageParam["content"] }
-  | { type: "tool_results"; content: Anthropic.MessageParam["content"] }
+  | { type: "model"; parts: ChatPart[] }
+  | { type: "tool_responses"; parts: ChatPart[] }
   | { type: "done"; stop: string }
   | { type: "error"; message: string };
