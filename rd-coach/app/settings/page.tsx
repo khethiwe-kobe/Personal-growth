@@ -4,22 +4,23 @@ import { useRef, useState } from "react";
 import { Page } from "@/components/Page";
 import { compactNow } from "@/lib/coach/client";
 import { getState, replaceState, resetState, setState, useCoachState } from "@/lib/store";
-import type { CoachState } from "@/lib/types";
 
 export default function SettingsPage() {
   const state = useCoachState();
-  const [key, setKey] = useState(state.settings.apiKey);
   const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const fileRef = useRef<HTMLInputElement | null>(null);
 
-  const saveKey = () => {
-    setState((s) => ({ ...s, settings: { ...s.settings, apiKey: key.trim() } }));
-    setNotice("Key saved in this browser.");
+  const forgetPasscode = () => {
+    if (!window.confirm("Remove the passcode from this device? You will need it again to use the coach.")) return;
+    setState((s) => ({ ...s, settings: { ...s.settings, passcode: "" } }));
   };
 
   const exportJson = () => {
-    const blob = new Blob([JSON.stringify(getState(), null, 2)], { type: "application/json" });
+    // The passcode is left out so a shared backup file does not give access.
+    const { settings: _settings, ...data } = getState();
+    void _settings;
+    const blob = new Blob([JSON.stringify({ ...data, settings: { passcode: "" } }, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -30,11 +31,13 @@ export default function SettingsPage() {
 
   const importJson = async (file: File) => {
     try {
-      const parsed = JSON.parse(await file.text()) as Partial<CoachState>;
+      const parsed = JSON.parse(await file.text()) as { version?: unknown; history?: unknown };
       if (parsed.version !== 1 || !Array.isArray(parsed.history)) throw new Error("Not an RD Coach backup.");
-      if (!window.confirm("Replace everything in this browser with the backup?")) return;
-      replaceState(parsed as CoachState);
-      setKey(parsed.settings?.apiKey ?? "");
+      if (!window.confirm("Replace everything on this device with the backup?")) return;
+      // Keep this device's passcode rather than whatever the backup carried.
+      const passcode = getState().settings.passcode;
+      replaceState(parsed);
+      setState((s) => ({ ...s, settings: { ...s.settings, passcode } }));
       setNotice("Backup restored.");
     } catch (e) {
       setNotice(e instanceof Error ? e.message : "Could not read that file.");
@@ -42,19 +45,10 @@ export default function SettingsPage() {
   };
 
   const condense = async () => {
-    if (!window.confirm("Condense the conversation into a summary? The coach keeps what matters, and the chat view starts fresh.")) return;
+    if (!window.confirm("Condense the conversation into the coach's notes? The chat view starts fresh; your data is kept.")) return;
     setBusy(true);
     try {
-      const summary = await compactNow(getState().settings.apiKey);
-      // Keep the summary as the opening context of the next message.
-      setState((s) => ({
-        ...s,
-        history: summary
-          ? [
-              { role: "user", content: [{ type: "text", text: `<context>\nSummary of the coaching conversation so far (your own notes):\n${summary}\n</context>` }, { type: "text", text: "Continue from your notes. Reply with one line confirming where we are." }] },
-            ]
-          : [],
-      }));
+      await compactNow();
       setNotice("Conversation condensed. Your next message continues from the coach's notes.");
     } catch (e) {
       setNotice(e instanceof Error ? e.message : "Could not condense.");
@@ -72,7 +66,6 @@ export default function SettingsPage() {
   const resetAll = () => {
     if (!window.confirm("Delete everything stored in this browser: conversation, programme, log, metrics and profile?")) return;
     resetState();
-    setKey("");
     setNotice("Everything was reset.");
   };
 
@@ -82,19 +75,19 @@ export default function SettingsPage() {
     <Page title="Settings">
       {notice && <div className="text-sm bg-surface-2 rounded-lg px-3 py-2 mb-4">{notice}</div>}
 
-      <section className="card p-5 mb-4">
-        <h3 className="text-lg">Claude API key</h3>
-        <p className="text-sm text-ink-2 mt-1 leading-relaxed">
-          The server uses its own key when <code>ANTHROPIC_API_KEY</code> is set. Otherwise a key saved here is sent with each
-          request from this browser only.
-        </p>
-        <div className="flex gap-2 mt-3">
-          <input className="input" type="password" autoComplete="off" placeholder="sk-ant-…" value={key} onChange={(e) => setKey(e.target.value)} />
-          <button className="btn btn-primary" onClick={saveKey}>
-            Save
-          </button>
-        </div>
-      </section>
+      {state.settings.passcode && (
+        <section className="card p-5 mb-4">
+          <h3 className="text-lg">Access</h3>
+          <p className="text-sm text-ink-2 mt-1 leading-relaxed">
+            This device has the passcode saved. Remove it on a shared or borrowed device.
+          </p>
+          <div className="mt-3">
+            <button className="btn btn-ghost" onClick={forgetPasscode}>
+              Forget passcode on this device
+            </button>
+          </div>
+        </section>
+      )}
 
       <section className="card p-5 mb-4">
         <h3 className="text-lg">Conversation</h3>
@@ -115,7 +108,7 @@ export default function SettingsPage() {
       <section className="card p-5 mb-4">
         <h3 className="text-lg">Backup and restore</h3>
         <p className="text-sm text-ink-2 mt-1 leading-relaxed">
-          Everything lives in this browser. Download a JSON backup before clearing site data or switching devices.
+          Your data lives only on this device. Download a backup to move it to another phone or computer, or before clearing site data.
         </p>
         <div className="flex flex-wrap gap-2 mt-3">
           <button className="btn btn-ghost" onClick={exportJson}>

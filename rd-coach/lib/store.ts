@@ -1,6 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
+import { normalizeHistory } from "./coach/history";
 import { EMPTY_STATE, type CoachState } from "./types";
 
 const KEY = "rd-coach:v1";
@@ -13,8 +14,7 @@ function read(): CoachState {
   try {
     const raw = window.localStorage.getItem(KEY);
     if (raw) {
-      const parsed = JSON.parse(raw) as Partial<CoachState>;
-      cache = { ...EMPTY_STATE, ...parsed, settings: { ...EMPTY_STATE.settings, ...(parsed.settings ?? {}) } };
+      cache = hydrate(JSON.parse(raw));
       return cache;
     }
   } catch {
@@ -22,6 +22,13 @@ function read(): CoachState {
   }
   cache = { ...EMPTY_STATE, createdAt: new Date().toISOString() };
   return cache;
+}
+
+/** Fill defaults and upgrade transcripts saved by earlier versions. */
+export function hydrate(raw: unknown): CoachState {
+  const parsed = (raw && typeof raw === "object" ? raw : {}) as Partial<CoachState> & { settings?: { passcode?: unknown } };
+  const passcode = typeof parsed.settings?.passcode === "string" ? parsed.settings.passcode : "";
+  return { ...EMPTY_STATE, ...parsed, history: normalizeHistory(parsed.history), settings: { passcode } };
 }
 
 function write(next: CoachState) {
@@ -42,12 +49,14 @@ export function setState(update: (s: CoachState) => CoachState) {
   write(update(read()));
 }
 
-export function replaceState(next: CoachState) {
-  write({ ...EMPTY_STATE, ...next });
+export function replaceState(next: unknown) {
+  write(hydrate(next));
 }
 
 export function resetState() {
-  write({ ...EMPTY_STATE, createdAt: new Date().toISOString() });
+  // The passcode is about access to this deployment, not training data; keep it.
+  const passcode = read().settings.passcode;
+  write({ ...EMPTY_STATE, settings: { passcode }, createdAt: new Date().toISOString() });
 }
 
 function subscribe(cb: () => void) {

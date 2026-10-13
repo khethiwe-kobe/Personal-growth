@@ -12,7 +12,7 @@ Built with Next.js, TypeScript and Tailwind CSS.
 > **New:** the `rd-coach/` directory contains **RD Coach** — a separate app that acts as a
 > personal strength and conditioning coach for RD preparation (assessment interview,
 > strengths and weaknesses, a periodised programme, daily sessions, post-session reports and
-> progress tracking), built on the Claude API. See `rd-coach/README.md`.
+> progress tracking), powered by Gemini and shareable with a passcode. See `rd-coach/README.md`.
 
 > The `cadence/` directory contains **Cadence** — a separate, full-stack
 > accountability & productivity app for Khethiwe, Lethabo and Aldonia (own accounts,

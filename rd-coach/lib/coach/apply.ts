@@ -9,8 +9,10 @@ export function applyTool(state: CoachState, name: string, rawInput: unknown, ma
 
   switch (name) {
     case "update_profile": {
-      const { fields } = parsed.data as { fields: Record<string, string | number | boolean | null> };
-      return { ...state, profile: { ...state.profile, ...fields } };
+      const { fields } = parsed.data as { fields: { key: string; value: string }[] };
+      const next = { ...state.profile };
+      for (const f of fields) next[f.key] = f.value;
+      return { ...state, profile: next };
     }
     case "record_metric": {
       const m = parsed.data as Omit<CoachState["metrics"][number], "id">;

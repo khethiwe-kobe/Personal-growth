@@ -1,11 +1,10 @@
 "use client";
 
-import type Anthropic from "@anthropic-ai/sdk";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Markdown } from "@/lib/markdown";
 import { sendToCoach } from "@/lib/coach/client";
 import { useCoachState, longDate } from "@/lib/store";
-import { CONTEXT_PREFIX, PHASES } from "@/lib/types";
+import { CONTEXT_PREFIX, PHASES, type ChatContent } from "@/lib/types";
 import { ReportForm } from "./ReportForm";
 
 type Item =
@@ -21,26 +20,23 @@ const SAVED_LABEL: Record<string, string> = {
   set_phase: "Phase updated",
 };
 
-function toItems(history: Anthropic.MessageParam[]): Item[] {
+function toItems(history: ChatContent[]): Item[] {
   const items: Item[] = [];
-  history.forEach((m, mi) => {
-    if (typeof m.content === "string") {
-      if (m.content.trim()) items.push({ kind: m.role === "user" ? "user" : "coach", text: m.content, key: `${mi}` });
-      return;
-    }
+  history.forEach((c, ci) => {
     let coachText = "";
     const saved: string[] = [];
-    m.content.forEach((b, bi) => {
-      if (b.type === "text") {
-        if (m.role === "user") {
-          if (!b.text.startsWith(CONTEXT_PREFIX)) items.push({ kind: "user", text: b.text, key: `${mi}-${bi}` });
-        } else coachText += (coachText ? "\n\n" : "") + b.text;
-      } else if (b.type === "tool_use") {
-        saved.push(SAVED_LABEL[b.name] ?? b.name);
+    c.parts.forEach((p, pi) => {
+      if (p.thought) return;
+      if (typeof p.text === "string" && p.text) {
+        if (c.role === "user") {
+          if (!p.text.startsWith(CONTEXT_PREFIX)) items.push({ kind: "user", text: p.text, key: `${ci}-${pi}` });
+        } else coachText += p.text;
+      } else if (p.functionCall?.name) {
+        saved.push(SAVED_LABEL[p.functionCall.name] ?? p.functionCall.name);
       }
     });
-    if (coachText.trim()) items.push({ kind: "coach", text: coachText, key: `${mi}-c` });
-    if (saved.length) items.push({ kind: "saved", names: Array.from(new Set(saved)), key: `${mi}-s` });
+    if (coachText.trim()) items.push({ kind: "coach", text: coachText, key: `${ci}-c` });
+    if (saved.length) items.push({ kind: "saved", names: Array.from(new Set(saved)), key: `${ci}-s` });
   });
   return items;
 }
@@ -58,6 +54,8 @@ export function Chat() {
 
   const items = useMemo(() => toItems(state.history), [state.history]);
   const phase = PHASES.find((p) => p.id === state.phase) ?? PHASES[0];
+  const hasProgress =
+    Object.keys(state.profile).length > 0 || !!state.programme || state.logs.length > 0 || !!state.pendingSummary;
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ block: "end" });
@@ -76,12 +74,13 @@ export function Chat() {
       trimmed,
       {
         onText: (d) => setDraft((t) => t + d),
-        onToolSaved: () => {},
         onError: (m) => setError(m),
-        onDone: () => {
+        onDone: (kept) => {
           setBusy(false);
           setDraft("");
           abortRef.current = null;
+          // Nothing was recorded: give the message back so it can be resent.
+          if (!kept) setInput((cur) => cur || trimmed);
         },
       },
       controller.signal,
@@ -105,7 +104,22 @@ export function Chat() {
     <div className="flex-1 flex flex-col">
       <div className="flex-1 overflow-y-auto">
         <div className="mx-auto w-full max-w-3xl px-4 pt-6 pb-32 flex flex-col gap-5">
-          {items.length === 0 && !busy && (
+          {items.length === 0 && !busy && hasProgress && (
+            <div className="card p-6 md:p-8 mt-6 fade-in">
+              <h1 className="text-2xl md:text-3xl">Pick up where you left off.</h1>
+              <p className="text-ink-2 mt-3 leading-relaxed">
+                The conversation view is empty, but your profile, programme, log and progress are all here. Your coach will be
+                shown them with your next message.
+              </p>
+              <div className="mt-6 flex flex-wrap gap-2">
+                <button className="btn btn-primary" onClick={() => send("Let's continue from where we were.")}>
+                  Continue coaching
+                </button>
+              </div>
+            </div>
+          )}
+
+          {items.length === 0 && !busy && !hasProgress && (
             <div className="card p-6 md:p-8 mt-6 fade-in">
               <h1 className="text-2xl md:text-3xl">Prepare for RD.</h1>
               <p className="text-ink-2 mt-3 leading-relaxed">
@@ -113,7 +127,7 @@ export function Chat() {
                 periodised programme for the weeks you have, then prescribe each session and adjust it from what you report.
               </p>
               <p className="text-ink-3 text-sm mt-3">
-                Everything is stored in this browser. Export a backup from Settings whenever you like.
+                Your data stays on this device. Download a backup from Settings whenever you like.
               </p>
               <div className="mt-6 flex flex-wrap gap-2">
                 <button className="btn btn-primary" onClick={() => send("I'm ready to begin. Please start the assessment.")}>

@@ -1,4 +1,4 @@
-import type Anthropic from "@anthropic-ai/sdk";
+import type { FunctionDeclaration } from "@google/genai";
 import { z } from "zod";
 
 /**
@@ -7,10 +7,8 @@ import { z } from "zod";
  * local store (see lib/coach/apply.ts), so nothing is persisted server-side.
  */
 
-const scalar = z.union([z.string(), z.number(), z.boolean(), z.null()]);
-
 export const UpdateProfileInput = z.object({
-  fields: z.record(z.string(), scalar),
+  fields: z.array(z.object({ key: z.string().min(1), value: z.string() })),
 });
 
 export const RecordMetricInput = z.object({
@@ -84,19 +82,23 @@ export function isToolName(name: string): name is ToolName {
 }
 
 /** Deterministic order matters for prompt caching: never reorder. */
-export const COACH_TOOLS: Anthropic.Tool[] = [
+export const COACH_TOOLS: FunctionDeclaration[] = [
   {
     name: "update_profile",
     description:
       "Save or update facts about the athlete gathered during assessment (age, height_cm, weight_kg, training_days_per_week, session_minutes, equipment, gym_access, experience, current_routine, strength_levels, bodyweight_levels, cardio, injuries, sleep, nutrition, weaknesses, weeks_until_rd, rd_date, rd_challenges, notes). Use the snake_case keys listed where they fit; add new snake_case keys for anything else. Only include fields you learned or that changed.",
-    eager_input_streaming: true,
-    input_schema: {
+    parametersJsonSchema: {
       type: "object",
       properties: {
         fields: {
-          type: "object",
-          description: "Map of snake_case field name to value.",
-          additionalProperties: { type: ["string", "number", "boolean", "null"] },
+          type: "array",
+          description: "One entry per fact: the snake_case key and its value as text.",
+          items: {
+            type: "object",
+            properties: { key: { type: "string" }, value: { type: "string" } },
+            required: ["key", "value"],
+            additionalProperties: false,
+          },
         },
       },
       required: ["fields"],
@@ -107,8 +109,7 @@ export const COACH_TOOLS: Anthropic.Tool[] = [
     name: "record_metric",
     description:
       "Record a measurable performance number: a baseline test, a reassessment, or a notable training result. Use a stable snake_case key per test so progress can be charted (for example pull_ups, push_ups, dead_hang_s, run_1_5_mile_s, squat_1rm_kg, farmer_carry_m, plank_s). Always use the same key, label and unit for the same test.",
-    eager_input_streaming: true,
-    input_schema: {
+    parametersJsonSchema: {
       type: "object",
       properties: {
         key: { type: "string" },
@@ -126,8 +127,7 @@ export const COACH_TOOLS: Anthropic.Tool[] = [
     name: "save_programme",
     description:
       "Save the athlete's full training programme (replaces any previous version). Call this when you first build the programme and whenever you restructure it (new block, changed weekly schedule, taper). The schedule lists one entry per training day of the week; the blocks describe periodisation across the weeks before RD.",
-    eager_input_streaming: true,
-    input_schema: {
+    parametersJsonSchema: {
       type: "object",
       properties: {
         title: { type: "string" },
@@ -172,8 +172,7 @@ export const COACH_TOOLS: Anthropic.Tool[] = [
     name: "log_workout",
     description:
       "Log a completed (or partially completed) workout after the athlete reports back: the exercises with sets, reps and loads actually performed, what felt easy or hard, any pain, and your short coaching note for next time. Log one entry per session.",
-    eager_input_streaming: true,
-    input_schema: {
+    parametersJsonSchema: {
       type: "object",
       properties: {
         date: { type: "string", description: "YYYY-MM-DD" },
@@ -207,8 +206,7 @@ export const COACH_TOOLS: Anthropic.Tool[] = [
     name: "set_phase",
     description:
       "Move the coaching relationship to its next phase: assessment (interviewing), analysis (strengths and weaknesses delivered), programme (the plan has been saved), training (daily coaching and progress tracking).",
-    eager_input_streaming: true,
-    input_schema: {
+    parametersJsonSchema: {
       type: "object",
       properties: {
         phase: { type: "string", enum: ["assessment", "analysis", "programme", "training"] },
