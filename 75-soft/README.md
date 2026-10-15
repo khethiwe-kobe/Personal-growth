@@ -1,6 +1,6 @@
-# 75 HARD — two-person tracker
+# 75 SOFT — two-person tracker
 
-One **A3 landscape** sheet (420 × 297 mm). 75 days, two people, 900 tick boxes.
+One **A3 landscape** sheet (420 × 297 mm). 75 days, two people, 600 tick boxes.
 
 ![The tracker](preview/tracker-A3.png)
 
@@ -10,7 +10,7 @@ One **A3 landscape** sheet (420 × 297 mm). 75 days, two people, 900 tick boxes.
 
 | File | What it is |
 |---|---|
-| `print/75-hard-A3-landscape.pdf` | The sheet, print-ready — 1 page, A3 landscape |
+| `print/75-soft-A3-landscape.pdf` | The sheet, print-ready — 1 page, A3 landscape |
 | `tracker.html` | The same sheet on screen |
 | `print.html` | The print stylesheet version, if you'd rather print from a browser |
 | `preview/tracker-A3.png` | The image above |
@@ -24,8 +24,34 @@ Print at **100% / "Actual size"**, A3, **landscape**, background graphics **on**
 Fit-to-page shrinks the boxes below the size of a pen tick.
 
 160 gsm matte survives 75 days on a wall and takes ballpoint without bleeding
-through. If you only have A4, printing at 71% still works but the boxes drop to
-about 6 × 3.7 mm — tight. A3 is worth the trip to a print shop.
+through. If you only have A4, printing at 71% still works but the boxes get
+tight. A3 is worth the trip to a print shop.
+
+---
+
+## The four rules
+
+| | Rule | |
+|---|---|---|
+| 01 | **Eat well** | Follow the plan you chose before Day 1. Alcohol only on social occasions. |
+| 02 | **Train 45 minutes** | Every day. One day a week may be active recovery — a walk, a stretch, a swim. |
+| 03 | **Drink your water** | Khethiwe 2.5 L · Kabelo 3 L, set to height and need. |
+| 04 | **Read 10 pages** | Any book. Fiction counts — the habit is the point, not the genre. |
+
+And the rule that defines the thing: **miss a day, pick it up tomorrow.** No
+restart. 75 Soft is built to be finished rather than survived.
+
+### What changed from 75 Hard
+
+One 45-minute workout instead of two · no outdoor requirement · three litres
+instead of a gallon · any book instead of non-fiction only · alcohol allowed
+socially · and no going back to Day 1.
+
+**The progress picture is gone**, because it is not a 75 Soft rule. Add
+`("PIC", "progress")` back to `TASKS` in `build.py` if you want the column.
+
+**The water targets are still yours, not the standard three litres** — 2.5 L and
+3 L, set to height and need.
 
 ---
 
@@ -42,41 +68,23 @@ The names and water targets are set in `build.py` → `PEOPLE`; change them ther
 and rebuild. The water column header is per person, so each of you ticks against
 your own number.
 
-Six tick boxes per person per day:
-
-| Box | Rule |
-|---|---|
-| `DIET` | Diet held, no cheat meals |
-| `W1` | First 45-minute workout |
-| `W2` | Second 45-minute workout — 3+ hours later, one of the two outdoors |
-| `2.5L` / `3L` | Plain water — Khethiwe 2.5 L, Kabelo 3 L |
-| `10pg` | Ten pages read |
-| `PIC` | Progress picture taken |
-
-Rule 2 is two workouts, so it gets two boxes — five rules, six boxes.
-
-**The water target is deliberately not the standard gallon.** 75 Hard as written
-calls for 3.8 L for everyone; this sheet carries 2.5 L and 3 L, set to height and
-need. Everything else follows the challenge as published.
-
 Every fifth day carries a heavier rule so you can count down the sheet at a
 glance. **Days 25, 50 and 75** are marked in terracotta.
 
-The header carries both names, a blank for each **chosen diet** (rule 1 says pick
+The header carries both names, a blank for each **chosen plan** (rule 1 says pick
 it before Day 1 — writing it on the sheet is what stops it being renegotiated in
 week three), and the Day 1 / Day 75 dates.
 
-The footer carries the restart tally. Six boxes each. Hopefully wasted ink.
+The footer carries a **days done** line each, out of 75 — a count rather than a
+streak, which is the whole difference between Soft and Hard.
 
 ---
 
 ## A note on the design
 
-Ticking is deliberately cheap and visible: an unbroken run of filled boxes is
-the whole motivational mechanism, and a single gap is meant to be obvious from
-across the room. That's also why the restart tally is printed rather than left
-off — the challenge only means anything if the restart is honoured, and a
-tracker that makes restarting invisible quietly invites fudging.
+Ticking is deliberately cheap and visible: a wall of filled boxes is the
+motivational mechanism, and with four rules instead of six the boxes are wider
+and easier to hit with a pen.
 
 Palette and type match the vision board in `../vision-board`, so the two hang
 together on the same wall.

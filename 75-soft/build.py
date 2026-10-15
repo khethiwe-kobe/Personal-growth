@@ -1,18 +1,24 @@
 #!/usr/bin/env python3
 """
-75 HARD — a two-person wall tracker, one A3 landscape sheet.
+75 SOFT — a two-person wall tracker, one A3 landscape sheet.
 
-75 days x 5 rules x 2 people. Both people's boxes sit on the same day row,
+75 days x 4 rules x 2 people. Both people's boxes sit on the same day row,
 so a glance down the sheet shows who is behind and on what.
+
+75 Soft is the forgiving sibling of 75 Hard: one 45-minute workout a day
+rather than two, no outdoor requirement, three litres rather than a gallon,
+any book rather than non-fiction only, alcohol allowed socially — and, the
+part that changes everything, no restart when a day is missed.
 
 Layout (A3 landscape, 420 x 297 mm)
 -----------------------------------
-  header band   the 5 rules, the names, the start date, the chosen diets
+  header band   the 4 rules, the names, the start date, the chosen plans
   three blocks  days 1-25, 26-50, 51-75, side by side
-  footer        the big rule, and a restart tally nobody wants to use
+  footer        the forgiving rule, and a days-done count per person
 
-Six tick boxes per person per day: diet, workout 1, workout 2, water,
-reading, progress picture. Rule 2 is two workouts, so it takes two boxes.
+Four tick boxes per person per day: eat well, train, water, read. The
+progress picture is not a 75 Soft rule, so it is not a column — add one to
+TASKS if you want it back.
 
 Run:  python3 build.py
 """
@@ -32,12 +38,10 @@ PEOPLE = [
 DAYS = 75
 BLOCK = 25                      # days per column block
 TASKS = [                       # (column head, what it means)
-    ("DIET", "diet held"),
-    ("W1", "45 min"),
-    ("W2", "45 min"),
+    ("EAT", "plan held"),
+    ("45′", "trained"),
     ("{water}", "water"),       # filled in per person
     ("10pg", "read"),
-    ("PIC", "progress"),
 ]
 
 
@@ -131,7 +135,7 @@ body{font-family:'Montserrat',sans-serif;-webkit-font-smoothing:antialiased;
                  line-height:1;margin-bottom:1.8mm;letter-spacing:.14em;
                  text-transform:uppercase;}
 .bhead .grp .cols{display:flex;gap:1mm;}
-.bhead .grp .cols span{width:8.4mm;text-align:center;font-size:1.95mm;font-weight:800;
+.bhead .grp .cols span{width:13mm;text-align:center;font-size:1.95mm;font-weight:800;
                        letter-spacing:.04em;color:var(--cocoa);}
 .bhead .gap{flex:0 0 5mm;align-self:stretch;position:relative;}
 .bhead .gap::before{content:'';position:absolute;left:50%;top:0;bottom:-1.6mm;
@@ -149,7 +153,7 @@ body{font-family:'Montserrat',sans-serif;-webkit-font-smoothing:antialiased;
   width:.35mm;background:var(--almond);}
 .row .grp{display:flex;gap:1mm;}
 
-.box{width:8.4mm;height:5.2mm;border:.3mm solid var(--almond);background:var(--box);}
+.box{width:13mm;height:5.2mm;border:.3mm solid var(--almond);background:var(--box);}
 .row.mile .box{border-color:var(--terracotta);}
 
 /* ---------------------------------------------------------- footer ---- */
@@ -164,7 +168,8 @@ body{font-family:'Montserrat',sans-serif;-webkit-font-smoothing:antialiased;
 .foot .tally .row2{display:flex;align-items:center;gap:1.4mm;}
 .foot .tally .t{font-size:2.2mm;font-weight:900;letter-spacing:.14em;text-transform:uppercase;
                 color:var(--terracotta);margin-right:1.4mm;width:17mm;text-align:right;}
-.foot .tally .tb{width:5.4mm;height:5.4mm;border:.3mm solid rgba(232,225,213,.5);}
+.foot .tally .dn{width:17mm;border-bottom:.4mm solid rgba(232,225,213,.5);height:5.4mm;}
+.foot .tally .of{font-size:2.4mm;font-weight:700;color:var(--almond);margin-left:1.6mm;}
 """
 
 
@@ -173,18 +178,16 @@ body{font-family:'Montserrat',sans-serif;-webkit-font-smoothing:antialiased;
 # --------------------------------------------------------------------------
 
 RULES = [
-    ("01", "Follow a diet",
-     "Chosen before Day 1. No cheat meals. Tailor it to your goal, then stick to it."),
-    ("02", "Two 45-min workouts",
-     "At least 3 hours apart. One of the two outdoors, whatever the weather."),
+    ("01", "Eat well",
+     "Follow the plan you chose before Day 1. Alcohol only on social occasions."),
+    ("02", "Train 45 minutes",
+     "Every day. One day a week may be active recovery — a walk, a stretch, a swim."),
     ("03", "Drink your water",
      f"{PEOPLE[0]['name']} {PEOPLE[0]['water'].replace('L', ' L')} · "
      f"{PEOPLE[1]['name']} {PEOPLE[1]['water'].replace('L', ' L')}, set to height and "
      "need. Plain water — nothing else counts towards it."),
     ("04", "Read 10 pages",
-     "Non-fiction or self-development. Audiobooks do not count."),
-    ("05", "Progress picture",
-     "One every single day. No exceptions, no skipped days."),
+     "Any book. Fiction counts — the habit is the point, not the genre."),
 ]
 
 
@@ -197,13 +200,13 @@ def header():
 <div class="head">
   <div class="mark">
     <div class="n">75</div>
-    <div class="w">hard</div>
-    <div class="t">All five · every day · 75 days</div>
+    <div class="w">soft</div>
+    <div class="t">All four · every day · 75 days</div>
   </div>
   <div class="rules">{rules}</div>
   <div class="fields">
-    <div class="field"><span class="who">{PEOPLE[0]["name"]}</span><span class="lab">Diet</span><span class="ln"></span></div>
-    <div class="field"><span class="who">{PEOPLE[1]["name"]}</span><span class="lab">Diet</span><span class="ln"></span></div>
+    <div class="field"><span class="who">{PEOPLE[0]["name"]}</span><span class="lab">Plan</span><span class="ln"></span></div>
+    <div class="field"><span class="who">{PEOPLE[1]["name"]}</span><span class="lab">Plan</span><span class="ln"></span></div>
     <div class="field"><span class="who"></span><span class="lab">Day 1</span><span class="ln"></span></div>
     <div class="field"><span class="who"></span><span class="lab">Day 75</span><span class="ln"></span></div>
   </div>
@@ -234,19 +237,18 @@ def block(first):
 
 
 def footer():
-    tally = "".join('<div class="tb"></div>' for _ in range(6))
     return """
 <div class="foot">
-  <div class="big">Miss anything &rarr; <em>back to Day 1</em></div>
-  <div class="sub">Not a rest day, not a half day, not "I will double up tomorrow."
-    The whole point of the challenge is that the rule does not bend — and a tick you
-    did not earn makes the whole sheet worthless.</div>
+  <div class="big">Miss a day &rarr; <em>pick it up tomorrow</em></div>
+  <div class="sub">No restart. 75 Soft is built to be finished rather than survived —
+    seventy-five days of consistency, not an unbroken chain you are frightened of
+    breaking. A tick you did not earn still makes the sheet worthless, though.</div>
   <div class="tally">
-    <span class="lab">Restarts</span>
-    <div class="row2"><span class="t">{a}</span>{tally}</div>
-    <div class="row2"><span class="t">{b}</span>{tally}</div>
+    <span class="lab">Days done</span>
+    <div class="row2"><span class="t">{a}</span><div class="dn"></div><span class="of">/ 75</span></div>
+    <div class="row2"><span class="t">{b}</span><div class="dn"></div><span class="of">/ 75</span></div>
   </div>
-</div>""".format(tally=tally, a=PEOPLE[0]["name"], b=PEOPLE[1]["name"])
+</div>""".format(a=PEOPLE[0]["name"], b=PEOPLE[1]["name"])
 
 
 PAGE = """<!doctype html><html lang="en"><head><meta charset="utf-8">
