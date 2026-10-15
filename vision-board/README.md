@@ -202,7 +202,7 @@ whatever has already come in.
 | | Line | Amount |
 |---|---|---|
 | 01 | Tithe — twenty percent, off the top | **R16 000** |
-| 02 | R&D, plus the flight back | **R13 000** |
+| 02 | RD, plus the flight back | **R13 000** |
 | 03 | Savings | **R20 000** |
 | 04 | Investments | **R20 000** |
 | 05 | CPT — flights and accommodation | **R5 000** |
