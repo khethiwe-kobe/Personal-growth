@@ -69,6 +69,7 @@ up with the cards already pasted on the canvas. The reprints so far:
 |---|---|---|
 | `print/03-reprint-C3-C4-C5-C7-C10-*.pdf` | C3, C4, C5, C7, C10 | Serentia, the warm CRC sheets, the new finances, and a stale figure on C10 |
 | `print/05-reprint-C6-C8-4am-*.pdf` | C6, C8 | Intercession moved from 3am to 4am |
+| `print/06-C7-finances-*.pdf` | C7 | The $5,000 bonus allocated line by line |
 
 ---
 
@@ -196,18 +197,19 @@ The run-rate is deliberately not fixed on the card: the actionable is to put
 *(R100K − actual) ÷ days left* on the board each morning, so the number stays true
 whatever has already come in.
 
-**Finances (C7)** — three months to close the year: October, November, December.
+**Finances (C7)** — the $5,000 bonus, ≈ **R80 000**, allocated before it lands:
 
-| Line | Amount |
-|---|---|
-| October bonus | **R32 000** |
-| Savings & investment, in by 31 December | **R20 000** |
-| R&D & entertainment | **R15 000** |
-| Property investment | Long term — deposit fund open |
+| | Line | Amount |
+|---|---|---|
+| 01 | Tithe — twenty percent, off the top | **R16 000** |
+| 02 | R&D, plus the flight back | **R13 000** |
+| 03 | Savings | **R20 000** |
+| 04 | Investments | **R20 000** |
+| 05 | CPT — flights and accommodation | **R5 000** |
+| | **To live on** | **R6 000** |
 
-The two allocations come to **R35 000** against a **R32 000** bonus, so the card shows
-the last R3 000 coming from monthly income. Change the split in `build.py` → `C7` if
-you'd rather it balanced exactly.
+The five lines come to R74 000, so the last **R6 000** is shown as the living
+allowance rather than left unaccounted. Change any line in `build.py` → `C7`.
 
 **Social (C9)**
 
