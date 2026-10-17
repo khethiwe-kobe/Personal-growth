@@ -155,7 +155,8 @@ export function createOrderFromPlan(planId: number, opts: { delivery_date: strin
   const full = getPlanFull(planId);
   if (!full) throw new Error("Plan not found");
   const client = getClientFull(full.plan.client_id)!;
-  const deliveryFee = getSettingNumber("delivery_cost_per_order");
+  const deliveryAddress = client.client.delivery_address || client.client.address;
+  const deliveryFee = /soho junction/i.test(deliveryAddress) ? 0 : getSettingNumber("delivery_cost_per_order");
   const peopleServed = client.prefs?.people_served ?? 1;
   const id = db.transaction(() => {
     const subtotal = full.items.reduce((s, i) => s + i.meal.price * peopleServed, 0);
@@ -164,7 +165,7 @@ export function createOrderFromPlan(planId: number, opts: { delivery_date: strin
     const r = db.prepare(
       `INSERT INTO orders (order_number, client_id, meal_plan_id, subscription_id, package_id, location_id, status, delivery_date, delivery_address, people_served, subtotal_zar, discount_zar, delivery_fee_zar, total_zar)
        VALUES (?, ?, ?, ?, ?, ?, 'awaiting_payment', ?, ?, ?, ?, ?, ?, ?)`
-    ).run(nextOrderNumber(), full.plan.client_id, planId, opts.subscription_id ?? null, opts.package_id ?? null, client.client.location_id, opts.delivery_date, client.client.delivery_address || client.client.address, peopleServed, r2(subtotal), discount, deliveryFee, r2(total));
+    ).run(nextOrderNumber(), full.plan.client_id, planId, opts.subscription_id ?? null, opts.package_id ?? null, client.client.location_id, opts.delivery_date, deliveryAddress, peopleServed, r2(subtotal), discount, deliveryFee, r2(total));
     const orderId = Number(r.lastInsertRowid);
     const ins = db.prepare("INSERT INTO order_items (order_id, meal_id, meal_number, day_index, slot, quantity, portion_multiplier, unit_price_zar, unit_cost_zar) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
     full.items.forEach((it, i) => ins.run(orderId, it.meal_id, i + 1, it.day_index, it.slot, peopleServed, it.portion_multiplier, it.meal.price, it.meal.cost));
