@@ -1,4 +1,4 @@
-import { getDb } from "./db";
+import { getDb, EPHEMERAL_DEMO } from "./db";
 import crypto from "crypto";
 import { cookies } from "next/headers";
 import { cache } from "react";
@@ -26,12 +26,42 @@ function tokenHash(token: string): string {
   return crypto.createHash("sha256").update(token).digest("hex");
 }
 
+/**
+ * Demo-only signed tokens. On the ephemeral demo every serverless instance has
+ * its own database, so a session row written by one instance is missing on the
+ * next and the visitor bounces back to the login page. A signed token carries
+ * the user id and expiry itself; the seed is deterministic, so ids match on
+ * every instance. The demo logins are public, so a fallback secret exposes
+ * nothing that signing in does not. Never used with a persistent database.
+ */
+const DEMO_SECRET = process.env.MEALPREP_SESSION_SECRET || "mealprep-ephemeral-demo";
+
+function demoSign(payload: string): string {
+  return crypto.createHmac("sha256", DEMO_SECRET).update(payload).digest("hex");
+}
+
+function demoToken(userId: number, expires: Date): string {
+  const payload = `${userId}.${expires.getTime()}`;
+  return `d.${payload}.${demoSign(payload)}`;
+}
+
+function demoUserId(token: string): number | null {
+  const [prefix, id, exp, sig] = token.split(".");
+  if (prefix !== "d" || !id || !exp || !sig) return null;
+  const expected = demoSign(`${id}.${exp}`);
+  if (sig.length !== expected.length || !crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected))) return null;
+  if (Number(exp) < Date.now()) return null;
+  return Number(id);
+}
+
 export async function createSession(userId: number): Promise<void> {
-  const token = crypto.randomBytes(32).toString("hex");
   const expires = new Date(Date.now() + SESSION_DAYS * 86400_000);
-  getDb()
-    .prepare("INSERT INTO sessions (token_hash, user_id, expires_at) VALUES (?, ?, ?)")
-    .run(tokenHash(token), userId, expires.toISOString());
+  const token = EPHEMERAL_DEMO ? demoToken(userId, expires) : crypto.randomBytes(32).toString("hex");
+  if (!EPHEMERAL_DEMO) {
+    getDb()
+      .prepare("INSERT INTO sessions (token_hash, user_id, expires_at) VALUES (?, ?, ?)")
+      .run(tokenHash(token), userId, expires.toISOString());
+  }
   getDb().prepare("UPDATE users SET last_login_at = datetime('now') WHERE id = ?").run(userId);
   const jar = await cookies();
   jar.set(COOKIE, token, {
@@ -54,6 +84,19 @@ export const getSessionUser = cache(async (): Promise<SessionUser | null> => {
   const jar = await cookies();
   const token = jar.get(COOKIE)?.value;
   if (!token) return null;
+  if (EPHEMERAL_DEMO) {
+    const id = demoUserId(token);
+    if (id === null) return null;
+    const u = getDb()
+      .prepare(
+        `SELECT u.id, u.email, u.name, u.role, u.is_active,
+                (SELECT c.id FROM clients c WHERE c.user_id = u.id LIMIT 1) AS client_id
+           FROM users u WHERE u.id = ?`
+      )
+      .get(id) as (SessionUser & { is_active: number }) | undefined;
+    if (!u || !u.is_active) return null;
+    return { id: u.id, email: u.email, name: u.name, role: u.role, client_id: u.client_id ?? null };
+  }
   const row = getDb()
     .prepare(
       `SELECT u.id, u.email, u.name, u.role, u.is_active, s.expires_at,
