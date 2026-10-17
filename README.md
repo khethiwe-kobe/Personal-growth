@@ -9,7 +9,14 @@ analytics, and a rule-based Companion that encourages you from your own data.
 
 Built with Next.js, TypeScript and Tailwind CSS.
 
-> **New:** the `rd-coach/` directory contains **RD Coach** — a separate app that acts as a
+> **New:** the `mealprep/` directory contains **MealPrep OS** — a complete
+> command centre for a premium personalised meal-prep business (CRM, nutrition
+> analysis, recommendation engine, weekly planner, recipes, grocery purchasing,
+> inventory, suppliers, kitchen production, QR labels, deliveries, subscriptions,
+> payments, pricing, finance, analytics, automation and a client portal).
+> See `mealprep/README.md`.
+
+> The `rd-coach/` directory contains **RD Coach** — a separate app that acts as a
 > personal strength and conditioning coach for RD preparation (assessment interview,
 > strengths and weaknesses, a periodised programme, daily sessions, post-session reports and
 > progress tracking) with a shared JHB team feed and scoreboard, powered by Gemini. See `rd-coach/README.md`.
