@@ -19,6 +19,12 @@ const DB_PATH =
   process.env.MEALPREP_DB_PATH || (SERVERLESS ? "/tmp/mealprep.db" : path.join(process.cwd(), "data", "mealprep.db"));
 const AUTO_SEED = process.env.MEALPREP_AUTO_SEED === "1" || (SERVERLESS && process.env.MEALPREP_AUTO_SEED !== "0");
 
+/**
+ * True when each serverless instance keeps its own throwaway demo database in
+ * /tmp. Instances do not share data, so sessions cannot live in the database.
+ */
+export const EPHEMERAL_DEMO = SERVERLESS && AUTO_SEED && !process.env.MEALPREP_DB_PATH;
+
 let db: Database.Database | null = null;
 
 export function getDb(): Database.Database {
