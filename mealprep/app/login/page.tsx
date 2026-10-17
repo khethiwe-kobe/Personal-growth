@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getSessionUser } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { getSetting, getDb } from "@/lib/db";
@@ -13,7 +14,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   return (
     <div className="min-h-screen grid lg:grid-cols-2">
       <div className="hidden lg:flex flex-col justify-between p-12 bg-ink text-bone">
-        <div className="font-display text-2xl">{await getSetting("brand_name")}</div>
+        <Link href="/" className="font-display text-2xl">{await getSetting("brand_name")}</Link>
         <div>
           <div className="font-display text-5xl leading-tight max-w-md">{await getSetting("tagline")}</div>
           <p className="mt-6 text-bone/70 max-w-md text-sm">Client data → nutrition analysis → personalised plans → recipes → grocery → inventory → production → packaging → delivery → feedback → retention → revenue → intelligence. One connected system.</p>
@@ -39,6 +40,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
             </div>
           )}
           <a href="/onboard" className="btn-secondary w-full">New client? Start your assessment</a>
+          <Link href="/" className="block text-center text-xs text-ink-3 hover:text-ink">← Back to the website</Link>
         </form>
       </div>
     </div>

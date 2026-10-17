@@ -274,6 +274,13 @@ export const DEFAULT_SETTINGS: Record<string, string> = {
   target_margin_premium: "0.65",
   kitchen_capacity_meals_per_day: "200",
   consent_version: "2026-01",
+  // Public website (shown on the marketing pages; edit under Settings → Website)
+  site_city: "Johannesburg",
+  site_delivery_areas: "Rosebank, Sandton, Melville, Parkhurst, Bryanston, Greenside, Fourways, Randburg",
+  site_delivery_days: "Sunday and Wednesday",
+  site_order_cutoff: "Thursday 12:00 for the week ahead",
+  site_contact_email: "",
+  site_contact_phone: "",
   disclaimer:
     "Nutrition figures are estimates based on recognised equations and ingredient data. They are general guidance, not medical advice, and do not replace a registered dietitian or doctor.",
 };

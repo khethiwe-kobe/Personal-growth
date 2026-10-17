@@ -67,6 +67,19 @@ compliance checklists) and creates the owner account. No SQL to run by hand.
 Without `DATABASE_URL`, each Vercel instance runs its own in-memory demo that
 resets on a cold start: fine for showing the product, not for real data.
 
+### Public website
+
+`/` is the business's public website, built on the same data as the system:
+home, `/menu` (filterable, with per-meal nutrition and allergen pages),
+`/plans`, `/how-it-works` and `/contact`. Prices, plans, the "most popular"
+badge, meal ratings and reviews all come from live meals, packages,
+subscriptions and client feedback. Cost and margin are never shown. Contact
+enquiries arrive in the CRM as leads (source `website`) with a notification for
+the owner and planners. City, delivery areas and days, order cut-off and contact
+details are under **Settings → Website**. Set `MEALPREP_PUBLIC_URL` so
+`sitemap.xml` and `robots.txt` use the real domain. Only the marketing pages
+can be indexed.
+
 New clients self-onboard at `/onboard` (10 steps, consent, portal password);
 staff can run the same flow for a client.
 
