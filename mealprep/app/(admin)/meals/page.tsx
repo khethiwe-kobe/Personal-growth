@@ -9,8 +9,8 @@ import { prettyTag } from "@/lib/recommend";
 export default async function MealsPage({ searchParams }: { searchParams: Promise<{ category?: string; q?: string; tag?: string }> }) {
   await requirePermission("meals:view");
   const { category, q, tag } = await searchParams;
-  const rows = listMeals(false);
-  const profiles = new Map(mealProfiles().map((m) => [m.id, m]));
+  const rows = await listMeals(false);
+  const profiles = new Map((await mealProfiles()).map((m) => [m.id, m]));
   const filtered = rows.filter((m) => (!category || m.category === category) && (!q || m.name.toLowerCase().includes(q.toLowerCase())) && (!tag || (profiles.get(m.id)?.dietary_tags ?? []).includes(tag)));
   return (
     <div>

@@ -18,7 +18,7 @@ const COLUMNS: { key: string; label: string; statuses: string[] }[] = [
 export default async function Orders({ searchParams }: { searchParams: Promise<{ view?: string; status?: string; q?: string; from?: string; to?: string }> }) {
   await requirePermission("orders:view");
   const { view = "board", status, q, from, to } = await searchParams;
-  const rows = listOrders({ status, q, from, to });
+  const rows = await listOrders({ status, q, from, to });
   return (
     <div>
       <PageHeader kicker="Operations" title="Orders" actions={<><Link href="/orders?view=board" className={`btn-secondary btn-sm ${view === "board" ? "!bg-ink !text-white" : ""}`}>Board</Link><Link href="/orders?view=table" className={`btn-secondary btn-sm ${view === "table" ? "!bg-ink !text-white" : ""}`}>Table</Link><Link href="/api/export/orders" className="btn-secondary btn-sm">CSV</Link></>}>Orders are created from approved meal plans. Payment moves them into production; production and delivery update them automatically.</PageHeader>

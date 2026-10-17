@@ -8,8 +8,8 @@ import { formatQty } from "@/lib/grocery";
 export default async function Recipes({ searchParams }: { searchParams: Promise<{ meal?: string }> }) {
   const user = await requireClient();
   const { meal } = await searchParams;
-  const mine = getDb().prepare("SELECT DISTINCT oi.meal_id FROM order_items oi JOIN orders o ON o.id = oi.order_id WHERE o.client_id = ? UNION SELECT DISTINCT i.meal_id FROM meal_plan_items i JOIN meal_plans p ON p.id = i.plan_id WHERE p.client_id = ?").all(user.client_id, user.client_id) as { meal_id: number }[];
-  const meals = mine.map((m) => getMealFull(m.meal_id)).filter(Boolean) as NonNullable<ReturnType<typeof getMealFull>>[];
+  const mine = await getDb().prepare("SELECT DISTINCT oi.meal_id FROM order_items oi JOIN orders o ON o.id = oi.order_id WHERE o.client_id = ? UNION SELECT DISTINCT i.meal_id FROM meal_plan_items i JOIN meal_plans p ON p.id = i.plan_id WHERE p.client_id = ?").all(user.client_id, user.client_id) as { meal_id: number }[];
+  const meals = (await Promise.all(mine.map((m) => getMealFull(m.meal_id)))).filter(Boolean) as NonNullable<Awaited<ReturnType<typeof getMealFull>>>[];
   const sel = meal ? meals.find((m) => m.meal.id === Number(meal)) : meals[0];
   return (
     <div className="grid md:grid-cols-[240px_1fr] gap-4">

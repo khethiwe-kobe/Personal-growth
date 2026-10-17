@@ -17,13 +17,13 @@ export default async function PlanPage({ params, searchParams }: { params: Promi
   const user = await requirePermission("plans:view");
   const { id } = await params;
   const { tab = "plan" } = await searchParams;
-  const full = getPlanFull(Number(id));
+  const full = await getPlanFull(Number(id));
   if (!full) notFound();
   const { plan, items, audits, totals, suggestions, slots, client, targets } = full;
   const editable = can(user, "plans:edit") && ["draft", "proposed", "approved"].includes(plan.status);
-  const meals = mealProfiles(plan.client_id);
-  const grocery = groceryForPlan(plan.id);
-  const subs = listSubscriptions(plan.client_id).filter((s) => s.status === "active");
+  const meals = await mealProfiles(plan.client_id);
+  const grocery = await groceryForPlan(plan.id);
+  const subs = (await listSubscriptions(plan.client_id)).filter((s) => s.status === "active");
 
   return (
     <div>
@@ -98,7 +98,7 @@ export default async function PlanPage({ params, searchParams }: { params: Promi
             <form action={createOrderAction} className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
               <input type="hidden" name="plan_id" value={plan.id} />
               <Field label="Delivery date"><input name="delivery_date" type="date" defaultValue={shiftDays(plan.week_start, -1)} className="input" required /></Field>
-              <Field label="Package (optional)"><select name="package_id" className="input"><option value="">None</option>{listPackages().map((p) => <option key={p.id} value={p.id}>{p.name} · {p.meals_per_week} meals</option>)}</select></Field>
+              <Field label="Package (optional)"><select name="package_id" className="input"><option value="">None</option>{(await listPackages()).map((p) => <option key={p.id} value={p.id}>{p.name} · {p.meals_per_week} meals</option>)}</select></Field>
               <Field label="Subscription (optional)"><select name="subscription_id" className="input"><option value="">None</option>{subs.map((s) => <option key={s.id} value={s.id}>#{s.id} {s.meals_per_week}/wk {s.frequency}</option>)}</select></Field>
               <Field label="Discount (R)"><input name="discount_zar" type="number" defaultValue={0} className="input" /></Field>
               <div className="sm:col-span-2 lg:col-span-4 text-sm text-ink-2">Plan price {formatZar(totals.price)} + delivery fee. {plan.status !== "approved" && <span className="text-amber-800">The plan is not yet approved by the client; you can still create the order (e.g. phone approval).</span>}</div>

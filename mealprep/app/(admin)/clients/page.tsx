@@ -6,7 +6,7 @@ import { PageHeader, Card, StatusBadge, fmtDate, Empty } from "@/components/ui";
 export default async function Clients({ searchParams }: { searchParams: Promise<{ status?: string; q?: string }> }) {
   await requirePermission("clients:view");
   const { status, q } = await searchParams;
-  const rows = listClients({ status, q });
+  const rows = await listClients({ status, q });
   return (
     <div>
       <PageHeader kicker="CRM" title="Clients" actions={<Link href="/onboard" className="btn-primary">Onboard a client</Link>}>{rows.length} clients{status ? ` · ${status}` : ""}</PageHeader>

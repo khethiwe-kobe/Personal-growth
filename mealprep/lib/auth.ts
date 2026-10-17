@@ -58,11 +58,11 @@ export async function createSession(userId: number): Promise<void> {
   const expires = new Date(Date.now() + SESSION_DAYS * 86400_000);
   const token = EPHEMERAL_DEMO ? demoToken(userId, expires) : crypto.randomBytes(32).toString("hex");
   if (!EPHEMERAL_DEMO) {
-    getDb()
+    await getDb()
       .prepare("INSERT INTO sessions (token_hash, user_id, expires_at) VALUES (?, ?, ?)")
       .run(tokenHash(token), userId, expires.toISOString());
   }
-  getDb().prepare("UPDATE users SET last_login_at = datetime('now') WHERE id = ?").run(userId);
+  await getDb().prepare("UPDATE users SET last_login_at = now_text() WHERE id = ?").run(userId);
   const jar = await cookies();
   jar.set(COOKIE, token, {
     httpOnly: true,
@@ -76,7 +76,7 @@ export async function createSession(userId: number): Promise<void> {
 export async function destroySession(): Promise<void> {
   const jar = await cookies();
   const token = jar.get(COOKIE)?.value;
-  if (token) getDb().prepare("DELETE FROM sessions WHERE token_hash = ?").run(tokenHash(token));
+  if (token) await getDb().prepare("DELETE FROM sessions WHERE token_hash = ?").run(tokenHash(token));
   jar.delete(COOKIE);
 }
 
@@ -87,7 +87,7 @@ export const getSessionUser = cache(async (): Promise<SessionUser | null> => {
   if (EPHEMERAL_DEMO) {
     const id = demoUserId(token);
     if (id === null) return null;
-    const u = getDb()
+    const u = await getDb()
       .prepare(
         `SELECT u.id, u.email, u.name, u.role, u.is_active,
                 (SELECT c.id FROM clients c WHERE c.user_id = u.id LIMIT 1) AS client_id
@@ -97,7 +97,7 @@ export const getSessionUser = cache(async (): Promise<SessionUser | null> => {
     if (!u || !u.is_active) return null;
     return { id: u.id, email: u.email, name: u.name, role: u.role, client_id: u.client_id ?? null };
   }
-  const row = getDb()
+  const row = await getDb()
     .prepare(
       `SELECT u.id, u.email, u.name, u.role, u.is_active, s.expires_at,
               (SELECT c.id FROM clients c WHERE c.user_id = u.id LIMIT 1) AS client_id
@@ -109,14 +109,14 @@ export const getSessionUser = cache(async (): Promise<SessionUser | null> => {
     | undefined;
   if (!row || !row.is_active) return null;
   if (new Date(row.expires_at) < new Date()) {
-    getDb().prepare("DELETE FROM sessions WHERE token_hash = ?").run(tokenHash(token));
+    await getDb().prepare("DELETE FROM sessions WHERE token_hash = ?").run(tokenHash(token));
     return null;
   }
   return { id: row.id, email: row.email, name: row.name, role: row.role, client_id: row.client_id ?? null };
 });
 
-export function authenticate(email: string, password: string): UserRow | null {
-  const row = getDb().prepare("SELECT * FROM users WHERE email = ? AND is_active = 1").get(email) as UserRow | undefined;
+export async function authenticate(email: string, password: string): Promise<UserRow | null> {
+  const row = await getDb().prepare("SELECT * FROM users WHERE lower(email) = lower(?) AND is_active = 1").get(email) as UserRow | undefined;
   if (!row) return null;
   return verifyPassword(password, row.password_hash) ? row : null;
 }

@@ -20,13 +20,13 @@ export type ClientFull = {
   reviews: { id: number; reviewer_name: string; reviewer_role: string; outcome: string; notes: string; reviewed_at: string | null; created_at: string }[];
 };
 
-export function listClients(opts: { status?: string; q?: string } = {}): (ClientRow & { orders: number; last_order: string | null; review_flag: number })[] {
+export async function listClients(opts: { status?: string; q?: string } = {}): Promise<(ClientRow & { orders: number; last_order: string | null; review_flag: number })[]> {
   const db = getDb();
   const where: string[] = ["c.anonymised_at IS NULL"];
   const params: unknown[] = [];
   if (opts.status) { where.push("c.status = ?"); params.push(opts.status); }
-  if (opts.q) { where.push("(c.first_name LIKE ? OR c.last_name LIKE ? OR c.email LIKE ?)"); params.push(`%${opts.q}%`, `%${opts.q}%`, `%${opts.q}%`); }
-  return db
+  if (opts.q) { where.push("(c.first_name ILIKE ? OR c.last_name ILIKE ? OR c.email ILIKE ?)"); params.push(`%${opts.q}%`, `%${opts.q}%`, `%${opts.q}%`); }
+  return await db
     .prepare(
       `SELECT c.*, (SELECT COUNT(*) FROM orders o WHERE o.client_id = c.id AND o.status != 'cancelled') AS orders,
               (SELECT MAX(o.delivery_date) FROM orders o WHERE o.client_id = c.id) AS last_order,
@@ -36,29 +36,29 @@ export function listClients(opts: { status?: string; q?: string } = {}): (Client
     .all(...params) as (ClientRow & { orders: number; last_order: string | null; review_flag: number })[];
 }
 
-export function getClient(id: number): ClientRow | null {
-  return (getDb().prepare("SELECT * FROM clients WHERE id = ?").get(id) as ClientRow | undefined) ?? null;
+export async function getClient(id: number): Promise<ClientRow | null> {
+  return (await getDb().prepare("SELECT * FROM clients WHERE id = ?").get(id) as ClientRow | undefined) ?? null;
 }
 
-export function getClientFull(id: number): ClientFull | null {
+export async function getClientFull(id: number): Promise<ClientFull | null> {
   const db = getDb();
-  const client = getClient(id);
+  const client = await getClient(id);
   if (!client) return null;
-  const health = (db.prepare("SELECT * FROM client_health_profiles WHERE client_id = ?").get(id) as HealthProfileRow | undefined) ?? null;
-  const prefs = (db.prepare("SELECT * FROM client_preferences WHERE client_id = ?").get(id) as PreferencesRow | undefined) ?? null;
-  const allergies = db.prepare("SELECT * FROM client_allergies WHERE client_id = ? ORDER BY kind, allergen").all(id) as AllergyRow[];
-  const goals = db.prepare("SELECT * FROM client_goals WHERE client_id = ? ORDER BY is_primary DESC, created_at").all(id) as GoalRow[];
-  const targets = (db.prepare("SELECT * FROM client_nutrition_targets WHERE client_id = ?").get(id) as TargetsRow | undefined) ?? null;
-  const reviews = db.prepare("SELECT * FROM professional_reviews WHERE client_id = ? ORDER BY created_at DESC").all(id) as ClientFull["reviews"];
+  const health = (await db.prepare("SELECT * FROM client_health_profiles WHERE client_id = ?").get(id) as HealthProfileRow | undefined) ?? null;
+  const prefs = (await db.prepare("SELECT * FROM client_preferences WHERE client_id = ?").get(id) as PreferencesRow | undefined) ?? null;
+  const allergies = await db.prepare("SELECT * FROM client_allergies WHERE client_id = ? ORDER BY kind, allergen").all(id) as AllergyRow[];
+  const goals = await db.prepare("SELECT * FROM client_goals WHERE client_id = ? ORDER BY is_primary DESC, created_at").all(id) as GoalRow[];
+  const targets = (await db.prepare("SELECT * FROM client_nutrition_targets WHERE client_id = ?").get(id) as TargetsRow | undefined) ?? null;
+  const reviews = await db.prepare("SELECT * FROM professional_reviews WHERE client_id = ? ORDER BY created_at DESC").all(id) as ClientFull["reviews"];
   const primaryGoal = goals.find((g) => g.is_primary)?.goal_type ?? goals[0]?.goal_type ?? "balanced";
   const computed = computeTargets(profileInputFromRows(client, health, primaryGoal, allergies, prefs?.meals_per_day ?? 3, !!(prefs?.include_snacks ?? 1)));
   return { client, health, prefs, allergies, goals, targets, computed, reviews };
 }
 
-export function recomputeTargets(clientId: number): NutritionTargets {
-  const full = getClientFull(clientId);
+export async function recomputeTargets(clientId: number): Promise<NutritionTargets> {
+  const full = await getClientFull(clientId);
   if (!full) throw new Error("Client not found");
-  writeTargets(getDb(), clientId, full.computed);
+  await writeTargets(getDb(), clientId, full.computed);
   return full.computed;
 }
 
@@ -80,25 +80,25 @@ export type OnboardingData = {
   created_by?: number | null;
 };
 
-export function createClientFromOnboarding(d: OnboardingData): number {
+export async function createClientFromOnboarding(d: OnboardingData): Promise<number> {
   const db = getDb();
-  const tx = db.transaction(() => {
+  const tx = db.transaction(async () => {
     let userId: number | null = null;
     if (d.password && d.email) {
-      const existing = db.prepare("SELECT id FROM users WHERE email = ?").get(d.email) as { id: number } | undefined;
+      const existing = await db.prepare("SELECT id FROM users WHERE lower(email) = lower(?)").get(d.email) as { id: number } | undefined;
       if (existing) throw new Error("An account with this email already exists.");
-      const r = db.prepare("INSERT INTO users (email, password_hash, name, role, phone) VALUES (?, ?, ?, 'client', ?)")
+      const r = await db.prepare("INSERT INTO users (email, password_hash, name, role, phone) VALUES (?, ?, ?, 'client', ?)")
         .run(d.email, hashPassword(d.password), `${d.first_name} ${d.last_name}`.trim(), d.phone);
       userId = Number(r.lastInsertRowid);
     }
-    const r = db
+    const r = await db
       .prepare(
         `INSERT INTO clients (user_id, first_name, last_name, email, phone, date_of_birth, gender, address, delivery_address, delivery_notes, emergency_contact, status, source)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'onboarding', ?)`
       )
       .run(userId, d.first_name, d.last_name, d.email, d.phone, d.date_of_birth || null, d.gender, d.address, d.delivery_address || d.address, d.delivery_notes, d.emergency_contact, d.source);
     const clientId = Number(r.lastInsertRowid);
-    db.prepare(
+    await db.prepare(
       `INSERT INTO client_health_profiles (client_id, height_cm, weight_kg, target_weight_kg, activity_level, fitness_level, blood_type, training_schedule, lifestyle,
          sleep_hours, water_litres, stress_level, is_pregnant, is_breastfeeding, medical_conditions, medications, eating_disorder_history, medically_restricted_diet, other_notes)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
@@ -107,7 +107,7 @@ export function createClientFromOnboarding(d: OnboardingData): number {
       d.sleep_hours, d.water_litres, d.stress_level, d.is_pregnant ? 1 : 0, d.is_breastfeeding ? 1 : 0, d.medical_conditions, d.medications,
       d.eating_disorder_history ? 1 : 0, d.medically_restricted_diet, d.other_notes
     );
-    db.prepare(
+    await db.prepare(
       `INSERT INTO client_preferences (client_id, dietary_pattern, dietary_tags, cuisines, liked_foods, disliked_foods, meals_per_day, include_snacks, meal_times,
          people_served, cooking_preference, spice_level, budget_per_meal_zar, budget_per_week_zar, preferred_delivery_days)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
@@ -117,129 +117,131 @@ export function createClientFromOnboarding(d: OnboardingData): number {
       d.budget_per_meal_zar, d.budget_per_week_zar, JSON.stringify(d.preferred_delivery_days)
     );
     const insA = db.prepare("INSERT INTO client_allergies (client_id, kind, allergen, severity, notes) VALUES (?, ?, ?, ?, ?)");
-    for (const a of d.allergies) if (a.allergen.trim()) insA.run(clientId, a.kind, a.allergen.trim(), a.severity, a.notes ?? "");
-    db.prepare("INSERT INTO client_goals (client_id, goal_type, description, target_value, target_unit, target_date, is_primary) VALUES (?, ?, ?, ?, ?, ?, 1)")
+    for (const a of d.allergies) if (a.allergen.trim()) await insA.run(clientId, a.kind, a.allergen.trim(), a.severity, a.notes ?? "");
+    await db.prepare("INSERT INTO client_goals (client_id, goal_type, description, target_value, target_unit, target_date, is_primary) VALUES (?, ?, ?, ?, ?, ?, 1)")
       .run(clientId, d.goal_type, d.goal_description, d.goal_target_value, d.goal_target_value ? "kg" : "", d.goal_target_date);
-    if (d.weight_kg) db.prepare("INSERT INTO client_measurements (client_id, measured_at, weight_kg, notes) VALUES (?, date('now'), ?, 'Onboarding')").run(clientId, d.weight_kg);
+    if (d.weight_kg) await db.prepare("INSERT INTO client_measurements (client_id, measured_at, weight_kg, notes) VALUES (?, date_text('now'), ?, 'Onboarding')").run(clientId, d.weight_kg);
     const insC = db.prepare("INSERT INTO client_consents (client_id, consent_type, version, granted) VALUES (?, ?, ?, ?)");
-    for (const [k, v] of Object.entries(d.consents)) insC.run(clientId, k, d.consent_version, v ? 1 : 0);
+    for (const [k, v] of Object.entries(d.consents)) await insC.run(clientId, k, d.consent_version, v ? 1 : 0);
     return clientId;
   });
-  const clientId = tx();
-  const targets = recomputeTargets(clientId);
-  audit(d.created_by ?? null, "create", "client", clientId, "Onboarding submitted");
-  emit("client.created", { client_id: clientId, requires_professional_review: targets.requires_professional_review });
-  emit("assessment.received", { client_id: clientId });
+  const clientId = await tx();
+  const targets = await recomputeTargets(clientId);
+  await audit(d.created_by ?? null, "create", "client", clientId, "Onboarding submitted");
+  await emit("client.created", { client_id: clientId, requires_professional_review: targets.requires_professional_review });
+  await emit("assessment.received", { client_id: clientId });
   return clientId;
 }
 
-export function updateClientSection(clientId: number, table: "clients" | "client_health_profiles" | "client_preferences", fields: Record<string, unknown>, userId: number | null) {
+export async function updateClientSection(clientId: number, table: "clients" | "client_health_profiles" | "client_preferences", fields: Record<string, unknown>, userId: number | null) {
   const db = getDb();
   const keys = Object.keys(fields);
   if (!keys.length) return;
   const set = keys.map((k) => `${k} = ?`).join(", ");
   const idCol = table === "clients" ? "id" : "client_id";
-  const extra = table === "clients" ? "" : ", updated_at = datetime('now')";
-  db.prepare(`UPDATE ${table} SET ${set}${extra} WHERE ${idCol} = ?`).run(...keys.map((k) => fields[k]), clientId);
-  audit(userId, "update", table, clientId, keys.join(","));
-  if (table !== "clients") recomputeTargets(clientId);
+  const extra = table === "clients" ? "" : ", updated_at = now_text()";
+  await db.prepare(`UPDATE ${table} SET ${set}${extra} WHERE ${idCol} = ?`).run(...keys.map((k) => fields[k]), clientId);
+  await audit(userId, "update", table, clientId, keys.join(","));
+  if (table !== "clients") await recomputeTargets(clientId);
 }
 
-export function setAllergies(clientId: number, allergies: { kind: string; allergen: string; severity: string; notes?: string }[], userId: number | null) {
+export async function setAllergies(clientId: number, allergies: { kind: string; allergen: string; severity: string; notes?: string }[], userId: number | null) {
   const db = getDb();
-  db.transaction(() => {
-    db.prepare("DELETE FROM client_allergies WHERE client_id = ?").run(clientId);
+  await db.transaction(async () => {
+    await db.prepare("DELETE FROM client_allergies WHERE client_id = ?").run(clientId);
     const ins = db.prepare("INSERT INTO client_allergies (client_id, kind, allergen, severity, notes) VALUES (?, ?, ?, ?, ?)");
-    for (const a of allergies) if (a.allergen.trim()) ins.run(clientId, a.kind, a.allergen.trim(), a.severity, a.notes ?? "");
+    for (const a of allergies) if (a.allergen.trim()) await ins.run(clientId, a.kind, a.allergen.trim(), a.severity, a.notes ?? "");
   })();
-  audit(userId, "update", "client_allergies", clientId, `${allergies.length} entries`);
-  recomputeTargets(clientId);
+  await audit(userId, "update", "client_allergies", clientId, `${allergies.length} entries`);
+  await recomputeTargets(clientId);
 }
 
-export function setPrimaryGoal(clientId: number, goal: { goal_type: string; description: string; target_value: number | null; target_date: string | null }, userId: number | null) {
+export async function setPrimaryGoal(clientId: number, goal: { goal_type: string; description: string; target_value: number | null; target_date: string | null }, userId: number | null) {
   const db = getDb();
-  db.transaction(() => {
-    db.prepare("UPDATE client_goals SET is_primary = 0 WHERE client_id = ?").run(clientId);
-    db.prepare("INSERT INTO client_goals (client_id, goal_type, description, target_value, target_unit, target_date, is_primary) VALUES (?, ?, ?, ?, 'kg', ?, 1)")
+  await db.transaction(async () => {
+    await db.prepare("UPDATE client_goals SET is_primary = 0 WHERE client_id = ?").run(clientId);
+    await db.prepare("INSERT INTO client_goals (client_id, goal_type, description, target_value, target_unit, target_date, is_primary) VALUES (?, ?, ?, ?, 'kg', ?, 1)")
       .run(clientId, goal.goal_type, goal.description, goal.target_value, goal.target_date);
   })();
-  audit(userId, "update", "client_goals", clientId, goal.goal_type);
-  recomputeTargets(clientId);
+  await audit(userId, "update", "client_goals", clientId, goal.goal_type);
+  await recomputeTargets(clientId);
 }
 
-export function recordProfessionalReview(clientId: number, r: { reviewer_name: string; reviewer_role: string; outcome: string; notes: string }, userId: number | null) {
-  getDb().prepare("INSERT INTO professional_reviews (client_id, reviewer_name, reviewer_role, outcome, notes, reviewed_at) VALUES (?, ?, ?, ?, ?, datetime('now'))")
+export async function recordProfessionalReview(clientId: number, r: { reviewer_name: string; reviewer_role: string; outcome: string; notes: string }, userId: number | null) {
+  await getDb().prepare("INSERT INTO professional_reviews (client_id, reviewer_name, reviewer_role, outcome, notes, reviewed_at) VALUES (?, ?, ?, ?, ?, now_text())")
     .run(clientId, r.reviewer_name, r.reviewer_role, r.outcome, r.notes);
-  audit(userId, "review", "client", clientId, r.outcome);
+  await audit(userId, "review", "client", clientId, r.outcome);
 }
 
-export function hasApprovedReview(clientId: number): boolean {
-  const row = getDb().prepare("SELECT COUNT(*) AS n FROM professional_reviews WHERE client_id = ? AND outcome IN ('approved','approved_with_limits')").get(clientId) as { n: number };
+export async function hasApprovedReview(clientId: number): Promise<boolean> {
+  const row = await getDb().prepare("SELECT COUNT(*) AS n FROM professional_reviews WHERE client_id = ? AND outcome IN ('approved','approved_with_limits')").get(clientId) as { n: number };
   return row.n > 0;
 }
 
 export type TimelineEvent = { at: string; kind: string; title: string; detail: string; link?: string };
 
-export function clientTimeline(clientId: number): TimelineEvent[] {
+export async function clientTimeline(clientId: number): Promise<TimelineEvent[]> {
   const db = getDb();
   const ev: TimelineEvent[] = [];
-  const c = getClient(clientId);
+  const c = await getClient(clientId);
   if (!c) return ev;
   ev.push({ at: c.registered_at, kind: "registration", title: "Registered", detail: c.source ? `Source: ${c.source}` : "" });
-  const hp = db.prepare("SELECT updated_at FROM client_health_profiles WHERE client_id = ?").get(clientId) as { updated_at: string } | undefined;
+  const hp = await db.prepare("SELECT updated_at FROM client_health_profiles WHERE client_id = ?").get(clientId) as { updated_at: string } | undefined;
   if (hp) ev.push({ at: hp.updated_at, kind: "assessment", title: "Health assessment", detail: "Profile captured / updated" });
-  for (const r of db.prepare("SELECT * FROM professional_reviews WHERE client_id = ?").all(clientId) as { created_at: string; outcome: string; reviewer_name: string }[])
+  for (const r of await db.prepare("SELECT * FROM professional_reviews WHERE client_id = ?").all(clientId) as { created_at: string; outcome: string; reviewer_name: string }[])
     ev.push({ at: r.created_at, kind: "review", title: `Professional review: ${r.outcome}`, detail: r.reviewer_name });
-  for (const p of db.prepare("SELECT id, week_start, status, created_at FROM meal_plans WHERE client_id = ?").all(clientId) as { id: number; week_start: string; status: string; created_at: string }[])
+  for (const p of await db.prepare("SELECT id, week_start, status, created_at FROM meal_plans WHERE client_id = ?").all(clientId) as { id: number; week_start: string; status: string; created_at: string }[])
     ev.push({ at: p.created_at, kind: "plan", title: `Meal plan — week of ${p.week_start}`, detail: p.status, link: `/meal-plans/${p.id}` });
-  for (const o of db.prepare("SELECT id, order_number, status, total_zar, delivery_date, created_at FROM orders WHERE client_id = ?").all(clientId) as { id: number; order_number: string; status: string; total_zar: number; delivery_date: string; created_at: string }[])
+  for (const o of await db.prepare("SELECT id, order_number, status, total_zar, delivery_date, created_at FROM orders WHERE client_id = ?").all(clientId) as { id: number; order_number: string; status: string; total_zar: number; delivery_date: string; created_at: string }[])
     ev.push({ at: o.created_at, kind: "order", title: `Order ${o.order_number}`, detail: `${o.status} · R${o.total_zar.toFixed(0)} · delivery ${o.delivery_date}`, link: `/orders/${o.id}` });
-  for (const p of db.prepare("SELECT amount_zar, method, paid_at FROM payments WHERE client_id = ?").all(clientId) as { amount_zar: number; method: string; paid_at: string }[])
+  for (const p of await db.prepare("SELECT amount_zar, method, paid_at FROM payments WHERE client_id = ?").all(clientId) as { amount_zar: number; method: string; paid_at: string }[])
     ev.push({ at: p.paid_at, kind: "payment", title: `Payment R${p.amount_zar.toFixed(0)}`, detail: p.method });
-  for (const d of db.prepare("SELECT delivery_date, status, delivered_at FROM deliveries WHERE client_id = ?").all(clientId) as { delivery_date: string; status: string; delivered_at: string | null }[])
+  for (const d of await db.prepare("SELECT delivery_date, status, delivered_at FROM deliveries WHERE client_id = ?").all(clientId) as { delivery_date: string; status: string; delivered_at: string | null }[])
     ev.push({ at: d.delivered_at ?? d.delivery_date, kind: "delivery", title: `Delivery ${d.status}`, detail: d.delivery_date });
-  for (const f of db.prepare("SELECT overall, comment, created_at FROM feedback WHERE client_id = ?").all(clientId) as { overall: number | null; comment: string; created_at: string }[])
+  for (const f of await db.prepare("SELECT overall, comment, created_at FROM feedback WHERE client_id = ?").all(clientId) as { overall: number | null; comment: string; created_at: string }[])
     ev.push({ at: f.created_at, kind: "feedback", title: `Feedback ${f.overall ?? "—"}/5`, detail: f.comment });
-  for (const m of db.prepare("SELECT measured_at, weight_kg FROM client_measurements WHERE client_id = ?").all(clientId) as { measured_at: string; weight_kg: number | null }[])
+  for (const m of await db.prepare("SELECT measured_at, weight_kg FROM client_measurements WHERE client_id = ?").all(clientId) as { measured_at: string; weight_kg: number | null }[])
     ev.push({ at: m.measured_at, kind: "measurement", title: `Weight ${m.weight_kg ?? "—"} kg`, detail: "" });
-  for (const s of db.prepare("SELECT s.created_at, s.status, s.meals_per_week, s.frequency FROM subscriptions s WHERE client_id = ?").all(clientId) as { created_at: string; status: string; meals_per_week: number; frequency: string }[])
+  for (const s of await db.prepare("SELECT s.created_at, s.status, s.meals_per_week, s.frequency FROM subscriptions s WHERE client_id = ?").all(clientId) as { created_at: string; status: string; meals_per_week: number; frequency: string }[])
     ev.push({ at: s.created_at, kind: "subscription", title: `Subscription ${s.meals_per_week} meals/${s.frequency}`, detail: s.status });
-  for (const m of db.prepare("SELECT channel, template, created_at, status FROM communications WHERE client_id = ?").all(clientId) as { channel: string; template: string; created_at: string; status: string }[])
+  for (const m of await db.prepare("SELECT channel, template, created_at, status FROM communications WHERE client_id = ?").all(clientId) as { channel: string; template: string; created_at: string; status: string }[])
     ev.push({ at: m.created_at, kind: "communication", title: `${m.channel}: ${m.template.replace(/_/g, " ")}`, detail: m.status });
   return ev.sort((a, b) => (a.at < b.at ? 1 : -1));
 }
 
-export function listProgress(clientId: number): ProgressRow[] {
-  return getDb().prepare("SELECT * FROM client_progress WHERE client_id = ? ORDER BY logged_at").all(clientId) as ProgressRow[];
+export async function listProgress(clientId: number): Promise<ProgressRow[]> {
+  return await getDb().prepare("SELECT * FROM client_progress WHERE client_id = ? ORDER BY logged_at").all(clientId) as ProgressRow[];
 }
 
-export function addProgress(clientId: number, p: Omit<ProgressRow, "id" | "client_id">) {
-  getDb().prepare(
+export async function addProgress(clientId: number, p: Omit<ProgressRow, "id" | "client_id">) {
+  await getDb().prepare(
     "INSERT INTO client_progress (client_id, logged_at, weight_kg, waist_cm, adherence_pct, energy, satisfaction, water_litres, exercise_minutes, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
   ).run(clientId, p.logged_at, p.weight_kg, p.waist_cm, p.adherence_pct, p.energy, p.satisfaction, p.water_litres, p.exercise_minutes, p.notes);
   if (p.weight_kg) {
-    getDb().prepare("INSERT INTO client_measurements (client_id, measured_at, weight_kg, waist_cm, notes) VALUES (?, ?, ?, ?, 'Progress check-in')").run(clientId, p.logged_at, p.weight_kg, p.waist_cm);
-    getDb().prepare("UPDATE client_health_profiles SET weight_kg = ?, updated_at = datetime('now') WHERE client_id = ?").run(p.weight_kg, clientId);
-    recomputeTargets(clientId);
+    await getDb().prepare("INSERT INTO client_measurements (client_id, measured_at, weight_kg, waist_cm, notes) VALUES (?, ?, ?, ?, 'Progress check-in')").run(clientId, p.logged_at, p.weight_kg, p.waist_cm);
+    await getDb().prepare("UPDATE client_health_profiles SET weight_kg = ?, updated_at = now_text() WHERE client_id = ?").run(p.weight_kg, clientId);
+    await recomputeTargets(clientId);
   }
 }
 
 /** Clients with no delivered order in the last 21 days but at least one before. */
-export function atRiskClients(): (ClientRow & { last_order: string | null })[] {
-  return getDb()
+export async function atRiskClients(): Promise<(ClientRow & { last_order: string | null })[]> {
+  return await getDb()
     .prepare(
-      `SELECT c.*, (SELECT MAX(delivery_date) FROM orders o WHERE o.client_id = c.id AND o.status NOT IN ('cancelled')) AS last_order
-         FROM clients c
-        WHERE c.status = 'active' AND c.anonymised_at IS NULL
-          AND last_order IS NOT NULL AND last_order < date('now', '-21 days')
-          AND NOT EXISTS (SELECT 1 FROM subscriptions s WHERE s.client_id = c.id AND s.status = 'active')
+      `SELECT * FROM (
+         SELECT c.*, (SELECT MAX(delivery_date) FROM orders o WHERE o.client_id = c.id AND o.status NOT IN ('cancelled')) AS last_order
+           FROM clients c
+          WHERE c.status = 'active' AND c.anonymised_at IS NULL
+            AND NOT EXISTS (SELECT 1 FROM subscriptions s WHERE s.client_id = c.id AND s.status = 'active')
+       ) x
+        WHERE last_order IS NOT NULL AND last_order < date_text('now', '-21 days')
         ORDER BY last_order`
     )
     .all() as (ClientRow & { last_order: string | null })[];
 }
 
 /** POPIA: export everything we hold about a client. */
-export function exportClientData(clientId: number): Record<string, unknown> {
+export async function exportClientData(clientId: number): Promise<Record<string, unknown>> {
   const db = getDb();
   const tables = [
     "clients", "client_health_profiles", "client_preferences", "client_allergies", "client_goals", "client_measurements",
@@ -249,7 +251,7 @@ export function exportClientData(clientId: number): Record<string, unknown> {
   const out: Record<string, unknown> = {};
   for (const t of tables) {
     const col = t === "clients" ? "id" : "client_id";
-    out[t] = db.prepare(`SELECT * FROM ${t} WHERE ${col} = ?`).all(clientId).map((r) => {
+    out[t] = (await db.prepare(`SELECT * FROM ${t} WHERE ${col} = ?`).all(clientId)).map((r) => {
       const row = r as Record<string, unknown>;
       delete row.photo_blob; delete row.proof_blob;
       return row;
@@ -259,26 +261,26 @@ export function exportClientData(clientId: number): Record<string, unknown> {
 }
 
 /** POPIA: anonymise personal data while keeping financial records intact. */
-export function anonymiseClient(clientId: number, userId: number | null) {
+export async function anonymiseClient(clientId: number, userId: number | null) {
   const db = getDb();
-  db.transaction(() => {
-    const c = getClient(clientId);
+  await db.transaction(async () => {
+    const c = await getClient(clientId);
     if (!c) return;
-    db.prepare(
+    await db.prepare(
       `UPDATE clients SET first_name = 'Deleted', last_name = 'Client', email = '', phone = '', date_of_birth = NULL, address = '', delivery_address = '',
-         delivery_notes = '', emergency_contact = '', photo_blob = NULL, photo_mime = NULL, notes = '', status = 'churned', anonymised_at = datetime('now'), user_id = NULL WHERE id = ?`
+         delivery_notes = '', emergency_contact = '', photo_blob = NULL, photo_mime = NULL, notes = '', status = 'churned', anonymised_at = now_text(), user_id = NULL WHERE id = ?`
     ).run(clientId);
-    db.prepare("DELETE FROM client_health_profiles WHERE client_id = ?").run(clientId);
-    db.prepare("DELETE FROM client_preferences WHERE client_id = ?").run(clientId);
-    db.prepare("DELETE FROM client_allergies WHERE client_id = ?").run(clientId);
-    db.prepare("DELETE FROM client_measurements WHERE client_id = ?").run(clientId);
-    db.prepare("DELETE FROM client_nutrition_targets WHERE client_id = ?").run(clientId);
-    db.prepare("DELETE FROM client_progress WHERE client_id = ?").run(clientId);
-    db.prepare("DELETE FROM communications WHERE client_id = ?").run(clientId);
-    db.prepare("UPDATE deliveries SET address = '', proof_blob = NULL, proof_note = '' WHERE client_id = ?").run(clientId);
-    if (c.user_id) db.prepare("UPDATE users SET is_active = 0, email = 'deleted-' || id || '@anonymised.local', name = 'Deleted client' WHERE id = ?").run(c.user_id);
+    await db.prepare("DELETE FROM client_health_profiles WHERE client_id = ?").run(clientId);
+    await db.prepare("DELETE FROM client_preferences WHERE client_id = ?").run(clientId);
+    await db.prepare("DELETE FROM client_allergies WHERE client_id = ?").run(clientId);
+    await db.prepare("DELETE FROM client_measurements WHERE client_id = ?").run(clientId);
+    await db.prepare("DELETE FROM client_nutrition_targets WHERE client_id = ?").run(clientId);
+    await db.prepare("DELETE FROM client_progress WHERE client_id = ?").run(clientId);
+    await db.prepare("DELETE FROM communications WHERE client_id = ?").run(clientId);
+    await db.prepare("UPDATE deliveries SET address = '', proof_blob = NULL, proof_note = '' WHERE client_id = ?").run(clientId);
+    if (c.user_id) await db.prepare("UPDATE users SET is_active = 0, email = 'deleted-' || id || '@anonymised.local', name = 'Deleted client' WHERE id = ?").run(c.user_id);
   })();
-  audit(userId, "anonymise", "client", clientId, "POPIA deletion request");
+  await audit(userId, "anonymise", "client", clientId, "POPIA deletion request");
 }
 
 export function clientPrefsParsed(prefs: PreferencesRow | null) {

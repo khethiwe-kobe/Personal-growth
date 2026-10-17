@@ -1,6 +1,6 @@
 # Database design
 
-Authoritative DDL: `lib/schema.ts` (exported as a string so serverless bundles include it) (SQLite dialect, portable to Postgres). Every
+Authoritative DDL: `lib/schema.ts` (Postgres, exported as a string so serverless bundles include it). Every
 table the brief suggested exists, plus the ones needed to keep facts single-sourced.
 
 ## Entity map
@@ -59,9 +59,12 @@ marketing_campaigns, startup_cost_items, compliance_items, automation_events
 - **meal_plans**: draft → proposed → approved → ordered | archived.
 - **subscriptions**: active ⇄ paused → cancelled | expired.
 
-## Moving to Postgres
+## Postgres notes
 
-1. Replace `INTEGER PRIMARY KEY AUTOINCREMENT` with `BIGSERIAL`, `datetime('now')` with `now()`, `date('now', '-7 days')` with interval arithmetic (all such expressions are in `lib/repo/*` and `lib/finance.ts`).
-2. `json_extract` → `->>`.
-3. Swap `better-sqlite3` for `pg` in `lib/db.ts`; the repo layer's prepared statements are plain SQL strings.
-4. Add `business_id` to every table for multi-tenant SaaS.
+- **Connection**: `lib/db.ts` uses `pg` with `DATABASE_URL` (Neon in production) and falls back to PGlite, an in-process Postgres, when it is not set. Both run the same SQL.
+- **Migrations**: on the first query of each process the schema in `lib/schema.ts` is applied when `schema_meta.version` is behind `SCHEMA_VERSION`, inside one transaction guarded by a transaction-scoped advisory lock (safe behind Neon's pooler). Bump `SCHEMA_VERSION` with every schema change; statements must stay idempotent (`IF NOT EXISTS`, `CREATE OR REPLACE`).
+- **Dates** stay ISO-8601 text in UTC. `now_text()`, `date_text(x, modifiers…)` and `datetime_text(x, modifiers…)` return the same formats and accept modifiers such as `'-7 days'`, `'+1 month'` and `'start of month'`.
+- **Placeholders**: queries use `?`; `lib/db.ts` rewrites them to `$1, $2, …`. INSERTs into tables with an identity `id` return it as `lastInsertRowid`.
+- **Transactions** use AsyncLocalStorage, so helpers called inside `db.transaction(...)` share its connection; nested calls become savepoints.
+- **Seeding** (`lib/seed-core.ts`) builds rows in memory and writes them with multi-row INSERTs, so a fresh database fills in about a second even over the network.
+- **Multi-tenant SaaS**: add `business_id` to every table.

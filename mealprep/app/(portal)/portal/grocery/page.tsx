@@ -6,8 +6,8 @@ import { INGREDIENT_CATEGORY_LABELS } from "@/lib/types";
 
 export default async function Grocery() {
   const user = await requireClient();
-  const plan = listPlans(user.client_id).filter((p) => p.status !== "draft")[0];
-  const lines = plan ? groceryForPlan(plan.id) : [];
+  const plan = (await listPlans(user.client_id)).filter((p) => p.status !== "draft")[0];
+  const lines = plan ? await groceryForPlan(plan.id) : [];
   return (
     <div className="space-y-4">
       <h1 className="text-3xl">My grocery list</h1>

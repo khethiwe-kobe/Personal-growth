@@ -9,10 +9,10 @@ import { fmtDate } from "@/components/ui";
 export default async function Settings({ searchParams }: { searchParams: Promise<{ edit?: string }> }) {
   await requirePermission("settings:edit");
   const { edit } = await searchParams;
-  const s = getAllSettings();
-  const users = getDb().prepare("SELECT id, email, name, role, phone, is_active, last_login_at FROM users WHERE role != 'client' ORDER BY role, name").all() as { id: number; email: string; name: string; role: string; phone: string; is_active: number; last_login_at: string | null }[];
+  const s = await getAllSettings();
+  const users = await getDb().prepare("SELECT id, email, name, role, phone, is_active, last_login_at FROM users WHERE role != 'client' ORDER BY role, name").all() as { id: number; email: string; name: string; role: string; phone: string; is_active: number; last_login_at: string | null }[];
   const editing = edit ? users.find((u) => u.id === Number(edit)) : undefined;
-  const locations = getDb().prepare("SELECT * FROM locations").all() as { id: number; name: string; address: string; capacity_meals_per_day: number }[];
+  const locations = await getDb().prepare("SELECT * FROM locations").all() as { id: number; name: string; address: string; capacity_meals_per_day: number }[];
   return (
     <div>
       <PageHeader kicker="Administration" title="Settings">Brand, defaults, staff accounts and role permissions.</PageHeader>

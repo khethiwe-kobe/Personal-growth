@@ -7,7 +7,7 @@ import Link from "next/link";
 
 export default async function Profile() {
   const user = await requireClient();
-  const f = getClientFull(user.client_id)!;
+  const f = (await getClientFull(user.client_id))!;
   const p = clientPrefsParsed(f.prefs);
   const goal = f.goals.find((g) => g.is_primary);
   return (

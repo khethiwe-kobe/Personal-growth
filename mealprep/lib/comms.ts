@@ -26,13 +26,13 @@ export function render(template: string, vars: Record<string, string>): string {
   return template.replace(/\{\{(\w+)\}\}/g, (_, k) => vars[k] ?? "");
 }
 
-export function queueMessage(clientId: number, key: TemplateKey, vars: Record<string, string> = {}): number | null {
+export async function queueMessage(clientId: number, key: TemplateKey, vars: Record<string, string> = {}): Promise<number | null> {
   const db = getDb();
-  const c = db.prepare("SELECT first_name, email, phone FROM clients WHERE id = ?").get(clientId) as { first_name: string; email: string; phone: string } | undefined;
+  const c = await db.prepare("SELECT first_name, email, phone FROM clients WHERE id = ?").get(clientId) as { first_name: string; email: string; phone: string } | undefined;
   if (!c) return null;
   const t = TEMPLATES[key];
-  const all = { brand: getSetting("brand_name"), first_name: c.first_name, ...vars };
-  const r = db.prepare("INSERT INTO communications (client_id, channel, template, subject, body, status) VALUES (?, ?, ?, ?, ?, 'queued')")
+  const all = { brand: await getSetting("brand_name"), first_name: c.first_name, ...vars };
+  const r = await db.prepare("INSERT INTO communications (client_id, channel, template, subject, body, status) VALUES (?, ?, ?, ?, ?, 'queued')")
     .run(clientId, t.channel, key, render(t.subject, all), render(t.body, all));
   return Number(r.lastInsertRowid);
 }
@@ -44,14 +44,14 @@ export const ADAPTERS: Record<"whatsapp" | "email" | "sms", (to: string, subject
   sms: async () => ({ ok: false, ref: "not-configured" }),
 };
 
-export function listQueued(limit = 200) {
-  return getDb().prepare(
+export async function listQueued(limit = 200) {
+  return await getDb().prepare(
     `SELECT m.*, c.first_name, c.last_name FROM communications m LEFT JOIN clients c ON c.id = m.client_id ORDER BY m.id DESC LIMIT ?`
   ).all(limit) as { id: number; client_id: number; channel: string; template: string; subject: string; body: string; status: string; created_at: string; sent_at: string | null; first_name: string; last_name: string }[];
 }
 
-export function markSent(id: number, status: "sent" | "failed" | "skipped", ref = "") {
-  getDb().prepare("UPDATE communications SET status = ?, provider_ref = ?, sent_at = datetime('now') WHERE id = ?").run(status, ref, id);
+export async function markSent(id: number, status: "sent" | "failed" | "skipped", ref = "") {
+  await getDb().prepare("UPDATE communications SET status = ?, provider_ref = ?, sent_at = now_text() WHERE id = ?").run(status, ref, id);
 }
 
 export const INTEGRATION_POINTS = [

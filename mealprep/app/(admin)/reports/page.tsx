@@ -9,8 +9,8 @@ const R = ({ title, desc, links }: { title: string; desc: string; links: { label
 
 export default async function Reports() {
   await requirePermission("analytics:view");
-  const clients = listClients().slice(0, 50);
-  const plans = listPlans().slice(0, 30);
+  const clients = (await listClients()).slice(0, 50);
+  const plans = (await listPlans()).slice(0, 30);
   const d = todayIso();
   return (
     <div>

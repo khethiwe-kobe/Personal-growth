@@ -9,8 +9,8 @@ import { shiftDays, todayIso } from "@/lib/finance";
 export default async function NewPlan({ searchParams }: { searchParams: Promise<{ client?: string }> }) {
   await requirePermission("plans:edit");
   const { client } = await searchParams;
-  const clients = listClients();
-  const selected = client ? getClientFull(Number(client)) : null;
+  const clients = await listClients();
+  const selected = client ? await getClientFull(Number(client)) : null;
   const nextMonday = mondayOf(shiftDays(todayIso(), 7));
   return (
     <div className="max-w-3xl">

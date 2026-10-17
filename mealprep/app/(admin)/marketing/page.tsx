@@ -11,11 +11,11 @@ const CHANNELS = ["instagram", "tiktok", "facebook", "whatsapp", "email", "googl
 export default async function Marketing({ searchParams }: { searchParams: Promise<{ edit?: string }> }) {
   const user = await requirePermission("marketing:view");
   const { edit } = await searchParams;
-  const rows = getDb().prepare("SELECT * FROM marketing_campaigns ORDER BY start_date DESC").all() as { id: number; name: string; channel: string; start_date: string; end_date: string | null; spend_zar: number; leads: number; conversions: number; orders: number; revenue_zar: number; status: string; notes: string }[];
+  const rows = await getDb().prepare("SELECT * FROM marketing_campaigns ORDER BY start_date DESC").all() as { id: number; name: string; channel: string; start_date: string; end_date: string | null; spend_zar: number; leads: number; conversions: number; orders: number; revenue_zar: number; status: string; notes: string }[];
   const editing = edit ? rows.find((r) => r.id === Number(edit)) : undefined;
   const spend = rows.reduce((s, r) => s + r.spend_zar, 0), leads = rows.reduce((s, r) => s + r.leads, 0), conv = rows.reduce((s, r) => s + r.conversions, 0), rev = rows.reduce((s, r) => s + r.revenue_zar, 0);
   const byChannel = CHANNELS.map((c) => ({ c, spend: rows.filter((r) => r.channel === c).reduce((s, r) => s + r.spend_zar, 0), revenue: rows.filter((r) => r.channel === c).reduce((s, r) => s + r.revenue_zar, 0) })).filter((x) => x.spend || x.revenue);
-  const sources = getDb().prepare("SELECT source, COUNT(*) AS n FROM clients WHERE source != '' GROUP BY source ORDER BY n DESC").all() as { source: string; n: number }[];
+  const sources = await getDb().prepare("SELECT source, COUNT(*) AS n FROM clients WHERE source != '' GROUP BY source ORDER BY n DESC").all() as { source: string; n: number }[];
   return (
     <div>
       <PageHeader kicker="Growth" title="Marketing">Campaigns across Instagram, TikTok, Facebook, WhatsApp, email and Google with leads, conversions, orders, revenue and ROI.</PageHeader>

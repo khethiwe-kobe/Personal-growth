@@ -5,7 +5,7 @@ import { saveComplianceAction } from "@/app/actions";
 
 export default async function Compliance() {
   const user = await requirePermission("compliance:view");
-  const rows = getDb().prepare("SELECT * FROM compliance_items ORDER BY sort_order").all() as { id: number; area: string; requirement: string; guidance: string; status: string; evidence: string; reviewed_at: string | null }[];
+  const rows = await getDb().prepare("SELECT * FROM compliance_items ORDER BY sort_order").all() as { id: number; area: string; requirement: string; guidance: string; status: string; evidence: string; reviewed_at: string | null }[];
   const done = rows.filter((r) => r.status === "done").length;
   return (
     <div>

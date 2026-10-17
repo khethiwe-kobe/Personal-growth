@@ -6,8 +6,8 @@ import Link from "next/link";
 export default async function Notifications() {
   const user = await requireUser();
   const db = getDb();
-  const rows = db.prepare("SELECT * FROM notifications WHERE user_id = ? ORDER BY id DESC LIMIT 100").all(user.id) as { id: number; title: string; body: string; link: string; read_at: string | null; created_at: string }[];
-  db.prepare("UPDATE notifications SET read_at = datetime('now') WHERE user_id = ? AND read_at IS NULL").run(user.id);
+  const rows = await db.prepare("SELECT * FROM notifications WHERE user_id = ? ORDER BY id DESC LIMIT 100").all(user.id) as { id: number; title: string; body: string; link: string; read_at: string | null; created_at: string }[];
+  await db.prepare("UPDATE notifications SET read_at = now_text() WHERE user_id = ? AND read_at IS NULL").run(user.id);
   return (
     <div className="max-w-3xl mx-auto p-6">
       <PageHeader title="Notifications" actions={<Link href={user.role === "client" ? "/portal" : "/dashboard"} className="btn-secondary btn-sm">Back</Link>} />

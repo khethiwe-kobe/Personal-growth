@@ -1,6 +1,5 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "nextjs",
-  "regions": ["cpt1"],
-  "env": { "MEALPREP_AUTO_SEED": "1" }
+  "regions": ["fra1"]
 }

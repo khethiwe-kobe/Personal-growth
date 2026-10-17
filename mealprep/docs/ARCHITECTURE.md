@@ -74,7 +74,7 @@ Next.js 16 (App Router, React 19, Server Components + Server Actions)
 ├── app/            routes (admin shell, client portal, public onboarding, QR meal page, CSV/export APIs)
 ├── components/     UI kit (cards, stat tiles, charts, kanban, tables, badges, modal forms)
 ├── lib/
-│   ├── db.ts       SQLite (better-sqlite3) + idempotent migrations
+│   ├── db.ts       Postgres (pg → Neon; PGlite in-process fallback) + versioned migrations
 │   ├── auth.ts     scrypt passwords, opaque sessions, RBAC permission matrix
 │   ├── repo/*.ts   data access per aggregate (clients, meals, orders, inventory, …)
 │   ├── nutrition.ts    Mifflin-St Jeor, activity multipliers, goal-adjusted ranges, warnings
@@ -93,18 +93,18 @@ Next.js 16 (App Router, React 19, Server Components + Server Actions)
 └── tests/              node:test unit tests for every engine
 ```
 
-**Why SQLite now, Postgres later.** The repo's sibling apps use SQLite and it
-is zero-ops for a 10–100 client business. The schema uses only portable SQL
-(integer PKs, ISO-8601 text dates, JSON in TEXT) so a move to Postgres (e.g.
-Supabase) is a connection-string change plus `lib/db.ts`. All data access is
-behind `lib/repo`, so the swap does not touch UI code.
+**Postgres everywhere.** Production runs on Neon Postgres, one shared,
+persistent database for every serverless instance. Local development and
+connection-less previews run the same SQL on PGlite, an in-process Postgres,
+so there is one dialect and nothing to install. All data access is behind
+`lib/repo`, so the UI never touches the driver.
 
 **Scaling narrative.**
 
 | Clients | What changes |
 |---|---|
-| 10 | Single Next.js process, SQLite, one admin. Everything in this repo works as-is. |
-| 100 | Same code. Postgres instead of SQLite; background jobs (`automation.ts` queue) moved to a worker; object storage for photos; WhatsApp/email adapters wired to real providers. |
+| 10 | Vercel + Neon free tiers, one admin. Everything in this repo works as-is. |
+| 100 | Same code and database. Background jobs (`automation.ts` queue) moved to a worker; object storage for photos; WhatsApp/email adapters wired to real providers. |
 | 1,000 | Multi-tenant (`business_id`), read replicas for analytics, production split by kitchen/location (`locations` table is already in the schema), route optimisation service, data warehouse export for BI. Domain modules are already separated so they can become services. |
 
 ## 4. Database schema

@@ -1,14 +1,93 @@
-import type Database from "better-sqlite3";
+import type { Db } from "./db";
+import { ID_TABLES } from "./schema";
 import { hashPassword } from "./password";
 import { computeTargets, profileInputFromRows } from "./nutrition";
-import { writeTargets } from "./targets";
-import type { ClientRow, HealthProfileRow, AllergyRow, PreferencesRow } from "./types";
+import { targetsRow } from "./targets";
+import type { ClientRow, HealthProfileRow, AllergyRow } from "./types";
 import { STARTUP_COST_DEFAULTS, COMPLIANCE_DEFAULTS } from "./business";
 
 /**
- * Demo business seed. Deterministic (seeded PRNG) so the demo looks the same
- * on every machine. All demo users are flagged is_demo = 1.
+ * Seed data. The starter catalogue (ingredients, suppliers, meals and recipes,
+ * packages, startup-cost and compliance checklists) fills any new database.
+ * The demo business (staff and client logins with public passwords, three
+ * months of orders) is added only in demo mode. Deterministic (seeded PRNG) so
+ * the demo looks the same on every machine and every serverless instance. All
+ * demo users are flagged is_demo = 1.
+ *
+ * Rows are collected in memory with pre-assigned ids and written with a few
+ * multi-row INSERTs, so seeding takes seconds even over a network connection.
  */
+type Row = Record<string, unknown>;
+
+class Recorder {
+  readonly tables = new Map<string, Row[]>();
+  private nextId = new Map<string, number>();
+  private byId = new Map<string, Map<number, Row>>();
+
+  insert(table: string, row: Row): number {
+    if (!this.tables.has(table)) this.tables.set(table, []);
+    let id = 0;
+    if (ID_TABLES.has(table)) {
+      id = this.nextId.get(table) ?? 1;
+      this.nextId.set(table, id + 1);
+      row = { id, ...row };
+      if (!this.byId.has(table)) this.byId.set(table, new Map());
+      this.byId.get(table)!.set(id, row);
+    }
+    this.tables.get(table)!.push(row);
+    return id;
+  }
+
+  row(table: string, id: number): Row {
+    return this.byId.get(table)!.get(id)!;
+  }
+
+  /** Minimal better-sqlite3-style statement for `INSERT INTO t (cols) VALUES (?, 'x', 1, NULL)`. */
+  prepare(sql: string) {
+    const m = /^\s*INSERT INTO (\w+) \(([^)]*)\) VALUES \((.*)\)\s*$/s.exec(sql);
+    if (!m) throw new Error(`Seed recorder only supports simple INSERTs: ${sql}`);
+    const [, table, colList, valueList] = m;
+    const cols = colList.split(",").map((c) => c.trim());
+    const values = valueList.split(",").map((v) => v.trim());
+    return {
+      run: (...params: unknown[]) => {
+        let n = 0;
+        const row: Row = {};
+        cols.forEach((c, i) => {
+          const v = values[i];
+          row[c] = v === "?" ? params[n++] : v === "NULL" ? null : v.startsWith("'") ? v.slice(1, -1) : Number(v);
+        });
+        return { lastInsertRowid: this.insert(table, row) };
+      },
+    };
+  }
+
+  async flush(db: Db) {
+    for (const [table, rows] of this.tables) {
+      const groups = new Map<string, Row[]>();
+      for (const r of rows) {
+        const key = Object.keys(r).join(",");
+        if (!groups.has(key)) groups.set(key, []);
+        groups.get(key)!.push(r);
+      }
+      for (const [key, group] of groups) {
+        const cols = key.split(",");
+        const per = Math.max(1, Math.floor(20000 / cols.length));
+        for (let i = 0; i < group.length; i += per) {
+          const chunk = group.slice(i, i + per);
+          const tuple = `(${cols.map(() => "?").join(", ")})`;
+          await db.prepare(`INSERT INTO ${table} (${key}) VALUES ${chunk.map(() => tuple).join(", ")}`)
+            .run(...chunk.flatMap((r) => cols.map((c) => r[c] ?? null)));
+        }
+      }
+    }
+    const seeded = [...this.tables.keys()].filter((t) => ID_TABLES.has(t));
+    if (seeded.length) {
+      await db.exec(seeded.map((t) => `SELECT setval(pg_get_serial_sequence('${t}', 'id'), (SELECT MAX(id) FROM ${t}));`).join("\n"));
+    }
+  }
+}
+
 let seedState = 42;
 function rnd(): number { seedState = (seedState * 1103515245 + 12345) & 0x7fffffff; return seedState / 0x7fffffff; }
 function pick<T>(arr: T[]): T { return arr[Math.floor(rnd() * arr.length)]; }
@@ -177,14 +256,15 @@ const FIRST = ["Thandiwe", "Sipho", "Megan", "Lerato", "Jason", "Naledi", "Piete
 const LAST = ["Mokoena", "Ndlovu", "van der Merwe", "Dlamini", "Smith", "Khumalo", "Botha", "Patel", "Molefe", "Williams", "Zulu", "Nkosi", "Pretorius", "Naidoo"];
 const SUBURBS = ["Rosebank, Johannesburg", "Sandton, Johannesburg", "Melville, Johannesburg", "Parkhurst, Johannesburg", "Bryanston, Johannesburg", "Greenside, Johannesburg", "Fourways, Johannesburg", "Randburg, Johannesburg"];
 
-export function seed(db: Database.Database, opts: { verbose?: boolean } = {}) {
+function seed(db: Recorder, opts: { demo: boolean; verbose?: boolean }) {
   const log = (s: string) => { if (opts.verbose) console.log(s); };
   const today = daysAgo(0);
+  seedState = 42;
 
   // ---- users (one per role)
   const users: Record<string, number> = {};
   const insUser = db.prepare("INSERT INTO users (email, password_hash, name, role, phone, is_demo) VALUES (?, ?, ?, ?, ?, 1)");
-  for (const [email, name, role] of [
+  if (opts.demo) for (const [email, name, role] of [
     ["owner@demo.local", "Khethiwe Kobe", "admin"], ["planner@demo.local", "Naledi Sithole", "planner"], ["kitchen@demo.local", "Chef Thabo Mahlangu", "kitchen"],
     ["packaging@demo.local", "Lindiwe Zwane", "packaging"], ["driver@demo.local", "Sam Jacobs", "delivery"], ["accounts@demo.local", "Riaan de Wet", "accounting"],
   ]) users[role] = Number(insUser.run(email, hashPassword(`${role}-demo`), name, role, "+27 82 000 0000").lastInsertRowid);
@@ -256,6 +336,14 @@ export function seed(db: Database.Database, opts: { verbose?: boolean } = {}) {
   pkg.complete = Number(insPkg.run("COMPLETE", "Complete", "21 meals per week — breakfast, lunch and dinner.", 21, 1750, 0, 4).lastInsertRowid);
   pkg.family = Number(insPkg.run("FAMILY", "Family", "Custom number of meals, multiple portions per meal.", 14, 2300, 1, 5).lastInsertRowid);
   pkg.premium = Number(insPkg.run("PREMIUM", "Premium Custom", "Fully personalised planning and preparation with planner check-ins.", 21, 2450, 1, 6).lastInsertRowid);
+  const pkgRow = (id: number) => db.row("packages", id) as { id: number; meals_per_week: number; price_zar: number };
+
+  // ---- startup costs & compliance checklists
+  const insSC = db.prepare("INSERT INTO startup_cost_items (category, description, estimate_zar, actual_zar, is_recurring, sort_order) VALUES (?, ?, ?, ?, ?, ?)");
+  STARTUP_COST_DEFAULTS.forEach((s, i) => insSC.run(s.category, s.description, s.estimate, opts.demo && rnd() < 0.5 ? Math.round(s.estimate * between(0.85, 1.2)) : null, s.recurring ? 1 : 0, i));
+  const insCI = db.prepare("INSERT INTO compliance_items (area, requirement, guidance, status, sort_order) VALUES (?, ?, ?, ?, ?)");
+  COMPLIANCE_DEFAULTS.forEach((c, i) => insCI.run(c.area, c.requirement, c.guidance, opts.demo ? pick(["done", "in_progress", "todo", "done"]) : "todo", i));
+  if (!opts.demo) { log("catalogue"); return; }
 
   // ---- inventory lots
   const insLot = db.prepare("INSERT INTO inventory_lots (ingredient_id, supplier_id, batch_number, quantity_received, quantity_remaining, unit_cost, received_at, expiry_date, storage_location) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
@@ -268,7 +356,7 @@ export function seed(db: Database.Database, opts: { verbose?: boolean } = {}) {
     const received = daysAgo(Math.round(between(1, 6)));
     const lotId = Number(insLot.run(id, supIds[["vegetables", "fruit", "herbs_spices"].includes(i[1]) ? 0 : ["meat", "poultry"].includes(i[1]) ? 1 : i[1] === "fish" ? 3 : 2], `B${lotN++}`, Math.round(qty), Math.round(qty), i[11], iso(received), iso(addDays(received, expiryDays)), i[13] === "frozen" ? "Freezer" : i[13] === "ambient" ? "Dry store" : "Walk-in fridge").lastInsertRowid);
     insTx.run(lotId, id, "purchase", Math.round(qty), `B${lotN}`, users.kitchen, iso(received));
-    if (rnd() < 0.25) { const w = Math.round(qty * between(0.02, 0.08)); db.prepare("UPDATE inventory_lots SET quantity_remaining = quantity_remaining - ? WHERE id = ?").run(w, lotId); insTx.run(lotId, id, "waste", -w, pick(["Spoiled", "Trim loss", "Dropped", "Past best-before"]), users.kitchen, iso(daysAgo(Math.round(between(0, 20))))); }
+    if (rnd() < 0.25) { const w = Math.round(qty * between(0.02, 0.08)); (db.row("inventory_lots", lotId).quantity_remaining as number) -= w; insTx.run(lotId, id, "waste", -w, pick(["Spoiled", "Trim loss", "Dropped", "Past best-before"]), users.kitchen, iso(daysAgo(Math.round(between(0, 20))))); }
   }
   log("inventory");
 
@@ -333,7 +421,7 @@ export function seed(db: Database.Database, opts: { verbose?: boolean } = {}) {
   const subByClient = new Map<number, number>();
   profiles.forEach((p, idx) => {
     if (!p.sub) return;
-    const pk = db.prepare("SELECT * FROM packages WHERE id = ?").get(pkg[p.sub]) as { id: number; meals_per_week: number; price_zar: number };
+    const pk = pkgRow(pkg[p.sub]);
     const freq = pick(["weekly", "weekly", "biweekly", "monthly"]);
     const start = iso(daysAgo(Math.round(between(20, 80))));
     const renewal = iso(addDays(today, Math.round(between(-1, 12))));
@@ -371,7 +459,7 @@ export function seed(db: Database.Database, opts: { verbose?: boolean } = {}) {
     const weeksBack = p.status === "churned" ? [12, 11, 10, 9] : [10, 9, 8, 7, 6];
     const cadence = p.sub ? 1 : 2;
     const slots: string[] = []; if (p.mpd >= 3) slots.push("breakfast", "lunch"); else if (p.mpd === 2) slots.push("lunch"); if (p.snacks) slots.push("snack"); slots.push("dinner");
-    const mealsPerWeekLimit = p.sub ? (db.prepare("SELECT meals_per_week FROM packages WHERE id = ?").get(pkg[p.sub]) as { meals_per_week: number }).meals_per_week : 10;
+    const mealsPerWeekLimit = p.sub ? pkgRow(pkg[p.sub]).meals_per_week : 10;
     const weeks = p.status === "active" ? [-1, ...Array(13).keys()] : weeksBack;
     const dayOffset = [0, 1, 3, 4][idx % 4]; // Mon / Tue / Thu / Fri delivery
     for (const k of weeks) {
@@ -420,7 +508,7 @@ export function seed(db: Database.Database, opts: { verbose?: boolean } = {}) {
       else if (daysUntil <= 1) { status = pick(["preparing", "packaging", "ready"]); payStatus = "paid"; }
       else if (daysUntil <= 3) { status = pick(["paid", "plan_created", "shopping", "awaiting_payment"]); payStatus = status === "awaiting_payment" ? "unpaid" : "paid"; }
       else { status = pick(["awaiting_payment", "paid", "quote_sent"]); payStatus = status === "paid" ? "paid" : "unpaid"; }
-      const orderId = Number(insOrder.run(`ORD-2026-${String(orderN++).padStart(4, "0")}`, cid, planId, subByClient.get(cid) ?? null, p.sub ? pkg[p.sub] : null, status, iso(deliveryDate), db.prepare("SELECT delivery_address FROM clients WHERE id = ?").pluck().get(cid), people, subtotal, discount, fee, total, payStatus, iso(createdAt), iso(createdAt)).lastInsertRowid);
+      const orderId = Number(insOrder.run(`ORD-2026-${String(orderN++).padStart(4, "0")}`, cid, planId, subByClient.get(cid) ?? null, p.sub ? pkg[p.sub] : null, status, iso(deliveryDate), db.row("clients", cid).delivery_address, people, subtotal, discount, fee, total, payStatus, iso(createdAt), iso(createdAt)).lastInsertRowid);
       insComm.run(cid, "email", "order_confirmation", `Order confirmed`, `Your order totalling R${total} is confirmed.`, "sent", iso(createdAt), iso(createdAt));
       const itemStatus = status === "delivered" || status === "completed" ? "delivered" : ["ready", "out_for_delivery"].includes(status) ? "ready" : ["preparing", "packaging"].includes(status) ? "in_production" : "pending";
       const itemIds: { id: number; meal: number }[] = [];
@@ -435,13 +523,15 @@ export function seed(db: Database.Database, opts: { verbose?: boolean } = {}) {
           const key = `${prodDate}:${it.meal}`;
           let bid = batches.get(key);
           if (!bid) { bid = Number(insBatch.run(prodDate, it.meal, 0, 0, 0, bStatus, bStatus === "not_started" ? null : users.kitchen, bStatus === "not_started" ? null : prodDate + "T06:30:00", ["ready", "delivered"].includes(bStatus) ? prodDate + "T14:00:00" : null).lastInsertRowid); batches.set(key, bid); }
-          db.prepare("UPDATE production_batches SET quantity_required = quantity_required + ?, quantity_done = CASE WHEN status IN ('ready','delivered') THEN quantity_required + ? ELSE quantity_done END WHERE id = ?").run(people, people, bid);
+          const b = db.row("production_batches", bid) as { quantity_required: number; quantity_done: number; status: string };
+          b.quantity_required += people;
+          if (["ready", "delivered"].includes(b.status)) b.quantity_done = b.quantity_required;
           insPI.run(bid, it.id);
           if (["ready", "delivered", "packaging"].includes(bStatus)) insLabel.run(it.id, `${orderId}-${it.id}-${Math.floor(rnd() * 1e6).toString(36)}`, prodDate, iso(addDays(new Date(prodDate + "T00:00:00"), MEALS.find((m) => mealByName.get(m.name) === it.meal)!.shelf)), prodDate + "T13:00:00");
         }
         // delivery
         const dStatus = isToday ? (status === "delivered" ? "delivered" : status === "out_for_delivery" ? "out_for_delivery" : "assigned") : !future ? (rnd() < 0.04 ? "failed" : "delivered") : daysUntil <= 3 ? "assigned" : "pending";
-        insDel.run(orderId, cid, dStatus === "pending" ? null : users.delivery, iso(deliveryDate), pick(["07:00", "08:00", "09:00"]), pick(["11:00", "12:00", "13:00"]), db.prepare("SELECT delivery_address FROM clients WHERE id = ?").pluck().get(cid), dStatus, dStatus === "delivered" ? pick(["photo", "signature", "pin"]) : "", dStatus === "delivered" ? pick(["Left with client", "Handed to security", "Signed by client"]) : "", dStatus === "delivered" ? iso(deliveryDate) + "T09:40:00" : null);
+        insDel.run(orderId, cid, dStatus === "pending" ? null : users.delivery, iso(deliveryDate), pick(["07:00", "08:00", "09:00"]), pick(["11:00", "12:00", "13:00"]), db.row("clients", cid).delivery_address, dStatus, dStatus === "delivered" ? pick(["photo", "signature", "pin"]) : "", dStatus === "delivered" ? pick(["Left with client", "Handed to security", "Signed by client"]) : "", dStatus === "delivered" ? iso(deliveryDate) + "T09:40:00" : null);
         if (dStatus === "delivered") { insComm.run(cid, "whatsapp", "delivered", "Delivered", "Your meals have been delivered.", "sent", iso(deliveryDate), iso(deliveryDate)); insComm.run(cid, "whatsapp", "feedback_request", "How were your meals?", "We'd love your feedback.", "sent", iso(deliveryDate), iso(deliveryDate)); }
         // feedback
         if (dStatus === "delivered" && rnd() < 0.7) {
@@ -456,7 +546,7 @@ export function seed(db: Database.Database, opts: { verbose?: boolean } = {}) {
     }
   });
   // production batch wastage touch-ups
-  for (const bid of batches.values()) if (rnd() < 0.15) db.prepare("UPDATE production_batches SET quantity_wasted = ? WHERE id = ? AND status = 'delivered'").run(1 + Math.floor(rnd() * 2), bid);
+  for (const bid of batches.values()) if (rnd() < 0.15) { const b = db.row("production_batches", bid); const w = 1 + Math.floor(rnd() * 2); if (b.status === "delivered") b.quantity_wasted = w; }
   log("orders");
 
   // ---- expenses (recurring + ad hoc, 4 months)
@@ -484,36 +574,78 @@ export function seed(db: Database.Database, opts: { verbose?: boolean } = {}) {
   insCamp.run("Referral rewards", "whatsapp", iso(daysAgo(60)), null, 900, 21, 9, 24, 19800, "active", "R100 credit per referral");
   insCamp.run("Google search", "google", iso(daysAgo(40)), null, 2200, 29, 4, 6, 4900, "active", "Branded + 'meal prep johannesburg'");
 
-  // ---- startup costs & compliance
-  const insSC = db.prepare("INSERT INTO startup_cost_items (category, description, estimate_zar, actual_zar, is_recurring, sort_order) VALUES (?, ?, ?, ?, ?, ?)");
-  STARTUP_COST_DEFAULTS.forEach((s, i) => insSC.run(s.category, s.description, s.estimate, rnd() < 0.5 ? Math.round(s.estimate * between(0.85, 1.2)) : null, s.recurring ? 1 : 0, i));
-  const insCI = db.prepare("INSERT INTO compliance_items (area, requirement, guidance, status, sort_order) VALUES (?, ?, ?, ?, ?)");
-  COMPLIANCE_DEFAULTS.forEach((c, i) => insCI.run(c.area, c.requirement, c.guidance, pick(["done", "in_progress", "todo", "done"]), i));
-
   // ---- audit log sample
   db.prepare("INSERT INTO audit_log (user_id, action, entity_type, entity_id, details, created_at) VALUES (?, 'seed', 'database', NULL, 'Demo data generated', ?)").run(users.admin, iso(today) + "T07:00:00");
   seedTargets(db);
   log("done");
-  return { users, clientIds, mealIds };
 }
 
-/** Compute and cache nutrition targets for every client (pure: no repo imports). */
-export function seedTargets(db: Database.Database) {
-  const clients = db.prepare("SELECT * FROM clients WHERE anonymised_at IS NULL").all() as ClientRow[];
-  for (const c of clients) {
-    const hp = (db.prepare("SELECT * FROM client_health_profiles WHERE client_id = ?").get(c.id) as HealthProfileRow | undefined) ?? null;
-    const prefs = (db.prepare("SELECT * FROM client_preferences WHERE client_id = ?").get(c.id) as PreferencesRow | undefined) ?? null;
-    const allergies = db.prepare("SELECT * FROM client_allergies WHERE client_id = ?").all(c.id) as AllergyRow[];
-    const goal = (db.prepare("SELECT goal_type FROM client_goals WHERE client_id = ? ORDER BY is_primary DESC LIMIT 1").get(c.id) as { goal_type: string } | undefined)?.goal_type ?? "balanced";
-    writeTargets(db, c.id, computeTargets(profileInputFromRows(c, hp, goal, allergies, prefs?.meals_per_day ?? 3, !!(prefs?.include_snacks ?? 1))));
+/** Compute and cache nutrition targets for every seeded client. */
+function seedTargets(db: Recorder) {
+  const byClient = (table: string, id: number) => (db.tables.get(table) ?? []).filter((r) => r.client_id === id);
+  for (const c of (db.tables.get("clients") ?? []) as unknown as ClientRow[]) {
+    const hp = (byClient("client_health_profiles", c.id)[0] as unknown as HealthProfileRow | undefined) ?? null;
+    const prefs = byClient("client_preferences", c.id)[0] as { meals_per_day?: number; include_snacks?: number } | undefined;
+    const allergies = byClient("client_allergies", c.id) as unknown as AllergyRow[];
+    const goal = (byClient("client_goals", c.id)[0]?.goal_type as string | undefined) ?? "balanced";
+    db.insert("client_nutrition_targets", targetsRow(c.id, computeTargets(profileInputFromRows(c, hp, goal, allergies, prefs?.meals_per_day ?? 3, !!(prefs?.include_snacks ?? 1)))));
   }
 }
 
-export function wipeDemo(db: Database.Database) {
-  const tables = ["audit_log", "automation_events", "communications", "notifications", "client_progress", "feedback", "deliveries", "delivery_routes", "meal_labels",
-    "production_items", "production_batches", "packaging_items", "inventory_transactions", "inventory_lots", "purchase_order_lines", "purchase_orders", "expenses", "payments",
-    "order_items", "orders", "subscription_events", "subscriptions", "packages", "meal_plan_items", "meal_plans", "recipe_ingredients", "recipes", "meals",
-    "supplier_price_history", "supplier_products", "suppliers", "ingredients", "client_consents", "professional_reviews", "client_nutrition_targets", "client_measurements",
-    "client_allergies", "client_preferences", "client_goals", "client_health_profiles", "clients", "marketing_campaigns", "startup_cost_items", "compliance_items", "sessions", "users"];
-  db.transaction(() => { for (const t of tables) db.exec(`DELETE FROM ${t}`); db.exec("DELETE FROM sqlite_sequence"); })();
+async function count(db: Db, table: string): Promise<number> {
+  return ((await db.prepare(`SELECT COUNT(*) AS n FROM ${table}`).get()) as { n: number }).n;
+}
+
+/** Load the full demo business (used by `npm run seed`). Expects empty tables. */
+export async function seedDemo(db: Db, opts: { verbose?: boolean } = {}) {
+  const rec = new Recorder();
+  seed(rec, { demo: true, verbose: opts.verbose });
+  await db.transaction(() => rec.flush(db))();
+  return { clients: rec.tables.get("clients")?.length ?? 0, meals: rec.tables.get("meals")?.length ?? 0 };
+}
+
+/**
+ * Fill a new database. Demo mode loads the demo business when the database is
+ * empty. Otherwise the starter catalogue is added once, and the owner account is
+ * created from MEALPREP_OWNER_EMAIL / MEALPREP_OWNER_PASSWORD when no user exists.
+ */
+export async function bootstrap(db: Db, opts: { demo: boolean }) {
+  if (opts.demo) {
+    if ((await count(db, "users")) === 0 && (await count(db, "ingredients")) === 0) {
+      const rec = new Recorder();
+      seed(rec, { demo: true });
+      await rec.flush(db);
+    }
+    return;
+  }
+  if ((await count(db, "ingredients")) === 0) {
+    const rec = new Recorder();
+    seed(rec, { demo: false });
+    await rec.flush(db);
+  }
+  const owner = ownerFromEnv();
+  if (owner && (await count(db, "users")) === 0) {
+    await db.prepare("INSERT INTO users (email, password_hash, name, role) VALUES (?, ?, ?, 'admin')")
+      .run(owner.email, hashPassword(owner.password), owner.name);
+  }
+}
+
+/** Owner account settings; null when they are missing or the password is too short. */
+export function ownerFromEnv(): { email: string; password: string; name: string } | null {
+  const email = (process.env.MEALPREP_OWNER_EMAIL ?? "").trim().toLowerCase();
+  const password = process.env.MEALPREP_OWNER_PASSWORD ?? "";
+  if (!email.includes("@") || password.length < 8) return null;
+  return { email, password, name: (process.env.MEALPREP_OWNER_NAME ?? "").trim() || "Owner" };
+}
+
+const ALL_TABLES = ["audit_log", "automation_events", "communications", "notifications", "client_progress", "feedback", "deliveries", "delivery_routes", "meal_labels",
+  "production_items", "production_batches", "packaging_items", "inventory_transactions", "inventory_lots", "purchase_order_lines", "purchase_orders", "expenses", "payments",
+  "order_items", "orders", "subscription_events", "subscriptions", "packages", "meal_plan_items", "meal_plans", "recipe_ingredients", "recipes", "meals",
+  "supplier_price_history", "supplier_products", "suppliers", "ingredients", "client_consents", "professional_reviews", "client_nutrition_targets", "client_measurements",
+  "client_allergies", "client_preferences", "client_goals", "client_health_profiles", "clients", "marketing_campaigns", "startup_cost_items", "compliance_items", "sessions", "users",
+  "corporate_accounts"];
+
+/** Remove all business data (settings and locations are kept). */
+export async function wipeDemo(db: Db) {
+  await db.exec(`TRUNCATE ${ALL_TABLES.join(", ")} RESTART IDENTITY CASCADE`);
 }

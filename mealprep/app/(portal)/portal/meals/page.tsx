@@ -6,13 +6,16 @@ import Link from "next/link";
 
 export default async function Meals() {
   const user = await requireClient();
-  const orders = listOrders({ clientId: user.client_id }).filter((o) => !["cancelled", "inquiry"].includes(o.status)).slice(0, 3);
+  const orders = (await listOrders({ clientId: user.client_id })).filter((o) => !["cancelled", "inquiry"].includes(o.status)).slice(0, 3);
+  const fulls = new Map(await Promise.all(orders.map(async (o) => [o.id, (await getOrder(o.id))!] as const)));
+  const mealIds = [...new Set([...fulls.values()].flatMap((f) => f.items.map((i) => i.meal_id)))];
+  const meals = new Map(await Promise.all(mealIds.map(async (id) => [id, (await getMealFull(id))!] as const)));
   return (
     <div className="space-y-4">
       <h1 className="text-3xl">My meals</h1>
-      {orders.length === 0 ? <Card><Empty>No meals yet.</Empty></Card> : orders.map((o) => { const f = getOrder(o.id)!; return (
+      {orders.length === 0 ? <Card><Empty>No meals yet.</Empty></Card> : orders.map((o) => { const f = fulls.get(o.id)!; return (
         <Card key={o.id} title={`Delivery ${fmtDate(o.delivery_date)}`} kicker={o.order_number} action={<StatusBadge status={o.status} />}>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">{f.items.map((i) => { const m = getMealFull(i.meal_id)!; return <div key={i.id} className="rounded-xl border border-line p-3"><div className="kicker"><CategoryDot category={i.category} /> Meal {String(i.meal_number).padStart(2, "0")} of {f.items.length}</div><Link href={`/portal/recipes?meal=${i.meal_id}`} className="font-medium text-sm hover:underline">{i.meal_name}</Link><div className="mt-1"><NutritionRow n={m.nutrition} compact /></div><div className="text-[11px] text-ink-3 mt-1">{m.meal.reheating}</div><div className="mt-1"><StatusBadge status={i.status} /></div></div>; })}</div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">{f.items.map((i) => { const m = meals.get(i.meal_id)!; return <div key={i.id} className="rounded-xl border border-line p-3"><div className="kicker"><CategoryDot category={i.category} /> Meal {String(i.meal_number).padStart(2, "0")} of {f.items.length}</div><Link href={`/portal/recipes?meal=${i.meal_id}`} className="font-medium text-sm hover:underline">{i.meal_name}</Link><div className="mt-1"><NutritionRow n={m.nutrition} compact /></div><div className="text-[11px] text-ink-3 mt-1">{m.meal.reheating}</div><div className="mt-1"><StatusBadge status={i.status} /></div></div>; })}</div>
         </Card>); })}
     </div>
   );

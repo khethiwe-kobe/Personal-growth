@@ -7,8 +7,8 @@ import { runChecksAction, dispatchQueuedAction } from "@/app/actions";
 export default async function Automations({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
   await requirePermission("settings:edit");
   const { tab = "rules" } = await searchParams;
-  const events = listEvents(80);
-  const queued = listQueued(100);
+  const events = await listEvents(80);
+  const queued = await listQueued(100);
   return (
     <div>
       <PageHeader kicker="Automation" title="Automations & communication" actions={<><form action={runChecksAction}><button className="btn-secondary btn-sm">Run scheduled checks now</button></form><form action={dispatchQueuedAction}><button className="btn-secondary btn-sm">Dispatch queued messages</button></form></>}>Every business event flows through one event bus; handlers queue messages, notify staff and POST to your webhook URL for Make.com / Zapier / n8n.</PageHeader>

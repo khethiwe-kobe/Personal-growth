@@ -10,19 +10,19 @@ import { listProgress } from "@/lib/repo/clients";
 
 export default async function PortalHome() {
   const user = await requireClient();
-  const full = getClientFull(user.client_id)!;
+  const full = (await getClientFull(user.client_id))!;
   const t = full.computed;
-  const plans = listPlans(user.client_id).filter((p) => ["proposed", "approved", "ordered"].includes(p.status));
+  const plans = (await listPlans(user.client_id)).filter((p) => ["proposed", "approved", "ordered"].includes(p.status));
   const today = new Date().toISOString().slice(0, 10);
   const inWeek = (p: { week_start: string }) => { const end = new Date(p.week_start + "T00:00:00"); end.setDate(end.getDate() + 7); return p.week_start <= today && today < end.toISOString().slice(0, 10); };
   const current = plans.find(inWeek) ?? [...plans].reverse().find((p) => p.week_start > today) ?? plans[0];
-  const plan = current ? getPlanFull(current.id) : null;
+  const plan = current ? await getPlanFull(current.id) : null;
   const todayIdx = (new Date().getDay() + 6) % 7;
   const todays = plan?.items.filter((i) => i.day_index === todayIdx) ?? [];
-  const orders = listOrders({ clientId: user.client_id });
-  const deliveries = upcomingDeliveries(14).filter((d) => d.client_id === user.client_id);
-  const sub = listSubscriptions(user.client_id).find((s) => s.status === "active");
-  const progress = listProgress(user.client_id);
+  const orders = await listOrders({ clientId: user.client_id });
+  const deliveries = (await upcomingDeliveries(14)).filter((d) => d.client_id === user.client_id);
+  const sub = (await listSubscriptions(user.client_id)).find((s) => s.status === "active");
+  const progress = await listProgress(user.client_id);
   const latest = progress[progress.length - 1];
   const goal = full.goals.find((g) => g.is_primary);
   const kcalToday = todays.reduce((s, i) => s + i.meal.nutrition.kcal, 0);

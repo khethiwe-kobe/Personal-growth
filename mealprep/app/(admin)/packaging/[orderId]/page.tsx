@@ -15,14 +15,15 @@ const BAND: Record<string, string> = { breakfast: "#d9a441", lunch: "#6f7f3f", d
 export default async function Labels({ params }: { params: Promise<{ orderId: string }> }) {
   const user = await requirePermission("labels:view");
   const { orderId } = await params;
-  const labels = labelsForOrder(Number(orderId));
+  const labels = await labelsForOrder(Number(orderId));
   if (!labels) notFound();
-  const brand = getSetting("brand_name");
+  const meals = new Map(await Promise.all([...new Set(labels.map((l) => l.meal_id))].map(async (id) => [id, (await getMealFull(id))!] as const)));
+  const brand = await getSetting("brand_name");
   return (
     <div>
       <div className="no-print"><PageHeader kicker="Labels" title={`${labels[0]?.client_name ?? ""} · ${labels[0]?.order_number ?? ""}`} actions={<><PrintButton label="Print labels" />{can(user, "labels:print") && <form action={markPrintedAction}><input type="hidden" name="order_id" value={orderId} /><button className="btn-primary btn-sm">Mark printed</button></form>}<Link href={`/orders/${orderId}`} className="btn-secondary btn-sm">Order</Link></>}>{labels.length} labels · each QR opens the client’s digital meal page (recipe, ingredients, nutrition, reheating, feedback).</PageHeader></div>
       <div className="label-sheet grid md:grid-cols-2 gap-4">
-        {labels.map((l) => { const m = getMealFull(l.meal_id)!; const mult = l.portion_multiplier; const n = m.nutrition; return (
+        {labels.map((l) => { const m = meals.get(l.meal_id)!; const mult = l.portion_multiplier; const n = m.nutrition; return (
           <div key={l.id} className="label bg-white border border-line rounded-xl overflow-hidden text-[11px] leading-snug" style={{ borderTop: `6px solid ${BAND[m.meal.category] ?? "#8c9a8e"}` }}>
             <div className="p-3 grid grid-cols-[1fr_auto] gap-3">
               <div>

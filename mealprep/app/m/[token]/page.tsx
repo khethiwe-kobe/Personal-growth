@@ -8,15 +8,15 @@ import Link from "next/link";
 
 export default async function MealPage({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
-  const l = labelByToken(token);
+  const l = await labelByToken(token);
   if (!l) notFound();
-  const m = getMealFull(l.meal_id);
+  const m = await getMealFull(l.meal_id);
   if (!m) notFound();
   const k = l.portion_multiplier;
   return (
     <div className="min-h-screen bg-bone">
       <div className="max-w-md mx-auto p-5 space-y-4">
-        <div className="text-center pt-4"><div className="font-display text-lg">{getSetting("brand_name")}</div><div className="text-xs text-ink-3">Prepared for {l.first_name} · Meal {String(l.meal_number).padStart(2, "0")} of {l.total}</div></div>
+        <div className="text-center pt-4"><div className="font-display text-lg">{await getSetting("brand_name")}</div><div className="text-xs text-ink-3">Prepared for {l.first_name} · Meal {String(l.meal_number).padStart(2, "0")} of {l.total}</div></div>
         <div className="card p-5"><div className="kicker capitalize">{m.meal.category}</div><h1 className="text-2xl">{m.meal.name}</h1><p className="text-sm text-ink-2 mt-1">{m.meal.description}</p><div className="grid grid-cols-2 gap-2 text-xs mt-3"><div><span className="text-ink-3">Prepared</span><br />{fmtDate(l.prepared_on)}</div><div><span className="text-ink-3">Best before</span><br /><b>{fmtDate(l.best_before)}</b></div></div></div>
         <div className="card p-5"><div className="kicker mb-2">Nutrition per portion</div><table className="w-full text-sm"><tbody>{[["Energy", `${Math.round(m.nutrition.kcal * k)} kcal`], ["Protein", `${(m.nutrition.protein * k).toFixed(1)} g`], ["Carbohydrate", `${(m.nutrition.carbs * k).toFixed(1)} g`], ["Fat", `${(m.nutrition.fat * k).toFixed(1)} g`], ["Fibre", `${(m.nutrition.fibre * k).toFixed(1)} g`], ["Sodium", `${Math.round(m.nutrition.sodium_mg * k)} mg`]].map(([a, b]) => <tr key={a} className="border-b border-line/60 last:border-0"><td className="py-1 text-ink-2">{a}</td><td className="py-1 text-right font-medium">{b}</td></tr>)}</tbody></table></div>
         <div className="card p-5"><div className="kicker mb-2">Ingredients</div><p className="text-sm">{m.lines.map((x) => x.ingredient.name).join(", ")}.</p><div className="text-sm mt-2"><b>Allergens:</b> {m.allergens.length ? m.allergens.map((a) => ALLERGEN_LABELS[a] ?? a).join(", ") : "none declared"}</div></div>

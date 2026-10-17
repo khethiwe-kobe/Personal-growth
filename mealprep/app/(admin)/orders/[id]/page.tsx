@@ -13,17 +13,17 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
   const user = await requirePermission("orders:view");
   const { id } = await params;
   const { view } = await searchParams;
-  const o = getOrder(Number(id));
+  const o = await getOrder(Number(id));
   if (!o) notFound();
   const cost = o.items.reduce((s, i) => s + i.unit_cost_zar * i.quantity, 0);
   const outstanding = Math.max(0, o.order.total_zar - o.paid);
   if (view === "invoice") return (
     <div className="max-w-2xl mx-auto bg-white p-8 rounded-2xl border border-line">
-      <div className="flex justify-between items-start"><div><div className="font-display text-2xl">{getSetting("brand_name")}</div><div className="text-xs text-ink-2">{getSetting("tagline")}</div></div><div className="text-right"><div className="kicker">Invoice</div><div className="font-medium">{o.order.order_number}</div><div className="text-xs text-ink-2">{fmtDate(o.order.created_at)}</div></div></div>
+      <div className="flex justify-between items-start"><div><div className="font-display text-2xl">{await getSetting("brand_name")}</div><div className="text-xs text-ink-2">{await getSetting("tagline")}</div></div><div className="text-right"><div className="kicker">Invoice</div><div className="font-medium">{o.order.order_number}</div><div className="text-xs text-ink-2">{fmtDate(o.order.created_at)}</div></div></div>
       <div className="mt-6 text-sm"><div className="kicker">Bill to</div><div>{o.client.name}</div><div className="text-ink-2">{o.client.email} · {o.client.phone}</div><div className="text-ink-2">{o.order.delivery_address}</div></div>
       <table className="table mt-6"><thead><tr><th>#</th><th>Meal</th><th>Qty</th><th>Unit</th><th>Total</th></tr></thead><tbody>{o.items.map((i) => <tr key={i.id}><td>{i.meal_number}</td><td>{i.meal_name}</td><td>{i.quantity}</td><td>{formatZar(i.unit_price_zar)}</td><td>{formatZar(i.unit_price_zar * i.quantity)}</td></tr>)}</tbody></table>
       <div className="mt-4 text-sm ml-auto w-64 space-y-1"><div className="flex justify-between"><span>Subtotal</span><span>{formatZar(o.order.subtotal_zar)}</span></div><div className="flex justify-between"><span>Discount</span><span>−{formatZar(o.order.discount_zar)}</span></div><div className="flex justify-between"><span>Delivery</span><span>{formatZar(o.order.delivery_fee_zar)}</span></div><div className="flex justify-between font-medium border-t border-line pt-1"><span>Total</span><span>{formatZar(o.order.total_zar)}</span></div><div className="flex justify-between text-ink-2"><span>Paid</span><span>{formatZar(o.paid)}</span></div><div className="flex justify-between font-medium"><span>Balance due</span><span>{formatZar(outstanding)}</span></div></div>
-      <div className="text-xs text-ink-3 mt-8">Delivery {fmtDate(o.order.delivery_date)}. Thank you for choosing {getSetting("brand_name")}.</div>
+      <div className="text-xs text-ink-3 mt-8">Delivery {fmtDate(o.order.delivery_date)}. Thank you for choosing {await getSetting("brand_name")}.</div>
       <div className="mt-6 flex gap-2 no-print"><PrintButton label="Print / save PDF" /><Link href={`/orders/${o.order.id}`} className="btn-secondary btn-sm">Back</Link></div>
     </div>
   );

@@ -18,13 +18,13 @@ export default async function Grocery({ searchParams }: { searchParams: Promise<
   const to = sp.to ?? shiftDays(from, 6);
   const scope = sp.scope ?? "committed";
   const statuses = scope === "all" ? ["awaiting_payment", "paid", "plan_created", "shopping", "preparing"] : ["paid", "plan_created", "shopping", "preparing"];
-  const g = groceryForOrders({ from, to, statuses });
+  const g = await groceryForOrders({ from, to, statuses });
   const groups = groupByCategory(g.lines);
   const toBuy = g.lines.filter((l) => l.to_purchase > 0);
-  const suppliers = listSuppliers().filter((s) => s.is_active);
+  const suppliers = (await listSuppliers()).filter((s) => s.is_active);
   const bySupplier = new Map<number, { name: string; lines: GroceryLine[]; options: Map<number, number> }>();
   for (const l of toBuy) {
-    const opts = compareSuppliers(l.ingredient_id);
+    const opts = await compareSuppliers(l.ingredient_id);
     const rec = opts.find((o) => o.recommended) ?? opts[0];
     if (!rec) continue;
     const cur = bySupplier.get(rec.supplier_id) ?? { name: rec.supplier, lines: [] as GroceryLine[], options: new Map<number, number>() };
