@@ -44,6 +44,19 @@ data on each cold start, so the live link is a resettable demo. For a
 persistent production deployment use a VPS (`npm run build && npm start`) or
 move to Postgres as described in `docs/DATABASE.md`.
 
+### Public website
+
+`/` is the business's public website, built on the same data as the system:
+home, `/menu` (filterable, with per-meal nutrition and allergen pages),
+`/plans`, `/how-it-works` and `/contact`. Prices, plans, the "most popular"
+badge, meal ratings and reviews all come from live meals, packages,
+subscriptions and client feedback. Cost and margin are never shown. Contact
+enquiries arrive in the CRM as leads (source `website`) with a notification for
+the owner and planners. City, delivery areas and days, order cut-off and contact
+details are under **Settings → Website**. Set `MEALPREP_PUBLIC_URL` so
+`sitemap.xml` and `robots.txt` use the real domain. Only the marketing pages
+can be indexed.
+
 New clients self-onboard at `/onboard` (10 steps, consent, portal password);
 staff can run the same flow for a client.
 

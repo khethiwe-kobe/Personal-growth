@@ -231,7 +231,7 @@ export async function subscriptionActionForm(fd: FormData) {
 export async function savePackageAction(fd: FormData) {
   const u = await guard("settings:edit");
   Orders.upsertPackage({ id: n(fd, "id") ?? undefined, code: s(fd, "code").toUpperCase(), name: s(fd, "name"), description: s(fd, "description"), meals_per_week: i(fd, "meals_per_week", 10), price_zar: n(fd, "price_zar") ?? 0, is_custom: b(fd, "is_custom") ? 1 : 0, is_active: b(fd, "is_active") ? 1 : 0, sort_order: i(fd, "sort_order") }, u.id);
-  revalidatePath("/settings"); revalidatePath("/pricing");
+  revalidatePath("/settings"); revalidatePath("/pricing"); revalidatePath("/", "layout");
 }
 
 // ---------------------------------------------------------------- inventory & suppliers
