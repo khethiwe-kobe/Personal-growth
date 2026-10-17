@@ -8,16 +8,27 @@ import { prettyTag } from "@/lib/recommend";
 
 const STEPS = ["Personal", "Lifestyle", "Nutrition preferences", "Health & dietary", "Goals", "Meal preferences", "Budget", "Delivery", "Consent", "Review"];
 
-type Draft = OnboardingData;
+type Draft = OnboardingData & { cuisines_text: string; liked_text: string; disliked_text: string; people_text: string; meals_per_week: number; snack_budget_zar: number | null; delivery_option: "address" | "soho" };
+export const SOHO_JUNCTION = "Soho Junction (free delivery, anytime)";
+const DIETARY_PATTERNS: [string, string][] = [
+  ["omnivore", "Omnivore — eats everything (meat, fish, dairy, plants)"],
+  ["pescatarian", "Pescatarian — fish and seafood, but no meat or poultry"],
+  ["vegetarian", "Vegetarian — no meat or fish; eggs and dairy are fine"],
+  ["vegan", "Vegan — no animal products at all"],
+  ["halal", "Halal — no pork or alcohol; halal-certified meat only"],
+  ["kosher", "Kosher — kosher-certified ingredients and preparation"],
+  ["other", "Other — tell us in the notes"],
+];
 const F = ({ label, children, hint }: { label: string; children: React.ReactNode; hint?: string }) => <label className="block"><span className="label">{label}</span>{children}{hint && <span className="block text-[11px] text-ink-3 mt-1">{hint}</span>}</label>;
 const initial: Draft = {
-  first_name: "", last_name: "", email: "", phone: "", date_of_birth: "", gender: "unspecified", address: "", delivery_address: "", delivery_notes: "", emergency_contact: "", source: "",
+  first_name: "", last_name: "", email: "", phone: "", date_of_birth: "", gender: "female", address: "", delivery_address: "", delivery_notes: "", emergency_contact: "", source: "",
   height_cm: null, weight_kg: null, target_weight_kg: null, activity_level: "moderate", fitness_level: "beginner", blood_type: "", training_schedule: "", lifestyle: "", sleep_hours: null, water_litres: null, stress_level: "",
   is_pregnant: false, is_breastfeeding: false, medical_conditions: "", medications: "", eating_disorder_history: false, medically_restricted_diet: "", other_notes: "",
   dietary_pattern: "omnivore", dietary_tags: [], cuisines: [], liked_foods: [], disliked_foods: [], meals_per_day: 3, include_snacks: true, meal_times: { breakfast: "07:00", lunch: "12:30", dinner: "19:00" }, people_served: 1,
   cooking_preference: "ready_to_heat", spice_level: "medium", budget_per_meal_zar: null, budget_per_week_zar: null, preferred_delivery_days: [],
   allergies: [], goal_type: "balanced", goal_description: "", goal_target_value: null, goal_target_date: null,
   consents: { data_processing: false, health_data: false, marketing: false, terms: false }, consent_version: "", password: "",
+  cuisines_text: "", liked_text: "", disliked_text: "", people_text: "1", meals_per_week: 21, snack_budget_zar: 35, delivery_option: "address",
 };
 
 export default function OnboardingWizard({ isStaff, consentVersion, brand }: { isStaff: boolean; consentVersion: string; brand: string }) {
@@ -28,7 +39,7 @@ export default function OnboardingWizard({ isStaff, consentVersion, brand }: { i
   const [done, setDone] = useState<number | null>(null);
   const set = <K extends keyof Draft>(k: K, v: Draft[K]) => setD((x) => ({ ...x, [k]: v }));
   const num = (v: string) => (v === "" ? null : Number(v));
-  const list = (v: string) => v.split(",").map((s) => s.trim()).filter(Boolean);
+  const list = (v: string) => v.split(/[,\n]+|\s{2,}|\s(?=[A-Z])/).map((s) => s.trim()).filter(Boolean);
   const toggle = (arr: string[], v: string) => (arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v]);
   const bmi = d.height_cm && d.weight_kg ? (d.weight_kg / ((d.height_cm / 100) ** 2)).toFixed(1) : null;
   const flags: string[] = [];
@@ -42,9 +53,19 @@ export default function OnboardingWizard({ isStaff, consentVersion, brand }: { i
     if (step === 8) return d.consents.data_processing && d.consents.health_data && d.consents.terms && (isStaff || (d.password ?? "").length >= 8);
     return true;
   };
+  const weeklyEstimate = Math.round(((d.budget_per_meal_zar ?? 0) * d.meals_per_week + (d.include_snacks ? (d.snack_budget_zar ?? 0) * 7 : 0)) * Math.max(1, d.people_served));
   const submit = () => start(async () => {
     setError("");
-    const r = await submitOnboarding(d);
+    const { cuisines_text, liked_text, disliked_text, people_text, meals_per_week, snack_budget_zar, delivery_option, ...payload } = d;
+    void people_text; void meals_per_week; void snack_budget_zar;
+    const soho = delivery_option === "soho";
+    const r = await submitOnboarding({
+      ...payload,
+      cuisines: list(cuisines_text), liked_foods: list(liked_text), disliked_foods: list(disliked_text),
+      budget_per_week_zar: weeklyEstimate || null,
+      delivery_address: soho ? SOHO_JUNCTION : payload.delivery_address,
+      delivery_notes: soho ? ["Collect/deliver at Soho Junction — free, any time", payload.delivery_notes].filter(Boolean).join(". ") : payload.delivery_notes,
+    });
     if (!r.ok) { setError(r.error); return; }
     setDone(r.client_id);
   });
@@ -59,7 +80,7 @@ export default function OnboardingWizard({ isStaff, consentVersion, brand }: { i
 
   return (
     <div className="card p-6">
-      <ol className="flex flex-wrap gap-1 mb-6">{STEPS.map((s, i) => <li key={s} className={`badge ${i === step ? "bg-ink text-white" : i < step ? "bg-emerald-100 text-emerald-900" : "bg-bone-2 text-ink-3"}`}>{i + 1}. {s}</li>)}</ol>
+      <ol className="flex flex-wrap gap-1 mb-6">{STEPS.map((s, i) => <li key={s}><button type="button" onClick={() => setStep(i)} className={`badge cursor-pointer ${i === step ? "bg-ink text-white" : i < step ? "bg-emerald-100 text-emerald-900 hover:bg-emerald-200" : "bg-bone-2 text-ink-3 hover:bg-bone"}`}>{i + 1}. {s}</button></li>)}</ol>
       <h2 className="text-xl mb-4">Step {step + 1} — {STEPS[step]}</h2>
 
       {step === 0 && <div className="grid sm:grid-cols-2 gap-3">
@@ -68,7 +89,7 @@ export default function OnboardingWizard({ isStaff, consentVersion, brand }: { i
         <F label="Email"><input type="email" value={d.email} onChange={(e) => set("email", e.target.value)} className="input" /></F>
         <F label="Phone (WhatsApp)"><input value={d.phone} onChange={(e) => set("phone", e.target.value)} className="input" /></F>
         <F label="Date of birth"><input type="date" value={d.date_of_birth} onChange={(e) => set("date_of_birth", e.target.value)} className="input" /></F>
-        <F label="Gender"><select value={d.gender} onChange={(e) => set("gender", e.target.value)} className="input">{["female", "male", "other", "unspecified"].map((g) => <option key={g} value={g}>{g === "unspecified" ? "prefer not to say" : g}</option>)}</select></F>
+        <F label="Gender"><select value={d.gender} onChange={(e) => set("gender", e.target.value)} className="input">{["female", "male"].map((g) => <option key={g} value={g}>{g === "female" ? "Female" : "Male"}</option>)}</select></F>
         <F label="How did you hear about us?"><select value={d.source} onChange={(e) => set("source", e.target.value)} className="input"><option value="">—</option>{["instagram", "tiktok", "facebook", "google", "whatsapp", "referral", "gym", "other"].map((s) => <option key={s}>{s}</option>)}</select></F>
         <F label="Emergency contact (optional)"><input value={d.emergency_contact} onChange={(e) => set("emergency_contact", e.target.value)} className="input" /></F>
       </div>}
@@ -85,10 +106,10 @@ export default function OnboardingWizard({ isStaff, consentVersion, brand }: { i
 
       {step === 2 && <div className="space-y-3">
         <div className="grid sm:grid-cols-2 gap-3">
-          <F label="Dietary pattern"><select value={d.dietary_pattern} onChange={(e) => set("dietary_pattern", e.target.value)} className="input">{["omnivore", "pescatarian", "vegetarian", "vegan", "halal", "kosher", "other"].map((x) => <option key={x}>{x}</option>)}</select></F>
-          <F label="Cuisines you enjoy (comma separated)"><input value={d.cuisines.join(", ")} onChange={(e) => set("cuisines", list(e.target.value))} placeholder="Mediterranean, Asian, Mexican" className="input" /></F>
-          <F label="Foods you love"><input value={d.liked_foods.join(", ")} onChange={(e) => set("liked_foods", list(e.target.value))} placeholder="chicken, salmon, sweet potato" className="input" /></F>
-          <F label="Foods you dislike"><input value={d.disliked_foods.join(", ")} onChange={(e) => set("disliked_foods", list(e.target.value))} placeholder="mushrooms, olives" className="input" /></F>
+          <F label="Dietary pattern"><select value={d.dietary_pattern} onChange={(e) => set("dietary_pattern", e.target.value)} className="input">{DIETARY_PATTERNS.map(([v, label]) => <option key={v} value={v}>{label}</option>)}</select></F>
+          <F label="Cuisines you enjoy" hint="Separate with commas or spaces, e.g. Mediterranean, Asian, Mexican"><input value={d.cuisines_text} onChange={(e) => set("cuisines_text", e.target.value)} placeholder="Mediterranean, Asian, Mexican" className="input" /></F>
+          <F label="Foods you love" hint="Separate with commas"><input value={d.liked_text} onChange={(e) => set("liked_text", e.target.value)} placeholder="chicken, salmon, sweet potato" className="input" /></F>
+          <F label="Foods you dislike" hint="Separate with commas"><input value={d.disliked_text} onChange={(e) => set("disliked_text", e.target.value)} placeholder="mushrooms, olives" className="input" /></F>
         </div>
         <div><span className="label">Preferences</span><div className="flex flex-wrap gap-2">{DIETARY_TAGS.map((t) => <button type="button" key={t} onClick={() => set("dietary_tags", toggle(d.dietary_tags, t))} className={`badge cursor-pointer ${d.dietary_tags.includes(t) ? "bg-ink text-white" : "bg-bone-2 text-ink-2"}`}>{prettyTag(t)}</button>)}</div></div>
       </div>}
@@ -127,24 +148,34 @@ export default function OnboardingWizard({ isStaff, consentVersion, brand }: { i
       </div>}
 
       {step === 5 && <div className="grid sm:grid-cols-2 gap-3">
-        <F label="Meals per day from us"><select value={d.meals_per_day} onChange={(e) => set("meals_per_day", Number(e.target.value))} className="input">{[1, 2, 3].map((n) => <option key={n} value={n}>{n}</option>)}</select></F>
+        <F label="Meals per day from us"><select value={d.meals_per_day} onChange={(e) => { const n = Number(e.target.value); set("meals_per_day", n); set("meals_per_week", n * 7); }} className="input">{[1, 2, 3].map((n) => <option key={n} value={n}>{n}</option>)}</select></F>
         <label className="flex items-center gap-2 text-sm mt-6"><input type="checkbox" checked={d.include_snacks} onChange={(e) => set("include_snacks", e.target.checked)} /> Include snacks</label>
-        {(["breakfast", "lunch", "dinner"] as const).map((k) => <F key={k} label={`Preferred ${k} time`}><input type="time" value={d.meal_times[k] ?? ""} onChange={(e) => set("meal_times", { ...d.meal_times, [k]: e.target.value })} className="input" /></F>)}
-        <F label="People being served"><input type="number" min={1} value={d.people_served} onChange={(e) => set("people_served", Number(e.target.value) || 1)} className="input" /></F>
-        <F label="Cooking preference"><select value={d.cooking_preference} onChange={(e) => set("cooking_preference", e.target.value)} className="input"><option value="ready_to_heat">Ready to heat</option><option value="some_assembly">Some assembly</option><option value="cook_at_home">Prepped to cook at home</option></select></F>
+        <F label="People being served" hint="Portions per meal — e.g. 2 for a couple"><input type="number" inputMode="numeric" min={1} value={d.people_text} onChange={(e) => { set("people_text", e.target.value); const n = Number(e.target.value); if (n >= 1) set("people_served", Math.round(n)); }} className="input" /></F>
+        <p className="sm:col-span-2 text-xs text-ink-2">All meals are fully cooked and portioned for the whole week — just reheat.</p>
         <F label="Spice level"><select value={d.spice_level} onChange={(e) => set("spice_level", e.target.value)} className="input">{["mild", "medium", "hot"].map((x) => <option key={x}>{x}</option>)}</select></F>
       </div>}
 
       {step === 6 && <div className="grid sm:grid-cols-2 gap-3">
-        <F label="Budget per meal (R)"><input type="number" value={d.budget_per_meal_zar ?? ""} onChange={(e) => set("budget_per_meal_zar", num(e.target.value))} className="input" /></F>
-        <F label="Budget per week (R)"><input type="number" value={d.budget_per_week_zar ?? ""} onChange={(e) => set("budget_per_week_zar", num(e.target.value))} className="input" /></F>
-        <p className="sm:col-span-2 text-xs text-ink-2">Recommendations respect your budget; meals above it are shown with a note rather than hidden.</p>
+        <F label="Budget per meal (R)"><input type="number" value={d.budget_per_meal_zar ?? ""} onChange={(e) => set("budget_per_meal_zar", num(e.target.value))} placeholder="e.g. 95" className="input" /></F>
+        <F label="Meals per week" hint={`${d.meals_per_day} meals/day × 7 days = ${d.meals_per_day * 7}; change if you want fewer`}><input type="number" min={1} value={d.meals_per_week} onChange={(e) => set("meals_per_week", Math.max(0, Math.round(Number(e.target.value) || 0)))} className="input" /></F>
+        <label className="flex items-center gap-2 text-sm mt-6"><input type="checkbox" checked={d.include_snacks} onChange={(e) => set("include_snacks", e.target.checked)} /> Include a daily snack</label>
+        {d.include_snacks && <F label="Budget per snack (R)"><input type="number" value={d.snack_budget_zar ?? ""} onChange={(e) => set("snack_budget_zar", num(e.target.value))} className="input" /></F>}
+        <div className="sm:col-span-2 rounded-xl bg-bone-2 p-4 text-sm">
+          <div className="kicker">Estimated weekly budget</div>
+          <div className="stat-value">R{weeklyEstimate.toLocaleString("en-ZA").replace(/\u00a0|\u202f/g, " ")}</div>
+          <div className="text-xs text-ink-2 mt-1">{d.meals_per_week} meals × R{d.budget_per_meal_zar ?? 0}{d.include_snacks ? ` + 7 snacks × R${d.snack_budget_zar ?? 0}` : ""} × {d.people_served} person(s). Recommendations respect your budget; meals above it are shown with a note rather than hidden.</div>
+        </div>
       </div>}
 
       {step === 7 && <div className="grid sm:grid-cols-2 gap-3">
+        <div className="sm:col-span-2 grid sm:grid-cols-2 gap-2">
+          {([["soho", "Soho Junction", "Free delivery, any time — our pickup point"], ["address", "Deliver to my address", "Standard delivery fee applies"]] as const).map(([v, title, sub]) => (
+            <button type="button" key={v} onClick={() => set("delivery_option", v)} className={`text-left rounded-xl border p-3 ${d.delivery_option === v ? "border-accent bg-bone-2" : "border-line"}`}><div className="font-medium text-sm">{title}</div><div className="text-xs text-ink-2">{sub}</div></button>
+          ))}
+        </div>
         <F label="Home address"><input value={d.address} onChange={(e) => set("address", e.target.value)} className="input" /></F>
-        <F label="Delivery address (if different)"><input value={d.delivery_address} onChange={(e) => set("delivery_address", e.target.value)} className="input" /></F>
-        <F label="Delivery notes"><input value={d.delivery_notes} onChange={(e) => set("delivery_notes", e.target.value)} placeholder="gate code, security, leave with…" className="input" /></F>
+        {d.delivery_option === "address" && <F label="Delivery address (if different)"><input value={d.delivery_address} onChange={(e) => set("delivery_address", e.target.value)} className="input" /></F>}
+        <F label="Delivery notes"><input value={d.delivery_notes} onChange={(e) => set("delivery_notes", e.target.value)} placeholder={d.delivery_option === "soho" ? "e.g. collect after 17:00" : "gate code, security, leave with…"} className="input" /></F>
         <div><span className="label">Preferred delivery days</span><div className="flex gap-2">{["mon", "tue", "wed", "thu", "fri", "sat"].map((x) => <button type="button" key={x} onClick={() => set("preferred_delivery_days", toggle(d.preferred_delivery_days, x))} className={`badge cursor-pointer ${d.preferred_delivery_days.includes(x) ? "bg-ink text-white" : "bg-bone-2 text-ink-2"}`}>{x}</button>)}</div></div>
       </div>}
 
@@ -161,8 +192,8 @@ export default function OnboardingWizard({ isStaff, consentVersion, brand }: { i
         <div className="grid sm:grid-cols-2 gap-3">
           <div className="rounded-xl border border-line p-3"><div className="kicker">Person</div>{d.first_name} {d.last_name} · {d.email} · {d.phone}<br />{d.gender}, born {d.date_of_birth || "—"}</div>
           <div className="rounded-xl border border-line p-3"><div className="kicker">Body & lifestyle</div>{d.height_cm ?? "—"} cm · {d.weight_kg ?? "—"} kg · BMI {bmi ?? "—"} · {ACTIVITY_LABELS[d.activity_level as keyof typeof ACTIVITY_LABELS]?.split(" (")[0]}</div>
-          <div className="rounded-xl border border-line p-3"><div className="kicker">Nutrition</div>{d.dietary_pattern} · {d.dietary_tags.map(prettyTag).join(", ") || "no tags"} · allergies: {d.allergies.filter((a) => a.allergen).map((a) => `${a.allergen} (${a.kind})`).join(", ") || "none"}</div>
-          <div className="rounded-xl border border-line p-3"><div className="kicker">Plan</div>{GOAL_LABELS[d.goal_type as keyof typeof GOAL_LABELS]} · {d.meals_per_day} meals/day{d.include_snacks ? " + snacks" : ""} · {d.people_served} person(s) · budget R{d.budget_per_meal_zar ?? "—"}/meal</div>
+          <div className="rounded-xl border border-line p-3"><div className="kicker">Nutrition</div>{d.dietary_pattern} · cuisines: {list(d.cuisines_text).join(", ") || "any"} · {d.dietary_tags.map(prettyTag).join(", ") || "no tags"} · allergies: {d.allergies.filter((a) => a.allergen).map((a) => `${a.allergen} (${a.kind})`).join(", ") || "none"}</div>
+          <div className="rounded-xl border border-line p-3"><div className="kicker">Plan</div>{GOAL_LABELS[d.goal_type as keyof typeof GOAL_LABELS]} · {d.meals_per_day} meals/day{d.include_snacks ? " + snacks" : ""} · {d.people_served} person(s) · budget R{d.budget_per_meal_zar ?? "—"}/meal ≈ R{weeklyEstimate}/week · delivery: {d.delivery_option === "soho" ? "Soho Junction (free)" : d.delivery_address || d.address || "—"}</div>
         </div>
         {flags.length > 0 && <div className="rounded-xl bg-rose-50 border border-rose-200 text-rose-900 text-xs px-3 py-2"><b>Professional review recommended before personalised meal recommendations are provided.</b> Reason: {flags.join(", ")}. Your profile will still be created and general guidance shown.</div>}
         {error && <div className="text-critical">{error}</div>}

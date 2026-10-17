@@ -50,7 +50,7 @@ export default async function ClientPage({ params, searchParams }: { params: Pro
               <Field label="Email"><input name="email" type="email" defaultValue={c.email} className="input" /></Field>
               <Field label="Phone"><input name="phone" defaultValue={c.phone} className="input" /></Field>
               <Field label="Date of birth"><input name="date_of_birth" type="date" defaultValue={c.date_of_birth ?? ""} className="input" /></Field>
-              <Field label="Gender"><select name="gender" defaultValue={c.gender} className="input">{["female", "male", "other", "unspecified"].map((g) => <option key={g}>{g}</option>)}</select></Field>
+              <Field label="Gender"><select name="gender" defaultValue={c.gender} className="input">{["female", "male"].map((g) => <option key={g} value={g}>{g === "female" ? "Female" : "Male"}</option>)}</select></Field>
               <Field label="Address" className="sm:col-span-2"><input name="address" defaultValue={c.address} className="input" /></Field>
               <Field label="Delivery address" className="sm:col-span-2"><input name="delivery_address" defaultValue={c.delivery_address} className="input" /></Field>
               <Field label="Delivery notes"><input name="delivery_notes" defaultValue={c.delivery_notes} className="input" /></Field>
