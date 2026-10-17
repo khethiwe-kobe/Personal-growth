@@ -6,7 +6,7 @@ import { saveStartupCostAction } from "@/app/actions";
 
 export default async function StartupCosts() {
   const user = await requirePermission("business:view");
-  const rows = getDb().prepare("SELECT * FROM startup_cost_items ORDER BY sort_order, id").all() as { id: number; category: string; description: string; estimate_zar: number; actual_zar: number | null; is_recurring: number }[];
+  const rows = await getDb().prepare("SELECT * FROM startup_cost_items ORDER BY sort_order, id").all() as { id: number; category: string; description: string; estimate_zar: number; actual_zar: number | null; is_recurring: number }[];
   const est = rows.reduce((s, r) => s + r.estimate_zar, 0);
   const act = rows.reduce((s, r) => s + (r.actual_zar ?? r.estimate_zar), 0);
   const recurring = rows.filter((r) => r.is_recurring).reduce((s, r) => s + (r.actual_zar ?? r.estimate_zar), 0);

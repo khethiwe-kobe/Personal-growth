@@ -9,7 +9,7 @@ const FILTER_TAGS = ["high_protein", "lower_carb", "vegetarian", "vegan", "pesca
 
 export default async function MenuPage({ searchParams }: { searchParams: Promise<{ diet?: string; cat?: string }> }) {
   const { diet, cat } = await searchParams;
-  const all = publicMenu();
+  const all = await publicMenu();
   const meals = all.filter((m) => (!diet || m.tags.includes(diet)) && (!cat || m.category === cat));
   const cats = MENU_CATEGORIES.filter((c) => all.some((m) => m.category === c));
   const href = (next: { diet?: string; cat?: string }) => {

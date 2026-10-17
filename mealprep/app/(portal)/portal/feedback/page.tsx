@@ -9,10 +9,10 @@ const R = ({ name, label }: { name: string; label: string }) => <Field label={la
 export default async function Feedback({ searchParams }: { searchParams: Promise<{ order?: string; meal?: string }> }) {
   const user = await requireClient();
   const sp = await searchParams;
-  const delivered = listOrders({ clientId: user.client_id }).filter((o) => ["delivered", "completed"].includes(o.status)).slice(0, 5);
+  const delivered = (await listOrders({ clientId: user.client_id })).filter((o) => ["delivered", "completed"].includes(o.status)).slice(0, 5);
   const orderId = sp.order ? Number(sp.order) : delivered[0]?.id;
-  const order = orderId ? getOrder(orderId) : null;
-  const mine = getDb().prepare("SELECT f.*, m.name AS meal_name FROM feedback f LEFT JOIN meals m ON m.id = f.meal_id WHERE f.client_id = ? ORDER BY f.created_at DESC LIMIT 20").all(user.client_id) as { id: number; overall: number | null; comment: string; meal_name: string | null; created_at: string }[];
+  const order = orderId ? await getOrder(orderId) : null;
+  const mine = await getDb().prepare("SELECT f.*, m.name AS meal_name FROM feedback f LEFT JOIN meals m ON m.id = f.meal_id WHERE f.client_id = ? ORDER BY f.created_at DESC LIMIT 20").all(user.client_id) as { id: number; overall: number | null; comment: string; meal_name: string | null; created_at: string }[];
   return (
     <div className="space-y-4">
       <h1 className="text-3xl">My feedback</h1>

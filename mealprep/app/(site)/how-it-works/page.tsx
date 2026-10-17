@@ -4,8 +4,8 @@ import { CtaBand, Section } from "@/components/site/parts";
 
 export const metadata: Metadata = { title: "How it works" };
 
-export default function HowItWorks() {
-  const s = siteInfo();
+export default async function HowItWorks() {
+  const s = await siteInfo();
   const steps: [string, string, string[]][] = [
     ["Your assessment", "Ten short steps, about ten minutes. Everything we cook starts here.", ["Goal: lose, maintain, gain or perform", "Height, weight, activity and training", "Allergies, intolerances and dietary pattern", "Foods you love, foods you avoid, cuisines and spice level", "Meals per day, snacks, people served and budget"]],
     ["Your targets", "We calculate a daily energy range and macros using the Mifflin-St Jeor equation and activity multipliers, then adjust for your goal.", ["Deficits are capped and never go below safety floors", "Protein, carbs, fat, fibre and water targets", "Split across your meals and snacks", "Flags for professional review where it matters"]],

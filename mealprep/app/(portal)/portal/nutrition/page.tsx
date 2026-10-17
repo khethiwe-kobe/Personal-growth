@@ -5,7 +5,7 @@ import { PROFESSIONAL_REVIEW_MESSAGE } from "@/lib/nutrition";
 
 export default async function Nutrition() {
   const user = await requireClient();
-  const f = getClientFull(user.client_id)!;
+  const f = (await getClientFull(user.client_id))!;
   const t = f.computed;
   return (
     <div className="space-y-4">

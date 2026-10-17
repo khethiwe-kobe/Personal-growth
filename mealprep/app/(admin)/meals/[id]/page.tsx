@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requirePermission, can } from "@/lib/auth";
-import { getMealFull, listIngredients, getIngredient } from "@/lib/repo/meals";
+import { getMealFull, listIngredients } from "@/lib/repo/meals";
 import { getSettingNumber } from "@/lib/db";
 import { PageHeader, Card, CategoryBadge, Tabs, Field, StatusBadge, Stat } from "@/components/ui";
 import { formatZar, scaleRecipe, pricingScenarios } from "@/lib/costing";
@@ -18,14 +18,18 @@ export default async function MealPage({ params, searchParams }: { params: Promi
   const user = await requirePermission("meals:view");
   const { id } = await params;
   const { tab = "overview", servings } = await searchParams;
-  const full = getMealFull(Number(id));
+  const full = await getMealFull(Number(id));
   if (!full) notFound();
   const { meal, lines, steps, nutrition, cost, margin, allergens, tags, rating } = full;
   const target = Number(servings) || 40;
   const scaled = scaleRecipe(meal, lines, target);
-  const scenarios = pricingScenarios(cost.total, { conservative: getSettingNumber("target_margin_conservative"), standard: getSettingNumber("target_margin_standard"), premium: getSettingNumber("target_margin_premium") });
-  const feedback = getDb().prepare("SELECT f.*, c.first_name FROM feedback f JOIN clients c ON c.id = f.client_id WHERE f.meal_id = ? ORDER BY f.created_at DESC LIMIT 8").all(meal.id) as { id: number; overall: number | null; taste: number | null; comment: string; first_name: string; created_at: string }[];
-  const sold = getDb().prepare("SELECT COALESCE(SUM(oi.quantity),0) AS n FROM order_items oi JOIN orders o ON o.id = oi.order_id WHERE oi.meal_id = ? AND o.status != 'cancelled'").get(meal.id) as { n: number };
+  const allIngredients = await listIngredients(false);
+  const ingredientById = new Map(allIngredients.map((i) => [i.id, i]));
+  const ingredientOptions = allIngredients.filter((i) => i.is_active);
+  const conservativeMargin = await getSettingNumber("target_margin_conservative");
+  const scenarios = pricingScenarios(cost.total, { conservative: await getSettingNumber("target_margin_conservative"), standard: await getSettingNumber("target_margin_standard"), premium: await getSettingNumber("target_margin_premium") });
+  const feedback = await getDb().prepare("SELECT f.*, c.first_name FROM feedback f JOIN clients c ON c.id = f.client_id WHERE f.meal_id = ? ORDER BY f.created_at DESC LIMIT 8").all(meal.id) as { id: number; overall: number | null; taste: number | null; comment: string; first_name: string; created_at: string }[];
+  const sold = await getDb().prepare("SELECT COALESCE(SUM(oi.quantity),0) AS n FROM order_items oi JOIN orders o ON o.id = oi.order_id WHERE oi.meal_id = ? AND o.status != 'cancelled'").get(meal.id) as { n: number };
 
   return (
     <div>
@@ -37,7 +41,7 @@ export default async function MealPage({ params, searchParams }: { params: Promi
           <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-3">
             <Stat label="Selling price" value={formatZar(meal.selling_price)} sub={meal.tier + " tier"} />
             <Stat label="True cost / serving" value={formatZar(cost.total)} sub={`ingredients ${formatZar(cost.ingredients)}`} />
-            <Stat label="Gross profit" value={formatZar(margin.profit)} sub={`${margin.margin_pct}% margin`} tone={margin.margin_pct >= getSettingNumber("target_margin_conservative") * 100 ? "good" : "critical"} />
+            <Stat label="Gross profit" value={formatZar(margin.profit)} sub={`${margin.margin_pct}% margin`} tone={margin.margin_pct >= conservativeMargin * 100 ? "good" : "critical"} />
             <Stat label="Servings sold" value={sold.n} sub="all time" />
             <Stat label="Client rating" value={rating.avg ? rating.avg.toFixed(1) : "—"} sub={`${rating.count} reviews · internal ${meal.internal_rating}/5`} />
             <Stat label="Shelf life" value={`${meal.shelf_life_days} d`} sub={`${meal.serving_size_g} g serving`} />
@@ -91,7 +95,7 @@ export default async function MealPage({ params, searchParams }: { params: Promi
           <Card title="Scale for production" kicker="Purchasing quantities">
             <form className="flex gap-2 mb-3"><input type="hidden" name="tab" value="recipe" /><input name="servings" type="number" min={1} defaultValue={target} className="input" /><button className="btn-secondary">Scale</button></form>
             <div className="text-xs text-ink-2 mb-2">{meal.servings} servings → <b className="text-ink">{target}</b> servings (× {(scaled[0]?.factor ?? 1).toFixed(2)})</div>
-            <table className="table"><tbody>{scaled.map((s) => { const ing = getIngredient(s.ingredient_id)!; return <tr key={s.ingredient_id}><td>{ing.name}</td><td className="text-right font-medium">{formatQty(s.quantity, ing.base_unit)}</td><td className="text-right text-xs text-ink-3">+{ing.waste_pct}% waste → {formatQty(s.quantity * (1 + ing.waste_pct / 100), ing.base_unit)}</td></tr>; })}</tbody></table>
+            <table className="table"><tbody>{scaled.map((s) => { const ing = ingredientById.get(s.ingredient_id)!; return <tr key={s.ingredient_id}><td>{ing.name}</td><td className="text-right font-medium">{formatQty(s.quantity, ing.base_unit)}</td><td className="text-right text-xs text-ink-3">+{ing.waste_pct}% waste → {formatQty(s.quantity * (1 + ing.waste_pct / 100), ing.base_unit)}</td></tr>; })}</tbody></table>
             <div className="text-sm mt-3">Ingredient cost for {target}: <b>{formatZar(cost.ingredients * target)}</b></div>
           </Card>
           {can(user, "meals:edit") && (
@@ -101,7 +105,7 @@ export default async function MealPage({ params, searchParams }: { params: Promi
                 <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-2">
                   {Array.from({ length: Math.max(12, lines.length + 3) }).map((_, k) => { const l = lines[k]; return (
                     <div key={k} className="flex gap-1">
-                      <select name={`ing_${k}`} defaultValue={l?.ingredient_id ?? ""} className="input"><option value="">— ingredient —</option>{listIngredients().map((i) => <option key={i.id} value={i.id}>{i.name} ({i.base_unit})</option>)}</select>
+                      <select name={`ing_${k}`} defaultValue={l?.ingredient_id ?? ""} className="input"><option value="">— ingredient —</option>{ingredientOptions.map((i) => <option key={i.id} value={i.id}>{i.name} ({i.base_unit})</option>)}</select>
                       <input name={`qty_${k}`} type="number" step="0.1" defaultValue={l?.quantity ?? ""} placeholder="qty" className="input !w-24" />
                       <input name={`note_${k}`} defaultValue={l?.note ?? ""} placeholder="note" className="input !w-28" />
                     </div>); })}

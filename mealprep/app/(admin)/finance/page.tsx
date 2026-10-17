@@ -9,14 +9,14 @@ export default async function Finance({ searchParams }: { searchParams: Promise<
   await requirePermission("finance:view");
   const sp = await searchParams;
   const from = sp.from ?? startOfMonth(), to = sp.to ?? todayIso();
-  const s = summary({ from, to });
-  const today = summary({ from: todayIso(), to: todayIso() });
-  const week = summary({ from: startOfWeek(), to: todayIso() });
-  const month = summary({ from: startOfMonth(), to: todayIso() });
-  const prev = summary({ from: shiftMonths(startOfMonth(), -1), to: shiftMonths(todayIso(), -1) });
-  const series = monthlySeries(6);
-  const cm = customerMetrics();
-  const prof = mealProfitability(90).slice(0, 8);
+  const s = await summary({ from, to });
+  const today = await summary({ from: todayIso(), to: todayIso() });
+  const week = await summary({ from: startOfWeek(), to: todayIso() });
+  const month = await summary({ from: startOfMonth(), to: todayIso() });
+  const prev = await summary({ from: shiftMonths(startOfMonth(), -1), to: shiftMonths(todayIso(), -1) });
+  const series = await monthlySeries(6);
+  const cm = await customerMetrics();
+  const prof = (await mealProfitability(90)).slice(0, 8);
   const delta = prev.revenue ? ((month.revenue - prev.revenue) / prev.revenue) * 100 : 0;
   return (
     <div>

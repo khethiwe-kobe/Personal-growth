@@ -6,7 +6,7 @@ import { PageHeader, Card, StatusBadge, fmtDate, Empty } from "@/components/ui";
 export default async function Plans({ searchParams }: { searchParams: Promise<{ status?: string }> }) {
   await requirePermission("plans:view");
   const { status } = await searchParams;
-  const rows = listPlans().filter((p) => !status || p.status === status);
+  const rows = (await listPlans()).filter((p) => !status || p.status === status);
   return (
     <div>
       <PageHeader kicker="Planning" title="Weekly meal plans" actions={<Link href="/meal-plans/new" className="btn-primary">Generate a plan</Link>}>Draft → proposed (client notified) → approved (by client) → ordered.</PageHeader>

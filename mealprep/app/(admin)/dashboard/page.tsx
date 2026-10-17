@@ -17,24 +17,24 @@ export default async function Dashboard() {
   const user = await requirePermission("dashboard:view");
   const db = getDb();
   const today = todayIso();
-  const todayFin = summary({ from: today, to: today });
-  const week = summary({ from: startOfWeek(), to: today });
-  const month = summary({ from: startOfMonth(), to: today });
-  const prod = productionSummary(today);
-  const tomorrowProd = productionSummary(shiftDays(today, 1));
-  const todayDeliveries = deliveriesForDate(today);
-  const upcoming = upcomingDeliveries(7);
-  const alerts = inventoryAlerts();
-  const atRisk = atRiskClients();
-  const popular = mealPopularity(30).slice(0, 6);
-  const pending = pendingPayments();
-  const todaysOrders = listOrders({ from: today, to: today });
-  const newClients = (db.prepare("SELECT COUNT(*) AS n FROM clients WHERE registered_at >= date('now','-7 days')").get() as { n: number }).n;
-  const active = (db.prepare("SELECT COUNT(*) AS n FROM clients WHERE status = 'active'").get() as { n: number }).n;
-  const reviewFlags = (db.prepare("SELECT COUNT(*) AS n FROM client_nutrition_targets t JOIN clients c ON c.id = t.client_id WHERE t.requires_professional_review = 1 AND c.anonymised_at IS NULL AND NOT EXISTS (SELECT 1 FROM professional_reviews r WHERE r.client_id = c.id AND r.outcome LIKE 'approved%')").get() as { n: number }).n;
-  const satisfaction = db.prepare("SELECT AVG(overall) AS a, COUNT(*) AS n FROM feedback WHERE created_at >= date('now','-30 days')").get() as { a: number | null; n: number };
-  const renewals = listSubscriptions().filter((s) => s.status === "active" && s.renewal_date <= shiftDays(today, 7));
-  const daily = dailyRevenue(14);
+  const todayFin = await summary({ from: today, to: today });
+  const week = await summary({ from: startOfWeek(), to: today });
+  const month = await summary({ from: startOfMonth(), to: today });
+  const prod = await productionSummary(today);
+  const tomorrowProd = await productionSummary(shiftDays(today, 1));
+  const todayDeliveries = await deliveriesForDate(today);
+  const upcoming = await upcomingDeliveries(7);
+  const alerts = await inventoryAlerts();
+  const atRisk = await atRiskClients();
+  const popular = (await mealPopularity(30)).slice(0, 6);
+  const pending = await pendingPayments();
+  const todaysOrders = await listOrders({ from: today, to: today });
+  const newClients = (await db.prepare("SELECT COUNT(*) AS n FROM clients WHERE registered_at >= date_text('now','-7 days')").get() as { n: number }).n;
+  const active = (await db.prepare("SELECT COUNT(*) AS n FROM clients WHERE status = 'active'").get() as { n: number }).n;
+  const reviewFlags = (await db.prepare("SELECT COUNT(*) AS n FROM client_nutrition_targets t JOIN clients c ON c.id = t.client_id WHERE t.requires_professional_review = 1 AND c.anonymised_at IS NULL AND NOT EXISTS (SELECT 1 FROM professional_reviews r WHERE r.client_id = c.id AND r.outcome LIKE 'approved%')").get() as { n: number }).n;
+  const satisfaction = await db.prepare("SELECT AVG(overall) AS a, COUNT(*) AS n FROM feedback WHERE created_at >= date_text('now','-30 days')").get() as { a: number | null; n: number };
+  const renewals = (await listSubscriptions()).filter((s) => s.status === "active" && s.renewal_date <= shiftDays(today, 7));
+  const daily = await dailyRevenue(14);
   const costSplit = { food: month.cogs.food, packaging: month.cogs.packaging, labour: month.cogs.labour + (month.expenses.labour ?? 0), delivery: month.expenses.delivery ?? 0, marketing: month.expenses.marketing ?? 0 };
   const estProfit = month.net_profit;
   const isOps = ["kitchen", "packaging", "delivery"].includes(user.role);
@@ -103,7 +103,7 @@ export default async function Dashboard() {
           <Card title="Client satisfaction" kicker="Last 30 days">
             <div className="stat-value">{satisfaction.a ? satisfaction.a.toFixed(2) : "—"} <span className="text-sm text-ink-3 font-sans">/ 5</span></div>
             <div className="text-xs text-ink-2 mt-1">{satisfaction.n} ratings · <Link href="/feedback" className="text-accent">see what to promote or remove</Link></div>
-            <div className="mt-4 text-xs text-ink-2">Subscription renewals this week: <b className="text-ink">{renewals.length}</b> · Active subscriptions: <b className="text-ink">{listSubscriptions().filter((s) => s.status === "active").length}</b></div>
+            <div className="mt-4 text-xs text-ink-2">Subscription renewals this week: <b className="text-ink">{renewals.length}</b> · Active subscriptions: <b className="text-ink">{(await listSubscriptions()).filter((s) => s.status === "active").length}</b></div>
           </Card>
         </>}
       </div>

@@ -13,19 +13,19 @@ export default async function Analytics({ searchParams }: { searchParams: Promis
   await requirePermission("analytics:view");
   const sp = await searchParams;
   const f = { from: sp.from ?? shiftDays(todayIso(), -90), to: sp.to ?? todayIso(), client_id: sp.client ? Number(sp.client) : null, meal_id: sp.meal ? Number(sp.meal) : null, package_id: sp.package ? Number(sp.package) : null, subscription_id: sp.subscription ? Number(sp.subscription) : null, staff_id: sp.staff ? Number(sp.staff) : null };
-  const a = fullAnalytics(f);
-  const fc = demandForecast(1);
-  const staff = getDb().prepare("SELECT id, name FROM users WHERE role IN ('kitchen','packaging','admin') AND is_active = 1").all() as { id: number; name: string }[];
+  const a = await fullAnalytics(f);
+  const fc = await demandForecast(1);
+  const staff = await getDb().prepare("SELECT id, name FROM users WHERE role IN ('kitchen','packaging','admin') AND is_active = 1").all() as { id: number; name: string }[];
   const filtered = f.client_id || f.meal_id || f.package_id || f.subscription_id || f.staff_id;
   return (
     <div>
       <PageHeader kicker="Intelligence" title="Business analytics">Growth, retention, profitability, waste and satisfaction. Filter the order metrics by date, client, meal, package, subscription or staff member.</PageHeader>
       <Card className="mb-4"><form className="grid sm:grid-cols-3 lg:grid-cols-7 gap-2 items-end">
         <Field label="From"><input name="from" type="date" defaultValue={f.from} className="input" /></Field><Field label="To"><input name="to" type="date" defaultValue={f.to} className="input" /></Field>
-        <Field label="Client"><select name="client" defaultValue={sp.client ?? ""} className="input"><option value="">All</option>{listClients().map((c) => <option key={c.id} value={c.id}>{c.first_name} {c.last_name}</option>)}</select></Field>
-        <Field label="Meal"><select name="meal" defaultValue={sp.meal ?? ""} className="input"><option value="">All</option>{listMeals().map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}</select></Field>
-        <Field label="Package"><select name="package" defaultValue={sp.package ?? ""} className="input"><option value="">All</option>{listPackages(false).map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select></Field>
-        <Field label="Subscription"><select name="subscription" defaultValue={sp.subscription ?? ""} className="input"><option value="">All</option>{listSubscriptions().map((s) => <option key={s.id} value={s.id}>#{s.id} {s.client_name}</option>)}</select></Field>
+        <Field label="Client"><select name="client" defaultValue={sp.client ?? ""} className="input"><option value="">All</option>{(await listClients()).map((c) => <option key={c.id} value={c.id}>{c.first_name} {c.last_name}</option>)}</select></Field>
+        <Field label="Meal"><select name="meal" defaultValue={sp.meal ?? ""} className="input"><option value="">All</option>{(await listMeals()).map((m) => <option key={m.id} value={m.id}>{m.name}</option>)}</select></Field>
+        <Field label="Package"><select name="package" defaultValue={sp.package ?? ""} className="input"><option value="">All</option>{(await listPackages(false)).map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}</select></Field>
+        <Field label="Subscription"><select name="subscription" defaultValue={sp.subscription ?? ""} className="input"><option value="">All</option>{(await listSubscriptions()).map((s) => <option key={s.id} value={s.id}>#{s.id} {s.client_name}</option>)}</select></Field>
         <Field label="Staff"><select name="staff" defaultValue={sp.staff ?? ""} className="input"><option value="">All</option>{staff.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}</select></Field>
         <div className="lg:col-span-7"><button className="btn-secondary btn-sm">Apply filters</button></div>
       </form></Card>

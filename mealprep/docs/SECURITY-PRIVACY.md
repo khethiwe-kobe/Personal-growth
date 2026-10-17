@@ -14,9 +14,9 @@ for meal planning, restricted by role, auditable and deletable.
 | Consent | `client_consents` records type, version, granted flag and timestamp; onboarding requires data-processing, health-data and terms consent; marketing is optional |
 | Data subject rights | JSON export of every record (`/api/export/client/:id`); anonymise-and-delete that removes personal/health data while keeping financial records (`anonymiseClient`) |
 | Minimisation | Blood type is stored but never used; medical free text is optional; photo/proof blobs excluded from exports |
-| Encryption | Transport: deploy behind TLS. At rest: SQLite file permissions / disk encryption, or SQLCipher; `lib/crypto.ts` offers AES-256-GCM field encryption when `MEALPREP_FIELD_KEY` is set |
-| Backups | Copy `data/mealprep.db` (WAL mode: use `sqlite3 .backup` or stop the process) nightly to encrypted storage; with Postgres use managed point-in-time recovery |
-| Secrets | `MEALPREP_SESSION_SECRET`, `MEALPREP_WEBHOOK_SECRET`, `MEALPREP_FIELD_KEY` via environment only |
+| Encryption | Transport: deploy behind TLS. At rest: Neon encrypts storage; `lib/crypto.ts` offers AES-256-GCM field encryption when `MEALPREP_FIELD_KEY` is set |
+| Backups | Neon point-in-time restore (history window depends on the plan); for extra safety schedule a `pg_dump` to encrypted storage |
+| Secrets | `DATABASE_URL`, `MEALPREP_OWNER_PASSWORD`, `MEALPREP_WEBHOOK_SECRET`, `MEALPREP_FIELD_KEY` via environment only. Demo logins exist only when demo data is loaded |
 | Webhooks | Outbound events carry `x-mealprep-secret`; inbound payment webhooks should verify the gateway signature before calling `recordPayment` |
 
 ## Operational checklist

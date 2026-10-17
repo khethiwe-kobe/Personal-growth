@@ -17,9 +17,13 @@ CLIENT DATA → NUTRITION ANALYSIS → PERSONALISATION → MEAL PLAN → RECIPES
 ```bash
 cd mealprep
 npm install
-npm run seed      # realistic demo business (14 clients, 26 meals, 3 months of history)
 npm run dev       # http://localhost:3200
 ```
+
+With no `DATABASE_URL`, the app runs on an in-process Postgres (PGlite) stored
+in `data/pglite` and loads a realistic demo business on first start (14
+clients, 26 meals, 3 months of history). Set `DATABASE_URL` to use a real
+Postgres instead.
 
 | Login | Password | Lands on |
 |---|---|---|
@@ -31,18 +35,37 @@ npm run dev       # http://localhost:3200
 | accounts@demo.local | `accounting-demo` | Finance |
 | thandiwe@client.local (any seeded client) | `client-demo` | Client portal |
 
-`npm run seed -- --force` wipes and reseeds. `npm test` runs the engine tests.
-`npm run build && npm start` for production (set `MEALPREP_SESSION_SECRET`,
-`MEALPREP_PUBLIC_URL` for QR links, optional `MEALPREP_WEBHOOK_URL`).
+`npm run seed -- --force` wipes the database and loads the demo business.
+`npm test` runs the engine tests. `npm run build && npm start` for production.
 
-### Deploy to Vercel (demo mode)
+### Deploy to Vercel with Neon Postgres
 
-Import the repository in Vercel with **Root Directory = `mealprep`** (or run
-`vercel --cwd mealprep`). `vercel.json` sets `MEALPREP_AUTO_SEED=1`: on a
-serverless host the SQLite file lives in `/tmp` and is re-created with demo
-data on each cold start, so the live link is a resettable demo. For a
-persistent production deployment use a VPS (`npm run build && npm start`) or
-move to Postgres as described in `docs/DATABASE.md`.
+Import the repository in Vercel with **Root Directory = `mealprep`**. Then, in
+the Vercel project:
+
+1. **Storage → Create Database → Neon (Serverless Postgres)**. Pick the region
+   **AWS Europe Central 1 (Frankfurt)**, the closest Neon region to South
+   Africa, and connect it to the project. This adds `DATABASE_URL`.
+2. **Settings → Environment Variables**: add `MEALPREP_OWNER_EMAIL` and
+   `MEALPREP_OWNER_PASSWORD` (at least 8 characters). That becomes the admin login.
+3. **Deployments → Redeploy**.
+
+On first start the app creates its tables, loads the starter catalogue
+(ingredients, suppliers, meals and recipes, packages, startup-cost and
+compliance checklists) and creates the owner account. No SQL to run by hand.
+`vercel.json` runs the functions in Frankfurt (`fra1`) next to the database.
+
+| Variable | Purpose |
+|---|---|
+| `DATABASE_URL` (or `POSTGRES_URL`) | Postgres connection string. Without it the app runs the in-process demo. |
+| `MEALPREP_OWNER_EMAIL`, `MEALPREP_OWNER_PASSWORD`, `MEALPREP_OWNER_NAME` | Owner (admin) account created when the database has no users. |
+| `MEALPREP_DEMO_DATA=1` | Load the demo business (public demo logins) into an empty Postgres instead of starting clean. |
+| `MEALPREP_PUBLIC_URL` | Base URL for label QR codes (defaults to the request origin). |
+| `MEALPREP_WEBHOOK_URL`, `MEALPREP_WEBHOOK_SECRET` | Optional outbound automation webhook. |
+| `MEALPREP_FIELD_KEY` | Optional AES-256-GCM key (32-byte hex) for medical free-text fields. |
+
+Without `DATABASE_URL`, each Vercel instance runs its own in-memory demo that
+resets on a cold start: fine for showing the product, not for real data.
 
 ### Public website
 

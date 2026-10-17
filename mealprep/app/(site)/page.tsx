@@ -28,12 +28,12 @@ const SHOW_RATING_FROM = 4;
 const SHOW_MEALS_FROM = 500;
 const SHOW_CLIENTS_FROM = 50;
 
-export default function Home() {
-  const s = siteInfo();
-  const menu = publicMenu();
-  const plans = publicPackages();
-  const { reviews, average, count } = publicReviews(3);
-  const stats = publicStats();
+export default async function Home() {
+  const s = await siteInfo();
+  const menu = await publicMenu();
+  const plans = await publicPackages();
+  const { reviews, average, count } = await publicReviews(3);
+  const stats = await publicStats();
   const featured = [...menu].filter((m) => ["breakfast", "lunch", "dinner"].includes(m.category)).sort((a, b) => (b.rating ?? 0) - (a.rating ?? 0)).slice(0, 6);
   const standard = plans.filter((p) => !p.custom);
   const lowest = standard.length ? Math.min(...standard.map((p) => p.per_meal)) : null;

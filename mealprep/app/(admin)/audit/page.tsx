@@ -7,9 +7,9 @@ export default async function Audit({ searchParams }: { searchParams: Promise<{ 
   const { entity, q } = await searchParams;
   const where: string[] = ["1=1"]; const params: unknown[] = [];
   if (entity) { where.push("a.entity_type = ?"); params.push(entity); }
-  if (q) { where.push("(a.details LIKE ? OR a.action LIKE ?)"); params.push(`%${q}%`, `%${q}%`); }
-  const rows = getDb().prepare(`SELECT a.*, u.name AS user FROM audit_log a LEFT JOIN users u ON u.id = a.user_id WHERE ${where.join(" AND ")} ORDER BY a.id DESC LIMIT 300`).all(...params) as { id: number; action: string; entity_type: string; entity_id: number | null; details: string; created_at: string; user: string | null }[];
-  const entities = getDb().prepare("SELECT DISTINCT entity_type FROM audit_log ORDER BY 1").all() as { entity_type: string }[];
+  if (q) { where.push("(a.details ILIKE ? OR a.action ILIKE ?)"); params.push(`%${q}%`, `%${q}%`); }
+  const rows = await getDb().prepare(`SELECT a.*, u.name AS user FROM audit_log a LEFT JOIN users u ON u.id = a.user_id WHERE ${where.join(" AND ")} ORDER BY a.id DESC LIMIT 300`).all(...params) as { id: number; action: string; entity_type: string; entity_id: number | null; details: string; created_at: string; user: string | null }[];
+  const entities = await getDb().prepare("SELECT DISTINCT entity_type FROM audit_log ORDER BY 1").all() as { entity_type: string }[];
   return (
     <div>
       <PageHeader kicker="Security" title="Audit log">Every create, update, status change, payment, inventory movement and data-subject action, with the user who performed it.</PageHeader>

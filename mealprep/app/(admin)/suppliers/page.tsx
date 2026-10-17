@@ -9,8 +9,8 @@ import { parseJson } from "@/lib/types";
 export default async function Suppliers({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
   const user = await requirePermission("suppliers:view");
   const { tab = "list" } = await searchParams;
-  const suppliers = listSuppliers();
-  const table = priceComparisonTable();
+  const suppliers = await listSuppliers();
+  const table = await priceComparisonTable();
   return (
     <div>
       <PageHeader kicker="Purchasing" title="Suppliers" actions={<><Link href="/suppliers" className="btn-secondary btn-sm">Profiles</Link><Link href="/suppliers?tab=compare" className="btn-secondary btn-sm">Price comparison</Link></>}>Profiles, product prices per kg/L/each, and a weighted recommendation (price 60 %, reliability 25 %, quality 15 %).</PageHeader>
@@ -30,7 +30,7 @@ export default async function Suppliers({ searchParams }: { searchParams: Promis
   );
 }
 
-export function SupplierForm({ s }: { s?: ReturnType<typeof listSuppliers>[number] }) {
+export function SupplierForm({ s }: { s?: Awaited<ReturnType<typeof listSuppliers>>[number] }) {
   const days = parseJson<string[]>(s?.delivery_days, []);
   return (
     <form action={saveSupplierAction} className="grid grid-cols-2 gap-2">

@@ -6,8 +6,8 @@ import { BarChart } from "@/components/charts";
 
 export default async function Feedback() {
   await requirePermission("clients:view");
-  const rows = listFeedback(100);
-  const ins = feedbackInsights();
+  const rows = await listFeedback(100);
+  const ins = await feedbackInsights();
   const dims = ["taste", "portion", "presentation", "variety", "packaging", "overall"] as const;
   return (
     <div>

@@ -8,23 +8,23 @@ import { publicMenu } from "@/lib/site";
 import { MealCard, Stars, TagList } from "@/components/site/parts";
 
 /** Active meals only — retired dishes are not public. */
-function load(id: string) {
-  const m = getMealFull(Number(id));
+async function load(id: string) {
+  const m = await getMealFull(Number(id));
   return m && m.meal.is_active ? m : null;
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
-  const m = load((await params).id);
+  const m = await load((await params).id);
   return m ? { title: m.meal.name, description: m.meal.description } : {};
 }
 
 const BAND: Record<string, string> = { breakfast: "bg-cat-breakfast", lunch: "bg-cat-lunch", dinner: "bg-cat-dinner", snack: "bg-cat-snack", dessert: "bg-cat-snack", drink: "bg-sage" };
 
 export default async function MealDetail({ params }: { params: Promise<{ id: string }> }) {
-  const m = load((await params).id);
+  const m = await load((await params).id);
   if (!m) notFound();
   const n = m.nutrition;
-  const more = publicMenu().filter((x) => x.category === m.meal.category && x.id !== m.meal.id).slice(0, 3);
+  const more = (await publicMenu()).filter((x) => x.category === m.meal.category && x.id !== m.meal.id).slice(0, 3);
   const rows: [string, string][] = [["Energy", `${Math.round(n.kcal)} kcal`], ["Protein", `${n.protein.toFixed(1)} g`], ["Carbohydrate", `${n.carbs.toFixed(1)} g`], ["of which sugars", `${n.sugar.toFixed(1)} g`], ["Fat", `${n.fat.toFixed(1)} g`], ["Fibre", `${n.fibre.toFixed(1)} g`], ["Sodium", `${Math.round(n.sodium_mg)} mg`]];
 
   return (

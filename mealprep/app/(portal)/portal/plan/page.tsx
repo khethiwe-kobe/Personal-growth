@@ -7,9 +7,9 @@ import { setPlanStatusAction } from "@/app/actions";
 export default async function Plan({ searchParams }: { searchParams: Promise<{ id?: string }> }) {
   const user = await requireClient();
   const { id } = await searchParams;
-  const plans = listPlans(user.client_id).filter((p) => p.status !== "draft");
+  const plans = (await listPlans(user.client_id)).filter((p) => p.status !== "draft");
   const sel = id ? plans.find((p) => p.id === Number(id)) : plans[0];
-  const full = sel ? getPlanFull(sel.id) : null;
+  const full = sel ? await getPlanFull(sel.id) : null;
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap justify-between items-end gap-2"><h1 className="text-3xl">My meal plan</h1><div className="flex gap-1 flex-wrap">{plans.slice(0, 6).map((p) => <a key={p.id} href={`/portal/plan?id=${p.id}`} className={`badge ${sel?.id === p.id ? "bg-ink text-white" : "bg-bone-2 text-ink-2"}`}>{fmtDate(p.week_start)}</a>)}</div></div>

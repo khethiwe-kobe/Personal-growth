@@ -6,7 +6,7 @@ import { siteInfo } from "@/lib/site";
 export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const s = siteInfo();
+  const s = await siteInfo();
   return {
     title: { default: `${s.brand} — Personalised meal prep in ${s.city}`, template: `%s · ${s.brand}` },
     description: `Chef-prepared meals planned around your nutrition targets, allergies and schedule. Delivered on ${s.deliveryDays} across ${s.city}.`,
@@ -16,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
 const NAV: [string, string][] = [["/menu", "Menu"], ["/plans", "Plans & pricing"], ["/how-it-works", "How it works"], ["/contact", "Contact"]];
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
-  const s = siteInfo();
+  const s = await siteInfo();
   const user = await getSessionUser();
   const app = user ? (user.role === "client" ? ["/portal", "My portal"] : ["/dashboard", "Dashboard"]) : null;
   return (

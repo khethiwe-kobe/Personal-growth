@@ -15,9 +15,9 @@ const INCLUDED = [
   "Skip, pause or cancel from your portal",
 ];
 
-export default function PlansPage() {
-  const s = siteInfo();
-  const plans = publicPackages();
+export default async function PlansPage() {
+  const s = await siteInfo();
+  const plans = await publicPackages();
   const standard = plans.filter((p) => !p.custom);
   const custom = plans.filter((p) => p.custom);
   return (

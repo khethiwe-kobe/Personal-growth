@@ -13,8 +13,8 @@ const CATS = ["food", "packaging", "labour", "delivery", "marketing", "rent", "u
 export default async function Expenses({ searchParams }: { searchParams: Promise<{ from?: string; to?: string }> }) {
   const user = await requirePermission("finance:view");
   const { from, to } = await searchParams;
-  const rows = listExpenses({ from, to });
-  const month = expensesByCategory({ from: startOfMonth(), to: todayIso() });
+  const rows = await listExpenses({ from, to });
+  const month = await expensesByCategory({ from: startOfMonth(), to: todayIso() });
   const parts = Object.entries(month).sort((a, b) => b[1] - a[1]);
   const top = parts.slice(0, 5).map(([name, value]) => ({ name, value }));
   const other = parts.slice(5).reduce((s, [, v]) => s + v, 0);
@@ -28,7 +28,7 @@ export default async function Expenses({ searchParams }: { searchParams: Promise
         </Card>
         <div className="space-y-4">
           <Card title="This month by category">{parts.length ? <Donut parts={top} label={formatZar(parts.reduce((s, [, v]) => s + v, 0)).replace(/,00$/, "")} /> : <Empty>No expenses this month.</Empty>}</Card>
-          {can(user, "finance:edit") && <Card title="Add expense"><form action={addExpenseAction} className="grid grid-cols-2 gap-2"><Field label="Category"><select name="category" className="input">{CATS.map((c) => <option key={c}>{c}</option>)}</select></Field><Field label="Amount (R)"><input name="amount_zar" type="number" step="0.01" className="input" required /></Field><Field label="Date"><input name="incurred_at" type="date" defaultValue={todayIso()} className="input" /></Field><Field label="Supplier"><select name="supplier_id" className="input"><option value="">—</option>{listSuppliers().map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}</select></Field><Field label="Description" className="col-span-2"><input name="description" className="input" /></Field><label className="flex items-center gap-2 text-sm"><input type="checkbox" name="is_recurring" /> Recurring monthly</label><div><button className="btn-primary btn-sm">Add</button></div></form></Card>}
+          {can(user, "finance:edit") && <Card title="Add expense"><form action={addExpenseAction} className="grid grid-cols-2 gap-2"><Field label="Category"><select name="category" className="input">{CATS.map((c) => <option key={c}>{c}</option>)}</select></Field><Field label="Amount (R)"><input name="amount_zar" type="number" step="0.01" className="input" required /></Field><Field label="Date"><input name="incurred_at" type="date" defaultValue={todayIso()} className="input" /></Field><Field label="Supplier"><select name="supplier_id" className="input"><option value="">—</option>{(await listSuppliers()).map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}</select></Field><Field label="Description" className="col-span-2"><input name="description" className="input" /></Field><label className="flex items-center gap-2 text-sm"><input type="checkbox" name="is_recurring" /> Recurring monthly</label><div><button className="btn-primary btn-sm">Add</button></div></form></Card>}
         </div>
       </div>
     </div>

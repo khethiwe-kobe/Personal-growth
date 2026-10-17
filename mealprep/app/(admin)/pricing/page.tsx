@@ -12,10 +12,10 @@ const TABS = [{ key: "assumptions", label: "Assumptions & calculator" }, { key: 
 export default async function Pricing({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
   const user = await requirePermission("finance:view");
   const { tab = "assumptions" } = await searchParams;
-  const s = getAllSettings();
+  const s = await getAllSettings();
   const margins = { conservative: Number(s.target_margin_conservative), standard: Number(s.target_margin_standard), premium: Number(s.target_margin_premium) };
-  const profiles = mealProfiles();
-  const meals = listMeals();
+  const profiles = await mealProfiles();
+  const meals = await listMeals();
   const avgPrice = profiles.length ? profiles.reduce((a, m) => a + m.price, 0) / profiles.length : 0;
   const avgCost = profiles.length ? profiles.reduce((a, m) => a + m.cost, 0) / profiles.length : 0;
   const edit = can(user, "finance:edit");
@@ -53,7 +53,7 @@ export default async function Pricing({ searchParams }: { searchParams: Promise<
       {tab === "packages" && (
         <div className="grid lg:grid-cols-3 gap-4">
           <Card title="Packages" className="lg:col-span-2" kicker="Editable names, meals and prices">
-            <table className="table"><thead><tr><th>Code</th><th>Name</th><th>Meals / week</th><th>Price / week</th><th>Per meal</th><th>Suggested (standard margin)</th><th>Monthly (×4)</th></tr></thead><tbody>{listPackages(false).map((p) => { const sug = packagePrice(p.meals_per_week, avgPrice, margins.standard); return <tr key={p.id} className={p.is_active ? "" : "opacity-50"}><td className="font-mono text-xs">{p.code}</td><td className="font-medium">{p.name}<div className="text-[11px] text-ink-2">{p.description}</div></td><td>{p.meals_per_week}{p.is_custom ? " (custom)" : ""}</td><td>{formatZar(p.price_zar)}</td><td>{formatZar(p.price_zar / p.meals_per_week)}</td><td className="text-xs">{formatZar(sug.price)} <span className="text-ink-3">({Math.round(sug.discount_pct * 100)}% volume discount)</span></td><td>{formatZar(p.price_zar * 4)}</td></tr>; })}</tbody></table>
+            <table className="table"><thead><tr><th>Code</th><th>Name</th><th>Meals / week</th><th>Price / week</th><th>Per meal</th><th>Suggested (standard margin)</th><th>Monthly (×4)</th></tr></thead><tbody>{(await listPackages(false)).map((p) => { const sug = packagePrice(p.meals_per_week, avgPrice, margins.standard); return <tr key={p.id} className={p.is_active ? "" : "opacity-50"}><td className="font-mono text-xs">{p.code}</td><td className="font-medium">{p.name}<div className="text-[11px] text-ink-2">{p.description}</div></td><td>{p.meals_per_week}{p.is_custom ? " (custom)" : ""}</td><td>{formatZar(p.price_zar)}</td><td>{formatZar(p.price_zar / p.meals_per_week)}</td><td className="text-xs">{formatZar(sug.price)} <span className="text-ink-3">({Math.round(sug.discount_pct * 100)}% volume discount)</span></td><td>{formatZar(p.price_zar * 4)}</td></tr>; })}</tbody></table>
             <p className="text-xs text-ink-2 mt-2">Volume discounts: 10+ meals 5 %, 14+ 8 %, 21+ 12 %, 28+ 15 % — capped at half the standard margin so bundles never destroy profitability.</p>
           </Card>
           {can(user, "settings:edit") && <Card title="Add / edit package"><form action={savePackageAction} className="grid grid-cols-2 gap-2"><Field label="ID (blank = new)"><input name="id" type="number" className="input" /></Field><Field label="Code"><input name="code" className="input" required /></Field><Field label="Name" className="col-span-2"><input name="name" className="input" required /></Field><Field label="Description" className="col-span-2"><input name="description" className="input" /></Field><Field label="Meals / week"><input name="meals_per_week" type="number" className="input" required /></Field><Field label="Price / week (R)"><input name="price_zar" type="number" className="input" required /></Field><Field label="Sort"><input name="sort_order" type="number" defaultValue={9} className="input" /></Field><div className="flex flex-col gap-1 text-sm"><label className="flex items-center gap-2"><input type="checkbox" name="is_custom" /> Custom quantity</label><label className="flex items-center gap-2"><input type="checkbox" name="is_active" defaultChecked /> Active</label></div><div><button className="btn-primary btn-sm">Save package</button></div></form></Card>}

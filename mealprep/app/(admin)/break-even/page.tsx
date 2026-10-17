@@ -6,8 +6,8 @@ import BreakEven from "@/components/BreakEven";
 
 export default async function BreakEvenPage() {
   await requirePermission("business:view");
-  const fixed = (getDb().prepare("SELECT COALESCE(SUM(amount_zar),0) AS s FROM expenses WHERE is_recurring = 1 AND incurred_at >= date('now','start of month')").get() as { s: number }).s;
-  const p = mealProfiles();
+  const fixed = (await getDb().prepare("SELECT COALESCE(SUM(amount_zar),0) AS s FROM expenses WHERE is_recurring = 1 AND incurred_at >= date_text('now','start of month')").get() as { s: number }).s;
+  const p = await mealProfiles();
   const avgPrice = p.length ? p.reduce((a, m) => a + m.price, 0) / p.length : 100;
   const avgCost = p.length ? p.reduce((a, m) => a + m.cost, 0) / p.length : 50;
   return (

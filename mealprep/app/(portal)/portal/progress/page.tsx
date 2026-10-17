@@ -6,8 +6,8 @@ import { addProgressAction } from "@/app/actions";
 
 export default async function Progress() {
   const user = await requireClient();
-  const rows = listProgress(user.client_id);
-  const f = getClientFull(user.client_id)!;
+  const rows = await listProgress(user.client_id);
+  const f = (await getClientFull(user.client_id))!;
   const goal = f.goals.find((g) => g.is_primary);
   const first = rows[0], last = rows[rows.length - 1];
   const change = first?.weight_kg && last?.weight_kg ? last.weight_kg - first.weight_kg : null;

@@ -15,6 +15,6 @@ export async function submitEnquiry(fd: FormData) {
   if (!e.name) fail("Please tell us your name.");
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e.email) && !e.phone) fail("Please leave an email address or phone number so we can reply.");
   if (fd.get("consent") !== "on") fail("Please agree to us contacting you about your enquiry.");
-  createEnquiry(e);
+  await createEnquiry(e);
   redirect("/contact?sent=1");
 }

@@ -1,4 +1,4 @@
-import { getDb } from "./db";
+import { getDb, EPHEMERAL_DEMO } from "./db";
 import crypto from "crypto";
 import { cookies } from "next/headers";
 import { cache } from "react";
@@ -26,13 +26,43 @@ function tokenHash(token: string): string {
   return crypto.createHash("sha256").update(token).digest("hex");
 }
 
+/**
+ * Demo-only signed tokens. On the ephemeral demo every serverless instance has
+ * its own database, so a session row written by one instance is missing on the
+ * next and the visitor bounces back to the login page. A signed token carries
+ * the user id and expiry itself; the seed is deterministic, so ids match on
+ * every instance. The demo logins are public, so a fallback secret exposes
+ * nothing that signing in does not. Never used with a persistent database.
+ */
+const DEMO_SECRET = process.env.MEALPREP_SESSION_SECRET || "mealprep-ephemeral-demo";
+
+function demoSign(payload: string): string {
+  return crypto.createHmac("sha256", DEMO_SECRET).update(payload).digest("hex");
+}
+
+function demoToken(userId: number, expires: Date): string {
+  const payload = `${userId}.${expires.getTime()}`;
+  return `d.${payload}.${demoSign(payload)}`;
+}
+
+function demoUserId(token: string): number | null {
+  const [prefix, id, exp, sig] = token.split(".");
+  if (prefix !== "d" || !id || !exp || !sig) return null;
+  const expected = demoSign(`${id}.${exp}`);
+  if (sig.length !== expected.length || !crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expected))) return null;
+  if (Number(exp) < Date.now()) return null;
+  return Number(id);
+}
+
 export async function createSession(userId: number): Promise<void> {
-  const token = crypto.randomBytes(32).toString("hex");
   const expires = new Date(Date.now() + SESSION_DAYS * 86400_000);
-  getDb()
-    .prepare("INSERT INTO sessions (token_hash, user_id, expires_at) VALUES (?, ?, ?)")
-    .run(tokenHash(token), userId, expires.toISOString());
-  getDb().prepare("UPDATE users SET last_login_at = datetime('now') WHERE id = ?").run(userId);
+  const token = EPHEMERAL_DEMO ? demoToken(userId, expires) : crypto.randomBytes(32).toString("hex");
+  if (!EPHEMERAL_DEMO) {
+    await getDb()
+      .prepare("INSERT INTO sessions (token_hash, user_id, expires_at) VALUES (?, ?, ?)")
+      .run(tokenHash(token), userId, expires.toISOString());
+  }
+  await getDb().prepare("UPDATE users SET last_login_at = now_text() WHERE id = ?").run(userId);
   const jar = await cookies();
   jar.set(COOKIE, token, {
     httpOnly: true,
@@ -46,7 +76,7 @@ export async function createSession(userId: number): Promise<void> {
 export async function destroySession(): Promise<void> {
   const jar = await cookies();
   const token = jar.get(COOKIE)?.value;
-  if (token) getDb().prepare("DELETE FROM sessions WHERE token_hash = ?").run(tokenHash(token));
+  if (token) await getDb().prepare("DELETE FROM sessions WHERE token_hash = ?").run(tokenHash(token));
   jar.delete(COOKIE);
 }
 
@@ -54,7 +84,20 @@ export const getSessionUser = cache(async (): Promise<SessionUser | null> => {
   const jar = await cookies();
   const token = jar.get(COOKIE)?.value;
   if (!token) return null;
-  const row = getDb()
+  if (EPHEMERAL_DEMO) {
+    const id = demoUserId(token);
+    if (id === null) return null;
+    const u = await getDb()
+      .prepare(
+        `SELECT u.id, u.email, u.name, u.role, u.is_active,
+                (SELECT c.id FROM clients c WHERE c.user_id = u.id LIMIT 1) AS client_id
+           FROM users u WHERE u.id = ?`
+      )
+      .get(id) as (SessionUser & { is_active: number }) | undefined;
+    if (!u || !u.is_active) return null;
+    return { id: u.id, email: u.email, name: u.name, role: u.role, client_id: u.client_id ?? null };
+  }
+  const row = await getDb()
     .prepare(
       `SELECT u.id, u.email, u.name, u.role, u.is_active, s.expires_at,
               (SELECT c.id FROM clients c WHERE c.user_id = u.id LIMIT 1) AS client_id
@@ -66,14 +109,14 @@ export const getSessionUser = cache(async (): Promise<SessionUser | null> => {
     | undefined;
   if (!row || !row.is_active) return null;
   if (new Date(row.expires_at) < new Date()) {
-    getDb().prepare("DELETE FROM sessions WHERE token_hash = ?").run(tokenHash(token));
+    await getDb().prepare("DELETE FROM sessions WHERE token_hash = ?").run(tokenHash(token));
     return null;
   }
   return { id: row.id, email: row.email, name: row.name, role: row.role, client_id: row.client_id ?? null };
 });
 
-export function authenticate(email: string, password: string): UserRow | null {
-  const row = getDb().prepare("SELECT * FROM users WHERE email = ? AND is_active = 1").get(email) as UserRow | undefined;
+export async function authenticate(email: string, password: string): Promise<UserRow | null> {
+  const row = await getDb().prepare("SELECT * FROM users WHERE lower(email) = lower(?) AND is_active = 1").get(email) as UserRow | undefined;
   if (!row) return null;
   return verifyPassword(password, row.password_hash) ? row : null;
 }

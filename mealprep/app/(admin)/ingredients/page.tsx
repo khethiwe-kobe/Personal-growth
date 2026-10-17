@@ -9,9 +9,9 @@ import { saveIngredient } from "@/app/actions";
 export default async function Ingredients({ searchParams }: { searchParams: Promise<{ edit?: string; category?: string }> }) {
   const user = await requirePermission("meals:view");
   const { edit, category } = await searchParams;
-  const rows = listIngredients(false).filter((i) => !category || i.category === category);
-  const prices = bestPrices();
-  const stock = stockByIngredient();
+  const rows = (await listIngredients(false)).filter((i) => !category || i.category === category);
+  const prices = await bestPrices();
+  const stock = await stockByIngredient();
   const editing = edit ? rows.find((r) => r.id === Number(edit)) : undefined;
   return (
     <div>

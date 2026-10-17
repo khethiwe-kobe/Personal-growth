@@ -7,8 +7,8 @@ import { BRAND_IDENTITY } from "@/lib/business";
 
 export default async function Packaging() {
   await requirePermission("labels:view");
-  const rows = listOrders().filter((o) => ["preparing", "packaging", "ready", "out_for_delivery"].includes(o.status) || (o.status === "delivered" && o.delivery_date >= new Date().toISOString().slice(0, 10)));
-  const printed = new Map((getDb().prepare("SELECT oi.order_id, COUNT(l.id) AS n, SUM(l.printed_at IS NOT NULL) AS p FROM order_items oi LEFT JOIN meal_labels l ON l.order_item_id = oi.id GROUP BY oi.order_id").all() as { order_id: number; n: number; p: number }[]).map((r) => [r.order_id, r]));
+  const rows = (await listOrders()).filter((o) => ["preparing", "packaging", "ready", "out_for_delivery"].includes(o.status) || (o.status === "delivered" && o.delivery_date >= new Date().toISOString().slice(0, 10)));
+  const printed = new Map((await getDb().prepare("SELECT oi.order_id, COUNT(l.id) AS n, COUNT(l.printed_at) AS p FROM order_items oi LEFT JOIN meal_labels l ON l.order_item_id = oi.id GROUP BY oi.order_id").all() as { order_id: number; n: number; p: number }[]).map((r) => [r.order_id, r]));
   return (
     <div>
       <PageHeader kicker="Packaging" title="Labels & packaging">Each meal gets a wrap-around label with client name, meal number, nutrition, allergens, storage, reheating and a QR code to the client’s digital meal page.</PageHeader>

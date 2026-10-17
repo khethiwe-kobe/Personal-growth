@@ -6,7 +6,7 @@ import Link from "next/link";
 export default async function Assistant({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
   await requirePermission("assistant:use");
   const { q } = await searchParams;
-  const answer = q ? ask(q) : null;
+  const answer = q ? await ask(q) : null;
   return (
     <div className="max-w-4xl">
       <PageHeader kicker="Business assistant" title="Ask the business">Answers come from live application data: orders, inventory, suppliers, feedback and finance. No figures are invented.</PageHeader>

@@ -19,7 +19,7 @@ export default async function ClientPage({ params, searchParams }: { params: Pro
   const user = await requirePermission("clients:view");
   const { id } = await params;
   const { tab = "overview" } = await searchParams;
-  const full = getClientFull(Number(id));
+  const full = await getClientFull(Number(id));
   if (!full) notFound();
   const { client: c, health: h, prefs, allergies, goals, computed: t } = full;
   const p = clientPrefsParsed(prefs);
@@ -82,7 +82,7 @@ export default async function ClientPage({ params, searchParams }: { params: Pro
               <div className="mt-3 flex flex-wrap gap-1">{allergies.map((a) => <span key={a.id} className={`badge ${a.kind === "allergy" ? "bg-rose-100 text-rose-900" : "bg-amber-100 text-amber-900"}`}>{a.kind}: {ALLERGEN_LABELS[a.allergen] ?? a.allergen} ({a.severity})</span>)}{p.dietary_tags.map((x) => <span key={x} className="badge bg-bone-2 text-ink-2">{prettyTag(x)}</span>)}</div>
             </Card>
             <Card title="Subscriptions" kicker="Recurring">
-              {listSubscriptions(c.id).length === 0 ? <Empty>No subscription. <Link href="/subscriptions" className="text-accent">Create one</Link></Empty> : listSubscriptions(c.id).map((s) => <div key={s.id} className="text-sm flex justify-between py-1"><span>{s.package_name ?? "Custom"} · {s.meals_per_week}/wk · {s.frequency}</span><StatusBadge status={s.status} /></div>)}
+              {(await listSubscriptions(c.id)).length === 0 ? <Empty>No subscription. <Link href="/subscriptions" className="text-accent">Create one</Link></Empty> : (await listSubscriptions(c.id)).map((s) => <div key={s.id} className="text-sm flex justify-between py-1"><span>{s.package_name ?? "Custom"} · {s.meals_per_week}/wk · {s.frequency}</span><StatusBadge status={s.status} /></div>)}
             </Card>
           </div>
           <Card title="Health & lifestyle" kicker="Special personal information (POPIA)" className="lg:col-span-3">
@@ -204,10 +204,10 @@ export default async function ClientPage({ params, searchParams }: { params: Pro
       {tab === "plans" && (
         <div className="grid lg:grid-cols-2 gap-4">
           <Card title="Meal plans" action={<Link href={`/meal-plans/new?client=${c.id}`} className="btn-primary btn-sm">New plan</Link>}>
-            {listPlans(c.id).length === 0 ? <Empty>No plans yet.</Empty> : <table className="table"><thead><tr><th>Week</th><th>Items</th><th>Status</th><th></th></tr></thead><tbody>{listPlans(c.id).map((pl) => <tr key={pl.id}><td>{fmtDate(pl.week_start)}</td><td>{pl.items}</td><td><StatusBadge status={pl.status} /></td><td><Link href={`/meal-plans/${pl.id}`} className="btn-ghost btn-sm">Open</Link></td></tr>)}</tbody></table>}
+            {(await listPlans(c.id)).length === 0 ? <Empty>No plans yet.</Empty> : <table className="table"><thead><tr><th>Week</th><th>Items</th><th>Status</th><th></th></tr></thead><tbody>{(await listPlans(c.id)).map((pl) => <tr key={pl.id}><td>{fmtDate(pl.week_start)}</td><td>{pl.items}</td><td><StatusBadge status={pl.status} /></td><td><Link href={`/meal-plans/${pl.id}`} className="btn-ghost btn-sm">Open</Link></td></tr>)}</tbody></table>}
           </Card>
           <Card title="Orders">
-            {listOrders({ clientId: c.id }).length === 0 ? <Empty>No orders yet.</Empty> : <table className="table"><thead><tr><th>Order</th><th>Delivery</th><th>Total</th><th>Status</th></tr></thead><tbody>{listOrders({ clientId: c.id }).map((o) => <tr key={o.id}><td><Link href={`/orders/${o.id}`} className="hover:underline">{o.order_number}</Link></td><td>{fmtDate(o.delivery_date)}</td><td>{formatZar(o.total_zar)}</td><td><StatusBadge status={o.status} /></td></tr>)}</tbody></table>}
+            {(await listOrders({ clientId: c.id })).length === 0 ? <Empty>No orders yet.</Empty> : <table className="table"><thead><tr><th>Order</th><th>Delivery</th><th>Total</th><th>Status</th></tr></thead><tbody>{(await listOrders({ clientId: c.id })).map((o) => <tr key={o.id}><td><Link href={`/orders/${o.id}`} className="hover:underline">{o.order_number}</Link></td><td>{fmtDate(o.delivery_date)}</td><td>{formatZar(o.total_zar)}</td><td><StatusBadge status={o.status} /></td></tr>)}</tbody></table>}
           </Card>
         </div>
       )}
@@ -216,14 +216,14 @@ export default async function ClientPage({ params, searchParams }: { params: Pro
 
       {tab === "timeline" && (
         <Card title="Client timeline">
-          <ol className="relative border-l border-line ml-2 space-y-4">{clientTimeline(c.id).map((e, i) => <li key={i} className="pl-5"><span className="absolute -left-1.5 mt-1.5 w-3 h-3 rounded-full bg-accent/80 border-2 border-white" /><div className="text-[11px] text-ink-3">{fmtDate(e.at)} · {e.kind}</div><div className="text-sm font-medium">{e.link ? <Link href={e.link} className="hover:underline">{e.title}</Link> : e.title}</div>{e.detail && <div className="text-xs text-ink-2">{e.detail}</div>}</li>)}</ol>
+          <ol className="relative border-l border-line ml-2 space-y-4">{(await clientTimeline(c.id)).map((e, i) => <li key={i} className="pl-5"><span className="absolute -left-1.5 mt-1.5 w-3 h-3 rounded-full bg-accent/80 border-2 border-white" /><div className="text-[11px] text-ink-3">{fmtDate(e.at)} · {e.kind}</div><div className="text-sm font-medium">{e.link ? <Link href={e.link} className="hover:underline">{e.title}</Link> : e.title}</div>{e.detail && <div className="text-xs text-ink-2">{e.detail}</div>}</li>)}</ol>
         </Card>
       )}
 
       {tab === "privacy" && (
         <div className="grid lg:grid-cols-2 gap-4">
           <Card title="Consent record" kicker="POPIA">
-            <table className="table"><thead><tr><th>Consent</th><th>Version</th><th>Granted</th><th>Date</th></tr></thead><tbody>{(exportClientData(c.id).client_consents as { consent_type: string; version: string; granted: number; granted_at: string }[]).map((x, i) => <tr key={i}><td>{x.consent_type.replace("_", " ")}</td><td>{x.version}</td><td>{x.granted ? "yes" : "no"}</td><td>{fmtDate(x.granted_at)}</td></tr>)}</tbody></table>
+            <table className="table"><thead><tr><th>Consent</th><th>Version</th><th>Granted</th><th>Date</th></tr></thead><tbody>{((await exportClientData(c.id)).client_consents as { consent_type: string; version: string; granted: number; granted_at: string }[]).map((x, i) => <tr key={i}><td>{x.consent_type.replace("_", " ")}</td><td>{x.version}</td><td>{x.granted ? "yes" : "no"}</td><td>{fmtDate(x.granted_at)}</td></tr>)}</tbody></table>
             <p className="text-xs text-ink-2 mt-3">Health and nutrition information is treated as special personal information. Access is role-restricted and every change is written to the audit log.</p>
           </Card>
           <Card title="Data subject rights">
@@ -239,9 +239,9 @@ export default async function ClientPage({ params, searchParams }: { params: Pro
   );
 }
 
-function Recommendations({ clientId, reviewPending }: { clientId: number; reviewPending: boolean }) {
-  const { ctx } = clientContext(clientId);
-  const meals = mealProfiles(clientId);
+async function Recommendations({ clientId, reviewPending }: { clientId: number; reviewPending: boolean }) {
+  const { ctx } = await clientContext(clientId);
+  const meals = await mealProfiles(clientId);
   const ex = excluded(meals, ctx);
   const subs = suggestSubstitutions(ex.flatMap((e) => e.meal.ingredient_names), ctx).filter((v, i, a) => a.findIndex((x) => x.ingredient === v.ingredient && x.suggest === v.suggest) === i).slice(0, 8);
   return (
@@ -275,8 +275,8 @@ function Recommendations({ clientId, reviewPending }: { clientId: number; review
   );
 }
 
-function ProgressTab({ clientId }: { clientId: number }) {
-  const rows = listProgress(clientId);
+async function ProgressTab({ clientId }: { clientId: number }) {
+  const rows = await listProgress(clientId);
   const labels = rows.map((r) => r.logged_at.slice(5));
   return (
     <div className="grid lg:grid-cols-3 gap-4">

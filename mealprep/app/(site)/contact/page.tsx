@@ -9,7 +9,7 @@ const INTERESTS = ["A personal plan", "Family meals", "Office or team meals", "G
 
 export default async function Contact({ searchParams }: { searchParams: Promise<{ sent?: string; error?: string; suburb?: string }> }) {
   const { sent, error, suburb } = await searchParams;
-  const s = siteInfo();
+  const s = await siteInfo();
   return (
     <section className="max-w-6xl mx-auto px-4 sm:px-6 pt-14 pb-24 grid lg:grid-cols-[1fr_1.2fr] gap-12">
       <div>

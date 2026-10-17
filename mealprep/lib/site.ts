@@ -15,18 +15,18 @@ export type SiteInfo = {
   cutoff: string; email: string; phone: string; deliveryFee: number; disclaimer: string;
 };
 
-export function siteInfo(): SiteInfo {
+export async function siteInfo(): Promise<SiteInfo> {
   return {
-    brand: getSetting("brand_name"),
-    tagline: getSetting("tagline"),
-    city: getSetting("site_city"),
-    areas: getSetting("site_delivery_areas").split(",").map((a) => a.trim()).filter(Boolean),
-    deliveryDays: getSetting("site_delivery_days"),
-    cutoff: getSetting("site_order_cutoff"),
-    email: getSetting("site_contact_email"),
-    phone: getSetting("site_contact_phone"),
-    deliveryFee: getSettingNumber("delivery_cost_per_order"),
-    disclaimer: getSetting("disclaimer"),
+    brand: await getSetting("brand_name"),
+    tagline: await getSetting("tagline"),
+    city: await getSetting("site_city"),
+    areas: (await getSetting("site_delivery_areas")).split(",").map((a) => a.trim()).filter(Boolean),
+    deliveryDays: await getSetting("site_delivery_days"),
+    cutoff: await getSetting("site_order_cutoff"),
+    email: await getSetting("site_contact_email"),
+    phone: await getSetting("site_contact_phone"),
+    deliveryFee: await getSettingNumber("delivery_cost_per_order"),
+    disclaimer: await getSetting("disclaimer"),
   };
 }
 
@@ -43,9 +43,9 @@ export const TAG_LABELS: Record<string, string> = {
   nut_free: "Nut-free", kid_friendly: "Kid-friendly", low_fodmap: "Low FODMAP",
 };
 
-export function publicMenu(): PublicMeal[] {
-  const desc = new Map(listMeals().map((m) => [m.id, m.description]));
-  return mealProfiles()
+export async function publicMenu(): Promise<PublicMeal[]> {
+  const desc = new Map((await listMeals()).map((m) => [m.id, m.description]));
+  return (await mealProfiles())
     .map((m) => ({
       id: m.id, name: m.name, category: m.category, cuisine: m.cuisine, description: desc.get(m.id) ?? "",
       tags: m.dietary_tags, allergens: m.allergens, nutrition: m.nutrition, price: m.price, rating: m.avg_rating,
@@ -59,8 +59,8 @@ export type PublicPackage = {
 };
 
 /** Active packages; "most popular" is the standard package with the most live subscriptions. */
-export function publicPackages(): PublicPackage[] {
-  const rows = getDb().prepare(
+export async function publicPackages(): Promise<PublicPackage[]> {
+  const rows = await getDb().prepare(
     `SELECT p.*, (SELECT COUNT(*) FROM subscriptions s WHERE s.package_id = p.id AND s.status IN ('active','paused')) AS subs
        FROM packages p WHERE p.is_active = 1 ORDER BY p.sort_order, p.id`
   ).all() as { id: number; code: string; name: string; description: string; meals_per_week: number; price_zar: number; is_custom: number; subs: number }[];
@@ -80,10 +80,10 @@ export type Review = { id: number; name: string; meal: string | null; comment: s
 const CRITICAL_WORDS = /\b(but|could|should|less|more|little|too|not|bit|wish|please|dry|bland|late|cold)\b/i;
 
 /** Recent five-star comments, attributed as first name + initial only (POPIA). */
-export function publicReviews(limit = 6): { reviews: Review[]; average: number | null; count: number } {
+export async function publicReviews(limit = 6): Promise<{ reviews: Review[]; average: number | null; count: number }> {
   const db = getDb();
-  const agg = db.prepare("SELECT AVG(overall) AS avg, COUNT(*) AS n FROM feedback WHERE overall IS NOT NULL").get() as { avg: number | null; n: number };
-  const rows = db.prepare(
+  const agg = await db.prepare("SELECT AVG(overall) AS avg, COUNT(*) AS n FROM feedback WHERE overall IS NOT NULL").get() as { avg: number | null; n: number };
+  const rows = await db.prepare(
     `SELECT f.id, f.comment, f.overall, c.first_name, c.last_name, m.name AS meal
        FROM feedback f JOIN clients c ON c.id = f.client_id LEFT JOIN meals m ON m.id = f.meal_id
       WHERE f.overall = 5 AND length(trim(f.comment)) > 0 AND c.anonymised_at IS NULL
@@ -100,26 +100,26 @@ export function publicReviews(limit = 6): { reviews: Review[]; average: number |
   return { reviews, average: agg.avg, count: agg.n };
 }
 
-export function publicStats() {
+export async function publicStats() {
   const db = getDb();
-  const meals = db.prepare(
+  const meals = await db.prepare(
     "SELECT COALESCE(SUM(oi.quantity), 0) AS n FROM order_items oi JOIN orders o ON o.id = oi.order_id WHERE o.status IN ('delivered','completed')"
   ).get() as { n: number };
-  const clients = db.prepare("SELECT COUNT(*) AS n FROM clients WHERE status = 'active'").get() as { n: number };
-  return { mealsDelivered: meals.n, activeClients: clients.n, menuSize: listMeals().length };
+  const clients = await db.prepare("SELECT COUNT(*) AS n FROM clients WHERE status = 'active'").get() as { n: number };
+  return { mealsDelivered: meals.n, activeClients: clients.n, menuSize: (await listMeals()).length };
 }
 
 export type Enquiry = { name: string; email: string; phone: string; suburb: string; interest: string; message: string };
 
 /** A website enquiry becomes a CRM lead (status 'lead', source 'website') and notifies the owner and planners. */
-export function createEnquiry(e: Enquiry): number {
+export async function createEnquiry(e: Enquiry): Promise<number> {
   const [first, ...rest] = e.name.trim().split(/\s+/);
   const notes = [`Website enquiry${e.interest ? ` — interested in: ${e.interest}` : ""}`, e.suburb && `Suburb: ${e.suburb}`, e.message].filter(Boolean).join("\n");
-  const id = Number(getDb().prepare(
+  const id = Number((await getDb().prepare(
     "INSERT INTO clients (first_name, last_name, email, phone, address, status, source, notes) VALUES (?, ?, ?, ?, ?, 'lead', 'website', ?)"
-  ).run(first, rest.join(" "), e.email, e.phone, e.suburb, notes).lastInsertRowid);
-  audit(null, "create", "client", id, "website enquiry");
-  notifyStaff(["admin", "planner"], "New website enquiry", `${e.name}${e.interest ? ` · ${e.interest}` : ""}${e.suburb ? ` · ${e.suburb}` : ""}`, `/clients/${id}`);
+  ).run(first, rest.join(" "), e.email, e.phone, e.suburb, notes)).lastInsertRowid);
+  await audit(null, "create", "client", id, "website enquiry");
+  await notifyStaff(["admin", "planner"], "New website enquiry", `${e.name}${e.interest ? ` · ${e.interest}` : ""}${e.suburb ? ` · ${e.suburb}` : ""}`, `/clients/${id}`);
   return id;
 }
 

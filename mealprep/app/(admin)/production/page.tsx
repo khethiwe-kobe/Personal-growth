@@ -12,13 +12,13 @@ export default async function Production({ searchParams }: { searchParams: Promi
   const user = await requirePermission("production:view");
   const sp = await searchParams;
   const date = sp.date ?? todayIso();
-  const s = productionSummary(date);
-  const staff = kitchenStaff();
+  const s = await productionSummary(date);
+  const staff = await kitchenStaff();
   const edit = can(user, "production:edit");
   const open = sp.batch ? s.batches.find((b) => b.id === Number(sp.batch)) : null;
-  const ingredients = open ? batchIngredients(open.id) : [];
-  const week = batchesBetween(shiftDays(date, -1), shiftDays(date, 6));
-  const capacity = getSettingNumber("kitchen_capacity_meals_per_day");
+  const ingredients = open ? await batchIngredients(open.id) : [];
+  const week = await batchesBetween(shiftDays(date, -1), shiftDays(date, 6));
+  const capacity = await getSettingNumber("kitchen_capacity_meals_per_day");
   const cols = PRODUCTION_STATUSES.filter((st) => st !== "delivered");
   return (
     <div>
